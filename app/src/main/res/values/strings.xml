@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">AMTEL app</string>
+    <string name="profile">Účet</string>
+    <string name="results">Výsledky</string>
+    <string name="schedule">Harmonogram</string>
+    <string name="teams">Týmy</string>
+    <string name="players">Hráči</string>
+    <string name="email">Email</string>
+    <string name="password">Heslo</string>
+</resources>
