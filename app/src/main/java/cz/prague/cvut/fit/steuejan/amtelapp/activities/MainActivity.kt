@@ -12,14 +12,14 @@ import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.authentication.AuthUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.*
-import cz.prague.cvut.fit.steuejan.amtelapp.models.MainActivityModel
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
 
 class MainActivity : AbstractBaseActivity()
 {
-    private val viewModel by viewModels<MainActivityModel>()
+    private val viewModel by viewModels<MainActivityVM>()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -39,7 +39,7 @@ class MainActivity : AbstractBaseActivity()
 
     private fun createNavigationDrawer(savedInstanceState: Bundle?)
     {
-        val profileTitle = AuthUtil.getProfileDrawerOption(applicationContext)
+        val profileTitle = AuthManager.getProfileDrawerOption(applicationContext)
         val profile = PrimaryDrawerItem().withName(profileTitle).withIcon(FontAwesome.Icon.faw_user_edit)
         val results = PrimaryDrawerItem().withName(getString(R.string.results)).withIcon(FontAwesome.Icon.faw_list_ol)
         val schedule = PrimaryDrawerItem().withName(getString(R.string.schedule)).withIcon(FontAwesome.Icon.faw_calendar_alt)

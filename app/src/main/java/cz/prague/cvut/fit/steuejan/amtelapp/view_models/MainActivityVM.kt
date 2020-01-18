@@ -1,10 +1,10 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.models
+package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
-class MainActivityModel(private val state: SavedStateHandle) : ViewModel()
+class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 {
     fun setTitle(title: String)
     {
