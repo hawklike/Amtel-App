@@ -9,9 +9,9 @@ import kotlinx.android.synthetic.main.toolbar.*
 
 abstract class AbstractBaseActivity : AppCompatActivity()
 {
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?)
+    override fun onCreate(savedInstanceState: Bundle?)
     {
-        super.onCreate(savedInstanceState, persistentState)
+        super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
     }
 

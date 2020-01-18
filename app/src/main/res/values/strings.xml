@@ -7,4 +7,6 @@
     <string name="players">Hráči</string>
     <string name="email">Email</string>
     <string name="password">Heslo</string>
+    <string name="account">Účet</string>
+    <string name="login">Přihlášení</string>
 </resources>

@@ -37,4 +37,11 @@
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
     </style>
+
+    <!-- TextInputEditText custom theme so that error background is transparent -->
+    <style name="textInputEditTextStyle" parent="EditTextStyle">
+        <item name="android:background">@drawable/input_text_layout_selector</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">7dp</item>
+    </style>
 </resources>

@@ -5,8 +5,6 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.materialdrawer.Drawer
@@ -14,10 +12,10 @@ import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.authentication.AuthUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.*
 import cz.prague.cvut.fit.steuejan.amtelapp.models.MainActivityModel
 import kotlinx.android.synthetic.main.toolbar.*
-
 
 class MainActivity : AbstractBaseActivity()
 {
@@ -41,7 +39,8 @@ class MainActivity : AbstractBaseActivity()
 
     private fun createNavigationDrawer(savedInstanceState: Bundle?)
     {
-        val profile = PrimaryDrawerItem().withName(getString(R.string.profile)).withIcon(FontAwesome.Icon.faw_user_edit)
+        val profileTitle = AuthUtil.getProfileDrawerOption(applicationContext)
+        val profile = PrimaryDrawerItem().withName(profileTitle).withIcon(FontAwesome.Icon.faw_user_edit)
         val results = PrimaryDrawerItem().withName(getString(R.string.results)).withIcon(FontAwesome.Icon.faw_list_ol)
         val schedule = PrimaryDrawerItem().withName(getString(R.string.schedule)).withIcon(FontAwesome.Icon.faw_calendar_alt)
         val teams = PrimaryDrawerItem().withName(getString(R.string.teams)).withIcon(FontAwesome.Icon.faw_users)
@@ -65,7 +64,7 @@ class MainActivity : AbstractBaseActivity()
                     viewModel.setDrawerSelectedPosition(position)
                     when(drawerItem)
                     {
-                        profile -> populateFragment(ProfileFragment.newInstance())
+                        profile -> populateFragment(LoginFragment.newInstance())
                         results -> populateFragment(ResultsFragment.newInstance())
                         schedule -> populateFragment(ScheduleFragment.newInstance())
                         teams -> populateFragment(TeamsFragment.newInstance())
@@ -80,7 +79,7 @@ class MainActivity : AbstractBaseActivity()
 
         if(savedInstanceState == null)
         {
-            populateFragment(ProfileFragment.newInstance())
+            populateFragment(LoginFragment.newInstance())
             drawer.setSelection(profile)
             viewModel.setDrawerSelectedPosition(drawer.currentSelectedPosition)
         }

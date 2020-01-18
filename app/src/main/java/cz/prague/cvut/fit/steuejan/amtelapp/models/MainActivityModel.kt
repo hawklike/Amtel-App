@@ -15,14 +15,14 @@ class MainActivityModel(private val state: SavedStateHandle) : ViewModel()
 
     fun setDrawerSelectedPosition(position: Int)
     {
-        state.set(DRAWER_POSITON, position)
+        state.set(DRAWER_POSITION, position)
     }
 
-    fun getDrawerSelectedPosition(): Int = state[DRAWER_POSITON] ?: 0
+    fun getDrawerSelectedPosition(): Int = state[DRAWER_POSITION] ?: 0
 
     companion object
     {
-        const val TITLE = "title"
-        const val DRAWER_POSITON = "position"
+        private const val TITLE = "title"
+        private const val DRAWER_POSITION = "position"
     }
 }

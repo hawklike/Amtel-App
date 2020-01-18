@@ -15,13 +15,14 @@
         android:layout_marginEnd="24dp"
         android:hint="@string/email"
         app:errorEnabled="true"
-        app:errorTextColor="@color/blue"
+        app:errorTextColor="@android:color/holo_red_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            style="@style/EditTextStyle"
+            style="@style/textInputEditTextStyle"
+            android:id="@+id/login_email_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -36,13 +37,15 @@
         android:layout_marginEnd="24dp"
         android:hint="@string/password"
         app:errorEnabled="true"
-        app:errorTextColor="@color/blue"
+        app:errorTextColor="@android:color/holo_red_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/login_email">
 
         <com.google.android.material.textfield.TextInputEditText
-            style="@style/EditTextStyle"
+            style="@style/textInputEditTextStyle"
+            android:id="@+id/login_password_text"
+            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
