@@ -10,6 +10,8 @@
         <item name="android:windowBackground">@color/white</item>
         <!-- Status bar color -->
         <item name="android:statusBarColor">@color/blue</item>
+        <item name="md_color_button_text">@color/blue</item>
+        <item name="md_corner_radius">16dp</item>
     </style>
 
     <!-- Toolbar custom theme -->
@@ -39,7 +41,7 @@
     </style>
 
     <!-- TextInputEditText custom theme so that error background is transparent -->
-    <style name="textInputEditTextStyle" parent="EditTextStyle">
+    <style name="TextInputEditTextStyle" parent="EditTextStyle">
         <item name="android:background">@drawable/input_text_layout_selector</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">7dp</item>

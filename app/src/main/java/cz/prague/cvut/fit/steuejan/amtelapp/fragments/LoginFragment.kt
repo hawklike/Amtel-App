@@ -7,6 +7,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.WhichButton
+import com.afollestad.materialdialogs.actions.getActionButton
+import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.afollestad.materialdialogs.callbacks.onShow
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
@@ -60,21 +65,56 @@ class LoginFragment : AbstractBaseFragment()
 
     private fun setObservers()
     {
+        confirmEmail()
+        confirmPassword()
+        getUser()
+    }
+
+    private fun confirmEmail()
+    {
         viewModel.confirmEmail().observe(viewLifecycleOwner) { credentialState ->
             if(credentialState is LoginFragmentVM.EmailState.InvalidEmail)
-                emailLayout.error = "Zadejte prosím validní email."
+                emailLayout.error = getString(R.string.invalidEmail_error)
         }
+    }
 
+    private fun confirmPassword()
+    {
         viewModel.confirmPassword().observe(viewLifecycleOwner) { credentialState ->
             if(credentialState is LoginFragmentVM.PasswordState.InvalidPassword)
-                passwordLayout.error = "Vyplňte prosím heslo."
+                passwordLayout.error = getString(R.string.invalidPassword_error)
         }
+    }
 
+    private fun getUser()
+    {
         //TODO: replace login with an actual account screen after successful login [3]
         //TODO: add loading bar [1]
-        //TODO: add confirmation [2]
         viewModel.getUser().observe(viewLifecycleOwner) { user ->
-            deleteText()
+            val title: String
+            val message: String
+
+            if(user != null)
+            {
+                title = getString(R.string.user_login_success_title)
+                message = getString(R.string.user_login_success_message)
+                deleteText()
+            }
+            else
+            {
+                title = getString(R.string.user_login_failure_title)
+                message = getString(R.string.user_login_failure_message)
+            }
+
+            MaterialDialog(activity!!)
+                .title(text = title)
+                .message(text = message)
+                .show {
+                    positiveButton(text = "OK")
+                    onDismiss { user?.let {user ->
+                        mainActivityModel.setUser(user)
+                    } }
+                }
         }
     }
 

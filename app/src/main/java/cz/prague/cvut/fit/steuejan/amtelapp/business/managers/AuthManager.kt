@@ -44,10 +44,12 @@ object AuthManager
                 else
                 {
                     listener.onTaskCompleted(user = null)
-                    Log.d(TAG, "unsuccessful login")
+                    Log.d(TAG, "unsuccessful login: ${task.exception?.message}")
                 }
             }
     }
+
+    fun getCurrentUser(): FirebaseUser? = auth.currentUser
 
     interface FirebaseUserListener
     {

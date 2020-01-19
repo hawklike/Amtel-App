@@ -6,7 +6,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 
 abstract class AbstractBaseFragment : Fragment()
 {
-    private val mainActivityModel by activityViewModels<MainActivityVM>()
+    protected val mainActivityModel by activityViewModels<MainActivityVM>()
 
     protected open fun setToolbarTitle(title: String)
     {

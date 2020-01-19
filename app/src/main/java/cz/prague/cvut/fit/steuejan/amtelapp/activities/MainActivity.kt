@@ -2,6 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -26,14 +27,27 @@ class MainActivity : AbstractBaseActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setToolbarTitle()
+        setObservers()
         createNavigationDrawer(savedInstanceState)
+    }
+
+    private fun setObservers()
+    {
+        setToolbarTitle()
+        displayAccount()
     }
 
     private fun setToolbarTitle()
     {
         viewModel.getTitle().observe(this) { title ->
             setToolbarTitle(title)
+        }
+    }
+
+    private fun displayAccount()
+    {
+        viewModel.getUser().observe(this) { user ->
+            populateFragment(AccountFragment.newInstance(user))
         }
     }
 

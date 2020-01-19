@@ -20,8 +20,8 @@ class LoginFragmentVM : ViewModel()
     /*---------------------------------------------------*/
 
     //TODO: return actual User [3]
-    private val user = MutableLiveData<FirebaseUser>()
-    fun getUser(): LiveData<FirebaseUser> = user
+    private val user = MutableLiveData<FirebaseUser?>()
+    fun getUser(): LiveData<FirebaseUser?> = user
 
     /*---------------------------------------------------*/
 
@@ -33,7 +33,7 @@ class LoginFragmentVM : ViewModel()
             {
                 override fun onTaskCompleted(user: FirebaseUser?)
                 {
-                    user?.let { this@LoginFragmentVM.user.value = it }
+                    this@LoginFragmentVM.user.value = user
                 }
             })
     }
@@ -49,7 +49,7 @@ class LoginFragmentVM : ViewModel()
             this.email.value = EmailState.InvalidEmail.also { okEmail = false }
 
         if(password.isNotEmpty())
-            this.password.value = PasswordState.ValidPassword(password)
+            this.password.value = PasswordState.ValidPassword
         else
             this.password.value = PasswordState.InvalidPassword.also { okPassword = false }
 
@@ -65,7 +65,7 @@ class LoginFragmentVM : ViewModel()
 
     sealed class PasswordState
     {
-        data class ValidPassword(val password: String) : PasswordState()
+        object ValidPassword : PasswordState()
         object InvalidPassword : PasswordState()
     }
 

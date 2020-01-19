@@ -11,5 +11,8 @@
         <!-- Status bar -->
         <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
+        <!-- Material dialog -->
+        <item name="md_color_button_text">@color/blue</item>
+        <item name="md_corner_radius">16dp</item>
     </style>
 </resources>
