@@ -88,7 +88,6 @@ class LoginFragment : AbstractBaseFragment()
 
     private fun getUser()
     {
-        //TODO: replace login with an actual account screen after successful login [3]
         //TODO: add loading bar [1]
         viewModel.getUser().observe(viewLifecycleOwner) { user ->
             val title: String
@@ -98,12 +97,12 @@ class LoginFragment : AbstractBaseFragment()
             {
                 title = getString(R.string.user_login_success_title)
                 message = getString(R.string.user_login_success_message)
-                deleteText()
             }
             else
             {
                 title = getString(R.string.user_login_failure_title)
                 message = getString(R.string.user_login_failure_message)
+                passwordLayout.editText!!.text.clear()
             }
 
             MaterialDialog(activity!!)
@@ -122,11 +121,5 @@ class LoginFragment : AbstractBaseFragment()
     {
         emailLayout.error = null
         passwordLayout.error = null
-    }
-
-    private fun deleteText()
-    {
-        emailLayout.editText!!.text.clear()
-        passwordLayout.editText!!.text.clear()
     }
 }

@@ -10,9 +10,9 @@
     <string name="account">Účet</string>
     <string name="login">Přihlášení</string>
     <string name="user_login_success_title">Přihlášení proběhlo úspěšně</string>
-    <string name="user_login_success_message">Za chvíli budete přesměrováni na stránku Vašeho účtu.</string>
+    <string name="user_login_success_message">Dále budete přesměrován/a na obrazovku s vaším účtem.</string>
     <string name="user_login_failure_title">Přihlášení se nezdařilo</string>
-    <string name="user_login_failure_message">Zadali jste neplatnou kombinaci emailu a hesla. Žádný takový uživatel neexistuje. Je možné, že byl smazán.</string>
+    <string name="user_login_failure_message">Zadali jste neplatnou kombinaci emailu a hesla.</string>
     <string name="invalidEmail_error">Zadejte prosím validní email.</string>
     <string name="invalidPassword_error">Vyplňte prosím heslo.</string>
 </resources>

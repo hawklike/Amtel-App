@@ -1,7 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.R
@@ -33,7 +32,7 @@ abstract class AbstractBaseActivity : AppCompatActivity()
 
     companion object
     {
-        const val TAG = "amtel_app_log"
+        const val TAG = "MainActivity"
     }
 
 }

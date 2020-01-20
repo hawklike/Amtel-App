@@ -1,8 +1,8 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -10,6 +10,7 @@ import androidx.lifecycle.observe
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.holder.StringHolder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import cz.prague.cvut.fit.steuejan.amtelapp.R
@@ -21,20 +22,21 @@ import kotlinx.android.synthetic.main.toolbar.*
 class MainActivity : AbstractBaseActivity()
 {
     private val viewModel by viewModels<MainActivityVM>()
+    private lateinit var drawer: Drawer
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setObservers()
+        setObservers(savedInstanceState)
         createNavigationDrawer(savedInstanceState)
     }
 
-    private fun setObservers()
+    private fun setObservers(savedInstanceState: Bundle?)
     {
         setToolbarTitle()
-        displayAccount()
+        displayAccount(savedInstanceState)
     }
 
     private fun setToolbarTitle()
@@ -44,9 +46,16 @@ class MainActivity : AbstractBaseActivity()
         }
     }
 
-    private fun displayAccount()
+    private fun displayAccount(savedInstanceState: Bundle?)
     {
+        //TODO: change to a User
+        AuthManager.getCurrentUser()?.let { user ->
+            savedInstanceState ?: viewModel.setUser(user)
+        }
+
         viewModel.getUser().observe(this) { user ->
+            //updates text in the drawer
+            if(::drawer.isInitialized) drawer.updateName(0, StringHolder(getString(R.string.account)))
             populateFragment(AccountFragment.newInstance(user))
         }
     }
@@ -54,13 +63,13 @@ class MainActivity : AbstractBaseActivity()
     private fun createNavigationDrawer(savedInstanceState: Bundle?)
     {
         val profileTitle = AuthManager.getProfileDrawerOption(applicationContext)
-        val profile = PrimaryDrawerItem().withName(profileTitle).withIcon(FontAwesome.Icon.faw_user_edit)
+        val profile = PrimaryDrawerItem().withIdentifier(0).withName(profileTitle).withIcon(FontAwesome.Icon.faw_user_edit)
         val results = PrimaryDrawerItem().withName(getString(R.string.results)).withIcon(FontAwesome.Icon.faw_list_ol)
         val schedule = PrimaryDrawerItem().withName(getString(R.string.schedule)).withIcon(FontAwesome.Icon.faw_calendar_alt)
         val teams = PrimaryDrawerItem().withName(getString(R.string.teams)).withIcon(FontAwesome.Icon.faw_users)
         val players = PrimaryDrawerItem().withName(getString(R.string.players)).withIcon(FontAwesome.Icon.faw_user)
 
-        val drawer = DrawerBuilder()
+        drawer = DrawerBuilder()
             .withActivity(this)
             .withToolbar(toolbar)
             .withTranslucentStatusBar(false)
@@ -78,7 +87,9 @@ class MainActivity : AbstractBaseActivity()
                     viewModel.setDrawerSelectedPosition(position)
                     when(drawerItem)
                     {
-                        profile -> populateFragment(LoginFragment.newInstance())
+                        profile -> AuthManager.getCurrentUser()?.let {
+                            populateFragment(AccountFragment.newInstance(viewModel.getUser().value!!))
+                        } ?: populateFragment(LoginFragment.newInstance())
                         results -> populateFragment(ResultsFragment.newInstance())
                         schedule -> populateFragment(ScheduleFragment.newInstance())
                         teams -> populateFragment(TeamsFragment.newInstance())
@@ -89,11 +100,11 @@ class MainActivity : AbstractBaseActivity()
             }).build()
 
         drawer.drawerLayout.setStatusBarBackground(R.color.white)
+        //restores option before configuration change (i.e rotation...)
         drawer.setSelectionAtPosition(viewModel.getDrawerSelectedPosition(), false)
 
         if(savedInstanceState == null)
         {
-            populateFragment(LoginFragment.newInstance())
             drawer.setSelection(profile)
             viewModel.setDrawerSelectedPosition(drawer.currentSelectedPosition)
         }
