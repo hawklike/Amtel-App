@@ -2,14 +2,13 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/darkGrey</item>
         <item name="colorAccent">@color/lightGrey</item>
         <item name="android:textColorPrimary">@color/darkGrey</item>
         <item name="android:windowBackground">@color/white</item>
-        <!-- Status bar color -->
         <item name="android:statusBarColor">@color/blue</item>
+        <!-- Material dialog -->
         <item name="md_color_button_text">@color/blue</item>
         <item name="md_corner_radius">16dp</item>
     </style>
@@ -47,3 +46,4 @@
         <item name="android:paddingBottom">7dp</item>
     </style>
 </resources>
+

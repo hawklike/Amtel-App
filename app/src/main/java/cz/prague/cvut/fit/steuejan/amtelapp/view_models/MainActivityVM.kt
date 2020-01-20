@@ -1,9 +1,11 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.android.parcel.Parcelize
 
 class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 {
@@ -26,12 +28,19 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
     /*---------------------------------------------------*/
 
     //TODO: change to a User
-    fun setUser(user: FirebaseUser)
+    fun setUser(user: UserStatus)
     {
         state.set(USER, user)
     }
 
-    fun getUser(): LiveData<FirebaseUser> = state.getLiveData(USER)
+    fun getUser(): LiveData<UserStatus> = state.getLiveData(USER)
+
+    sealed class UserStatus
+    {
+        @Parcelize
+        data class SignedUser(val self: FirebaseUser) : UserStatus(), Parcelable
+        @Parcelize object NoUser : UserStatus(), Parcelable
+    }
 
     companion object
     {

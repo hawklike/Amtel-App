@@ -9,7 +9,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 object AuthManager
 {
     private const val TAG = "authManager"
-    private val auth by lazy { FirebaseAuth.getInstance() }
+    val auth by lazy { FirebaseAuth.getInstance() }
 
     fun getProfileDrawerOption(context: Context): String =
         auth.currentUser?.let { context.getString(R.string.account) }

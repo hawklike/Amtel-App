@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.LoginFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 
 class LoginFragment : AbstractBaseFragment()
 {
@@ -109,9 +110,9 @@ class LoginFragment : AbstractBaseFragment()
                 .title(text = title)
                 .message(text = message)
                 .show {
-                    positiveButton(text = "OK")
+                    positiveButton(R.string.ok)
                     onDismiss { user?.let {user ->
-                        mainActivityModel.setUser(user)
+                        mainActivityModel.setUser(MainActivityVM.UserStatus.SignedUser(user))
                     } }
                 }
         }

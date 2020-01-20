@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseUser
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 
@@ -26,8 +27,6 @@ class AccountFragment : AbstractBaseFragment()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
-        val user = arguments?.get(DATA)
-        //TODO: change a layout based on user status
         return inflater.inflate(R.layout.fragment_account, container, false)
     }
 
@@ -35,5 +34,13 @@ class AccountFragment : AbstractBaseFragment()
     {
         super.onActivityCreated(savedInstanceState)
         setToolbarTitle(getString(R.string.account))
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
+    {
+        super.onViewCreated(view, savedInstanceState)
+        //TODO: change a layout based on user status
+        val user = arguments?.get(DATA) as FirebaseUser
+        Toast.makeText(activity, user.email, Toast.LENGTH_SHORT).show()
     }
 }

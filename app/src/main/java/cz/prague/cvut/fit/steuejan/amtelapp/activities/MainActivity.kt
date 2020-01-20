@@ -2,7 +2,9 @@ package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.View
+import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -19,6 +21,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.fragments.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
 
+
 class MainActivity : AbstractBaseActivity()
 {
     private val viewModel by viewModels<MainActivityVM>()
@@ -26,8 +29,8 @@ class MainActivity : AbstractBaseActivity()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
-        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        super.onCreate(savedInstanceState)
 
         setObservers(savedInstanceState)
         createNavigationDrawer(savedInstanceState)
@@ -50,13 +53,23 @@ class MainActivity : AbstractBaseActivity()
     {
         //TODO: change to a User
         AuthManager.getCurrentUser()?.let { user ->
-            savedInstanceState ?: viewModel.setUser(user)
+            savedInstanceState ?: viewModel.setUser(MainActivityVM.UserStatus.SignedUser(user))
         }
 
         viewModel.getUser().observe(this) { user ->
-            //updates text in the drawer
-            if(::drawer.isInitialized) drawer.updateName(0, StringHolder(getString(R.string.account)))
-            populateFragment(AccountFragment.newInstance(user))
+            if(user is MainActivityVM.UserStatus.SignedUser)
+            {
+                if(::drawer.isInitialized)
+                    drawer.updateName(0, StringHolder(getString(R.string.account)))
+                logoutIcon.visibility = View.VISIBLE
+                populateFragment(AccountFragment.newInstance(user.self))
+            }
+            else
+            {
+                if(::drawer.isInitialized)
+                    drawer.updateName(0, StringHolder(getString(R.string.login)))
+                populateFragment(LoginFragment.newInstance())
+            }
         }
     }
 
@@ -88,7 +101,9 @@ class MainActivity : AbstractBaseActivity()
                     when(drawerItem)
                     {
                         profile -> AuthManager.getCurrentUser()?.let {
-                            populateFragment(AccountFragment.newInstance(viewModel.getUser().value!!))
+                            val user = viewModel.getUser().value
+                            if(user is MainActivityVM.UserStatus.SignedUser)
+                                populateFragment(AccountFragment.newInstance(user.self))
                         } ?: populateFragment(LoginFragment.newInstance())
                         results -> populateFragment(ResultsFragment.newInstance())
                         schedule -> populateFragment(ScheduleFragment.newInstance())
