@@ -23,6 +23,8 @@
         <com.google.android.material.textfield.TextInputEditText
             style="@style/TextInputEditTextStyle"
             android:id="@+id/login_email_text"
+            android:maxLines="1"
+            android:inputType="text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -46,6 +48,7 @@
             style="@style/TextInputEditTextStyle"
             android:id="@+id/login_password_text"
             android:inputType="textPassword"
+            android:maxLines="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

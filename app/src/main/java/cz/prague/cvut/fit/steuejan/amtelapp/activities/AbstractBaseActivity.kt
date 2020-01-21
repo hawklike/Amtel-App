@@ -1,24 +1,24 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager.auth
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.LoginFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AbstractBaseActivityVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
-import kotlin.math.log
 
 abstract class AbstractBaseActivity : AppCompatActivity()
 {
-    protected val logoutIcon: ImageView by lazy { findViewById<ImageView>(R.id.toolbar_logout) }
+    private val logoutIcon: ImageView by lazy { findViewById<ImageView>(R.id.toolbar_logout) }
+    protected val baseActivityVM by viewModels<AbstractBaseActivityVM>()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -29,6 +29,11 @@ abstract class AbstractBaseActivity : AppCompatActivity()
 
     private fun handleLogout()
     {
+        baseActivityVM.getLogoutIconVisibility().observe(this) { visibility ->
+            if(visibility) logoutIcon.visibility = View.VISIBLE
+            else logoutIcon.visibility = View.GONE
+        }
+
         logoutIcon.setOnClickListener {
             displayLogoutDialog()
         }
@@ -47,11 +52,12 @@ abstract class AbstractBaseActivity : AppCompatActivity()
 
     private fun logout()
     {
+        Log.i(TAG, "logout")
         auth.signOut()
         val mainActivityModel by viewModels<MainActivityVM>()
         mainActivityModel.setTitle(getString(R.string.login))
         mainActivityModel.setUser(MainActivityVM.UserStatus.NoUser)
-        logoutIcon.visibility = View.GONE
+        baseActivityVM.setLogoutIconVisibility(false)
     }
 
     protected fun setToolbarTitle(title: String)

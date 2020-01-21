@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!-- TODO: add tabLayout with adapter (see fragment_edit_children) -->
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

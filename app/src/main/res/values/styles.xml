@@ -22,7 +22,7 @@
 
     <!-- EditText custom theme -->
     <style name="EditTextStyle" parent="Widget.AppCompat.EditText">
-        <item name="android:background">@drawable/rounded_edit_text_shape</item>
+        <item name="android:background">@drawable/rounded_object</item>
         <item name="android:paddingStart">12dp</item>
         <item name="android:paddingEnd">12dp</item>
         <item name="android:paddingTop">6dp</item>

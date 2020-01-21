@@ -27,7 +27,8 @@ class AccountFragment : AbstractBaseFragment()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
-        return inflater.inflate(R.layout.fragment_account, container, false)
+        //TODO: change layout back to fragment_account
+        return inflater.inflate(R.layout.account_boos_add_tm, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)

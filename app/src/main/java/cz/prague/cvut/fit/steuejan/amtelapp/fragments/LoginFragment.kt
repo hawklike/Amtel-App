@@ -1,6 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.afollestad.materialdialogs.callbacks.onShow
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.LoginFragmentVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
@@ -92,12 +94,12 @@ class LoginFragment : AbstractBaseFragment()
         //TODO: add loading bar [1]
         viewModel.getUser().observe(viewLifecycleOwner) { user ->
             val title: String
-            val message: String
+            val message: String?
 
             if(user != null)
             {
                 title = getString(R.string.user_login_success_title)
-                message = getString(R.string.user_login_success_message)
+                message = null
             }
             else
             {
@@ -107,11 +109,13 @@ class LoginFragment : AbstractBaseFragment()
             }
 
             MaterialDialog(activity!!)
-                .title(text = title)
-                .message(text = message)
+                .title(text = title).also {
+                    if(message != null) it.message(text = message)
+                }
                 .show {
                     positiveButton(R.string.ok)
-                    onDismiss { user?.let {user ->
+                    onDismiss { user?.let { user ->
+                        Log.i(AbstractBaseActivity.TAG, "login")
                         mainActivityModel.setUser(MainActivityVM.UserStatus.SignedUser(user))
                     } }
                 }

@@ -20,4 +20,6 @@
     <string name="yes">ANO</string>
     <string name="no">NE</string>
     <string name="ok">OK</string>
+    <string name="name">Jméno</string>
+    <string name="surname">Příjmení</string>
 </resources>

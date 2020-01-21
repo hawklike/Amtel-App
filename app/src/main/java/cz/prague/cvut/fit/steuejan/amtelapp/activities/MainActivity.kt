@@ -2,9 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.View
-import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -53,19 +51,26 @@ class MainActivity : AbstractBaseActivity()
     {
         //TODO: change to a User
         AuthManager.getCurrentUser()?.let { user ->
-            savedInstanceState ?: viewModel.setUser(MainActivityVM.UserStatus.SignedUser(user))
+            if(savedInstanceState == null)
+            {
+                Log.i(TAG, "display account")
+                viewModel.setUser(MainActivityVM.UserStatus.SignedUser(user))
+            }
         }
 
         viewModel.getUser().observe(this) { user ->
+            Log.i(TAG, "getUser() observed")
             if(user is MainActivityVM.UserStatus.SignedUser)
             {
+                Log.i(TAG, "signed user")
                 if(::drawer.isInitialized)
                     drawer.updateName(0, StringHolder(getString(R.string.account)))
-                logoutIcon.visibility = View.VISIBLE
+                baseActivityVM.setLogoutIconVisibility(true)
                 populateFragment(AccountFragment.newInstance(user.self))
             }
             else
             {
+                Log.i(TAG, "unsigned user")
                 if(::drawer.isInitialized)
                     drawer.updateName(0, StringHolder(getString(R.string.login)))
                 populateFragment(LoginFragment.newInstance())
@@ -127,6 +132,7 @@ class MainActivity : AbstractBaseActivity()
 
     private fun populateFragment(fragment: Fragment)
     {
+        Log.i(TAG, "fragment populated")
         supportFragmentManager.commit {
             replace(R.id.main_container, fragment)
         }
