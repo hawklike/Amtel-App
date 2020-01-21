@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseUser
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
+
 
 class AccountFragment : AbstractBaseFragment()
 {
@@ -25,10 +28,11 @@ class AccountFragment : AbstractBaseFragment()
         }
     }
 
+    private lateinit var viewPager: ViewPager
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
-        //TODO: change layout back to fragment_account
-        return inflater.inflate(R.layout.account_boos_add_tm, container, false)
+        return inflater.inflate(R.layout.fragment_account, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -40,8 +44,22 @@ class AccountFragment : AbstractBaseFragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
-        //TODO: change a layout based on user status
         val user = arguments?.get(DATA) as FirebaseUser
-        Toast.makeText(activity, user.email, Toast.LENGTH_SHORT).show()
+
+        viewPager = view.findViewById(R.id.account_viewPager)
+        setupViewPager(viewPager, user)
+
+        val tabs: TabLayout = view.findViewById(R.id.account_tabs)
+        tabs.setupWithViewPager(viewPager)
+    }
+
+    //TODO: change to a User
+    private fun setupViewPager(viewPager: ViewPager, user: FirebaseUser)
+    {
+        //TODO: create adapter based on user status
+        val adapter = ViewPagerAdapter(childFragmentManager)
+        adapter.addFragment(AccountBossAddTMFragment.newInstance(user), "Nový vedoucí")
+        adapter.addFragment(AccountBossMakeGroupsFragment.newInstance(user), "Vytvořit skupiny")
+        viewPager.adapter = adapter
     }
 }

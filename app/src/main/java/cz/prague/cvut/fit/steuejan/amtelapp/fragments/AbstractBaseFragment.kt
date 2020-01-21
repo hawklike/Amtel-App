@@ -1,5 +1,8 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments
 
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
