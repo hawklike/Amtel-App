@@ -22,4 +22,5 @@
     <string name="ok">OK</string>
     <string name="name">Jméno</string>
     <string name="surname">Příjmení</string>
+    <string name="deadline">Deadline</string>
 </resources>
