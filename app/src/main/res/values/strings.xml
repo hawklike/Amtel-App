@@ -23,4 +23,9 @@
     <string name="name">Jméno</string>
     <string name="surname">Příjmení</string>
     <string name="deadline">Deadline</string>
+    <string name="invalidSurname_error">Vyplňte prosím příjmení.</string>
+    <string name="invalidName_error">Vyplňte prosím jméno.</string>
+    <string name="user_registration_success_title">Uživatel byl úspěšně přidán</string>
+    <string name="user_registration_failure_title">Registrace se nepovedla</string>
+    <string name="user_registration_failure_message">Uživatel již byl zaregistrován v minulosti.</string>
 </resources>

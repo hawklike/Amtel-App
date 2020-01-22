@@ -16,6 +16,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.*
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
 

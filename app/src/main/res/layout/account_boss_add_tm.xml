@@ -51,7 +51,7 @@
                 android:id="@+id/account_boss_add_tm_surname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/account_boss_add_tm_name"
+                android:layout_below="@id/account_boss_add_tm_name"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:hint="@string/surname"

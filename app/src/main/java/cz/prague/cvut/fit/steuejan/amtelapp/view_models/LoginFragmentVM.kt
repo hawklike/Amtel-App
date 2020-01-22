@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 
 class LoginFragmentVM : ViewModel()
@@ -20,7 +21,7 @@ class LoginFragmentVM : ViewModel()
     /*---------------------------------------------------*/
 
     //TODO: return actual User [3]
-    private val user = MutableLiveData<FirebaseUser?>()
+    private val user = SingleLiveEvent<FirebaseUser?>()
     fun getUser(): LiveData<FirebaseUser?> = user
 
     /*---------------------------------------------------*/
@@ -31,7 +32,7 @@ class LoginFragmentVM : ViewModel()
         if(confirmCredentials(email, password))
             AuthManager.signInUser(email, password, object: AuthManager.FirebaseUserListener
             {
-                override fun onTaskCompleted(user: FirebaseUser?)
+                override fun onSignInCompleted(user: FirebaseUser?)
                 {
                     this@LoginFragmentVM.user.value = user
                 }

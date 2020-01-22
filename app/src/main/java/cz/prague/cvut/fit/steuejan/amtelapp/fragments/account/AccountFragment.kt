@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.fragments
+package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseUser
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
 
 
 class AccountFragment : AbstractBaseFragment()
@@ -58,8 +59,8 @@ class AccountFragment : AbstractBaseFragment()
     {
         //TODO: create adapter based on user status
         val adapter = ViewPagerAdapter(childFragmentManager)
-        adapter.addFragment(AccountBossAddTMFragment.newInstance(user), "Nový vedoucí")
-        adapter.addFragment(AccountBossMakeGroupsFragment.newInstance(user), "Vytvořit skupiny")
+        adapter.addFragment(AccountBossAddTMFragment.newInstance(), "Nový vedoucí")
+        adapter.addFragment(AccountBossMakeGroupsFragment.newInstance(), "Vytvořit skupiny")
         viewPager.adapter = adapter
     }
 }
