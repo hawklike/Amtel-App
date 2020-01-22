@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_centerVertical="true"
-        android:text="@string/players" />
+        android:textSize="20sp"
+        android:text="Toto je pouze dummy layout" />
 
 </RelativeLayout>

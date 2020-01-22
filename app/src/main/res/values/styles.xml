@@ -2,14 +2,15 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/darkGrey</item>
         <item name="colorAccent">@color/lightGrey</item>
         <item name="android:textColorPrimary">@color/darkGrey</item>
         <item name="android:windowBackground">@color/white</item>
-        <!-- Status bar color -->
         <item name="android:statusBarColor">@color/blue</item>
+        <!-- Material dialog -->
+        <item name="md_color_button_text">@color/blue</item>
+        <item name="md_corner_radius">16dp</item>
     </style>
 
     <!-- Toolbar custom theme -->
@@ -21,7 +22,7 @@
 
     <!-- EditText custom theme -->
     <style name="EditTextStyle" parent="Widget.AppCompat.EditText">
-        <item name="android:background">@drawable/rounded_edit_text_shape</item>
+        <item name="android:background">@drawable/rounded_object</item>
         <item name="android:paddingStart">12dp</item>
         <item name="android:paddingEnd">12dp</item>
         <item name="android:paddingTop">6dp</item>
@@ -37,4 +38,12 @@
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
     </style>
+
+    <!-- TextInputEditText custom theme so that error background is transparent -->
+    <style name="TextInputEditTextStyle" parent="EditTextStyle">
+        <item name="android:background">@drawable/input_text_layout_selector</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">7dp</item>
+    </style>
 </resources>
+

@@ -12,5 +12,8 @@
         <!-- Material dialog -->
         <item name="md_color_button_text">@color/blue</item>
         <item name="md_corner_radius">16dp</item>
+        <!-- White navigation bar-->
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:navigationBarColor">@color/white</item>
     </style>
 </resources>
