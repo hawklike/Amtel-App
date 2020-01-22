@@ -59,8 +59,7 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
             val email = emailLayout.editText!!.text.toString().trim()
 
             deleteErrors()
-//            displayDialog(name, surname, email)
-            viewModel.createUser(activity!!.applicationContext, name, surname, email)
+            viewModel.confirmCredentials(name, surname, email)
         }
     }
 
@@ -69,21 +68,34 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
         confirmName()
         confirmSurname()
         confirmEmail()
-        isSuccessful()
+        isCredentialsValid()
+        isRegistrationSuccesfull()
     }
 
-//    private fun displayDialog(name: String, surname: String, email: String)
-//    {
-//        MaterialDialog(activity!!)
-//            .title("Opravdu chcete přidat tohoto vedoucího?")
-//            .message(R.string.logout_message)
-//            .show {
-//                positiveButton(R.string.yes) {
-//                    viewModel.createUser(activity!!.applicationContext, name, surname, email)
-//                }
-//                negativeButton(R.string.no)
-//            }
-//    }
+    private fun isCredentialsValid()
+    {
+        viewModel.isCredentialsValid().observe(viewLifecycleOwner) { credentialState ->
+            if(credentialState is AccountBossAddTMFragmentVM.CredentialsState.ValidCredentials)
+                displayDialog(credentialState)
+        }
+    }
+
+    private fun displayDialog(credentials: AccountBossAddTMFragmentVM.CredentialsState.ValidCredentials)
+    {
+        MaterialDialog(activity!!)
+            .title(text = "Opravdu chcete přidat tohoto uživatele?")
+            .message(text = "${credentials.name} ${credentials.surname}\n${credentials.email}")
+            .show {
+                positiveButton(R.string.yes) {
+                    viewModel.createUser(
+                        activity!!.applicationContext,
+                        credentials.name,
+                        credentials.surname,
+                        credentials.email)
+                }
+                negativeButton(R.string.no)
+            }
+    }
 
     private fun confirmName()
     {
@@ -109,7 +121,7 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
         }
     }
 
-    private fun isSuccessful()
+    private fun isRegistrationSuccesfull()
     {
         viewModel.isUserCreated().observe(viewLifecycleOwner) { isCreated ->
             val title: String

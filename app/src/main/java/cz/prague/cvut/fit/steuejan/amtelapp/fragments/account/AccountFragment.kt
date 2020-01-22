@@ -55,6 +55,7 @@ class AccountFragment : AbstractBaseFragment()
     }
 
     //TODO: change to a User
+    //TODO: add 'Ostatní', where a user may change his password
     private fun setupViewPager(viewPager: ViewPager, user: FirebaseUser)
     {
         //TODO: create adapter based on user status

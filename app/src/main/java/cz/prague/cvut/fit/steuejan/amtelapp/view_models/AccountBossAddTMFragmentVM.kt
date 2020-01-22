@@ -32,6 +32,11 @@ class AccountBossAddTMFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
+    private val credentials = SingleLiveEvent<CredentialsState>()
+    fun isCredentialsValid(): LiveData<CredentialsState> = credentials
+
+    /*---------------------------------------------------*/
+
     //TODO: create random password and send it via email
     fun createUser(context: Context, name: String, surname: String, email: String)
     {
@@ -45,19 +50,28 @@ class AccountBossAddTMFragmentVM : ViewModel()
             })
     }
 
-    private fun confirmCredentials(name: String, surname: String, email: String): Boolean
+    fun confirmCredentials(name: String, surname: String, email: String): Boolean
     {
         var okName = true
         var okSurname = true
         var okEmail = true
 
+        var cName = ""
+        var cSurname = ""
+
         if(name.isNotEmpty())
-            this.name.value = NameState.ValidName(NameConverter.convertToFirstLetterBig(name))
+        {
+            cName = NameConverter.convertToFirstLetterBig(name)
+            this.name.value = NameState.ValidName(cName)
+        }
         else
             this.name.value = NameState.InvalidName.also { okName = false }
 
         if(surname.isNotEmpty())
-            this.surname.value = SurnameState.ValidSurname(NameConverter.convertToFirstLetterBig(surname))
+        {
+            cSurname = NameConverter.convertToFirstLetterBig(surname)
+            this.surname.value = SurnameState.ValidSurname(cSurname)
+        }
         else
             this.surname.value = SurnameState.InvalidSurname.also { okSurname = false }
 
@@ -66,7 +80,18 @@ class AccountBossAddTMFragmentVM : ViewModel()
         else
             this.email.value = EmailState.InvalidEmail.also { okEmail = false }
 
-        return okName && okSurname && okEmail
+        return (okName && okSurname && okEmail).also { isValid ->
+            if(isValid) credentials.value = CredentialsState.ValidCredentials(cName, cSurname, email)
+            else credentials.value = CredentialsState.InvalidCredentials
+        }
+    }
+
+
+
+    sealed class CredentialsState
+    {
+        data class ValidCredentials(val name: String, val surname: String, val email: String) : CredentialsState()
+        object InvalidCredentials : CredentialsState()
     }
 
     sealed class NameState
