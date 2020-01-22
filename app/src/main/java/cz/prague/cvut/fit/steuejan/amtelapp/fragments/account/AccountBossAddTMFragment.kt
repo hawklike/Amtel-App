@@ -29,6 +29,7 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
     private lateinit var surnameLayout: TextInputLayout
     private lateinit var emailLayout: TextInputLayout
     private lateinit var addUserButton: FloatingActionButton
+    private lateinit var dialog: MaterialDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
@@ -47,8 +48,14 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
-        setListeners()
         setObservers()
+        setListeners()
+    }
+
+    override fun onPause()
+    {
+        super.onPause()
+        if(::dialog.isInitialized) dialog.dismiss()
     }
 
     private fun setListeners()
@@ -65,72 +72,49 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
 
     private fun setObservers()
     {
-        confirmName()
-        confirmSurname()
-        confirmEmail()
-        isCredentialsValid()
-        isRegistrationSuccesfull()
+        registerUser()
+        isRegistrationSuccessful()
     }
 
-    private fun isCredentialsValid()
+    private fun registerUser()
     {
-        viewModel.isCredentialsValid().observe(viewLifecycleOwner) { credentialState ->
-            if(credentialState is AccountBossAddTMFragmentVM.CredentialsState.ValidCredentials)
-                displayDialog(credentialState)
+        viewModel.isCredentialsValid().observe(viewLifecycleOwner) { credentialsState ->
+            if(credentialsState is AccountBossAddTMFragmentVM.CredentialsState.ValidCredentials)
+                displayDialog(credentialsState)
+            if(credentialsState is AccountBossAddTMFragmentVM.CredentialsState.InvalidCredentials)
+            {
+                if(!credentialsState.name) nameLayout.error = getString(R.string.invalidName_error)
+                if(!credentialsState.surname) surnameLayout.error = getString(R.string.invalidSurname_error)
+                if(!credentialsState.email)  emailLayout.error = getString(R.string.invalidEmail_error)
+            }
         }
     }
 
     private fun displayDialog(credentials: AccountBossAddTMFragmentVM.CredentialsState.ValidCredentials)
     {
-        MaterialDialog(activity!!)
-            .title(text = "Opravdu chcete přidat tohoto uživatele?")
+        dialog = MaterialDialog(activity!!)
+            .title(R.string.user_registration_confirmation_title)
             .message(text = "${credentials.name} ${credentials.surname}\n${credentials.email}")
             .show {
                 positiveButton(R.string.yes) {
                     viewModel.createUser(
-                        activity!!.applicationContext,
-                        credentials.name,
-                        credentials.surname,
+                        activity!!,
                         credentials.email)
                 }
                 negativeButton(R.string.no)
             }
     }
 
-    private fun confirmName()
-    {
-        viewModel.confirmName().observe(viewLifecycleOwner) { credentialState ->
-            if(credentialState is AccountBossAddTMFragmentVM.NameState.InvalidName)
-                nameLayout.error = getString(R.string.invalidName_error)
-        }
-    }
-
-    private fun confirmSurname()
-    {
-        viewModel.confirmSurname().observe(viewLifecycleOwner) { credentialState ->
-            if(credentialState is AccountBossAddTMFragmentVM.SurnameState.InvalidSurname)
-                surnameLayout.error = getString(R.string.invalidSurname_error)
-        }
-    }
-
-    private fun confirmEmail()
-    {
-        viewModel.confirmEmail().observe(viewLifecycleOwner) { credentialState ->
-            if(credentialState is AccountBossAddTMFragmentVM.EmailState.InvalidEmail)
-                emailLayout.error = getString(R.string.invalidEmail_error)
-        }
-    }
-
-    private fun isRegistrationSuccesfull()
+    private fun isRegistrationSuccessful()
     {
         viewModel.isUserCreated().observe(viewLifecycleOwner) { isCreated ->
             val title: String
-            val message: String?
+            val message: String
 
             if(isCreated)
             {
                 title = getString(R.string.user_registration_success_title)
-                message = null
+                message = getString(R.string.user_registration_success_message)
             }
             else
             {

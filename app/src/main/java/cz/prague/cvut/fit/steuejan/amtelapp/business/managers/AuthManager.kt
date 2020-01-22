@@ -38,6 +38,7 @@ object AuthManager
             .addOnCompleteListener { task ->
                 if(task.isSuccessful)
                 {
+//                    auth2.currentUser?.sendEmailVerification()
                     auth2.signOut()
                     listener.onSignUpCompleted(success = true)
                     Log.d(TAG, "successful registration")

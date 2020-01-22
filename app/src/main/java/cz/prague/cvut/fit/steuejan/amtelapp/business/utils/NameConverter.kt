@@ -10,4 +10,11 @@ object NameConverter
                 .toUpperCase()
                 .toString())
     }
+
+    fun getRandomString(length: Int) : String {
+        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz1234567890"
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
+    }
 }

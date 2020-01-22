@@ -20,11 +20,11 @@ import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
 
-
 class MainActivity : AbstractBaseActivity()
 {
     private val viewModel by viewModels<MainActivityVM>()
     private lateinit var drawer: Drawer
+    private lateinit var currentFragment: Fragment
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -133,6 +133,7 @@ class MainActivity : AbstractBaseActivity()
 
     private fun populateFragment(fragment: Fragment)
     {
+        currentFragment = fragment
         Log.i(TAG, "fragment populated")
         supportFragmentManager.commit {
             replace(R.id.main_container, fragment)
