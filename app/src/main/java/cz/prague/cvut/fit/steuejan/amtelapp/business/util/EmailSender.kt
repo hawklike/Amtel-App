@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.utils
+package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
 import android.content.Context
 import android.util.Log
@@ -52,7 +52,7 @@ object EmailSender
    {
        val head = "Dobrý den,\nbyl Vám udělen přístup do aplikace AMTEL Opava. Vaše přiřazená role je vedoucí týmu. Pro přihlášení zadejte v aplikaci následující kombinaci:\n\n"
        val body = "email: $email\nheslo: $password\n\n"
-       val foot = "Heslo Vám bylo náhodně vygenerováno. Můžete si jej změnit v aplikaci.\n\nS přáním příjemného dne,\nMgr. Jiří Vaněk\n\nPoznámka: Tento email je náhodně generovaný, neodpovídejte na něj prosím."
+       val foot = "Heslo Vám bylo náhodně vygenerováno. Můžete si jej změnit v aplikaci.\n\nS přáním příjemného dne,\nMgr. Jiří Vaněk\n\nPoznámka: Tento email je automaticky vygenerovaný, neodpovídejte na něj prosím."
        return "$head$body$foot"
    }
 }

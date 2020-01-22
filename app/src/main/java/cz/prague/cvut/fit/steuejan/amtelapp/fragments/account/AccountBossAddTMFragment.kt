@@ -14,6 +14,8 @@ import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossAddTMFragmentVM
 
 class AccountBossAddTMFragment : AbstractBaseFragment()
@@ -79,9 +81,9 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
     private fun registerUser()
     {
         viewModel.isCredentialsValid().observe(viewLifecycleOwner) { credentialsState ->
-            if(credentialsState is AccountBossAddTMFragmentVM.CredentialsState.ValidCredentials)
+            if(credentialsState is ValidCredentials)
                 displayDialog(credentialsState)
-            if(credentialsState is AccountBossAddTMFragmentVM.CredentialsState.InvalidCredentials)
+            if(credentialsState is InvalidCredentials)
             {
                 if(!credentialsState.name) nameLayout.error = getString(R.string.invalidName_error)
                 if(!credentialsState.surname) surnameLayout.error = getString(R.string.invalidSurname_error)
@@ -90,7 +92,7 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
         }
     }
 
-    private fun displayDialog(credentials: AccountBossAddTMFragmentVM.CredentialsState.ValidCredentials)
+    private fun displayDialog(credentials: ValidCredentials)
     {
         dialog = MaterialDialog(activity!!)
             .title(R.string.user_registration_confirmation_title)
@@ -99,6 +101,8 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
                 positiveButton(R.string.yes) {
                     viewModel.createUser(
                         activity!!,
+                        credentials.name,
+                        credentials.surname,
                         credentials.email)
                 }
                 negativeButton(R.string.no)
@@ -124,7 +128,7 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
 
             MaterialDialog(activity!!)
                 .title(text = title).also {
-                    if(message != null) it.message(text = message)
+                    it.message(text = message)
                 }
                 .show {
                     positiveButton(R.string.ok)

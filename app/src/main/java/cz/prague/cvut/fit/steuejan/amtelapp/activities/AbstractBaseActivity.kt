@@ -11,6 +11,7 @@ import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager.auth
+import cz.prague.cvut.fit.steuejan.amtelapp.states.NoUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AbstractBaseActivityVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
@@ -56,7 +57,7 @@ abstract class AbstractBaseActivity : AppCompatActivity()
         auth.signOut()
         val mainActivityModel by viewModels<MainActivityVM>()
         mainActivityModel.setTitle(getString(R.string.login))
-        mainActivityModel.setUser(MainActivityVM.UserStatus.NoUser)
+        mainActivityModel.setUser(NoUser)
         baseActivityVM.setLogoutIconVisibility(false)
     }
 

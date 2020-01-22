@@ -5,21 +5,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.WhichButton
-import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.callbacks.onDismiss
-import com.afollestad.materialdialogs.callbacks.onShow
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidEmail
+import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidPassword
+import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.LoginFragmentVM
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 
 class LoginFragment : AbstractBaseFragment()
 {
@@ -76,7 +74,7 @@ class LoginFragment : AbstractBaseFragment()
     private fun confirmEmail()
     {
         viewModel.confirmEmail().observe(viewLifecycleOwner) { credentialState ->
-            if(credentialState is LoginFragmentVM.EmailState.InvalidEmail)
+            if(credentialState is InvalidEmail)
                 emailLayout.error = getString(R.string.invalidEmail_error)
         }
     }
@@ -84,7 +82,7 @@ class LoginFragment : AbstractBaseFragment()
     private fun confirmPassword()
     {
         viewModel.confirmPassword().observe(viewLifecycleOwner) { credentialState ->
-            if(credentialState is LoginFragmentVM.PasswordState.InvalidPassword)
+            if(credentialState is InvalidPassword)
                 passwordLayout.error = getString(R.string.invalidPassword_error)
         }
     }
@@ -116,7 +114,7 @@ class LoginFragment : AbstractBaseFragment()
                     positiveButton(R.string.ok)
                     onDismiss { user?.let { user ->
                         Log.i(AbstractBaseActivity.TAG, "login")
-                        mainActivityModel.setUser(MainActivityVM.UserStatus.SignedUser(user))
+                        mainActivityModel.setUser(SignedUser(user))
                     } }
                 }
         }

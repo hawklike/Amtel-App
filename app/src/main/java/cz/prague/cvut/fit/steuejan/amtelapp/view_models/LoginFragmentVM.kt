@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseUser
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 
 class LoginFragmentVM : ViewModel()
 {
@@ -45,29 +46,16 @@ class LoginFragmentVM : ViewModel()
         var okPassword = true
 
         if(email.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(email).matches())
-            this.email.value = EmailState.ValidEmail(email)
+            this.email.value = ValidEmail(email)
         else
-            this.email.value = EmailState.InvalidEmail.also { okEmail = false }
+            this.email.value = InvalidEmail.also { okEmail = false }
 
         if(password.isNotEmpty())
-            this.password.value = PasswordState.ValidPassword
+            this.password.value = ValidPassword
         else
-            this.password.value = PasswordState.InvalidPassword.also { okPassword = false }
+            this.password.value = InvalidPassword.also { okPassword = false }
 
         return okEmail && okPassword
-    }
-
-
-    sealed class EmailState
-    {
-        data class ValidEmail(val email: String) : EmailState()
-        object InvalidEmail : EmailState()
-    }
-
-    sealed class PasswordState
-    {
-        object ValidPassword : PasswordState()
-        object InvalidPassword : PasswordState()
     }
 
 }

@@ -17,6 +17,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.*
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
 
@@ -55,13 +56,13 @@ class MainActivity : AbstractBaseActivity()
             if(savedInstanceState == null)
             {
                 Log.i(TAG, "display account")
-                viewModel.setUser(MainActivityVM.UserStatus.SignedUser(user))
+                viewModel.setUser(SignedUser(user))
             }
         }
 
         viewModel.getUser().observe(this) { user ->
             Log.i(TAG, "getUser() observed")
-            if(user is MainActivityVM.UserStatus.SignedUser)
+            if(user is SignedUser)
             {
                 Log.i(TAG, "signed user")
                 if(::drawer.isInitialized)
@@ -108,8 +109,7 @@ class MainActivity : AbstractBaseActivity()
                     {
                         profile -> AuthManager.getCurrentUser()?.let {
                             val user = viewModel.getUser().value
-                            if(user is MainActivityVM.UserStatus.SignedUser)
-                                populateFragment(AccountFragment.newInstance(user.self))
+                            if(user is SignedUser) populateFragment(AccountFragment.newInstance(user.self))
                         } ?: populateFragment(LoginFragment.newInstance())
                         results -> populateFragment(ResultsFragment.newInstance())
                         schedule -> populateFragment(ScheduleFragment.newInstance())

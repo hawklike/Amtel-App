@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.utils
+package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
 object NameConverter
 {

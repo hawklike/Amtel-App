@@ -38,14 +38,13 @@ object AuthManager
             .addOnCompleteListener { task ->
                 if(task.isSuccessful)
                 {
-//                    auth2.currentUser?.sendEmailVerification()
+                    listener.onSignUpCompleted(auth2.currentUser?.uid)
                     auth2.signOut()
-                    listener.onSignUpCompleted(success = true)
                     Log.d(TAG, "successful registration")
                 }
                 else
                 {
-                    listener.onSignUpCompleted(success = false)
+                    listener.onSignUpCompleted(null)
                     Log.d(TAG, "registration failed: ${task.exception?.message}")
                 }
             }
@@ -73,7 +72,7 @@ object AuthManager
     interface FirebaseUserListener
     {
         fun onSignInCompleted(user: FirebaseUser?) {}
-        fun onSignUpCompleted(success: Boolean) {}
+        fun onSignUpCompleted(uid: String?) {}
     }
 
 }

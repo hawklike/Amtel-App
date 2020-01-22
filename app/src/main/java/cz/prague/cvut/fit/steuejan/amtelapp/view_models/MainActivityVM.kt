@@ -1,12 +1,10 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
-import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseUser
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import kotlinx.android.parcel.Parcelize
+import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
 
 class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 {
@@ -28,27 +26,18 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val user = SingleLiveEvent<UserStatus>()
+    private val user = SingleLiveEvent<UserState>()
 
-    //TODO: change to a User
-    fun setUser(user: UserStatus)
+    fun setUser(user: UserState)
     {
         this.user.value = user
     }
 
-    fun getUser(): LiveData<UserStatus> = user
-
-    sealed class UserStatus
-    {
-        @Parcelize
-        data class SignedUser(val self: FirebaseUser) : UserStatus(), Parcelable
-        @Parcelize object NoUser : UserStatus(), Parcelable
-    }
+    fun getUser(): LiveData<UserState> = user
 
     companion object
     {
         const val TITLE = "title"
         const val DRAWER_POSITION = "position"
-        const val USER = "user"
     }
 }
