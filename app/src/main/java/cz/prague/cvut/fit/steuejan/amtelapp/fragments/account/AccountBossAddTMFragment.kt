@@ -12,10 +12,13 @@ import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidRegistration
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossAddTMFragmentVM
 
 class AccountBossAddTMFragment : AbstractBaseFragment()
@@ -101,9 +104,8 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
                 positiveButton(R.string.yes) {
                     viewModel.createUser(
                         activity!!,
-                        credentials.name,
-                        credentials.surname,
-                        credentials.email)
+                        credentials
+                    )
                 }
                 negativeButton(R.string.no)
             }
@@ -111,14 +113,18 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
 
     private fun isRegistrationSuccessful()
     {
-        viewModel.isUserCreated().observe(viewLifecycleOwner) { isCreated ->
+        viewModel.isUserCreated().observe(viewLifecycleOwner) { registration ->
             val title: String
             val message: String
 
-            if(isCreated)
+            if(registration is ValidRegistration)
             {
                 title = getString(R.string.user_registration_success_title)
                 message = getString(R.string.user_registration_success_message)
+
+                val (name, surname, email) = registration.credentials
+                UserManager.addUser(registration.uid, name, surname, email, UserRole.TEAM_MANAGER)
+                EmailSender.sendVerificationEmail(activity!!, email, registration.password)
             }
             else
             {
@@ -133,7 +139,7 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
                 .show {
                     positiveButton(R.string.ok)
                     onDismiss {
-                        Log.i(AbstractBaseActivity.TAG, "registration")
+                        Log.i(TAG, "registration completed")
                         deleteInput()
                     }
                 }

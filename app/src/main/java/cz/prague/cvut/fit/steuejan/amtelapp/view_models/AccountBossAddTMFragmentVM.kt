@@ -7,18 +7,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
-import cz.prague.cvut.fit.steuejan.amtelapp.states.CredentialsState
-import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 
 class AccountBossAddTMFragmentVM : ViewModel()
 {
-    private val userCreated = SingleLiveEvent<Boolean>()
-    fun isUserCreated(): LiveData<Boolean> = userCreated
+    private val userCreated = SingleLiveEvent<RegistrationState>()
+    fun isUserCreated(): LiveData<RegistrationState> = userCreated
 
     /*---------------------------------------------------*/
 
@@ -27,18 +22,15 @@ class AccountBossAddTMFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun createUser(context: Context, name: String, surname: String, email: String)
+    fun createUser(context: Context, credentials: ValidCredentials)
     {
         val password = NameConverter.getRandomString(6)
-        AuthManager.signUpUser(context, email, password, object: AuthManager.FirebaseUserListener
+        AuthManager.signUpUser(context, credentials.email, password, object: AuthManager.FirebaseUserListener
         {
             override fun onSignUpCompleted(uid: String?)
             {
-                uid?.let {
-                    userCreated.value = true
-                    UserManager.addUser(it, name, surname, email, UserRole.TEAM_MANAGER)
-                }
-                sendEmail(context, email, password)
+                if(uid == null) userCreated.value = InvalidRegistration
+                else userCreated.value = ValidRegistration(uid, password, credentials)
             }
         })
     }
@@ -62,10 +54,5 @@ class AccountBossAddTMFragmentVM : ViewModel()
 
         if(okName && okSurname && okEmail) credentials.value = ValidCredentials(cName, cSurname, email)
         else credentials.value = InvalidCredentials(okName, okSurname, okEmail)
-    }
-
-    private fun sendEmail(context: Context, email: String, password: String)
-    {
-        EmailSender.sendVerificationEmail(context, email, password)
     }
 }
