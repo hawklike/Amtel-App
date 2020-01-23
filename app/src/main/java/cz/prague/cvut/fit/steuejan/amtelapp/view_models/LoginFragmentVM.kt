@@ -4,10 +4,13 @@ import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
+import kotlinx.coroutines.launch
 
 class LoginFragmentVM : ViewModel()
 {
@@ -21,21 +24,25 @@ class LoginFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    //TODO: return actual User [3]
-    private val user = SingleLiveEvent<FirebaseUser?>()
-    fun getUser(): LiveData<FirebaseUser?> = user
+    private val user = SingleLiveEvent<UserState>()
+    fun getUser(): LiveData<UserState> = user
 
     /*---------------------------------------------------*/
 
-    //TODO: use a findUser(id: String) [3]
     fun loginUser(email: String, password: String)
     {
         if(confirmCredentials(email, password))
-            AuthManager.signInUser(email, password, object: AuthManager.FirebaseUserListener
+            AuthManager.signInUser(email, password, object: AuthManager.FirebaseAuthUserListener
             {
-                override fun onSignInCompleted(user: FirebaseUser?)
+                override fun onSignInCompleted(firebaseUser: FirebaseUser?)
                 {
-                    this@LoginFragmentVM.user.value = user
+                    if(firebaseUser != null)
+                    {
+                        viewModelScope.launch {
+                            val user =  UserManager.findUser(firebaseUser.uid)
+                            this@LoginFragmentVM.user.value = user?.let { SignedUser(it) } ?: NoUser
+                        }
+                    }
                 }
             })
     }

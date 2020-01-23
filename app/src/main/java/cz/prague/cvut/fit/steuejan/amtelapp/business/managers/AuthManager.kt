@@ -18,7 +18,7 @@ object AuthManager
         auth.currentUser?.let { context.getString(R.string.account) }
             ?: context.getString(R.string.login)
 
-    fun signUpUser(context: Context, email: String, password: String, listener: FirebaseUserListener)
+    fun signUpUser(context: Context, email: String, password: String, listener: FirebaseAuthUserListener)
     {
         val firebaseOptions = FirebaseOptions.Builder()
             .setDatabaseUrl("https://amtel-app.firebaseio.com")
@@ -50,7 +50,7 @@ object AuthManager
             }
     }
 
-    fun signInUser(email: String, password: String, listener: FirebaseUserListener)
+    fun signInUser(email: String, password: String, listener: FirebaseAuthUserListener)
     {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -61,7 +61,7 @@ object AuthManager
                 }
                 else
                 {
-                    listener.onSignInCompleted(user = null)
+                    listener.onSignInCompleted(firebaseUser = null)
                     Log.d(TAG, "unsuccessful login: ${task.exception?.message}")
                 }
             }
@@ -69,9 +69,9 @@ object AuthManager
 
     fun getCurrentUser(): FirebaseUser? = auth.currentUser
 
-    interface FirebaseUserListener
+    interface FirebaseAuthUserListener
     {
-        fun onSignInCompleted(user: FirebaseUser?) {}
+        fun onSignInCompleted(firebaseUser: FirebaseUser?) {}
         fun onSignUpCompleted(uid: String?) {}
     }
 

@@ -15,11 +15,13 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.*
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
+import kotlinx.coroutines.launch
 
 class MainActivity : AbstractBaseActivity()
 {
@@ -51,12 +53,16 @@ class MainActivity : AbstractBaseActivity()
 
     private fun displayAccount(savedInstanceState: Bundle?)
     {
-        //TODO: change to a User
-        AuthManager.getCurrentUser()?.let { user ->
+        AuthManager.getCurrentUser()?.let { firebaseUser ->
             if(savedInstanceState == null)
             {
-                Log.i(TAG, "display account")
-                viewModel.setUser(SignedUser(user))
+                launch {
+                    val user =  UserManager.findUser(firebaseUser.uid)
+                    user?.let {
+                        viewModel.setUser(SignedUser(it))
+                        Log.i(TAG, "displayAccount(): $user currently logged in")
+                    }
+                }
             }
         }
 

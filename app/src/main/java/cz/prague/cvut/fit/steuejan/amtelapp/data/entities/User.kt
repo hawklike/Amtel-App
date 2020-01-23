@@ -4,8 +4,8 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class User(val id: String,
-                val name: String,
-                val surname: String,
-                val email: String,
-                val isTM: Boolean) : Parcelable
+data class User(var id: String = "",
+                var name: String = "",
+                var surname: String = "",
+                var email: String = "",
+                var isTM: Boolean = true) : Parcelable

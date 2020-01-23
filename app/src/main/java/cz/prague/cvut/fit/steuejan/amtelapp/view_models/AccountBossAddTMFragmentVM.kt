@@ -25,7 +25,7 @@ class AccountBossAddTMFragmentVM : ViewModel()
     fun createUser(context: Context, credentials: ValidCredentials)
     {
         val password = NameConverter.getRandomString(6)
-        AuthManager.signUpUser(context, credentials.email, password, object: AuthManager.FirebaseUserListener
+        AuthManager.signUpUser(context, credentials.email, password, object: AuthManager.FirebaseAuthUserListener
         {
             override fun onSignUpCompleted(uid: String?)
             {

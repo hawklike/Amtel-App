@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
-import com.google.firebase.auth.FirebaseUser
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
 
 
@@ -18,8 +18,7 @@ class AccountFragment : AbstractBaseFragment()
     {
         const val DATA = "user"
 
-        //TODO: change to a User
-        fun newInstance(user: FirebaseUser): AccountFragment
+        fun newInstance(user: User): AccountFragment
         {
             val fragment = AccountFragment()
             val bundle = Bundle()
@@ -45,7 +44,7 @@ class AccountFragment : AbstractBaseFragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
-        val user = arguments?.get(DATA) as FirebaseUser
+        val user = arguments?.get(DATA) as User
 
         viewPager = view.findViewById(R.id.account_viewPager)
         setupViewPager(viewPager, user)
@@ -54,9 +53,8 @@ class AccountFragment : AbstractBaseFragment()
         tabs.setupWithViewPager(viewPager)
     }
 
-    //TODO: change to a User
     //TODO: add 'Ostatní', where a user may change his password
-    private fun setupViewPager(viewPager: ViewPager, user: FirebaseUser)
+    private fun setupViewPager(viewPager: ViewPager, user: User)
     {
         //TODO: create adapter based on user status
         val adapter = ViewPagerAdapter(childFragmentManager)

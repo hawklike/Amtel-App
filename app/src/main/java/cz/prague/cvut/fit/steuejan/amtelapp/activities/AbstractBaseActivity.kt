@@ -15,17 +15,38 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.NoUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AbstractBaseActivityVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlin.coroutines.CoroutineContext
 
-abstract class AbstractBaseActivity : AppCompatActivity()
+abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
 {
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job + handler
+
+    private lateinit var job: Job
+
+    private val handler = CoroutineExceptionHandler { _, exception ->
+        Log.e(TAG, "$exception handled !")
+    }
+
     private val logoutIcon: ImageView by lazy { findViewById<ImageView>(R.id.toolbar_logout) }
     protected val baseActivityVM by viewModels<AbstractBaseActivityVM>()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
+        job = Job()
         setSupportActionBar(toolbar)
         handleLogout()
+    }
+
+    override fun onDestroy()
+    {
+        job.cancel()
+        super.onDestroy()
     }
 
     private fun handleLogout()
