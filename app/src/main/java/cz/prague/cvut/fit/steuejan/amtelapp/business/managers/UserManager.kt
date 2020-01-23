@@ -1,7 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 
 import android.util.Log
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
@@ -24,7 +23,8 @@ object UserManager
             val user = UserDAO().find(id).toObject<User>()
             Log.i(TAG, "findUser(): $user found in database")
             user
-        } catch(ex: FirebaseFirestoreException)
+        }
+        catch(ex: Exception)
         {
             Log.e(TAG, "findUser(): user with $id not found in database because ${ex.message}")
             null

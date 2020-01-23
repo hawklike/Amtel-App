@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseUser
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
@@ -32,20 +31,19 @@ class LoginFragmentVM : ViewModel()
     fun loginUser(email: String, password: String)
     {
         if(confirmCredentials(email, password))
-            AuthManager.signInUser(email, password, object: AuthManager.FirebaseAuthUserListener
-            {
-                override fun onSignInCompleted(firebaseUser: FirebaseUser?)
+        {
+            viewModelScope.launch {
+                val firebaseUser = AuthManager.signInUser(email, password)
+                if(firebaseUser != null)
                 {
-                    if(firebaseUser != null)
-                    {
-                        viewModelScope.launch {
-                            val user =  UserManager.findUser(firebaseUser.uid)
-                            this@LoginFragmentVM.user.value = user?.let { SignedUser(it) } ?: NoUser
-                        }
-                    }
+                    val user = UserManager.findUser(firebaseUser.uid)
+                    this@LoginFragmentVM.user.value = user?.let { SignedUser(it) } ?: NoUser
                 }
-            })
+                else this@LoginFragmentVM.user.value = NoUser
+            }
+        }
     }
+
 
     private fun confirmCredentials(email: String, password: String): Boolean
     {

@@ -5,10 +5,12 @@ import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
+import kotlinx.coroutines.launch
 
 class AccountBossAddTMFragmentVM : ViewModel()
 {
@@ -25,14 +27,11 @@ class AccountBossAddTMFragmentVM : ViewModel()
     fun createUser(context: Context, credentials: ValidCredentials)
     {
         val password = NameConverter.getRandomString(6)
-        AuthManager.signUpUser(context, credentials.email, password, object: AuthManager.FirebaseAuthUserListener
-        {
-            override fun onSignUpCompleted(uid: String?)
-            {
-                if(uid == null) userCreated.value = InvalidRegistration
-                else userCreated.value = ValidRegistration(uid, password, credentials)
-            }
-        })
+        viewModelScope.launch {
+            val uid = AuthManager.signUpUser(context, credentials.email, password)
+            if(uid == null) userCreated.value = InvalidRegistration
+            else userCreated.value = ValidRegistration(uid, password, credentials)
+        }
     }
 
     fun confirmCredentials(name: String, surname: String, email: String)
