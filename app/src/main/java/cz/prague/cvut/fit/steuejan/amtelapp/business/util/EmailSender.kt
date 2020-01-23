@@ -9,9 +9,10 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 
 object EmailSender
 {
+    //TODO: refactor to a nicer code
+    //TODO: hash a password
     fun sendVerificationEmail(context: Context, mailTo: String, genPassword: String)
     {
-        //TODO: hash a password
         Firebase.firestore
             .collection("email_password")
             .document("noreply.amtelopava@gmail.com")

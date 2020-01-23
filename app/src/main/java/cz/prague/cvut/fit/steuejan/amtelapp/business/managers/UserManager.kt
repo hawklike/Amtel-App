@@ -5,6 +5,8 @@ import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 object UserManager
 {
@@ -16,15 +18,14 @@ object UserManager
             .addOnFailureListener { Log.e(TAG, "addUser(): $user not added to database because $it")}
     }
 
-    suspend fun findUser(id: String): User?
+    suspend fun findUser(id: String): User? = withContext(Dispatchers.IO)
     {
-        return try
+        return@withContext try
         {
             val user = UserDAO().find(id).toObject<User>()
             Log.i(TAG, "findUser(): $user found in database")
             user
-        }
-        catch(ex: Exception)
+        } catch(ex: Exception)
         {
             Log.e(TAG, "findUser(): user with $id not found in database because ${ex.message}")
             null

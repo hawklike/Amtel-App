@@ -7,7 +7,9 @@ import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 
 object AuthManager
@@ -20,7 +22,7 @@ object AuthManager
         auth.currentUser?.let { context.getString(R.string.account) }
             ?: context.getString(R.string.login)
 
-    suspend fun signUpUser(context: Context, email: String, password: String): String?
+    suspend fun signUpUser(context: Context, email: String, password: String): String? = withContext(Dispatchers.IO)
     {
         val firebaseOptions = FirebaseOptions.Builder()
             .setDatabaseUrl("https://amtel-app.firebaseio.com")
@@ -38,30 +40,28 @@ object AuthManager
             FirebaseAuth.getInstance(FirebaseApp.getInstance("amtel-helper"))
         }
 
-        return try
+        return@withContext try
         {
             auth2.createUserWithEmailAndPassword(email, password).await()
             val user = auth2.currentUser?.uid
             auth2.signOut()
             Log.i(TAG, "signUpUser(): user with $email and $password successfully registered")
             user
-        }
-        catch(ex: Exception)
+        } catch(ex: Exception)
         {
-            Log.e(TAG, "signUpnUser(): unsuccessful login because ${ex.message}")
+            Log.e(TAG, "signUpUser(): unsuccessful login because ${ex.message}")
             null
         }
     }
 
-    suspend fun signInUser(email: String, password: String): FirebaseUser?
+    suspend fun signInUser(email: String, password: String): FirebaseUser? = withContext(Dispatchers.IO)
     {
-        return try
+        return@withContext try
         {
             val user = auth.signInWithEmailAndPassword(email, password).await().user
             Log.i(TAG, "signInUser(): $user successfully logged in")
             user
-        }
-        catch(ex: Exception)
+        } catch(ex: Exception)
         {
             Log.e(TAG, "signInUser(): unsuccessful login because ${ex.message}")
             null
