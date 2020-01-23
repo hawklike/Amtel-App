@@ -12,7 +12,6 @@ import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidEmail
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidPassword
@@ -75,7 +74,7 @@ class LoginFragment : AbstractBaseFragment()
     {
         viewModel.confirmEmail().observe(viewLifecycleOwner) { credentialState ->
             if(credentialState is InvalidEmail)
-                emailLayout.error = getString(R.string.invalidEmail_error)
+                emailLayout.error = credentialState.errorMessage
         }
     }
 
@@ -83,7 +82,7 @@ class LoginFragment : AbstractBaseFragment()
     {
         viewModel.confirmPassword().observe(viewLifecycleOwner) { credentialState ->
             if(credentialState is InvalidPassword)
-                passwordLayout.error = getString(R.string.invalidPassword_error)
+                passwordLayout.error = credentialState.errorMessage
         }
     }
 
@@ -94,16 +93,18 @@ class LoginFragment : AbstractBaseFragment()
             val title: String
             val message: String?
 
-            if(user != null)
+            if(user is SignedUser)
             {
                 title = getString(R.string.user_login_success_title)
                 message = null
+                Log.i(TAG, "getUser(): login was successful - current user: $user")
             }
             else
             {
                 title = getString(R.string.user_login_failure_title)
                 message = getString(R.string.user_login_failure_message)
-                passwordLayout.editText!!.text.clear()
+                passwordLayout.editText?.text?.clear()
+                Log.e(TAG, "getUser(): login not successful")
             }
 
             MaterialDialog(activity!!)
@@ -112,13 +113,14 @@ class LoginFragment : AbstractBaseFragment()
                 }
                 .show {
                     positiveButton(R.string.ok)
-                    onDismiss { user?.let { user ->
-                        Log.i(AbstractBaseActivity.TAG, "login")
-                        mainActivityModel.setUser(SignedUser(user))
-                    } }
+                    onDismiss {
+                        if(user is SignedUser) mainActivityModel.setUser(SignedUser(user.self))
+                    }
                 }
         }
     }
+
+    private val TAG = "LoginFragment"
 
     private fun deleteErrors()
     {

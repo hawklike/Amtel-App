@@ -1,14 +1,13 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.states
 
 import android.os.Parcelable
-import com.google.firebase.auth.FirebaseUser
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import kotlinx.android.parcel.Parcelize
 
 sealed class UserState
 
-//TODO: change to a User
 @Parcelize
-data class SignedUser(val self: FirebaseUser) : UserState(), Parcelable
+data class SignedUser(val self: User) : UserState(), Parcelable
 
 @Parcelize
 object NoUser : UserState(), Parcelable
