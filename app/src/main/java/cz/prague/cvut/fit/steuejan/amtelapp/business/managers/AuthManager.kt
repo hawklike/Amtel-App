@@ -7,6 +7,9 @@ import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidPassword
+import cz.prague.cvut.fit.steuejan.amtelapp.states.PasswordState
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidPassword
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -65,6 +68,30 @@ object AuthManager
         {
             Log.e(TAG, "signInUser(): unsuccessful login because ${ex.message}")
             null
+        }
+    }
+
+    suspend fun changePassword(newPassword: String): PasswordState = withContext(Dispatchers.IO)
+    {
+        val user = getCurrentUser()
+        return@withContext if(user != null)
+        {
+            try
+            {
+                user.updatePassword(newPassword).await()
+                Log.i(TAG, "changePassword(): new password successfully changed")
+                ValidPassword(newPassword)
+            }
+            catch(ex: Exception)
+            {
+                Log.e(TAG, "changePassword(): new password failed because ${ex.message}")
+                InvalidPassword()
+            }
+        }
+        else
+        {
+            Log.e(TAG, "changePassword(): new password failed because there is no signed user")
+            InvalidPassword()
         }
     }
 

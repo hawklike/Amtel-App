@@ -64,10 +64,10 @@ class AccountFragment : AbstractBaseFragment()
         }
         else
         {
-            adapter.addFragment(AccountTMMakeTeam.newInstance(), getString(R.string.account_tm_adapter_make_team))
+            adapter.addFragment(AccountTMMakeTeamFragment.newInstance(), getString(R.string.account_tm_adapter_make_team))
         }
 
-        adapter.addFragment(AccountPersonal.newInstance(user), getString(R.string.account_adapter_personal))
+        adapter.addFragment(AccountPersonalFragment.newInstance(user), getString(R.string.account_adapter_personal))
         viewPager.adapter = adapter
     }
 }

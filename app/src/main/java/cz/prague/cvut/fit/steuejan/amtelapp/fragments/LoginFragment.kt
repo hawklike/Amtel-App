@@ -74,7 +74,7 @@ class LoginFragment : AbstractBaseFragment()
     {
         viewModel.confirmEmail().observe(viewLifecycleOwner) { credentialState ->
             if(credentialState is InvalidEmail)
-                emailLayout.error = getString(R.string.invalidEmail_error)
+                emailLayout.error = credentialState.errorMessage
         }
     }
 
@@ -82,7 +82,7 @@ class LoginFragment : AbstractBaseFragment()
     {
         viewModel.confirmPassword().observe(viewLifecycleOwner) { credentialState ->
             if(credentialState is InvalidPassword)
-                passwordLayout.error = getString(R.string.invalidPassword_error)
+                passwordLayout.error = credentialState.errorMessage
         }
     }
 
@@ -103,7 +103,7 @@ class LoginFragment : AbstractBaseFragment()
             {
                 title = getString(R.string.user_login_failure_title)
                 message = getString(R.string.user_login_failure_message)
-                passwordLayout.editText!!.text.clear()
+                passwordLayout.editText?.text?.clear()
                 Log.e(TAG, "getUser(): login not successful")
             }
 

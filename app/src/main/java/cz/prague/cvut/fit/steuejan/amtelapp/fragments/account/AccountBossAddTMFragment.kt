@@ -148,9 +148,9 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
 
     private fun deleteInput()
     {
-        nameLayout.editText!!.text.clear()
-        surnameLayout.editText!!.text.clear()
-        emailLayout.editText!!.text.clear()
+        nameLayout.editText?.text?.clear()
+        surnameLayout.editText?.text?.clear()
+        emailLayout.editText?.text?.clear()
     }
 
     private fun deleteErrors()

@@ -35,4 +35,12 @@
     <string name="account_boss_adapter_make_groups">Skupiny</string>
     <string name="account_adapter_personal">Osobní</string>
     <string name="account_tm_adapter_make_team">Vytvořit soupisku</string>
+    <string name="new_password">Nové heslo</string>
+    <string name="change_password">Změnit heslo</string>
+    <string name="add_tm">Přidat vedoucího týmu</string>
+    <string name="set_deadline">Zvolit termín odevzdání soupisky</string>
+    <string name="password_change_success_title">Heslo bylo změněno</string>
+    <string name="password_change_failure_title">Heslo se nepodařilo změnit</string>
+    <string name="password_change_failure_message">Zkuste se prosím odhlásit a pak znovu přihlásit.</string>
+    <string name="password_change_confirmation_title">Opravdu chcete změnit heslo?</string>
 </resources>

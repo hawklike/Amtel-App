@@ -44,7 +44,6 @@ class LoginFragmentVM : ViewModel()
         }
     }
 
-
     private fun confirmCredentials(email: String, password: String): Boolean
     {
         var okEmail = true
@@ -53,12 +52,12 @@ class LoginFragmentVM : ViewModel()
         if(email.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(email).matches())
             this.email.value = ValidEmail(email)
         else
-            this.email.value = InvalidEmail.also { okEmail = false }
+            this.email.value = InvalidEmail(errorMessage = "Zadejte prosím validní email.").also { okEmail = false }
 
         if(password.isNotEmpty())
-            this.password.value = ValidPassword
+            this.password.value = ValidPassword(password)
         else
-            this.password.value = InvalidPassword.also { okPassword = false }
+            this.password.value = InvalidPassword(errorMessage = "Vyplňte prosím heslo.").also { okPassword = false }
 
         return okEmail && okPassword
     }
