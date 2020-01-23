@@ -5,9 +5,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class UserDAO : DAO
 {
@@ -23,9 +21,9 @@ class UserDAO : DAO
         else throw IllegalArgumentException("UserDAO::insert(): entity is not type of User and should be")
     }
 
-    override suspend fun find(id: String): DocumentSnapshot = withContext(Dispatchers.IO)
+    override suspend fun find(id: String): DocumentSnapshot
     {
-        return@withContext Firebase.firestore
+        return Firebase.firestore
             .collection("users")
             .document(id)
             .get()

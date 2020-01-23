@@ -31,4 +31,8 @@
     <string name="user_registration_confirmation_title">Opravdu chcete přidat tohoto uživatele?</string>
     <string name="verificationEmail_subject">amtelOpava_registrace</string>
     <string name="user_registration_success_message">Bude odeslán automatický email vedoucímu týmu.</string>
+    <string name="account_boss_adapter_add_TM">Vedoucí</string>
+    <string name="account_boss_adapter_make_groups">Skupiny</string>
+    <string name="account_adapter_personal">Osobní</string>
+    <string name="account_tm_adapter_make_team">Vytvořit soupisku</string>
 </resources>

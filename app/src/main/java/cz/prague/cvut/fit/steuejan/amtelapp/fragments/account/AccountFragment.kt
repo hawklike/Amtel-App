@@ -53,13 +53,21 @@ class AccountFragment : AbstractBaseFragment()
         tabs.setupWithViewPager(viewPager)
     }
 
-    //TODO: add 'Ostatní', where a user may change his password
     private fun setupViewPager(viewPager: ViewPager, user: User)
     {
-        //TODO: create adapter based on user status
         val adapter = ViewPagerAdapter(childFragmentManager)
-        adapter.addFragment(AccountBossAddTMFragment.newInstance(), "Nový vedoucí")
-        adapter.addFragment(AccountBossMakeGroupsFragment.newInstance(), "Vytvořit skupiny")
+
+        if(!user.isTM)
+        {
+            adapter.addFragment(AccountBossAddTMFragment.newInstance(), getString(R.string.account_boss_adapter_add_TM))
+            adapter.addFragment(AccountBossMakeGroupsFragment.newInstance(), getString(R.string.account_boss_adapter_make_groups))
+        }
+        else
+        {
+            adapter.addFragment(AccountTMMakeTeam.newInstance(), getString(R.string.account_tm_adapter_make_team))
+        }
+
+        adapter.addFragment(AccountPersonal.newInstance(user), getString(R.string.account_adapter_personal))
         viewPager.adapter = adapter
     }
 }
