@@ -13,7 +13,7 @@ object UserManager
         val user = User(id, name, surname, email, UserRole.isTM(role))
         dao.insert(user)
             .addOnSuccessListener { Log.i(TAG, "addUser(): $user successfully added to database") }
-            .addOnFailureListener { Log.e(TAG, "addUser(): $user not added to database")}
+            .addOnFailureListener { Log.e(TAG, "addUser(): $user not added to database because $it")}
     }
 
 

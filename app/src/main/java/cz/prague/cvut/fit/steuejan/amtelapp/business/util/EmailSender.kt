@@ -6,13 +6,12 @@ import com.creativityapps.gmailbackgroundlibrary.BackgroundMail
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity.Companion.TAG
 
 object EmailSender
 {
     fun sendVerificationEmail(context: Context, mailTo: String, genPassword: String)
     {
+        //TODO: hash a password
         Firebase.firestore
             .collection("email_password")
             .document("noreply.amtelopava@gmail.com")
@@ -31,20 +30,19 @@ object EmailSender
                         {
                             override fun onSuccess()
                             {
-                                Log.i(AbstractBaseActivity.TAG, "email sent")
+                                Log.i(TAG, "sendVerificationEmail(): email successfully sent")
                             }
 
                             override fun onFail(e: Exception)
                             {
-                                Log.e(AbstractBaseActivity.TAG, "email not sent: ${e.message}")
+                                Log.e(TAG, "sendVerificationEmail(): email not sent because ${e.message}")
                             }
                         })
                         .send()
                 }
-                else Log.d(TAG, "password not found")
             }
             .addOnFailureListener { exception ->
-                Log.d(TAG, "password failed because ", exception)
+                Log.e(TAG, "sendVerificationEmail(): password not found because $exception")
             }
     }
 
@@ -55,4 +53,6 @@ object EmailSender
        val foot = "Heslo Vám bylo náhodně vygenerováno. Můžete si jej změnit v aplikaci.\n\nS přáním příjemného dne,\nMgr. Jiří Vaněk\n\nPoznámka: Tento email je automaticky vygenerovaný, neodpovídejte na něj prosím."
        return "$head$body$foot"
    }
+
+    private const val TAG = "EmailSender"
 }
