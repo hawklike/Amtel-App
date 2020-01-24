@@ -29,4 +29,12 @@ class UserDAO : DAO
             .get()
             .await()
     }
+
+    override fun <T> update(documentId: String, field: String, newValue: T): Task<Void>
+    {
+        return Firebase.firestore
+            .collection("users")
+            .document(documentId)
+            .update(field, newValue)
+    }
 }
