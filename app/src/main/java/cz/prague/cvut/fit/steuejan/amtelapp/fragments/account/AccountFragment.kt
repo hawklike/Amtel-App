@@ -9,6 +9,9 @@ import com.google.android.material.tabs.TabLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.HEAD_OF_LEAGUE
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.TEAM_MANAGER
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
 
 
@@ -57,17 +60,19 @@ class AccountFragment : AbstractBaseFragment()
     {
         val adapter = ViewPagerAdapter(childFragmentManager)
 
-        if(!user.isTM)
+        val role = UserRole.toRole(user.role)
+        if(role == HEAD_OF_LEAGUE)
         {
             adapter.addFragment(AccountBossAddTMFragment.newInstance(), getString(R.string.account_boss_adapter_add_TM))
             adapter.addFragment(AccountBossMakeGroupsFragment.newInstance(), getString(R.string.account_boss_adapter_make_groups))
+            adapter.addFragment(AccountPersonalFragment.newInstance(user), getString(R.string.account_adapter_personal))
         }
-        else
+        else if(role == TEAM_MANAGER)
         {
+            adapter.addFragment(AccountPersonalFragment.newInstance(user), getString(R.string.account_adapter_personal))
             adapter.addFragment(AccountTMMakeTeamFragment.newInstance(), getString(R.string.account_tm_adapter_make_team))
         }
 
-        adapter.addFragment(AccountPersonalFragment.newInstance(user), getString(R.string.account_adapter_personal))
         viewPager.adapter = adapter
     }
 }

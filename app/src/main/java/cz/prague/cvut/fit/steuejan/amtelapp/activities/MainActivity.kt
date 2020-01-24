@@ -59,7 +59,7 @@ class MainActivity : AbstractBaseActivity()
                 launch {
                     val user =  UserManager.findUser(firebaseUser.uid)
                     user?.let {
-                        viewModel.setUser(SignedUser(it))
+                        viewModel.setUser(SignedUser(it, firstSign = false))
                         Log.i(TAG, "displayAccount(): $user currently logged in")
                     }
                 }
