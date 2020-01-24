@@ -32,10 +32,10 @@ object UserManager
         }
     }
 
-    fun <T> updateUser(documentId: String, field: String, newValue: T)
+    fun updateUser(documentId: String, mapOfFieldsAndValues: Map<String, Any?>)
     {
-        UserDAO().update(documentId, field, newValue)
-            .addOnSuccessListener { Log.i(TAG, "updateUser(): user with id $documentId successfully updated $field with value: ${newValue.toString()}") }
+        UserDAO().update(documentId, mapOfFieldsAndValues)
+            .addOnSuccessListener { Log.i(TAG, "updateUser(): user with id $documentId successfully updated with $mapOfFieldsAndValues") }
             .addOnFailureListener { Log.e(TAG, "updateUser(): user with id $documentId not updated because $it") }
     }
 

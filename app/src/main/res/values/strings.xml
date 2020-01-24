@@ -10,7 +10,7 @@
     <string name="account">Účet</string>
     <string name="login">Přihlášení</string>
     <string name="user_login_success_title">Přihlášení proběhlo úspěšně</string>
-    <string name="user_login_success_message">Dále budete přesměrován/a na obrazovku s vaším účtem.</string>
+    <string name="user_login_success_message">Vítejte!\nZdá se, že jste se přihlásil/a poprvé. Jako první prosím vyplňte Vaše osobní údaje v sekci:\nÚčet > OSOBNÍ.</string>
     <string name="user_login_failure_title">Přihlášení se nezdařilo</string>
     <string name="user_login_failure_message">Zadali jste neplatnou kombinaci emailu a hesla.</string>
     <string name="invalidEmail_error">Zadejte prosím validní email.</string>
@@ -43,4 +43,6 @@
     <string name="password_change_failure_title">Heslo se nepodařilo změnit</string>
     <string name="password_change_failure_message">Zkuste se prosím odhlásit a pak znovu přihlásit.</string>
     <string name="password_change_confirmation_title">Opravdu chcete změnit heslo?</string>
+    <string name="autoEmail_template_head">Dobrý den,\nbyl Vám udělen přístup do aplikace AMTEL Opava. Vaše přiřazená role je vedoucí týmu. Pro přihlášení zadejte v aplikaci následující kombinaci:\n\n</string>
+    <string name="autoEmail_template_foot">Heslo Vám bylo náhodně vygenerováno. Můžete si jej změnit v aplikaci.\n\nS přáním příjemného dne,\nMgr. Jiří Vaněk\n\nPoznámka: Tento email je automaticky vygenerovaný, neodpovídejte na něj prosím.</string>
 </resources>

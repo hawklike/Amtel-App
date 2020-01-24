@@ -40,4 +40,27 @@ class AccountPersonalVM : ViewModel()
         }
     }
 
+    fun createAfterDialog(success: Boolean,
+                          successTitle: String,
+                          unsuccessTitle: String,
+                          unsuccessMessage: String)
+    : Pair<String, String?>
+    {
+        val title: String
+        val message: String?
+
+        if(success)
+        {
+            title = successTitle
+            message = null
+        }
+        else
+        {
+            title = unsuccessTitle
+            message = unsuccessMessage
+        }
+
+        return Pair(title, message)
+    }
+
 }

@@ -42,7 +42,7 @@ class LoginFragmentVM : ViewModel()
                     this@LoginFragmentVM.user.value = user?.let { SignedUser(it, user.firstSign) } ?: NoUser
                     user?.let {
                         if(user.firstSign)
-                            UserManager.updateUser(user.id, field = "firstSign", newValue = false)
+                            UserManager.updateUser(user.id, mapOf("firstSign" to false))
                     }
                 }
                 else this@LoginFragmentVM.user.value = NoUser
@@ -50,26 +50,31 @@ class LoginFragmentVM : ViewModel()
         }
     }
 
-    fun createAfterDialog(user: UserState): Pair<String, String?>
+    fun createAfterDialog(user: UserState,
+                          successTitle: String,
+                          successMessage: String,
+                          unsuccessTitle: String,
+                          unsuccessMessage: String)
+    : Pair<String, String?>
     {
         val title: String
         val message: String?
 
         if(user is SignedUser)
         {
-            title = "Přihlášení proběhlo úspěšně"
+            title = successTitle
             message = when
             {
                 UserRole.toRole(user.self.role) != UserRole.TEAM_MANAGER -> null
-                user.firstSign -> "Vítejte!\nZdá se, že jste se přihlásil/a poprvé. Jako první prosím vyplňte Vaše osobní údaje v sekci: Účet > OSOBNÍ."
+                user.firstSign -> successMessage
                 else -> null
             }
             Log.i(TAG, "getUser(): login was successful - current user: $user")
         }
         else
         {
-            title = "Přihlášení se nezdařilo"
-            message = "Zadali jste neplatnou kombinaci emailu a hesla."
+            title = unsuccessTitle
+            message = unsuccessMessage
             Log.e(TAG, "getUser(): login not successful")
         }
 

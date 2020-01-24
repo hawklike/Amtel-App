@@ -26,7 +26,7 @@ object EmailSender
                         .withMailTo(mailTo)
                         .withType(BackgroundMail.TYPE_PLAIN)
                         .withSubject(context.getString(R.string.verificationEmail_subject))
-                        .withBody(createVerificationTemplate(mailTo, genPassword))
+                        .withBody(createVerificationTemplate(context, mailTo, genPassword))
                         .withOnSuccessCallback(object : BackgroundMail.OnSendingCallback
                         {
                             override fun onSuccess()
@@ -47,11 +47,11 @@ object EmailSender
             }
     }
 
-   private fun createVerificationTemplate(email: String, password: String): String
+   private fun createVerificationTemplate(context: Context, email: String, password: String): String
    {
-       val head = "Dobrý den,\nbyl Vám udělen přístup do aplikace AMTEL Opava. Vaše přiřazená role je vedoucí týmu. Pro přihlášení zadejte v aplikaci následující kombinaci:\n\n"
+       val head = context.getString(R.string.autoEmail_template_head)
        val body = "email: $email\nheslo: $password\n\n"
-       val foot = "Heslo Vám bylo náhodně vygenerováno. Můžete si jej změnit v aplikaci.\n\nS přáním příjemného dne,\nMgr. Jiří Vaněk\n\nPoznámka: Tento email je automaticky vygenerovaný, neodpovídejte na něj prosím."
+       val foot = context.getString(R.string.autoEmail_template_foot)
        return "$head$body$foot"
    }
 
