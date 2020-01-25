@@ -36,6 +36,8 @@ class LoginFragment : AbstractBaseFragment()
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
+    override fun getName(): String = "LoginFragment"
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
@@ -109,7 +111,10 @@ class LoginFragment : AbstractBaseFragment()
                     positiveButton(R.string.ok)
                     onDismiss {
                         if(user is SignedUser)
-                            mainActivityModel.setUser(SignedUser(user.self, user.firstSign))
+                        {
+                            mainActivityModel.setUserState(SignedUser(user.self, user.firstSign))
+                            mainActivityModel.setUser(user.self)
+                        }
                     }
                 }
         }

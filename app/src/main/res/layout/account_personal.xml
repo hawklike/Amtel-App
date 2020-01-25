@@ -83,7 +83,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="center"
-            android:text="Osobní údaje"
+            android:text="@string/personal_information"
             android:textColor="@color/darkGrey"
             android:textSize="16sp" />
 
@@ -95,7 +95,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:layout_below="@id/account_personal_personal_information_text"
-            android:hint="Datum narození"
+            android:hint="@string/birthdate"
             app:errorEnabled="true"
             app:errorTextColor="@android:color/holo_red_dark">
 
@@ -116,7 +116,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_below="@id/account_personal_personal_information_birthdate"
-            android:hint="Telefonní číslo"
+            android:hint="@string/phone_number"
             app:errorEnabled="true"
             app:errorTextColor="@android:color/holo_red_dark">
 
@@ -142,7 +142,7 @@
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/account_personal_personal_information_sex_man"
-                android:text="Muž"
+                android:text="@string/man"
                 android:paddingEnd="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -154,7 +154,7 @@
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/account_personal_personal_information_sex_woman"
-                android:text="Žena"
+                android:text="@string/woman"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:theme="@style/checkBoxStyle"

@@ -78,7 +78,7 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
         auth.signOut()
         val mainActivityModel by viewModels<MainActivityVM>()
         mainActivityModel.setTitle(getString(R.string.login))
-        mainActivityModel.setUser(NoUser)
+        mainActivityModel.setUserState(NoUser)
         baseActivityVM.setLogoutIconVisibility(false)
     }
 

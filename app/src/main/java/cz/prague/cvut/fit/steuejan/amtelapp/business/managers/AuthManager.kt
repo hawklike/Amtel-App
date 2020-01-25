@@ -73,7 +73,7 @@ object AuthManager
 
     suspend fun changePassword(newPassword: String): PasswordState = withContext(Dispatchers.IO)
     {
-        val user = getCurrentUser()
+        val user = currentUser
         return@withContext if(user != null)
         {
             try
@@ -95,5 +95,6 @@ object AuthManager
         }
     }
 
-    fun getCurrentUser(): FirebaseUser? = auth.currentUser
+    val currentUser: FirebaseUser?
+    get() { return auth.currentUser }
 }

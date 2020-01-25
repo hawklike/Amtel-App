@@ -14,6 +14,8 @@ class AccountBossMakeGroupsFragment : AbstractBaseFragment()
         fun newInstance(): AccountBossMakeGroupsFragment = AccountBossMakeGroupsFragment()
     }
 
+    override fun getName(): String = "AccountBossMakeGroupsFragment"
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
         return inflater.inflate(R.layout.dummy_layout, container, false)

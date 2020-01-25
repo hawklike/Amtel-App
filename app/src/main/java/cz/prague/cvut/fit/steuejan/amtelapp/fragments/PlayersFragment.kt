@@ -18,6 +18,8 @@ class PlayersFragment : AbstractBaseFragment()
         return inflater.inflate(R.layout.fragment_players, container, false)
     }
 
+    override fun getName(): String = "PlayersFragment"
+
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)

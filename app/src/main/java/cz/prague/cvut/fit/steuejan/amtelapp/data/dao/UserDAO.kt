@@ -30,11 +30,12 @@ class UserDAO : DAO
             .await()
     }
 
-    override fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Task<Void>
+    override suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Void?
     {
         return Firebase.firestore
             .collection("users")
             .document(documentId)
             .update(mapOfFieldsAndValues)
+            .await()
     }
 }

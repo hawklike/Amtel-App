@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 sealed class UserState
 
 @Parcelize
-data class SignedUser(val self: User, val firstSign: Boolean) : UserState(), Parcelable
+data class SignedUser(var self: User, val firstSign: Boolean = false) : UserState(), Parcelable
 
 @Parcelize
 object NoUser : UserState(), Parcelable

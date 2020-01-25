@@ -25,18 +25,27 @@ object UserManager
             val user = UserDAO().find(id).toObject<User>()
             Log.i(TAG, "findUser(): $user found in database")
             user
-        } catch(ex: Exception)
+        }
+        catch(ex: Exception)
         {
             Log.e(TAG, "findUser(): user with $id not found in database because ${ex.message}")
             null
         }
     }
 
-    fun updateUser(documentId: String, mapOfFieldsAndValues: Map<String, Any?>)
+    suspend fun updateUser(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(Dispatchers.IO)
     {
-        UserDAO().update(documentId, mapOfFieldsAndValues)
-            .addOnSuccessListener { Log.i(TAG, "updateUser(): user with id $documentId successfully updated with $mapOfFieldsAndValues") }
-            .addOnFailureListener { Log.e(TAG, "updateUser(): user with id $documentId not updated because $it") }
+        return@withContext try
+        {
+            UserDAO().update(documentId, mapOfFieldsAndValues)
+            Log.i(TAG, "updateUser(): user with id $documentId successfully updated with $mapOfFieldsAndValues")
+            true
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "updateUser(): user with id $documentId not updated because $ex")
+            false
+        }
     }
 
     private const val TAG = "UserManager"

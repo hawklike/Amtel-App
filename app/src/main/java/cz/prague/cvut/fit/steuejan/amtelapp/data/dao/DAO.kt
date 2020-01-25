@@ -7,5 +7,5 @@ interface DAO
 {
     fun <T> insert(entity: T): Task<Void>
     suspend fun find(id: String): DocumentSnapshot
-    fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Task<Void>
+    suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Void?
 }

@@ -81,6 +81,7 @@ class LoginFragmentVM : ViewModel()
         return Pair(title, message)
     }
 
+    //TODO: add error messages as parameters
     private fun confirmCredentials(email: String, password: String): Boolean
     {
         var okEmail = true

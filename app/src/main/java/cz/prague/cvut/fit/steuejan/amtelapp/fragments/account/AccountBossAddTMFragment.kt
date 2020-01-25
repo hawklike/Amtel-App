@@ -57,6 +57,8 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
         setListeners()
     }
 
+    override fun getName(): String = "AccountBossAddTMFragment"
+
     override fun onPause()
     {
         super.onPause()

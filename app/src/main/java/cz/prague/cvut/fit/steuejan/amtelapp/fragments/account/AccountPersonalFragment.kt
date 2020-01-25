@@ -1,53 +1,63 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.afollestad.materialdialogs.datetime.datePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidPassword
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidPassword
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountPersonalVM
 
 class AccountPersonalFragment : AbstractBaseFragment()
 {
     companion object
     {
-        const val DATA = "user"
-
-        fun newInstance(user: User): AccountPersonalFragment
-        {
-            val fragment = AccountPersonalFragment()
-            val bundle = Bundle()
-            bundle.putParcelable(DATA, user)
-            fragment.arguments = bundle
-            return fragment
-        }
+        fun newInstance(): AccountPersonalFragment = AccountPersonalFragment()
     }
 
     private val viewModel by viewModels<AccountPersonalVM>()
 
+    private lateinit var user: User
+
     private lateinit var passwordLayout: TextInputLayout
     private lateinit var addNewPassword: FloatingActionButton
+
+    private lateinit var birthdateLayout: TextInputLayout
+    private lateinit var phoneNumberLayout: TextInputLayout
+    private lateinit var sexGroup: RadioGroup //hihi
+    private lateinit var addPersonalInfo: FloatingActionButton
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
         return inflater.inflate(R.layout.account_personal, container, false)
     }
 
+    override fun getName(): String = "AccountPersonalFragment"
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
         passwordLayout = view.findViewById(R.id.account_personal_password)
         addNewPassword = view.findViewById(R.id.account_personal_add_password_button)
+
+        birthdateLayout = view.findViewById(R.id.account_personal_personal_information_birthdate)
+        phoneNumberLayout = view.findViewById(R.id.account_personal_personal_information_phone)
+        sexGroup = view.findViewById(R.id.account_personal_personal_information_sex)
+        addPersonalInfo = view.findViewById(R.id.account_personal_personal_information_add_button)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -59,16 +69,101 @@ class AccountPersonalFragment : AbstractBaseFragment()
 
     private fun setObservers()
     {
+        getUser()
+        updatePersonalInfo()
         confirmPassword()
+        confirmBirthdate()
+        confirmPhoneNumber()
         isPasswordChanged()
+        isPersonalInformationSaved()
+    }
+
+    private fun getUser()
+    {
+        user = mainActivityModel.getUser().value ?: User()
+        mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
+            user = observedUser.copy()
+        }
+    }
+
+    private fun updatePersonalInfo()
+    {
+        user.birthdate?.let {
+            birthdateLayout.editText?.text = SpannableStringBuilder(DateUtil.toString(it, "dd.MM.yyyy"))
+        }
+
+        user.phone?.let {
+            phoneNumberLayout.editText?.text = SpannableStringBuilder(it)
+        }
+
+        val rb: RadioButton = if(Sex.toSex(user.sex) == Sex.MAN) view!!.findViewById(R.id.account_personal_personal_information_sex_man)
+        else view!!.findViewById(R.id.account_personal_personal_information_sex_woman)
+        rb.isChecked = true
     }
 
     private fun setListeners()
     {
+        var sex = Sex.MAN
+        sexGroup.setOnCheckedChangeListener { _, checkedId ->
+            val rb = view!!.findViewById<RadioButton>(checkedId)
+            sex = if(rb.id == R.id.account_personal_personal_information_sex_man) Sex.MAN else Sex.WOMAN
+        }
+
         addNewPassword.setOnClickListener {
-            val password = passwordLayout.editText!!.text.toString().trim()
+            val password = passwordLayout.editText?.text.toString().trim()
             passwordLayout.error = null
             viewModel.confirmPassword(password)
+        }
+
+        addPersonalInfo.setOnClickListener {
+            val birthdate = birthdateLayout.editText?.text.toString()
+            val phoneNumber = phoneNumberLayout.editText?.text.toString()
+            deletePersonalInfo()
+            viewModel.savePersonalInfo(birthdate, phoneNumber, sex)
+        }
+
+        birthdateLayout.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if(hasFocus)
+            {
+                MaterialDialog(activity!!).show {
+                    datePicker { _, datetime ->
+                        val dateText = DateUtil.toString(datetime, "dd.MM.yyyy")
+                        birthdateLayout.editText?.text = SpannableStringBuilder(dateText)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun isPersonalInformationSaved()
+    {
+        viewModel.isPersonalInfoChanged().observe(viewLifecycleOwner) { state ->
+            updateUser(state)
+            val title = viewModel.createAfterPersonalInfoDialog(
+                state,
+                getString(R.string.personalInfo_change_success_title),
+                getString(R.string.personalInfo_change_failure_title))
+
+            MaterialDialog(activity!!)
+                .title(text = title)
+                .show {
+                    positiveButton(R.string.ok)
+                    onDismiss {
+                    }
+                }
+        }
+    }
+
+    private fun updateUser(state: PersonalInfoState)
+    {
+        if(state is PersonalInfoSuccess)
+        {
+            mainActivityModel.getUser().value?.let {
+                it.birthdate = DateUtil.stringToDate(state.birthdate, "dd.MM.yyyy")
+                it.phone = state.phoneNumber
+                it.sex = Sex.toBoolean(state.sex)
+                mainActivityModel.setUser(it)
+            }
         }
     }
 
@@ -87,10 +182,26 @@ class AccountPersonalFragment : AbstractBaseFragment()
         }
     }
 
+    private fun confirmBirthdate()
+    {
+        viewModel.confirmBirthdate().observe(viewLifecycleOwner) { birthdateState ->
+            if(birthdateState is InvalidBirthdate)
+                birthdateLayout.error = birthdateState.errorMessage
+        }
+    }
+
+    private fun confirmPhoneNumber()
+    {
+        viewModel.confirmPhoneNumber().observe(viewLifecycleOwner) { phoneUmberState ->
+            if(phoneUmberState is InvalidPhoneNumber)
+                phoneNumberLayout.error = getString(R.string.phoneNumber_change_error)
+        }
+    }
+
     private fun isPasswordChanged()
     {
         viewModel.isPasswordChanged().observe(viewLifecycleOwner) { success ->
-            val dialog = viewModel.createAfterDialog(
+            val dialog = viewModel.createAfterPasswordChangeDialog(
                 success,
                 getString(R.string.password_change_success_title),
                 getString(R.string.password_change_failure_title),
@@ -112,6 +223,11 @@ class AccountPersonalFragment : AbstractBaseFragment()
         }
     }
 
+    private fun deletePersonalInfo()
+    {
+        birthdateLayout.error = null
+        phoneNumberLayout.error = null
+    }
 
     private fun displayDialog(newPassword: String)
     {

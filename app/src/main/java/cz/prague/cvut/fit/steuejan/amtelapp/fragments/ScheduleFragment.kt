@@ -18,6 +18,8 @@ class ScheduleFragment : AbstractBaseFragment()
         return inflater.inflate(R.layout.fragment_schedule, container, false)
     }
 
+    override fun getName(): String = "ScheduleFragment"
+
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
