@@ -13,7 +13,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
 
-class AccountPersonalVM : ViewModel()
+class AccountPersonalFragmentVM : ViewModel()
 {
     private val password = MutableLiveData<PasswordState>()
     fun confirmPassword(): LiveData<PasswordState> = password
@@ -39,7 +39,6 @@ class AccountPersonalVM : ViewModel()
     fun isPersonalInfoChanged(): LiveData<PersonalInfoState> = personalInfoChange
 
     /*---------------------------------------------------*/
-
 
     //TODO: add error messages as parameters
     fun confirmPassword(newPassword: String)

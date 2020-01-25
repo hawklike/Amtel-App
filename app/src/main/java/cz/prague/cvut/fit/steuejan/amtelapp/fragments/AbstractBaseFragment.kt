@@ -18,7 +18,6 @@ abstract class AbstractBaseFragment : Fragment()
         main.progressLayout.visibility = View.INVISIBLE
     }
 
-
     protected open fun setToolbarTitle(title: String)
     {
         mainActivityModel.setTitle(title)

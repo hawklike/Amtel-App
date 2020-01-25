@@ -20,7 +20,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountPersonalVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountPersonalFragmentVM
 
 class AccountPersonalFragment : AbstractBaseFragment()
 {
@@ -29,7 +29,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
         fun newInstance(): AccountPersonalFragment = AccountPersonalFragment()
     }
 
-    private val viewModel by viewModels<AccountPersonalVM>()
+    private val viewModel by viewModels<AccountPersonalFragmentVM>()
 
     private lateinit var user: User
 
@@ -158,12 +158,10 @@ class AccountPersonalFragment : AbstractBaseFragment()
     {
         if(state is PersonalInfoSuccess)
         {
-            mainActivityModel.getUser().value?.let {
-                it.birthdate = DateUtil.stringToDate(state.birthdate, "dd.MM.yyyy")
-                it.phone = state.phoneNumber
-                it.sex = Sex.toBoolean(state.sex)
-                mainActivityModel.setUser(it)
-            }
+            user.birthdate = DateUtil.stringToDate(state.birthdate, "dd.MM.yyyy")
+            user.phone = state.phoneNumber
+            user.sex = Sex.toBoolean(state.sex)
+            mainActivityModel.setUser(user)
         }
     }
 

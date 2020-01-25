@@ -10,12 +10,18 @@ import kotlinx.coroutines.withContext
 
 object UserManager
 {
-    fun addUser(id: String, name: String, surname: String, email: String, role: UserRole)
+    suspend fun addUser(id: String, name: String, surname: String, email: String, role: UserRole) = withContext(Dispatchers.IO)
     {
         val user = User(id, name, surname, email, role = UserRole.toString(role))
-        UserDAO().insert(user)
-            .addOnSuccessListener { Log.i(TAG, "addUser(): $user successfully added to database") }
-            .addOnFailureListener { Log.e(TAG, "addUser(): $user not added to database because $it")}
+        try
+        {
+            UserDAO().insert(user)
+            Log.i(TAG, "addUser(): $user successfully added to database")
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "addUser(): $user not added to database because $ex")
+        }
     }
 
     suspend fun findUser(id: String): User? = withContext(Dispatchers.IO)

@@ -13,7 +13,7 @@ data class User(var id: String = "",
                 var birthdate: Date? = null,
                 var sex: Boolean = true,
                 var role: String = "",
-                var teamId: String = "",
-                var matchesId: MutableList<String> = mutableListOf(),
+                var teamId: String? = null,
+                var matchesId: List<String> = emptyList(),
                 var firstSign: Boolean = true
                 ) : Parcelable

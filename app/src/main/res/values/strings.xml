@@ -12,7 +12,7 @@
     <string name="user_login_success_title">Přihlášení proběhlo úspěšně</string>
     <string name="user_login_success_message">Vítejte!\nZdá se, že jste se přihlásil/a poprvé. Jako první prosím vyplňte Vaše osobní údaje v sekci:\nÚčet > OSOBNÍ.</string>
     <string name="user_login_failure_title">Přihlášení se nezdařilo</string>
-    <string name="user_login_failure_message">Zadali jste neplatnou kombinaci emailu a hesla.</string>
+    <string name="user_login_failure_message">Zadali jste neplatnou kombinaci emailu a hesla. Možná jenom nemáte připojení k internetu.</string>
     <string name="invalidEmail_error">Zadejte prosím validní email.</string>
     <string name="invalidPassword_error">Vyplňte prosím heslo.</string>
     <string name="logout">Odhlášení</string>
@@ -53,4 +53,9 @@
     <string name="phoneNumber_change_error">Zadejte prosím platné telefonní číslo i s předponou.</string>
     <string name="personalInfo_change_success_title">Osobní údaje byly úspěšně uloženy.</string>
     <string name="personalInfo_change_failure_title">Osobní údaje se nepodařilo uložit.</string>
+    <string name="court_address">Adresa kurtu</string>
+    <string name="playing_days">Hrací dny</string>
+    <string name="create_team">Vytvořit tým</string>
+    <string name="sign_out">Odhlásit se</string>
+    <string name="add_player">Přidat hráče</string>
 </resources>

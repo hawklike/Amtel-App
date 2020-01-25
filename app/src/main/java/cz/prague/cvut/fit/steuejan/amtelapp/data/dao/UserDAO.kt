@@ -1,6 +1,5 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.data.dao
 
-import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -9,14 +8,15 @@ import kotlinx.coroutines.tasks.await
 
 class UserDAO : DAO
 {
-    override fun <T> insert(entity: T): Task<Void>
+    override suspend fun <T> insert(entity: T)
     {
         if(entity is User)
         {
-            return Firebase.firestore
+            Firebase.firestore
                 .collection("users")
                 .document(entity.id)
                 .set(entity)
+                .await()
         }
         else throw IllegalArgumentException("UserDAO::insert(): entity is not type of User and should be")
     }

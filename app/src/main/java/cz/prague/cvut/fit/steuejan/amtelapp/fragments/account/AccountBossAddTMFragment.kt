@@ -20,12 +20,23 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidRegistration
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossAddTMFragmentVM
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class AccountBossAddTMFragment : AbstractBaseFragment()
+class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
 {
     companion object
     {
         fun newInstance(): AccountBossAddTMFragment = AccountBossAddTMFragment()
+    }
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job + handler
+
+    private lateinit var job: Job
+
+    private val handler = CoroutineExceptionHandler { _, exception ->
+        Log.e("CoroutineScope", "$exception handled !")
     }
 
     private val viewModel by viewModels<AccountBossAddTMFragmentVM>()
@@ -38,6 +49,7 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
+        job = Job()
         return inflater.inflate(R.layout.account_boss_add_tm, container, false)
     }
 
@@ -65,12 +77,18 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
         if(::dialog.isInitialized) dialog.dismiss()
     }
 
+    override fun onDestroy()
+    {
+        job.cancel()
+        super.onDestroy()
+    }
+
     private fun setListeners()
     {
         addUserButton.setOnClickListener {
-            val name = nameLayout.editText!!.text.toString().trim()
-            val surname = surnameLayout.editText!!.text.toString().trim()
-            val email = emailLayout.editText!!.text.toString().trim()
+            val name = nameLayout.editText?.text.toString().trim()
+            val surname = surnameLayout.editText?.text.toString().trim()
+            val email = emailLayout.editText?.text.toString().trim()
 
             deleteErrors()
             viewModel.confirmCredentials(name, surname, email)
@@ -113,6 +131,7 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
             }
     }
 
+    //TODO: refactor this
     private fun isRegistrationSuccessful()
     {
         viewModel.isUserCreated().observe(viewLifecycleOwner) { registration ->
@@ -125,8 +144,10 @@ class AccountBossAddTMFragment : AbstractBaseFragment()
                 message = getString(R.string.user_registration_success_message)
 
                 val (name, surname, email) = registration.credentials
-                UserManager.addUser(registration.uid, name, surname, email, UserRole.TEAM_MANAGER)
-                EmailSender.sendVerificationEmail(activity!!, email, registration.password)
+                launch {
+                    UserManager.addUser(registration.uid, name, surname, email, UserRole.TEAM_MANAGER)
+                    EmailSender.sendVerificationEmail(activity!!, email, registration.password)
+                }
             }
             else
             {

@@ -2,7 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.data.util
 
 enum class UserRole
 {
-    HEAD_OF_LEAGUE, TEAM_MANAGER, NONE;
+    HEAD_OF_LEAGUE, TEAM_MANAGER, PLAYER;
 
     companion object
     {
@@ -12,7 +12,7 @@ enum class UserRole
             {
                 HEAD_OF_LEAGUE -> "head_of_league"
                 TEAM_MANAGER -> "team_manager"
-                NONE -> "none"
+                PLAYER -> "player"
             }
         }
 
@@ -22,7 +22,7 @@ enum class UserRole
             {
                 "head_of_league" -> HEAD_OF_LEAGUE
                 "team_manager" -> TEAM_MANAGER
-                "none" -> NONE
+                "player" -> PLAYER
                 else -> throw IllegalArgumentException("given role doesn't exist")
             }
         }

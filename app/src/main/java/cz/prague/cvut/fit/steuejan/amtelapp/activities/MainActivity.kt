@@ -21,10 +21,20 @@ import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class MainActivity : AbstractBaseActivity()
+class MainActivity : AbstractBaseActivity(), CoroutineScope
 {
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job + handler
+
+    private lateinit var job: Job
+
+    private val handler = CoroutineExceptionHandler { _, exception ->
+        Log.e(TAG, "$exception handled !")
+    }
+
     private val viewModel by viewModels<MainActivityVM>()
     private lateinit var drawer: Drawer
     lateinit var progressLayout: FrameLayout
@@ -33,10 +43,17 @@ class MainActivity : AbstractBaseActivity()
     {
         setContentView(R.layout.activity_main)
         progressLayout = findViewById(R.id.progressBar)
+        job = Job()
         super.onCreate(savedInstanceState)
 
         setObservers(savedInstanceState)
         createNavigationDrawer(savedInstanceState)
+    }
+
+    override fun onDestroy()
+    {
+        job.cancel()
+        super.onDestroy()
     }
 
     private fun setObservers(savedInstanceState: Bundle?)

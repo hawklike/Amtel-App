@@ -13,7 +13,7 @@
         android:textColor="@color/darkGrey"
         android:layout_height="wrap_content" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/toolbar_logout"
         android:visibility="gone"
         android:background="@drawable/ic_exit_to_app_blue_24dp"
@@ -21,6 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginEnd="15dp"
-        tools:ignore="ContentDescription" />
+        android:contentDescription="@string/sign_out" />
 
 </androidx.appcompat.widget.Toolbar>
