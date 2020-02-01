@@ -58,4 +58,10 @@
     <string name="create_team">Vytvořit tým</string>
     <string name="sign_out">Odhlásit se</string>
     <string name="add_player">Přidat hráče</string>
+    <string name="add_team_success_title">Tým byl úspěšně vytvořen</string>
+    <string name="add_team_failure_title">Chyba při tvorbě týmu</string>
+    <string name="add_team_actualization_title">Tým byl úspěšně aktualizován</string>
+    <string name="create_team_failure_name_error">Vyplňte prosím jméno.</string>
+    <string name="create_team_failure_place_error">Vyplňte prosím adresu kurtu.</string>
+    <string name="create_team_failure_days_error">Vyplňte prosím hrací dny.</string>
 </resources>

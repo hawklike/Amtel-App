@@ -20,8 +20,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidRegistration
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossAddTMFragmentVM
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
 {
@@ -30,14 +31,7 @@ class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
         fun newInstance(): AccountBossAddTMFragment = AccountBossAddTMFragment()
     }
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job + handler
-
-    private lateinit var job: Job
-
-    private val handler = CoroutineExceptionHandler { _, exception ->
-        Log.e("CoroutineScope", "$exception handled !")
-    }
+    override lateinit var job: Job
 
     private val viewModel by viewModels<AccountBossAddTMFragmentVM>()
 
@@ -80,6 +74,7 @@ class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
     override fun onDestroy()
     {
         job.cancel()
+        Log.i(TAG, "job is canceled: ${job.isCancelled}")
         super.onDestroy()
     }
 

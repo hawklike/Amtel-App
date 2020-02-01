@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
@@ -55,7 +56,7 @@ class LoginFragmentVM : ViewModel()
                           successMessage: String,
                           unsuccessTitle: String,
                           unsuccessMessage: String)
-    : Pair<String, String?>
+    : Message
     {
         val title: String
         val message: String?
@@ -78,7 +79,7 @@ class LoginFragmentVM : ViewModel()
             Log.e(TAG, "getUser(): login not successful")
         }
 
-        return Pair(title, message)
+        return Message(title, message)
     }
 
     //TODO: add error messages as parameters

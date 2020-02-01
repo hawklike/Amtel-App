@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
@@ -40,7 +41,7 @@ class AccountPersonalFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    //TODO: add error messages as parameters
+    //TODO: [REFACTORING] add error messages as parameters
     fun confirmPassword(newPassword: String)
     {
         when(newPassword.length)
@@ -99,7 +100,7 @@ class AccountPersonalFragmentVM : ViewModel()
         }
     }
 
-    //TODO: add error messages as parameters
+    //TODO: [REFACTORING] add error messages as parameters
     private fun confirmPersonalInfo(birthdate: String, phoneNumber: String): Boolean
     {
         var okBirthdate = true
@@ -124,16 +125,16 @@ class AccountPersonalFragmentVM : ViewModel()
         if(phoneNumber.isNotEmpty() && !PhoneNumberValidator.isValid(phoneNumber, "CZ", "SK", "PL"))
         {
             okPhoneNumber = false
-            this.phoneNumber.value = InvalidPhoneNumber
+            this.phoneNumber.value = InvalidPhoneNumber("Zadejte prosím platné telefonní číslo i s předponou.")
         }
 
         return okBirthdate && okPhoneNumber
     }
 
-    fun createAfterPersonalInfoDialog(state: PersonalInfoState, successTitle: String, unsuccessTitle: String): String
+    fun createAfterPersonalInfoDialog(state: PersonalInfoState, successTitle: String, unsuccessTitle: String): Message
     {
-        return if(state is PersonalInfoSuccess) successTitle
-        else unsuccessTitle
+        return if(state is PersonalInfoSuccess) Message(successTitle, null)
+        else Message(unsuccessTitle, null)
     }
 
 }

@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class Team(var id: String = "",
+data class Team(var id: String? = null,
                 var name: String = "",
                 var tmId: String = "",
                 var playingDays: List<String> = emptyList(),

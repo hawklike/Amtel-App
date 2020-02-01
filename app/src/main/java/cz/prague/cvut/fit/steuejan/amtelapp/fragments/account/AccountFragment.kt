@@ -9,11 +9,16 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.HEAD_OF_LEAGUE
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.TEAM_MANAGER
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 
 class AccountFragment : AbstractBaseFragment()
@@ -25,16 +30,25 @@ class AccountFragment : AbstractBaseFragment()
         fun newInstance(): AccountFragment = AccountFragment()
     }
 
+    override lateinit var job: Job
+
     private lateinit var viewPager: ViewPager
     private lateinit var tabs: TabLayout
     private lateinit var user: User
 
+    override fun getName(): String = "AccountFragment"
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
+        job = Job()
         return inflater.inflate(R.layout.fragment_account, container, false)
     }
 
-    override fun getName(): String = "AccountFragment"
+    override fun onDestroy()
+    {
+        job.cancel()
+        super.onDestroy()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
@@ -73,10 +87,18 @@ class AccountFragment : AbstractBaseFragment()
         }
         else if(role == TEAM_MANAGER)
         {
-            adapter.addFragment(AccountPersonalFragment.newInstance(), getString(R.string.account_adapter_personal))
-            adapter.addFragment(AccountTMMakeTeamFragment.newInstance(), getString(R.string.account_tm_adapter_make_team))
-        }
+            launch {
+                setProgressBar(true)
+                user.teamId?.let {
+                    val team = TeamManager.findTeam(it)
+                    if(team is ValidTeam) mainActivityModel.setTeam(team)
+                } ?: mainActivityModel.setTeam(NoTeam)
 
+                adapter.addFragment(AccountPersonalFragment.newInstance(), getString(R.string.account_adapter_personal))
+                adapter.addFragment(AccountTMMakeTeamFragment.newInstance(), getString(R.string.account_tm_adapter_make_team))
+                adapter.notifyDataSetChanged()
+            }
+        }
         viewPager.adapter = adapter
     }
 }

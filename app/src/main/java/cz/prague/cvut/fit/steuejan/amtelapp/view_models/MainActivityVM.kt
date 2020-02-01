@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
 
 class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
@@ -52,15 +52,15 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val team = SingleLiveEvent<Team>()
+    private val team = SingleLiveEvent<TeamState>()
 
-    fun setTeam(team: Team)
+    fun setTeam(team: TeamState)
     {
         this.team.value = team
         Log.i(TAG, "setTeam(): $team is set")
     }
 
-    fun getTeam(): LiveData<Team> = team
+    fun getTeam(): LiveData<TeamState> = team
 
     /*---------------------------------------------------*/
 

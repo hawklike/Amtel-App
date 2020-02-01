@@ -4,9 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
 
@@ -30,25 +33,55 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
     private val team = SingleLiveEvent<TeamState>()
     fun isTeamCreated(): LiveData<TeamState> = team
 
+    /*---------------------------------------------------*/
 
-    fun createTeam(name: String, place: String, playingDays: String)
+    fun createTeam(user: User, name: String, place: String, playingDays: String, errorName: String, errorPlace: String, errorDays: String)
     {
-        if(confirmInput(name, place, playingDays))
+        if(confirmInput(name, place, playingDays, errorName, errorPlace, errorDays))
         {
             viewModelScope.launch {
                 val days = this@AccountTMMakeTeamFragmentVM.playingDays.value as ValidPlayingDays
-                val team = TeamManager.addTeam(name, AuthManager.currentUser!!.uid, days.self, place)
+                val team = TeamManager.addTeam(user.teamId, name, AuthManager.currentUser!!.uid, days.self, NameConverter.convertToFirstLetterBig(place))
                 if(team != null) this@AccountTMMakeTeamFragmentVM.team.value = ValidTeam(team)
                 else this@AccountTMMakeTeamFragmentVM.team.value = NoTeam
             }
         }
     }
 
-    //TODO: implement confirmation
-    private fun confirmInput(name: String, place: String, playingDays: String): Boolean
+    fun displayAfterDialog(teamState: TeamState, user: User, successTitle: String, failureTitle: String, actualizationTitle: String): Message
     {
-        this.playingDays.value = ValidPlayingDays(playingDays.split(","))
-        return true
+        val title: String = if(teamState is ValidTeam) user.teamId?.let { actualizationTitle } ?: successTitle
+        else failureTitle
+
+        return Message(title, null)
+    }
+
+    private fun confirmInput(name: String, place: String, playingDays: String, errorName: String, errorPlace: String, errorDays: String): Boolean
+    {
+        var okName = true
+        var okPlace = true
+        var okDays = true
+
+        if(name.isEmpty())
+        {
+            this.name.value = InvalidName(errorName)
+            okName = false
+        }
+
+        if(place.isEmpty())
+        {
+            this.place.value = InvalidPlace(errorPlace)
+            okPlace = false
+        }
+
+        if(playingDays.isEmpty())
+        {
+            this.playingDays.value = InvalidPlayingDays(errorDays)
+            okDays = false
+        }
+        else this.playingDays.value = ValidPlayingDays(playingDays.split(","))
+
+        return okName && okPlace && okDays
     }
 
 }

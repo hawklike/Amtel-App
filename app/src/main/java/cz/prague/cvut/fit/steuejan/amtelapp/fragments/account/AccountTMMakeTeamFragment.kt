@@ -1,12 +1,14 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
@@ -14,31 +16,23 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountTMMakeTeamFragmentVM
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
-class AccountTMMakeTeamFragment : AbstractBaseFragment(), CoroutineScope
+class AccountTMMakeTeamFragment : AbstractBaseFragment()
 {
     companion object
     {
         fun newInstance(): AccountTMMakeTeamFragment = AccountTMMakeTeamFragment()
     }
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job + handler
-
-    private lateinit var job: Job
-
-    private val handler = CoroutineExceptionHandler { _, exception ->
-        Log.e("CoroutineScope", "$exception handled !")
-    }
+    override lateinit var job: Job
 
     private val viewModel by viewModels<AccountTMMakeTeamFragmentVM>()
 
-    private lateinit var team: Team
+    private lateinit var team: TeamState
     private lateinit var user: User
 
     private lateinit var nameLayout: TextInputLayout
@@ -78,32 +72,88 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment(), CoroutineScope
 
     private fun setListeners()
     {
-        //TODO: delete previous teams if clicked more times
+        playingDaysLayout.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if(hasFocus)
+            {
+                MaterialDialog(activity!!).show {
+                    listItemsMultiChoice(R.array.days) { _, _, items ->
+                        playingDaysLayout.editText?.setText(items.joinToString(", "))
+                    }
+                    positiveButton(R.string.ok)
+                }
+            }
+        }
+
         createTeam.setOnClickListener {
             val name = nameLayout.editText?.text.toString().trim()
             val place = placeLayout.editText?.text.toString().trim()
             val playingDays = playingDaysLayout.editText?.text.toString().trim()
 
+
             //TODO: [REFACTORING] add deleteErrors into AbstractBaseFragment
             deleteErrors()
-            viewModel.createTeam(name, place, playingDays)
+            viewModel.createTeam(
+                user,
+                name,
+                place,
+                playingDays,
+                getString(R.string.create_team_failure_name_error),
+                getString(R.string.create_team_failure_place_error),
+                getString(R.string.create_team_failure_days_error))
         }
     }
 
-    //TODO: observe to name, place and days
     //TODO: update text fields
     private fun setObservers()
     {
         getTeam()
         getUser()
+        updateFields()
+        confirmName()
+        confirmPlace()
+        confirmDays()
         isTeamCreated()
+    }
+
+    private fun updateFields()
+    {
+        if(team is ValidTeam)
+        {
+            nameLayout.editText?.setText((team as ValidTeam).self.name)
+            placeLayout.editText?.setText((team as ValidTeam).self.place)
+            playingDaysLayout.editText?.setText((team as ValidTeam).self.playingDays.joinToString(", "))
+        }
+    }
+
+    private fun confirmDays()
+    {
+        viewModel.confirmPlayingDays().observe(viewLifecycleOwner) { daysState ->
+            if(daysState is InvalidPlayingDays)
+                playingDaysLayout.error = daysState.errorMessage
+        }
+    }
+
+    private fun confirmPlace()
+    {
+        viewModel.confirmPlace().observe(viewLifecycleOwner) { placeState ->
+            if(placeState is InvalidPlace)
+                placeLayout.error = placeState.errorMessage
+        }
+    }
+
+    private fun confirmName()
+    {
+        viewModel.confirmName().observe(viewLifecycleOwner) { nameState ->
+            if(nameState is InvalidName)
+                nameLayout.error = nameState.errorMessage
+        }
     }
 
     private fun getTeam()
     {
-        team = mainActivityModel.getTeam().value ?: Team()
+        team = mainActivityModel.getTeam().value ?: ValidTeam(Team())
         mainActivityModel.getTeam().observe(viewLifecycleOwner) { observedTeam ->
-            team = observedTeam.copy()
+            team = observedTeam
         }
     }
 
@@ -115,10 +165,25 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment(), CoroutineScope
         }
     }
 
-    //TODO: display dialog
     private fun isTeamCreated()
     {
         viewModel.isTeamCreated().observe(viewLifecycleOwner) { teamState ->
+            val title = viewModel.displayAfterDialog(
+                teamState,
+                user,
+                getString(R.string.add_team_success_title),
+                getString(R.string.add_team_failure_title),
+                getString(R.string.add_team_actualization_title))
+                .title
+
+            MaterialDialog(activity!!)
+                .title(text = title)
+                .show {
+                    positiveButton(R.string.ok)
+                    onDismiss {
+                    }
+                }
+
             update(teamState)
         }
     }
@@ -132,7 +197,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment(), CoroutineScope
                 UserManager.updateUser(user.id, mapOf("teamId" to user.teamId))
             }
             mainActivityModel.setUser(user)
-            mainActivityModel.setTeam(state.self)
+            mainActivityModel.setTeam(ValidTeam(state.self))
         }
     }
 

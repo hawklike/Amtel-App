@@ -98,8 +98,8 @@ class LoginFragment : AbstractBaseFragment()
                 getString(R.string.user_login_success_message),
                 getString(R.string.user_login_failure_title),
                 getString(R.string.user_login_failure_message))
-            val title = dialog.first
-            val message = dialog.second
+            val title = dialog.title
+            val message = dialog.message
 
             if(user is NoUser) passwordLayout.editText?.text?.clear()
 

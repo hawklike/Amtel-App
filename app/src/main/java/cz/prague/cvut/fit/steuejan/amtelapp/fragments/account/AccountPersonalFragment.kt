@@ -1,7 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
 import android.os.Bundle
-import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -89,11 +88,11 @@ class AccountPersonalFragment : AbstractBaseFragment()
     private fun updatePersonalInfo()
     {
         user.birthdate?.let {
-            birthdateLayout.editText?.text = SpannableStringBuilder(DateUtil.toString(it, "dd.MM.yyyy"))
+            birthdateLayout.editText?.setText(DateUtil.toString(it, "dd.MM.yyyy"))
         }
 
         user.phone?.let {
-            phoneNumberLayout.editText?.text = SpannableStringBuilder(it)
+            phoneNumberLayout.editText?.setText(it)
         }
 
         val rb: RadioButton = if(Sex.toSex(user.sex) == Sex.MAN) view!!.findViewById(R.id.account_personal_personal_information_sex_man)
@@ -128,7 +127,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
                 MaterialDialog(activity!!).show {
                     datePicker { _, datetime ->
                         val dateText = DateUtil.toString(datetime, "dd.MM.yyyy")
-                        birthdateLayout.editText?.text = SpannableStringBuilder(dateText)
+                        birthdateLayout.editText?.setText(dateText)
                     }
                 }
             }
@@ -143,6 +142,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
                 state,
                 getString(R.string.personalInfo_change_success_title),
                 getString(R.string.personalInfo_change_failure_title))
+                .title
 
             MaterialDialog(activity!!)
                 .title(text = title)
@@ -192,7 +192,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
     {
         viewModel.confirmPhoneNumber().observe(viewLifecycleOwner) { phoneUmberState ->
             if(phoneUmberState is InvalidPhoneNumber)
-                phoneNumberLayout.error = getString(R.string.phoneNumber_change_error)
+                phoneNumberLayout.error = phoneUmberState.errorMessage
         }
     }
 

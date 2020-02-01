@@ -1,6 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.data.dao
 
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -12,18 +13,23 @@ class TeamDAO : DAO
     {
         if(entity is Team)
         {
-            val docReference = Firebase.firestore
+            val collection = Firebase.firestore
                 .collection("teams")
-                .document()
-            entity.id = docReference.id
-            docReference.set(entity).await()
+
+            val document = entity.id?.let { collection.document(it) } ?: collection.document()
+            entity.id = document.id
+            document.set(entity, SetOptions.merge()).await()
         }
         else throw IllegalArgumentException("TeamDAO::insert(): entity is not type of Team and should be")
     }
 
     override suspend fun find(id: String): DocumentSnapshot
     {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Firebase.firestore
+            .collection("teams")
+            .document(id)
+            .get()
+            .await()
     }
 
     override suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Void?
