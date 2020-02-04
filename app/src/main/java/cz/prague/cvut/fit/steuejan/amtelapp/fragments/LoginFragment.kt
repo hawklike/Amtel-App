@@ -92,12 +92,7 @@ class LoginFragment : AbstractBaseFragment()
     {
         //TODO: add loading bar [1]
         viewModel.getUser().observe(viewLifecycleOwner) { user ->
-            val dialog = viewModel.createAfterDialog(
-                user,
-                getString(R.string.user_login_success_title),
-                getString(R.string.user_login_success_message),
-                getString(R.string.user_login_failure_title),
-                getString(R.string.user_login_failure_message))
+            val dialog = viewModel.createAfterDialog(user)
             val title = dialog.title
             val message = dialog.message
 

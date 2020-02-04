@@ -140,8 +140,8 @@ class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
 
                 val (name, surname, email) = registration.credentials
                 launch {
-                    UserManager.addUser(registration.uid, name, surname, email, UserRole.TEAM_MANAGER)
-                    EmailSender.sendVerificationEmail(activity!!, email, registration.password)
+                    UserManager.addUser(name, surname, email, UserRole.TEAM_MANAGER, id = registration.uid)
+                    EmailSender.sendVerificationEmail(email, registration.password)
                 }
             }
             else

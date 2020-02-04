@@ -12,11 +12,10 @@ class UserDAO : DAO
     {
         if(entity is User)
         {
-            Firebase.firestore
-                .collection("users")
-                .document(entity.id)
-                .set(entity)
-                .await()
+            val collection = Firebase.firestore.collection("users")
+            val document = entity.id?.let { collection.document(it) } ?: collection.document()
+            entity.id = document.id
+            document.set(entity).await()
         }
         else throw IllegalArgumentException("UserDAO::insert(): entity is not type of User and should be")
     }

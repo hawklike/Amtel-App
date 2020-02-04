@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
-import androidx.activity.viewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.observe
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
@@ -19,23 +18,14 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.*
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
-class MainActivity : AbstractBaseActivity(), CoroutineScope
+class MainActivity : AbstractBaseActivity()
 {
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job + handler
+    override lateinit var job: Job
 
-    private lateinit var job: Job
-
-    private val handler = CoroutineExceptionHandler { _, exception ->
-        Log.e(TAG, "$exception handled !")
-    }
-
-    private val viewModel by viewModels<MainActivityVM>()
     private lateinit var drawer: Drawer
     lateinit var progressLayout: FrameLayout
 
@@ -64,7 +54,7 @@ class MainActivity : AbstractBaseActivity(), CoroutineScope
 
     private fun setToolbarTitle()
     {
-        viewModel.getTitle().observe(this) { title ->
+        mainActivityVM.getTitle().observe(this) { title ->
             setToolbarTitle(title)
         }
     }
@@ -78,15 +68,15 @@ class MainActivity : AbstractBaseActivity(), CoroutineScope
                 launch {
                     val user =  UserManager.findUser(firebaseUser.uid)
                     user?.let {
-                        viewModel.setUserState(SignedUser(it))
-                        viewModel.setUser(it)
+                        mainActivityVM.setUserState(SignedUser(it))
+                        mainActivityVM.setUser(it)
                         Log.i(TAG, "displayAccount(): $user currently logged in")
                     }
                 }
             }
         }
 
-        viewModel.getUserState().observe(this) { user ->
+        mainActivityVM.getUserState().observe(this) { user ->
             if(user is SignedUser)
             {
                 Log.i(TAG, "displayAccount(): ${user.self} is signed")
@@ -129,11 +119,11 @@ class MainActivity : AbstractBaseActivity(), CoroutineScope
             {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean
                 {
-                    viewModel.setDrawerSelectedPosition(position)
+                    mainActivityVM.setDrawerSelectedPosition(position)
                     when(drawerItem)
                     {
                         profile -> AuthManager.currentUser?.let {
-                            val user = viewModel.getUserState().value
+                            val user = mainActivityVM.getUserState().value
                             if(user is SignedUser) populateFragment(AccountFragment.newInstance())
                         } ?: populateFragment(LoginFragment.newInstance())
                         results -> populateFragment(ResultsFragment.newInstance())
@@ -147,12 +137,12 @@ class MainActivity : AbstractBaseActivity(), CoroutineScope
 
         drawer.drawerLayout.setStatusBarBackground(R.color.white)
         //restores option before configuration change (i.e rotation...)
-        drawer.setSelectionAtPosition(viewModel.getDrawerSelectedPosition(), false)
+        drawer.setSelectionAtPosition(mainActivityVM.getDrawerSelectedPosition(), false)
 
         if(savedInstanceState == null)
         {
             drawer.setSelection(profile)
-            viewModel.setDrawerSelectedPosition(drawer.currentSelectedPosition)
+            mainActivityVM.setDrawerSelectedPosition(drawer.currentSelectedPosition)
         }
     }
 

@@ -1,9 +1,12 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -12,6 +15,7 @@ import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
@@ -38,6 +42,8 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
     private lateinit var nameLayout: TextInputLayout
     private lateinit var placeLayout: TextInputLayout
     private lateinit var playingDaysLayout: TextInputLayout
+    private lateinit var addPlayer: ImageButton
+
     private lateinit var createTeam: FloatingActionButton
 
     override fun getName(): String = "AccountTMMakeTeamFragment"
@@ -55,6 +61,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
         placeLayout = view.findViewById(R.id.account_tm_make_team_place)
         playingDaysLayout = view.findViewById(R.id.account_tm_make_team_playing_day)
         createTeam = view.findViewById(R.id.account_tm_make_team_create)
+        addPlayer = view.findViewById(R.id.account_tm_make_team_add_player_button)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -96,14 +103,22 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
                 user,
                 name,
                 place,
-                playingDays,
-                getString(R.string.create_team_failure_name_error),
-                getString(R.string.create_team_failure_place_error),
-                getString(R.string.create_team_failure_days_error))
+                playingDays)
         }
+
+        addPlayer.setOnClickListener {
+            if(::team.isInitialized && team is ValidTeam)
+            {
+                val intent = Intent(activity!!, AddUserToTeamActivity::class.java).apply {
+                    putExtra(AddUserToTeamActivity.TEAM, (team as ValidTeam).self)
+                }
+                startActivity(intent)
+            }
+            else(Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet."))
+        }
+
     }
 
-    //TODO: update text fields
     private fun setObservers()
     {
         getTeam()
@@ -168,13 +183,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
     private fun isTeamCreated()
     {
         viewModel.isTeamCreated().observe(viewLifecycleOwner) { teamState ->
-            val title = viewModel.displayAfterDialog(
-                teamState,
-                user,
-                getString(R.string.add_team_success_title),
-                getString(R.string.add_team_failure_title),
-                getString(R.string.add_team_actualization_title))
-                .title
+            val title = viewModel.displayAfterDialog(teamState, user).title
 
             MaterialDialog(activity!!)
                 .title(text = title)
@@ -194,7 +203,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
         {
             user.teamId = state.self.id
             launch {
-                UserManager.updateUser(user.id, mapOf("teamId" to user.teamId))
+                UserManager.updateUser(user.id!!, mapOf("teamId" to user.teamId))
             }
             mainActivityModel.setUser(user)
             mainActivityModel.setTeam(ValidTeam(state.self))

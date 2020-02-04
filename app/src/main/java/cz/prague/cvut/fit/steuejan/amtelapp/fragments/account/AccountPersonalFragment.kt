@@ -138,11 +138,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
     {
         viewModel.isPersonalInfoChanged().observe(viewLifecycleOwner) { state ->
             updateUser(state)
-            val title = viewModel.createAfterPersonalInfoDialog(
-                state,
-                getString(R.string.personalInfo_change_success_title),
-                getString(R.string.personalInfo_change_failure_title))
-                .title
+            val title = viewModel.createAfterPersonalInfoDialog(state).title
 
             MaterialDialog(activity!!)
                 .title(text = title)
@@ -158,7 +154,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
     {
         if(state is PersonalInfoSuccess)
         {
-            user.birthdate = DateUtil.stringToDate(state.birthdate, "dd.MM.yyyy")
+            user.birthdate = DateUtil.stringToDate(state.birthdate)
             user.phone = state.phoneNumber
             user.sex = Sex.toBoolean(state.sex)
             mainActivityModel.setUser(user)
@@ -199,11 +195,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
     private fun isPasswordChanged()
     {
         viewModel.isPasswordChanged().observe(viewLifecycleOwner) { success ->
-            val dialog = viewModel.createAfterPasswordChangeDialog(
-                success,
-                getString(R.string.password_change_success_title),
-                getString(R.string.password_change_failure_title),
-                getString(R.string.password_change_failure_message))
+            val dialog = viewModel.createAfterPasswordChangeDialog(success)
 
             val title = dialog.first
             val message = dialog.second

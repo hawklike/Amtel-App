@@ -10,7 +10,7 @@
     <string name="account">Účet</string>
     <string name="login">Přihlášení</string>
     <string name="user_login_success_title">Přihlášení proběhlo úspěšně</string>
-    <string name="user_login_success_message">Vítejte!\nZdá se, že jste se přihlásil/a poprvé. Jako první prosím vyplňte Vaše osobní údaje v sekci:\nÚčet > OSOBNÍ.</string>
+    <string name="user_login_success_message">Vítejte!\n\nZdá se, že jste se přihlásil/a poprvé. Jako první prosím vyplňte Vaše osobní údaje v sekci:\n\nÚčet > OSOBNÍ.</string>
     <string name="user_login_failure_title">Přihlášení se nezdařilo</string>
     <string name="user_login_failure_message">Zadali jste neplatnou kombinaci emailu a hesla. Možná jenom nemáte připojení k internetu.</string>
     <string name="invalidEmail_error">Zadejte prosím validní email.</string>
@@ -64,4 +64,12 @@
     <string name="create_team_failure_name_error">Vyplňte prosím jméno.</string>
     <string name="create_team_failure_place_error">Vyplňte prosím adresu kurtu.</string>
     <string name="create_team_failure_days_error">Vyplňte prosím hrací dny.</string>
+    <string name="birthdate_failure_message_bad_format">Vyplňte prosím datum narození ve formátu dd.MM.yyyy</string>
+    <string name="birthdate_failure_message_invalid">Datum narození neodpovídá realitě.</string>
+    <string name="phoneNumber_invalid_message">Zadejte prosím platné telefonní číslo i s předponou.</string>
+    <string name="password_invalid_empty_message">Vyplňte prosím heslo.</string>
+    <string name="password_invalid_short_message">Heslo musí mít minimálně 6 znaků.</string>
+    <string name="email_failure_message">Zadejte prosím validní email.</string>
+    <string name="add_user_success_message_title">Hráč byl úspěšně přidán do týmu</string>
+    <string name="add_user_failure_message_title">Hráče se nepodařilo přidat</string>
 </resources>

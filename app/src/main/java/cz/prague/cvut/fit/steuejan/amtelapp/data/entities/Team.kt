@@ -9,6 +9,6 @@ data class Team(var id: String? = null,
                 var tmId: String = "",
                 var playingDays: List<String> = emptyList(),
                 var place: String = "",
-                var usersId: List<String> = emptyList(),
-                var matchesId: List<String> = emptyList()
+                var usersId: MutableList<String> = mutableListOf(),
+                var matchesId: MutableList<String> = mutableListOf()
                 ) : Parcelable

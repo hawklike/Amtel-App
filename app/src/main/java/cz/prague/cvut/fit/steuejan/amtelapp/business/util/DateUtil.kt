@@ -18,7 +18,7 @@ object DateUtil
         return formatter.format(date.time)
     }
 
-    fun validateDate(date: String, dateFormat: String): Boolean
+    fun validateDate(date: String, dateFormat: String = "dd.MM.yyyy"): Boolean
     {
         return try
         {
@@ -31,13 +31,13 @@ object DateUtil
     }
 
     @Throws(Exception::class)
-    fun validateBirthdate(date: String, dateFormat: String): Boolean
+    fun validateBirthdate(date: String, dateFormat: String = "dd.MM.yyyy"): Boolean
     {
         if(!validateDate(date, dateFormat)) throw Exception("Invalid date")
         return stringToDate(dateToString(Date(), dateFormat), dateFormat) >= stringToDate(date, dateFormat)
     }
 
-    fun stringToDate(date: String, dateFormat: String): Date
+    fun stringToDate(date: String, dateFormat: String = "dd.MM.yyyy"): Date
     {
         return SimpleDateFormat(dateFormat, Locale.getDefault()).parse(date)
     }
