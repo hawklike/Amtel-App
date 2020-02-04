@@ -12,5 +12,7 @@
         <!-- Material dialog -->
         <item name="md_color_button_text">@color/blue</item>
         <item name="md_corner_radius">16dp</item>
+        <!-- Custom animation between activities -->
+        <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
     </style>
 </resources>

@@ -21,19 +21,12 @@ import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
-class MainActivity : AbstractBaseActivity(), CoroutineScope
+class MainActivity : AbstractBaseActivity()
 {
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job + handler
-
-    private lateinit var job: Job
-
-    private val handler = CoroutineExceptionHandler { _, exception ->
-        Log.e(TAG, "$exception handled !")
-    }
+    override lateinit var job: Job
 
     private val viewModel by viewModels<MainActivityVM>()
     private lateinit var drawer: Drawer

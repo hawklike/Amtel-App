@@ -1,9 +1,13 @@
+@file:Suppress("LocalVariableName")
+
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
@@ -15,48 +19,59 @@ import kotlinx.coroutines.launch
 
 class AccountTMMakeTeamFragmentVM : ViewModel()
 {
-    private val name = MutableLiveData<NameState>()
-    fun confirmName(): LiveData<NameState> = name
+    private val nameState = MutableLiveData<NameState>()
+    fun confirmName(): LiveData<NameState> = nameState
 
     /*---------------------------------------------------*/
 
-    private val place = MutableLiveData<PlaceState>()
-    fun confirmPlace(): LiveData<PlaceState> = place
+    private val placeState = MutableLiveData<PlaceState>()
+    fun confirmPlace(): LiveData<PlaceState> = placeState
 
     /*---------------------------------------------------*/
 
-    private val playingDays = MutableLiveData<PlayingDaysState>()
-    fun confirmPlayingDays(): LiveData<PlayingDaysState> = playingDays
+    private val playingDaysState = MutableLiveData<PlayingDaysState>()
+    fun confirmPlayingDays(): LiveData<PlayingDaysState> = playingDaysState
 
     /*---------------------------------------------------*/
 
-    private val team = SingleLiveEvent<TeamState>()
-    fun isTeamCreated(): LiveData<TeamState> = team
+    private val teamState = SingleLiveEvent<TeamState>()
+    fun isTeamCreated(): LiveData<TeamState> = teamState
 
     /*---------------------------------------------------*/
 
-    fun createTeam(user: User, name: String, place: String, playingDays: String, errorName: String, errorPlace: String, errorDays: String)
+    fun createTeam(user: User, name: String, place: String, days: String)
     {
-        if(confirmInput(name, place, playingDays, errorName, errorPlace, errorDays))
+        if(confirmInput(name, place, days))
         {
             viewModelScope.launch {
-                val days = this@AccountTMMakeTeamFragmentVM.playingDays.value as ValidPlayingDays
-                val team = TeamManager.addTeam(user.teamId, name, AuthManager.currentUser!!.uid, days.self, NameConverter.convertToFirstLetterBig(place))
-                if(team != null) this@AccountTMMakeTeamFragmentVM.team.value = ValidTeam(team)
-                else this@AccountTMMakeTeamFragmentVM.team.value = NoTeam
+                val _days = playingDaysState.value as ValidPlayingDays
+
+                val team = TeamManager.addTeam(
+                    user.teamId,
+                    name,
+                    AuthManager.currentUser!!.uid,
+                    _days.self,
+                    NameConverter.convertToFirstLetterBig(place))
+
+                if(team != null) teamState.value = ValidTeam(team)
+                else teamState.value = NoTeam
             }
         }
     }
 
-    fun displayAfterDialog(teamState: TeamState, user: User, successTitle: String, failureTitle: String, actualizationTitle: String): Message
+    fun displayAfterDialog(teamState: TeamState, user: User): Message
     {
+        val successTitle = App.context.getString(R.string.add_team_success_title)
+        val failureTitle = App.context.getString(R.string.add_team_failure_title)
+        val actualizationTitle = App.context.getString(R.string.add_team_actualization_title)
+
         val title: String = if(teamState is ValidTeam) user.teamId?.let { actualizationTitle } ?: successTitle
         else failureTitle
 
         return Message(title, null)
     }
 
-    private fun confirmInput(name: String, place: String, playingDays: String, errorName: String, errorPlace: String, errorDays: String): Boolean
+    private fun confirmInput(name: String, place: String, playingDays: String): Boolean
     {
         var okName = true
         var okPlace = true
@@ -64,22 +79,22 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
         if(name.isEmpty())
         {
-            this.name.value = InvalidName(errorName)
+            this.nameState.value = InvalidName()
             okName = false
         }
 
         if(place.isEmpty())
         {
-            this.place.value = InvalidPlace(errorPlace)
+            this.placeState.value = InvalidPlace()
             okPlace = false
         }
 
         if(playingDays.isEmpty())
         {
-            this.playingDays.value = InvalidPlayingDays(errorDays)
+            this.playingDaysState.value = InvalidPlayingDays()
             okDays = false
         }
-        else this.playingDays.value = ValidPlayingDays(playingDays.split(","))
+        else this.playingDaysState.value = ValidPlayingDays(playingDays.split(","))
 
         return okName && okPlace && okDays
     }

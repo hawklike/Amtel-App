@@ -1,7 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
 import android.content.Context
-import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -49,7 +48,7 @@ class AccountBossAddTMFragmentVM : ViewModel()
         if(surname.isNotEmpty()) cSurname = NameConverter.convertToFirstLetterBig(surname)
         else okSurname = false
 
-        if(!email.isNotBlank() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) okEmail = false
+        if(EmailState.validate(email) is InvalidEmail) okEmail = false
 
         if(okName && okSurname && okEmail) credentials.value = ValidCredentials(cName, cSurname, email)
         else credentials.value = InvalidCredentials(okName, okSurname, okEmail)

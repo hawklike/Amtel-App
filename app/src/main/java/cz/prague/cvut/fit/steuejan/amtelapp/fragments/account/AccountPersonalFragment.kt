@@ -199,11 +199,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
     private fun isPasswordChanged()
     {
         viewModel.isPasswordChanged().observe(viewLifecycleOwner) { success ->
-            val dialog = viewModel.createAfterPasswordChangeDialog(
-                success,
-                getString(R.string.password_change_success_title),
-                getString(R.string.password_change_failure_title),
-                getString(R.string.password_change_failure_message))
+            val dialog = viewModel.createAfterPasswordChangeDialog(success)
 
             val title = dialog.first
             val message = dialog.second

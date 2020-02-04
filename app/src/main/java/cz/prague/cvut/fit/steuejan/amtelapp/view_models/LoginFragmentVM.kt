@@ -1,11 +1,12 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
 import android.util.Log
-import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
@@ -16,18 +17,18 @@ import kotlinx.coroutines.launch
 
 class LoginFragmentVM : ViewModel()
 {
-    private val email = MutableLiveData<EmailState>()
-    fun confirmEmail(): LiveData<EmailState> = email
+    private val emailState = MutableLiveData<EmailState>()
+    fun confirmEmail(): LiveData<EmailState> = emailState
 
     /*---------------------------------------------------*/
 
-    private val password = MutableLiveData<PasswordState>()
-    fun confirmPassword(): LiveData<PasswordState> = password
+    private val passwordState = MutableLiveData<PasswordState>()
+    fun confirmPassword(): LiveData<PasswordState> = passwordState
 
     /*---------------------------------------------------*/
 
-    private val user = SingleLiveEvent<UserState>()
-    fun getUser(): LiveData<UserState> = user
+    private val userState = SingleLiveEvent<UserState>()
+    fun getUser(): LiveData<UserState> = userState
 
     /*---------------------------------------------------*/
 
@@ -40,63 +41,57 @@ class LoginFragmentVM : ViewModel()
                 if(firebaseUser != null)
                 {
                     val user = UserManager.findUser(firebaseUser.uid)
-                    this@LoginFragmentVM.user.value = user?.let { SignedUser(it, user.firstSign) } ?: NoUser
+                    userState.value = user?.let { SignedUser(it, user.firstSign) } ?: NoUser
                     user?.let {
                         if(user.firstSign)
                             UserManager.updateUser(user.id, mapOf("firstSign" to false))
                     }
                 }
-                else this@LoginFragmentVM.user.value = NoUser
+                else userState.value = NoUser
             }
         }
     }
 
-    fun createAfterDialog(user: UserState,
-                          successTitle: String,
-                          successMessage: String,
-                          unsuccessTitle: String,
-                          unsuccessMessage: String)
-    : Message
+    fun createAfterDialog(user: UserState): Message
     {
         val title: String
         val message: String?
 
         if(user is SignedUser)
         {
-            title = successTitle
+            title = App.context.getString(R.string.user_login_success_title)
             message = when
             {
                 UserRole.toRole(user.self.role) != UserRole.TEAM_MANAGER -> null
-                user.firstSign -> successMessage
+                user.firstSign -> App.context.getString(R.string.user_login_success_message)
                 else -> null
             }
             Log.i(TAG, "getUser(): login was successful - current user: $user")
         }
         else
         {
-            title = unsuccessTitle
-            message = unsuccessMessage
+            title = App.context.getString(R.string.user_login_failure_title)
+            message = App.context.getString(R.string.user_login_failure_message)
             Log.e(TAG, "getUser(): login not successful")
         }
 
         return Message(title, message)
     }
 
-    //TODO: add error messages as parameters
     private fun confirmCredentials(email: String, password: String): Boolean
     {
         var okEmail = true
         var okPassword = true
 
-        if(email.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(email).matches())
-            this.email.value = ValidEmail(email)
-        else
-            this.email.value = InvalidEmail(errorMessage = "Zadejte prosím validní email.").also { okEmail = false }
+        with(EmailState.validate(email)) {
+            if(this is InvalidEmail) okEmail = false
+            emailState.value = this
+        }
 
-        if(password.isNotEmpty())
-            this.password.value = ValidPassword(password)
-        else
-            this.password.value = InvalidPassword(errorMessage = "Vyplňte prosím heslo.").also { okPassword = false }
+        with(PasswordState.validate(password)) {
+            if(this is InvalidPassword) okPassword = false
+            passwordState.value = this
+        }
 
         return okEmail && okPassword
     }
