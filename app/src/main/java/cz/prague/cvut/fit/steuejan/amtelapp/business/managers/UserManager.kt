@@ -4,23 +4,28 @@ import android.util.Log
 import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.*
 
 object UserManager
 {
-    suspend fun addUser(id: String, name: String, surname: String, email: String, role: UserRole) = withContext(Dispatchers.IO)
+    suspend fun addUser(name: String, surname: String, email: String, role: UserRole,
+                        id: String? = null, sex: Sex = Sex.MAN, birthdate: Date? = null, teamId: String? = null): User? = withContext(Dispatchers.IO)
     {
-        val user = User(id, name, surname, email, role = UserRole.toString(role))
-        try
+        val user = User(id, name, surname, email, birthdate = birthdate, sex = Sex.toBoolean(sex), role = UserRole.toString(role), teamId = teamId)
+        return@withContext try
         {
             UserDAO().insert(user)
             Log.i(TAG, "addUser(): $user successfully added to database")
+            user
         }
         catch(ex: Exception)
         {
             Log.e(TAG, "addUser(): $user not added to database because $ex")
+            null
         }
     }
 

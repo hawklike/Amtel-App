@@ -1,8 +1,120 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
+import kotlinx.coroutines.launch
 
 class AddUserToTeamActivityVM : ViewModel()
 {
+    private val nameState = MutableLiveData<NameState>()
+    fun confirmName(): LiveData<NameState> = nameState
+
+    /*---------------------------------------------------*/
+
+    private val surnameState = MutableLiveData<SurnameState>()
+    fun confirmSurname(): LiveData<SurnameState> = surnameState
+
+    /*---------------------------------------------------*/
+
+    private val emailState = MutableLiveData<EmailState>()
+    fun confirmEmail(): LiveData<EmailState> = emailState
+
+    /*---------------------------------------------------*/
+
+    private val birthdateState = MutableLiveData<BirthdateState>()
+    fun confirmBirthdate(): LiveData<BirthdateState> = birthdateState
+
+    /*---------------------------------------------------*/
+
+    private val teamState = SingleLiveEvent<TeamState>()
+    fun isUserAdded(): LiveData<TeamState> = teamState
+
+    /*---------------------------------------------------*/
+
+    fun addUser(name: String, surname: String, email: String, birthdate: String, sex: Sex, team: Team)
+    {
+        if(confirmUser(name, surname, email, birthdate))
+        {
+            viewModelScope.launch {
+                val user = UserManager.addUser(
+                    NameConverter.convertToFirstLetterBig(name),
+                    NameConverter.convertToFirstLetterBig(surname),
+                    email,
+                    UserRole.PLAYER,
+                    sex = sex,
+                    birthdate = DateUtil.stringToDate(birthdate),
+                    teamId = team.id)
+
+                if(user != null)
+                {
+                    if(team.usersId.add(user.id!!))
+                    {
+                        TeamManager.updateTeam(team.id!!, mapOf("usersId" to team.usersId))
+                        teamState.value = ValidTeam(team)
+                    }
+                    else teamState.value = NoTeam
+                }
+                else teamState.value = NoTeam
+            }
+        }
+    }
+
+    private fun confirmUser(name: String, surname: String, email: String, birthdate: String): Boolean
+    {
+        var okName = true
+        var okSurname = true
+        var okEmail = true
+        var okBirthdate = true
+
+        if(name.isEmpty())
+        {
+            nameState.value = InvalidName()
+            okName = false
+        }
+
+        if(surname.isEmpty())
+        {
+            surnameState.value = InvalidSurname()
+            okSurname = false
+        }
+
+        with(EmailState.validate(email)) {
+            if(this is InvalidEmail)
+            {
+                okEmail = false
+                emailState.value = this
+            }
+        }
+
+        with(BirthdateState.validate(birthdate)) {
+            if(this is InvalidBirthdate)
+            {
+                okBirthdate = false
+                birthdateState.value = this
+            }
+        }
+
+        return okName && okSurname && okEmail && okBirthdate
+    }
+
+    fun createDialog(teamState: TeamState): Message
+    {
+        return if(teamState is ValidTeam) Message(App.context.getString(R.string.add_user_success_message_title), null)
+        else Message(App.context.getString(R.string.add_user_failure_message_title), null)
+    }
 
 }

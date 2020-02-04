@@ -11,21 +11,21 @@ sealed class BirthdateState
     {
         fun validate(birthdate: String): BirthdateState
         {
-            if(!DateUtil.validateDate(birthdate, "dd.MM.yyyy"))
+            if(!DateUtil.validateDate(birthdate))
             {
                 return InvalidBirthdate(App.context.getString(R.string.birthdate_failure_message_bad_format))
             }
 
             try
             {
-                if(!DateUtil.validateBirthdate(birthdate, "dd.MM.yyyy"))
+                if(!DateUtil.validateBirthdate(birthdate))
                 {
                     return InvalidBirthdate(App.context.getString(R.string.birthdate_failure_message_invalid))
                 }
             }
             catch(ex: Exception) { }
 
-            return ValidBirthdate(DateUtil.stringToDate(birthdate, "dd.MM.yyyy"))
+            return ValidBirthdate(DateUtil.stringToDate(birthdate))
         }
     }
 }

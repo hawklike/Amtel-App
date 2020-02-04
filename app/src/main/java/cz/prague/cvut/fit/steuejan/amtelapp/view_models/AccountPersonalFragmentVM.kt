@@ -80,7 +80,7 @@ class AccountPersonalFragmentVM : ViewModel()
             val phone: String? = if(phoneNumber.isEmpty()) null else phoneNumber
             viewModelScope.launch {
                 val success = UserManager.updateUser(AuthManager.currentUser!!.uid, mapOf(
-                    "birthdate" to DateUtil.stringToDate(birthdate, "dd.MM.yyyy"),
+                    "birthdate" to DateUtil.stringToDate(birthdate),
                     "phone" to phone,
                     "sex" to Sex.toBoolean(sex)
                 ))
@@ -115,10 +115,10 @@ class AccountPersonalFragmentVM : ViewModel()
         return okBirthdate && okPhoneNumber
     }
 
-    fun createAfterPersonalInfoDialog(state: PersonalInfoState, successTitle: String, unsuccessTitle: String): Message
+    fun createAfterPersonalInfoDialog(state: PersonalInfoState): Message
     {
-        return if(state is PersonalInfoSuccess) Message(successTitle, null)
-        else Message(unsuccessTitle, null)
+        return if(state is PersonalInfoSuccess) Message(App.context.getString(R.string.personalInfo_change_success_title), null)
+        else Message(App.context. getString(R.string.personalInfo_change_failure_title), null)
     }
 
 }

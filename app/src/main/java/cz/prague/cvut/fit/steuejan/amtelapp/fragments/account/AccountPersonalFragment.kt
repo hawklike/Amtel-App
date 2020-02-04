@@ -138,11 +138,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
     {
         viewModel.isPersonalInfoChanged().observe(viewLifecycleOwner) { state ->
             updateUser(state)
-            val title = viewModel.createAfterPersonalInfoDialog(
-                state,
-                getString(R.string.personalInfo_change_success_title),
-                getString(R.string.personalInfo_change_failure_title))
-                .title
+            val title = viewModel.createAfterPersonalInfoDialog(state).title
 
             MaterialDialog(activity!!)
                 .title(text = title)
@@ -158,7 +154,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
     {
         if(state is PersonalInfoSuccess)
         {
-            user.birthdate = DateUtil.stringToDate(state.birthdate, "dd.MM.yyyy")
+            user.birthdate = DateUtil.stringToDate(state.birthdate)
             user.phone = state.phoneNumber
             user.sex = Sex.toBoolean(state.sex)
             mainActivityModel.setUser(user)

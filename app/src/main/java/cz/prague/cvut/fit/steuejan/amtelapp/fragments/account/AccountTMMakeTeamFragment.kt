@@ -203,7 +203,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
         {
             user.teamId = state.self.id
             launch {
-                UserManager.updateUser(user.id, mapOf("teamId" to user.teamId))
+                UserManager.updateUser(user.id!!, mapOf("teamId" to user.teamId))
             }
             mainActivityModel.setUser(user)
             mainActivityModel.setTeam(ValidTeam(state.self))

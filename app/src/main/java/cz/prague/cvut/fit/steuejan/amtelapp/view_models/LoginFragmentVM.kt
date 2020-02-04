@@ -44,7 +44,7 @@ class LoginFragmentVM : ViewModel()
                     userState.value = user?.let { SignedUser(it, user.firstSign) } ?: NoUser
                     user?.let {
                         if(user.firstSign)
-                            UserManager.updateUser(user.id, mapOf("firstSign" to false))
+                            UserManager.updateUser(user.id!!, mapOf("firstSign" to false))
                     }
                 }
                 else userState.value = NoUser

@@ -4,11 +4,17 @@ import android.os.Bundle
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.activity.viewModels
+import androidx.lifecycle.observe
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.afollestad.materialdialogs.datetime.datePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AddUserToTeamActivityVM
 
 class AddUserToTeamActivity : AbstractBaseActivity()
@@ -46,6 +52,7 @@ class AddUserToTeamActivity : AbstractBaseActivity()
         addButton = findViewById(R.id.account_add_user_to_team_add_button)
 
         setListeners()
+        setObservers()
     }
 
     private fun setListeners()
@@ -57,19 +64,109 @@ class AddUserToTeamActivity : AbstractBaseActivity()
         }
 
         addButton.setOnClickListener {
-            val name = nameLayout.editText?.text
-            val surname = surnameLayout.editText?.text
-            val email = emailLayout.editText?.text
-            val birthdate = birthdateLayout.editText?.text
+            val name = nameLayout.editText?.text.toString().trim()
+            val surname = surnameLayout.editText?.text.toString().trim()
+            val email = emailLayout.editText?.text.toString().trim()
+            val birthdate = birthdateLayout.editText?.text.toString().trim()
 
-//            viewModel.addUser(
-//                name,
-//                surname,
-//                email,
-//                birthdate,
-//                sex,
-//                "")
+            deleteErrors()
+            viewModel.addUser(name, surname, email, birthdate, sex, team)
         }
+
+        birthdateLayout.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if(hasFocus)
+            {
+                MaterialDialog(this).show {
+                    datePicker { _, datetime ->
+                        val dateText = DateUtil.toString(datetime, "dd.MM.yyyy")
+                        birthdateLayout.editText?.setText(dateText)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setObservers()
+    {
+        confirmName()
+        confirmSurname()
+        confirmEmail()
+        confirmBirthdate()
+        isUserAdded()
+    }
+
+    private fun confirmName()
+    {
+        viewModel.confirmName().observe(this) { name ->
+            if(name is InvalidName)
+                nameLayout.error = name.errorMessage
+        }
+    }
+
+    private fun confirmSurname()
+    {
+        viewModel.confirmSurname().observe(this) { surname ->
+            if(surname is InvalidSurname)
+                surnameLayout.error = surname.errorMessage
+        }
+    }
+
+    private fun confirmEmail()
+    {
+        viewModel.confirmEmail().observe(this) { email ->
+            if(email is InvalidEmail)
+                emailLayout.error = email.errorMessage
+        }
+    }
+
+    private fun confirmBirthdate()
+    {
+        viewModel.confirmBirthdate().observe(this) { birthdate ->
+            if(birthdate is InvalidBirthdate)
+                birthdateLayout.error = birthdate.errorMessage
+        }
+    }
+
+    private fun isUserAdded()
+    {
+        viewModel.isUserAdded().observe(this) { teamState ->
+            val title = viewModel.createDialog(teamState).title
+
+            MaterialDialog(this)
+                .title(text = title)
+                .show {
+                    positiveButton(R.string.ok)
+                    onDismiss {
+                    }
+                }
+
+            if(teamState is ValidTeam)
+            {
+                deleteInput()
+                update(teamState.self)
+            }
+        }
+    }
+
+    private fun update(team: Team)
+    {
+        mainActivityVM.setTeam(ValidTeam(team))
+    }
+
+    private fun deleteInput()
+    {
+        nameLayout.editText?.text?.clear()
+        surnameLayout.editText?.text?.clear()
+        emailLayout.editText?.text?.clear()
+        birthdateLayout.editText?.text?.clear()
+    }
+
+    private fun deleteErrors()
+    {
+        nameLayout.error = null
+        surnameLayout.error = null
+        emailLayout.error = null
+        birthdateLayout.error = null
     }
 
     override fun onBackPressed()

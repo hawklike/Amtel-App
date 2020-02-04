@@ -70,4 +70,6 @@
     <string name="password_invalid_empty_message">Vyplňte prosím heslo.</string>
     <string name="password_invalid_short_message">Heslo musí mít minimálně 6 znaků.</string>
     <string name="email_failure_message">Zadejte prosím validní email.</string>
+    <string name="add_user_success_message_title">Hráč byl úspěšně přidán do týmu</string>
+    <string name="add_user_failure_message_title">Hráče se nepodařilo přidat</string>
 </resources>

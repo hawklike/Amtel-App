@@ -13,9 +13,7 @@ class TeamDAO : DAO
     {
         if(entity is Team)
         {
-            val collection = Firebase.firestore
-                .collection("teams")
-
+            val collection = Firebase.firestore.collection("teams")
             val document = entity.id?.let { collection.document(it) } ?: collection.document()
             entity.id = document.id
             document.set(entity, SetOptions.merge()).await()
@@ -34,6 +32,10 @@ class TeamDAO : DAO
 
     override suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Void?
     {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Firebase.firestore
+            .collection("teams")
+            .document(documentId)
+            .update(mapOfFieldsAndValues)
+            .await()
     }
 }

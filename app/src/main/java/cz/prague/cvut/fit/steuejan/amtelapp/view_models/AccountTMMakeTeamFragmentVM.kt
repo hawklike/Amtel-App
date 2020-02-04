@@ -79,22 +79,22 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
         if(name.isEmpty())
         {
-            this.nameState.value = InvalidName()
+            nameState.value = InvalidName()
             okName = false
         }
 
         if(place.isEmpty())
         {
-            this.placeState.value = InvalidPlace()
+            placeState.value = InvalidPlace()
             okPlace = false
         }
 
         if(playingDays.isEmpty())
         {
-            this.playingDaysState.value = InvalidPlayingDays()
+            playingDaysState.value = InvalidPlayingDays()
             okDays = false
         }
-        else this.playingDaysState.value = ValidPlayingDays(playingDays.split(","))
+        else playingDaysState.value = ValidPlayingDays(playingDays.split(","))
 
         return okName && okPlace && okDays
     }
