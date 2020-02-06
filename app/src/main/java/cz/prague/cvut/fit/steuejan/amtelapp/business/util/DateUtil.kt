@@ -6,13 +6,13 @@ import java.util.*
 
 object DateUtil
 {
-    fun toString(date: Date, format: String): String
+    fun toString(date: Date, format: String = "dd.MM.yyyy"): String
     {
         val formatter = SimpleDateFormat(format, Locale.getDefault())
         return formatter.format(date)
     }
 
-    fun toString(date: Calendar, format: String): String
+    fun toString(date: Calendar, format: String = "dd.MM.yyyy"): String
     {
         val formatter = SimpleDateFormat(format, Locale.getDefault())
         return formatter.format(date.time)

@@ -12,10 +12,20 @@ import java.util.*
 
 object UserManager
 {
-    suspend fun addUser(name: String, surname: String, email: String, role: UserRole,
-                        id: String? = null, sex: Sex = Sex.MAN, birthdate: Date? = null, teamId: String? = null): User? = withContext(Dispatchers.IO)
+    suspend fun addUser(name: String, surname: String, email: String, role: UserRole, id: String? = null,
+                        sex: Sex = Sex.MAN, birthdate: Date? = null, teamId: String? = null, teamName: String? = null): User? = withContext(Dispatchers.IO)
     {
-        val user = User(id, name, surname, email, birthdate = birthdate, sex = Sex.toBoolean(sex), role = UserRole.toString(role), teamId = teamId)
+        val user = User(
+            id,
+            name,
+            surname,
+            email,
+            birthdate = birthdate,
+            sex = Sex.toBoolean(sex),
+            role = UserRole.toString(role),
+            teamId = teamId,
+            teamName = teamName)
+
         return@withContext try
         {
             UserDAO().insert(user)
@@ -57,6 +67,14 @@ object UserManager
             Log.e(TAG, "updateUser(): user with id $documentId not updated because $ex")
             false
         }
+    }
+
+    suspend fun findUsers(usersId: List<String>): List<User> = withContext(Dispatchers.IO)
+    {
+        return@withContext usersId.fold(mutableListOf<User>(), { acc, userId ->
+            findUser(userId)?.let { acc.add(it) }
+            return@fold acc
+        })
     }
 
     private const val TAG = "UserManager"

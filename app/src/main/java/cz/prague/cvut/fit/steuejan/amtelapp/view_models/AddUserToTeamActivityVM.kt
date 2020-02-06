@@ -57,7 +57,8 @@ class AddUserToTeamActivityVM : ViewModel()
                     UserRole.PLAYER,
                     sex = sex,
                     birthdate = DateUtil.stringToDate(birthdate),
-                    teamId = team.id)
+                    teamId = team.id,
+                    teamName = team.name)
 
                 if(user != null)
                 {

@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -7,8 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
@@ -16,33 +20,36 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Companion.TEAM
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.MakeTeamUsersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountTMMakeTeamFragmentVM
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 class AccountTMMakeTeamFragment : AbstractBaseFragment()
 {
     companion object
     {
         fun newInstance(): AccountTMMakeTeamFragment = AccountTMMakeTeamFragment()
+        const val NEW_USER_CODE = 1
     }
-
-    override lateinit var job: Job
 
     private val viewModel by viewModels<AccountTMMakeTeamFragmentVM>()
 
     private lateinit var team: TeamState
     private lateinit var user: User
 
+    private var users = mutableListOf<User>()
+
     private lateinit var nameLayout: TextInputLayout
     private lateinit var placeLayout: TextInputLayout
     private lateinit var playingDaysLayout: TextInputLayout
     private lateinit var addPlayer: ImageButton
+
+    private lateinit var recyclerView: RecyclerView
+    private var adapter: MakeTeamUsersAdapter? = null
 
     private lateinit var createTeam: FloatingActionButton
 
@@ -50,7 +57,6 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
-        job = Job()
         return inflater.inflate(R.layout.account_tm_make_team, container, false)
     }
 
@@ -62,19 +68,44 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
         playingDaysLayout = view.findViewById(R.id.account_tm_make_team_playing_day)
         createTeam = view.findViewById(R.id.account_tm_make_team_create)
         addPlayer = view.findViewById(R.id.account_tm_make_team_add_player_button)
+        recyclerView = view.findViewById(R.id.account_tm_make_team_players_recyclerView)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
+        setupRecycler()
+        getUser()
+        getTeam()
+        updateFields()
+        populateAdapter()
         setObservers()
         setListeners()
     }
 
+    override fun onResume()
+    {
+        super.onResume()
+        if(::team.isInitialized && team is ValidTeam)
+        {
+            val tmpTeam = (team as ValidTeam).self
+            if(users.size != tmpTeam.usersId.size)
+                viewModel.setTeamUsers(tmpTeam)
+        }
+    }
+
     override fun onDestroy()
     {
-        job.cancel()
         super.onDestroy()
+        adapter = null
+    }
+
+    private fun setupRecycler()
+    {
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        adapter = MakeTeamUsersAdapter(activity!!, users)
+        recyclerView.adapter = adapter
     }
 
     private fun setListeners()
@@ -96,34 +127,51 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
             val place = placeLayout.editText?.text.toString().trim()
             val playingDays = playingDaysLayout.editText?.text.toString().trim()
 
-
-            //TODO: [REFACTORING] add deleteErrors into AbstractBaseFragment
             deleteErrors()
-            viewModel.createTeam(
-                user,
-                name,
-                place,
-                playingDays)
+
+            MaterialDialog(activity!!)
+                .title(text = "Jste si jistý/á?")
+                .message(text = "Název týmu již nepůjde změnit. Zbytek můžete změnit libovolněkrát.")
+                .show {
+                    positiveButton(R.string.yes) {
+                        viewModel.createTeam(
+                            user,
+                            name,
+                            place,
+                            playingDays,
+                            team)
+                    }
+                    negativeButton(R.string.no)
+                }
         }
 
         addPlayer.setOnClickListener {
             if(::team.isInitialized && team is ValidTeam)
             {
                 val intent = Intent(activity!!, AddUserToTeamActivity::class.java).apply {
-                    putExtra(AddUserToTeamActivity.TEAM, (team as ValidTeam).self)
+                    putExtra(TEAM, (team as ValidTeam).self)
                 }
-                startActivity(intent)
+                startActivityForResult(intent, NEW_USER_CODE)
             }
             else(Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet."))
         }
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == NEW_USER_CODE && resultCode == RESULT_OK)
+        {
+            val team = data?.getParcelableExtra<Team>(TEAM)
+            team?.let {
+                mainActivityModel.setTeam(ValidTeam(it))
+            }
+        }
+    }
+
     private fun setObservers()
     {
-        getTeam()
-        getUser()
-        updateFields()
         confirmName()
         confirmPlace()
         confirmDays()
@@ -137,6 +185,23 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
             nameLayout.editText?.setText((team as ValidTeam).self.name)
             placeLayout.editText?.setText((team as ValidTeam).self.place)
             playingDaysLayout.editText?.setText((team as ValidTeam).self.playingDays.joinToString(", "))
+
+            nameLayout.editText?.text?.let {
+                if(it.isNotEmpty())
+                {
+                    nameLayout.editText?.isEnabled = false
+                    nameLayout.editText?.setTextColor(ContextCompat.getColor(activity!!, R.color.lightGrey))
+                }
+            }
+        }
+    }
+
+    private fun populateAdapter()
+    {
+        viewModel.getTeamUsers().observe(viewLifecycleOwner) { users ->
+            this.users.clear()
+            this.users.addAll(users)
+            adapter?.notifyDataSetChanged()
         }
     }
 
@@ -197,16 +262,14 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
         }
     }
 
-    private fun update(state: TeamState)
+    private fun update(team: TeamState)
     {
-        if(state is ValidTeam)
+        if(team is ValidTeam)
         {
-            user.teamId = state.self.id
-            launch {
-                UserManager.updateUser(user.id!!, mapOf("teamId" to user.teamId))
-            }
+            user.teamId = team.self.id
+            viewModel.updateUser(user, team.self)
             mainActivityModel.setUser(user)
-            mainActivityModel.setTeam(ValidTeam(state.self))
+            mainActivityModel.setTeam(ValidTeam(team.self))
         }
     }
 

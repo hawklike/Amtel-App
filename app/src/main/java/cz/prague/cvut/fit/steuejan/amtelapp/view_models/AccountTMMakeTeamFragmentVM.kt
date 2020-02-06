@@ -12,7 +12,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
@@ -39,23 +41,52 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun createTeam(user: User, name: String, place: String, days: String)
+    private val teamUsers = MutableLiveData<List<User>>()
+    fun getTeamUsers(): LiveData<List<User>> = teamUsers
+
+    /*---------------------------------------------------*/
+
+    fun createTeam(user: User, name: String, place: String, days: String, currentTeam: TeamState)
     {
         if(confirmInput(name, place, days))
         {
             viewModelScope.launch {
                 val _days = playingDaysState.value as ValidPlayingDays
+                val usersId = mutableListOf<String>().apply {
+                    if(currentTeam is ValidTeam)
+                    {
+                        if(currentTeam.self.usersId.isEmpty()) this.add(user.id!!)
+                        else this.addAll(currentTeam.self.usersId)
+                    }
+                }
 
                 val team = TeamManager.addTeam(
                     user.teamId,
                     name,
                     AuthManager.currentUser!!.uid,
                     _days.self,
-                    NameConverter.convertToFirstLetterBig(place))
+                    NameConverter.convertToFirstLetterBig(place),
+                    usersId)
 
                 if(team != null) teamState.value = ValidTeam(team)
                 else teamState.value = NoTeam
             }
+        }
+    }
+
+    fun setTeamUsers(team: Team)
+    {
+        viewModelScope.launch {
+            teamUsers.value = UserManager.findUsers(team.usersId)
+        }
+    }
+
+    fun updateUser(user: User, team: Team)
+    {
+        viewModelScope.launch {
+            UserManager.updateUser(user.id!!, mapOf(
+                "teamId" to user.teamId,
+                "teamName" to team.name))
         }
     }
 

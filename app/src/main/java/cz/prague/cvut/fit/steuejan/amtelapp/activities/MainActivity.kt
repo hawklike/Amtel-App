@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
+import androidx.activity.viewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.observe
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
@@ -18,6 +19,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.*
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -25,6 +27,8 @@ import kotlinx.coroutines.launch
 class MainActivity : AbstractBaseActivity()
 {
     override lateinit var job: Job
+
+    private val viewModel by viewModels<MainActivityVM>()
 
     private lateinit var drawer: Drawer
     lateinit var progressLayout: FrameLayout
@@ -54,7 +58,7 @@ class MainActivity : AbstractBaseActivity()
 
     private fun setToolbarTitle()
     {
-        mainActivityVM.getTitle().observe(this) { title ->
+        viewModel.getTitle().observe(this) { title ->
             setToolbarTitle(title)
         }
     }
@@ -68,15 +72,15 @@ class MainActivity : AbstractBaseActivity()
                 launch {
                     val user =  UserManager.findUser(firebaseUser.uid)
                     user?.let {
-                        mainActivityVM.setUserState(SignedUser(it))
-                        mainActivityVM.setUser(it)
+                        viewModel.setUserState(SignedUser(it))
+                        viewModel.setUser(it)
                         Log.i(TAG, "displayAccount(): $user currently logged in")
                     }
                 }
             }
         }
 
-        mainActivityVM.getUserState().observe(this) { user ->
+        viewModel.getUserState().observe(this) { user ->
             if(user is SignedUser)
             {
                 Log.i(TAG, "displayAccount(): ${user.self} is signed")
@@ -119,11 +123,11 @@ class MainActivity : AbstractBaseActivity()
             {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean
                 {
-                    mainActivityVM.setDrawerSelectedPosition(position)
+                    viewModel.setDrawerSelectedPosition(position)
                     when(drawerItem)
                     {
                         profile -> AuthManager.currentUser?.let {
-                            val user = mainActivityVM.getUserState().value
+                            val user = viewModel.getUserState().value
                             if(user is SignedUser) populateFragment(AccountFragment.newInstance())
                         } ?: populateFragment(LoginFragment.newInstance())
                         results -> populateFragment(ResultsFragment.newInstance())
@@ -137,12 +141,12 @@ class MainActivity : AbstractBaseActivity()
 
         drawer.drawerLayout.setStatusBarBackground(R.color.white)
         //restores option before configuration change (i.e rotation...)
-        drawer.setSelectionAtPosition(mainActivityVM.getDrawerSelectedPosition(), false)
+        drawer.setSelectionAtPosition(viewModel.getDrawerSelectedPosition(), false)
 
         if(savedInstanceState == null)
         {
             drawer.setSelection(profile)
-            mainActivityVM.setDrawerSelectedPosition(drawer.currentSelectedPosition)
+            viewModel.setDrawerSelectedPosition(drawer.currentSelectedPosition)
         }
     }
 

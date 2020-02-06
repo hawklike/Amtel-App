@@ -12,9 +12,9 @@ import kotlinx.coroutines.withContext
 
 object TeamManager
 {
-    suspend fun addTeam(id: String? = null, name: String, tmId: String, playingDays: List<String>, place: String): Team? = withContext(Dispatchers.IO)
+    suspend fun addTeam(id: String? = null, name: String, tmId: String, playingDays: List<String>, place: String, usersId: MutableList<String> = mutableListOf()): Team? = withContext(Dispatchers.IO)
     {
-        val team = Team(id = id, name = name, tmId = tmId, playingDays = playingDays, place = place)
+        val team = Team(id = id, name = name, tmId = tmId, playingDays = playingDays, place = place, usersId = usersId)
         return@withContext try
         {
             TeamDAO().insert(team)

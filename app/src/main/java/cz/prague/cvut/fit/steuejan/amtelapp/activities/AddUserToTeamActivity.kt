@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
+import android.app.Activity
 import android.os.Bundle
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -143,14 +144,9 @@ class AddUserToTeamActivity : AbstractBaseActivity()
             if(teamState is ValidTeam)
             {
                 deleteInput()
-                update(teamState.self)
+                setResult(Activity.RESULT_OK, intent.putExtra(TEAM, teamState.self))
             }
         }
-    }
-
-    private fun update(team: Team)
-    {
-        mainActivityVM.setTeam(ValidTeam(team))
     }
 
     private fun deleteInput()

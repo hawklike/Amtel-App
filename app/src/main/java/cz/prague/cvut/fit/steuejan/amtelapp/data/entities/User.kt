@@ -14,6 +14,7 @@ data class User(var id: String? = null,
                 var sex: Boolean = true,
                 var role: String = "",
                 var teamId: String? = null,
+                var teamName: String? = null,
                 var matchesId: List<String> = emptyList(),
                 var firstSign: Boolean = true
                 ) : Parcelable
