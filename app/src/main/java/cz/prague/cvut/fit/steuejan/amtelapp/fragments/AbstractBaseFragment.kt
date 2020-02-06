@@ -29,8 +29,7 @@ abstract class AbstractBaseFragment : Fragment(), CoroutineScope
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
-        val main = activity as MainActivity
-        main.progressLayout.visibility = View.INVISIBLE
+        setProgressBar(false)
     }
 
     protected fun setProgressBar(on: Boolean)

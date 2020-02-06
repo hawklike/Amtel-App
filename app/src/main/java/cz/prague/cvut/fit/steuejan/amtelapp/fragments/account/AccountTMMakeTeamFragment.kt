@@ -130,16 +130,11 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
             deleteErrors()
 
             MaterialDialog(activity!!)
-                .title(text = "Jste si jistý/á?")
-                .message(text = "Název týmu již nepůjde změnit. Zbytek můžete změnit libovolněkrát.")
+                .title(R.string.create_team_dialog_title)
+                .message(R.string.create_team_dialog_message)
                 .show {
                     positiveButton(R.string.yes) {
-                        viewModel.createTeam(
-                            user,
-                            name,
-                            place,
-                            playingDays,
-                            team)
+                        viewModel.createTeam(user, name, place, playingDays)
                     }
                     negativeButton(R.string.no)
                 }

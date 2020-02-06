@@ -29,12 +29,21 @@ class UserDAO : DAO
             .await()
     }
 
-    override suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Void?
+    override suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>)
     {
-        return Firebase.firestore
+        Firebase.firestore
             .collection("users")
             .document(documentId)
             .update(mapOfFieldsAndValues)
+            .await()
+    }
+
+    override suspend fun delete(documentId: String)
+    {
+        Firebase.firestore
+            .collection("users")
+            .document(documentId)
+            .delete()
             .await()
     }
 }

@@ -46,18 +46,26 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun createTeam(user: User, name: String, place: String, days: String, currentTeam: TeamState)
+    fun createTeam(user: User, name: String, place: String, days: String)
     {
         if(confirmInput(name, place, days))
         {
             viewModelScope.launch {
                 val _days = playingDaysState.value as ValidPlayingDays
+
                 val usersId = mutableListOf<String>().apply {
-                    if(currentTeam is ValidTeam)
-                    {
-                        if(currentTeam.self.usersId.isEmpty()) this.add(user.id!!)
-                        else this.addAll(currentTeam.self.usersId)
+                    user.teamId?.let {
+                        val team = TeamManager.findTeam(it)
+                        if(team is ValidTeam)
+                        {
+                            if(team.self.usersId.isEmpty()) this.add(user.id!!)
+                            else this.addAll(team.self.usersId)
+                        }
+                    } ?: let {
+                        this.add(user.id!!)
+                        teamUsers.value = listOf(user)
                     }
+
                 }
 
                 val team = TeamManager.addTeam(

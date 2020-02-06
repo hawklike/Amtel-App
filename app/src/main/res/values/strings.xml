@@ -72,4 +72,7 @@
     <string name="email_failure_message">Zadejte prosím validní email.</string>
     <string name="add_user_success_message_title">Hráč byl úspěšně přidán do týmu</string>
     <string name="add_user_failure_message_title">Hráče se nepodařilo přidat</string>
+    <string name="delete_user_confirmation_message">Opravdu chcete smazat hráče?</string>
+    <string name="create_team_dialog_title">Jste si jistý/á?</string>
+    <string name="create_team_dialog_message">Název týmu již nepůjde změnit. Zbytek můžete změnit libovolněkrát.</string>
 </resources>

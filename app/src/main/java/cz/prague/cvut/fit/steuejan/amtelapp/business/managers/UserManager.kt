@@ -77,5 +77,20 @@ object UserManager
         })
     }
 
+    suspend fun deleteUser(userId: String): Boolean = withContext(Dispatchers.IO)
+    {
+        return@withContext try
+        {
+            UserDAO().delete(userId)
+            Log.i(TAG, "deleteUser(): user with id $userId successfully deleted with")
+            true
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "deleteUser(): user with id $userId not deleted because $ex")
+            false
+        }
+    }
+
     private const val TAG = "UserManager"
 }

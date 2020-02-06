@@ -30,12 +30,17 @@ class TeamDAO : DAO
             .await()
     }
 
-    override suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Void?
+    override suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>)
     {
-        return Firebase.firestore
+        Firebase.firestore
             .collection("teams")
             .document(documentId)
             .update(mapOfFieldsAndValues)
             .await()
+    }
+
+    override suspend fun delete(documentId: String)
+    {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
