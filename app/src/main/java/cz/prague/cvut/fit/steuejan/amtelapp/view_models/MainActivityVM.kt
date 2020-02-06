@@ -1,9 +1,12 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
 
 class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
@@ -26,18 +29,46 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val user = SingleLiveEvent<UserState>()
+    private val userState = SingleLiveEvent<UserState>()
 
-    fun setUser(user: UserState)
+    fun setUserState(userState: UserState)
     {
-        this.user.value = user
+        this.userState.value = userState
     }
 
-    fun getUser(): LiveData<UserState> = user
+    fun getUserState(): LiveData<UserState> = userState
+
+    /*---------------------------------------------------*/
+
+    private val user = SingleLiveEvent<User>()
+
+    fun setUser(user: User)
+    {
+        this.user.value = user
+        Log.i(TAG, "setUser(): $user is set")
+    }
+
+    fun getUser(): LiveData<User> = user
+
+    /*---------------------------------------------------*/
+
+    private val team = SingleLiveEvent<TeamState>()
+
+    fun setTeam(team: TeamState)
+    {
+        this.team.value = team
+        Log.i(TAG, "setTeam(): $team is set")
+    }
+
+    fun getTeam(): LiveData<TeamState> = team
+
+    /*---------------------------------------------------*/
 
     companion object
     {
         const val TITLE = "title"
         const val DRAWER_POSITION = "position"
     }
+
+    private val TAG = "MainActivityVM"
 }

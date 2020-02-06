@@ -3,7 +3,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.activities
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -23,30 +23,23 @@ import kotlin.coroutines.CoroutineContext
 
 abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
 {
+    private val logoutIcon: ImageButton by lazy { findViewById<ImageButton>(R.id.toolbar_logout) }
+    protected val baseActivityVM by viewModels<AbstractBaseActivityVM>()
+
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job + handler
 
-    private lateinit var job: Job
+    protected open val job: Job = Job()
 
     private val handler = CoroutineExceptionHandler { _, exception ->
         Log.e(TAG, "$exception handled !")
     }
 
-    private val logoutIcon: ImageView by lazy { findViewById<ImageView>(R.id.toolbar_logout) }
-    protected val baseActivityVM by viewModels<AbstractBaseActivityVM>()
-
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        job = Job()
         setSupportActionBar(toolbar)
         handleLogout()
-    }
-
-    override fun onDestroy()
-    {
-        job.cancel()
-        super.onDestroy()
     }
 
     private fun handleLogout()
@@ -78,7 +71,7 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
         auth.signOut()
         val mainActivityModel by viewModels<MainActivityVM>()
         mainActivityModel.setTitle(getString(R.string.login))
-        mainActivityModel.setUser(NoUser)
+        mainActivityModel.setUserState(NoUser)
         baseActivityVM.setLogoutIconVisibility(false)
     }
 

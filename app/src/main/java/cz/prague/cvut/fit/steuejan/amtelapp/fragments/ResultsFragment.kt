@@ -18,6 +18,8 @@ class ResultsFragment : AbstractBaseFragment()
         return inflater.inflate(R.layout.fragment_results, container, false)
     }
 
+    override fun getName(): String = "ResultsFragment"
+
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)

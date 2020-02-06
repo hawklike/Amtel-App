@@ -1,0 +1,14 @@
+package cz.prague.cvut.fit.steuejan.amtelapp.data.entities
+
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+data class Team(var id: String? = null,
+                var name: String = "",
+                var tmId: String = "",
+                var playingDays: List<String> = emptyList(),
+                var place: String = "",
+                var usersId: MutableList<String> = mutableListOf(),
+                var matchesId: MutableList<String> = mutableListOf()
+                ) : Parcelable

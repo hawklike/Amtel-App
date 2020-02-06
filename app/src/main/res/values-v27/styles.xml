@@ -15,5 +15,7 @@
         <!-- White navigation bar-->
         <item name="android:windowLightNavigationBar">true</item>
         <item name="android:navigationBarColor">@color/white</item>
+        <!-- Custom animation between activities -->
+        <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
     </style>
 </resources>

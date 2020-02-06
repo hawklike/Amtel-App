@@ -1,7 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidEmail
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidPassword
+import cz.prague.cvut.fit.steuejan.amtelapp.states.NoUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.LoginFragmentVM
 
@@ -35,6 +35,8 @@ class LoginFragment : AbstractBaseFragment()
     {
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
+
+    override fun getName(): String = "LoginFragment"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
@@ -90,22 +92,11 @@ class LoginFragment : AbstractBaseFragment()
     {
         //TODO: add loading bar [1]
         viewModel.getUser().observe(viewLifecycleOwner) { user ->
-            val title: String
-            val message: String?
+            val dialog = viewModel.createAfterDialog(user)
+            val title = dialog.title
+            val message = dialog.message
 
-            if(user is SignedUser)
-            {
-                title = getString(R.string.user_login_success_title)
-                message = null
-                Log.i(TAG, "getUser(): login was successful - current user: $user")
-            }
-            else
-            {
-                title = getString(R.string.user_login_failure_title)
-                message = getString(R.string.user_login_failure_message)
-                passwordLayout.editText?.text?.clear()
-                Log.e(TAG, "getUser(): login not successful")
-            }
+            if(user is NoUser) passwordLayout.editText?.text?.clear()
 
             MaterialDialog(activity!!)
                 .title(text = title).also {
@@ -114,12 +105,17 @@ class LoginFragment : AbstractBaseFragment()
                 .show {
                     positiveButton(R.string.ok)
                     onDismiss {
-                        if(user is SignedUser) mainActivityModel.setUser(SignedUser(user.self))
+                        if(user is SignedUser)
+                        {
+                            mainActivityModel.setUserState(SignedUser(user.self, user.firstSign))
+                            mainActivityModel.setUser(user.self)
+                        }
                     }
                 }
         }
     }
 
+    @Suppress("PrivatePropertyName")
     private val TAG = "LoginFragment"
 
     private fun deleteErrors()

@@ -3,8 +3,8 @@ package cz.prague.cvut.fit.steuejan.amtelapp.activities
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
 import androidx.activity.viewModels
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.observe
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
@@ -21,21 +21,33 @@ import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MainActivity : AbstractBaseActivity()
 {
+    override lateinit var job: Job
+
     private val viewModel by viewModels<MainActivityVM>()
+
     private lateinit var drawer: Drawer
-    private lateinit var currentFragment: Fragment
+    lateinit var progressLayout: FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         setContentView(R.layout.activity_main)
+        progressLayout = findViewById(R.id.progressBar)
+        job = Job()
         super.onCreate(savedInstanceState)
 
         setObservers(savedInstanceState)
         createNavigationDrawer(savedInstanceState)
+    }
+
+    override fun onDestroy()
+    {
+        job.cancel()
+        super.onDestroy()
     }
 
     private fun setObservers(savedInstanceState: Bundle?)
@@ -53,32 +65,33 @@ class MainActivity : AbstractBaseActivity()
 
     private fun displayAccount(savedInstanceState: Bundle?)
     {
-        AuthManager.getCurrentUser()?.let { firebaseUser ->
+        progressLayout.visibility = View.VISIBLE
+        AuthManager.currentUser?.let { firebaseUser ->
             if(savedInstanceState == null)
             {
                 launch {
                     val user =  UserManager.findUser(firebaseUser.uid)
                     user?.let {
-                        viewModel.setUser(SignedUser(it))
+                        viewModel.setUserState(SignedUser(it))
+                        viewModel.setUser(it)
                         Log.i(TAG, "displayAccount(): $user currently logged in")
                     }
                 }
             }
         }
 
-        viewModel.getUser().observe(this) { user ->
-            Log.i(TAG, "getUser() observed")
+        viewModel.getUserState().observe(this) { user ->
             if(user is SignedUser)
             {
-                Log.i(TAG, "signed user")
+                Log.i(TAG, "displayAccount(): ${user.self} is signed")
                 if(::drawer.isInitialized)
                     drawer.updateName(0, StringHolder(getString(R.string.account)))
                 baseActivityVM.setLogoutIconVisibility(true)
-                populateFragment(AccountFragment.newInstance(user.self))
+                populateFragment(AccountFragment.newInstance())
             }
             else
             {
-                Log.i(TAG, "unsigned user")
+                Log.i(TAG, "displayAccount(): user unsigned")
                 if(::drawer.isInitialized)
                     drawer.updateName(0, StringHolder(getString(R.string.login)))
                 populateFragment(LoginFragment.newInstance())
@@ -113,9 +126,9 @@ class MainActivity : AbstractBaseActivity()
                     viewModel.setDrawerSelectedPosition(position)
                     when(drawerItem)
                     {
-                        profile -> AuthManager.getCurrentUser()?.let {
-                            val user = viewModel.getUser().value
-                            if(user is SignedUser) populateFragment(AccountFragment.newInstance(user.self))
+                        profile -> AuthManager.currentUser?.let {
+                            val user = viewModel.getUserState().value
+                            if(user is SignedUser) populateFragment(AccountFragment.newInstance())
                         } ?: populateFragment(LoginFragment.newInstance())
                         results -> populateFragment(ResultsFragment.newInstance())
                         schedule -> populateFragment(ScheduleFragment.newInstance())
@@ -137,10 +150,10 @@ class MainActivity : AbstractBaseActivity()
         }
     }
 
-    private fun populateFragment(fragment: Fragment)
+    private fun populateFragment(fragment: AbstractBaseFragment)
     {
-        currentFragment = fragment
-        Log.i(TAG, "fragment populated")
+        progressLayout.visibility = View.VISIBLE
+        Log.i(TAG, "${fragment.getName()} populated")
         supportFragmentManager.commit {
             replace(R.id.main_container, fragment)
         }

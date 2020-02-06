@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class AbstractBaseActivityVM() : ViewModel()
+class AbstractBaseActivityVM : ViewModel()
 {
     private val logoutIconVisibility = MutableLiveData<Boolean>()
 

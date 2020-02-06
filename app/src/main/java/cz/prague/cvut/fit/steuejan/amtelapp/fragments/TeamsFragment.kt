@@ -18,6 +18,8 @@ class TeamsFragment : AbstractBaseFragment()
         return inflater.inflate(R.layout.fragment_teams, container, false)
     }
 
+    override fun getName(): String = "TeamsFragment"
+
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)

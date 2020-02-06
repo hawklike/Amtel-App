@@ -1,17 +1,17 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
-import android.content.Context
 import android.util.Log
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 
 object EmailSender
 {
     //TODO: refactor to a nicer code
     //TODO: hash a password
-    fun sendVerificationEmail(context: Context, mailTo: String, genPassword: String)
+    fun sendVerificationEmail(mailTo: String, genPassword: String)
     {
         Firebase.firestore
             .collection("email_password")
@@ -20,12 +20,12 @@ object EmailSender
             .addOnSuccessListener { password ->
                 if(password != null)
                 {
-                    BackgroundMail.newBuilder(context)
+                    BackgroundMail.newBuilder(App.context)
                         .withUsername("noreply.amtelopava@gmail.com")
                         .withPassword(password.data?.get("password").toString())
                         .withMailTo(mailTo)
                         .withType(BackgroundMail.TYPE_PLAIN)
-                        .withSubject(context.getString(R.string.verificationEmail_subject))
+                        .withSubject(App.context.getString(R.string.verificationEmail_subject))
                         .withBody(createVerificationTemplate(mailTo, genPassword))
                         .withOnSuccessCallback(object : BackgroundMail.OnSendingCallback
                         {
@@ -49,9 +49,9 @@ object EmailSender
 
    private fun createVerificationTemplate(email: String, password: String): String
    {
-       val head = "Dobrý den,\nbyl Vám udělen přístup do aplikace AMTEL Opava. Vaše přiřazená role je vedoucí týmu. Pro přihlášení zadejte v aplikaci následující kombinaci:\n\n"
+       val head = App.context.getString(R.string.autoEmail_template_head)
        val body = "email: $email\nheslo: $password\n\n"
-       val foot = "Heslo Vám bylo náhodně vygenerováno. Můžete si jej změnit v aplikaci.\n\nS přáním příjemného dne,\nMgr. Jiří Vaněk\n\nPoznámka: Tento email je automaticky vygenerovaný, neodpovídejte na něj prosím."
+       val foot = App.context.getString(R.string.autoEmail_template_foot)
        return "$head$body$foot"
    }
 
