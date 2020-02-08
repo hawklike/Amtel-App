@@ -38,7 +38,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     private val viewModel by viewModels<AccountTMMakeTeamFragmentVM>()
 
-    //TODO: get team from database in the fragment's view model
+    //TODO: [REFACTORING] get team from database in the fragment's view model
     private lateinit var team: TeamState
     private lateinit var user: User
 
@@ -47,13 +47,13 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
     private lateinit var nameLayout: TextInputLayout
     private lateinit var placeLayout: TextInputLayout
     private lateinit var playingDaysLayout: TextInputLayout
+    private lateinit var createTeam: FloatingActionButton
+
     private lateinit var addPlayer: ImageButton
 
     private var recyclerView: RecyclerView? = null
-    //TODO: use firestore recycler view
+    //TODO: [REFACTORING] use firestore recycler view
     private var adapter: ShowUserSimpleAdapter? = null
-
-    private lateinit var createTeam: FloatingActionButton
 
     override fun getName(): String = "AccountTMMakeTeamFragment"
 
@@ -156,6 +156,14 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     }
 
+    private fun setObservers()
+    {
+        confirmName()
+        confirmPlace()
+        confirmDays()
+        isTeamCreated()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
     {
         super.onActivityResult(requestCode, resultCode, data)
@@ -166,14 +174,6 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
                 mainActivityModel.setTeam(ValidTeam(it))
             }
         }
-    }
-
-    private fun setObservers()
-    {
-        confirmName()
-        confirmPlace()
-        confirmDays()
-        isTeamCreated()
     }
 
     private fun updateFields()
@@ -245,8 +245,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
                 .title(text = title)
                 .show {
                     positiveButton(R.string.ok)
-                    onDismiss {
-                    }
+                    onDismiss {}
                 }
 
             update(teamState)

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
 
@@ -42,10 +43,10 @@ class AccountBossAddTMFragmentVM : ViewModel()
         var cName = ""
         var cSurname = ""
 
-        if(name.isNotEmpty()) cName = NameConverter.convertToFirstLetterBig(name)
+        if(name.isNotEmpty()) cName = name.firstLetterUpperCase()
         else okName = false
 
-        if(surname.isNotEmpty()) cSurname = NameConverter.convertToFirstLetterBig(surname)
+        if(surname.isNotEmpty()) cSurname = surname.firstLetterUpperCase()
         else okSurname = false
 
         if(EmailState.validate(email) is InvalidEmail) okEmail = false

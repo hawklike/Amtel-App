@@ -12,9 +12,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.UsersAdapterVM
 
 class ShowUserSimpleAdapter(private val context: Context, private val list: MutableList<User>) : RecyclerView.Adapter<ShowUserSimpleAdapter.ViewHolder>()
@@ -62,11 +63,11 @@ class ShowUserSimpleAdapter(private val context: Context, private val list: Muta
     override fun onBindViewHolder(holder: ViewHolder, position: Int)
     {
         val user = getItem(position)
-        if(UserRole.toRole(user.role) == UserRole.TEAM_MANAGER) holder.deleteButton.visibility = View.GONE
+        if(user.role.toRole() == UserRole.TEAM_MANAGER) holder.deleteButton.visibility = View.GONE
 
         holder.fullName.text = "${user.name} ${user.surname}"
         holder.email.text = user.email
-        user.birthdate?.let { holder.birthdate.text = DateUtil.toString(it) }
+        user.birthdate?.let { holder.birthdate.text = it.toMyString() }
     }
 
 }

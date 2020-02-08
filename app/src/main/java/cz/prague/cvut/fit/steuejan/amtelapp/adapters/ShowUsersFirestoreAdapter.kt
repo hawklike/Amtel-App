@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
@@ -15,13 +16,14 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.UsersAdapterVM
 
-class ShowAllUsersFirebaseAdapter(private val context: Context, options: FirestoreRecyclerOptions<User>)
-    : FirestoreRecyclerAdapter<User, ShowAllUsersFirebaseAdapter.ViewHolder>(options)
+class ShowUsersFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<User>)
+    : FirestoreRecyclerAdapter<User, ShowUsersFirestoreAdapter.ViewHolder>(options)
 {
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(UsersAdapterVM::class.java)
 
@@ -47,6 +49,10 @@ class ShowAllUsersFirebaseAdapter(private val context: Context, options: Firesto
                         negativeButton(R.string.no)
                     }
             }
+
+            editButton.setOnClickListener {
+                Toast.makeText(context, "Tato možnost není zatím funkční.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -60,17 +66,17 @@ class ShowAllUsersFirebaseAdapter(private val context: Context, options: Firesto
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int, user: User)
     {
-        if(UserRole.toRole(user.role) == UserRole.HEAD_OF_LEAGUE)
+        if(user.role.toRole() == UserRole.HEAD_OF_LEAGUE)
             holder.deleteButton.visibility = View.GONE
         holder.team.visibility = View.VISIBLE
         holder.editButton.visibility = View.VISIBLE
 
         holder.fullName.text = "${user.surname} ${user.name}"
-        if(UserRole.toRole(user.role) == UserRole.TEAM_MANAGER)
+        if(user.role.toRole() == UserRole.TEAM_MANAGER)
             holder.fullName.setTextColor(ContextCompat.getColor(context, R.color.blue))
 
         holder.email.text = user.email
-        user.birthdate?.let { holder.birthdate.text = DateUtil.toString(it) }
+        user.birthdate?.let { holder.birthdate.text = it.toMyString() }
         user.teamName?.let { holder.team.text = it }
     }
 

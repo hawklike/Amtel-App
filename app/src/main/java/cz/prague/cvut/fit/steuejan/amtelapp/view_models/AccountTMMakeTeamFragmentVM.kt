@@ -13,7 +13,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
@@ -78,7 +78,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
                     name,
                     AuthManager.currentUser!!.uid,
                     _days.self,
-                    NameConverter.convertToFirstLetterBig(place),
+                    place.firstLetterUpperCase(),
                     usersId
                 )
 

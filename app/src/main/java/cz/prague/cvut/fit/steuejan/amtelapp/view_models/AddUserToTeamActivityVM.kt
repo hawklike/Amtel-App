@@ -10,8 +10,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
@@ -53,13 +53,13 @@ class AddUserToTeamActivityVM : ViewModel()
             viewModelScope.launch {
                 var user: User? = User(
                     null,
-                    NameConverter.convertToFirstLetterBig(name),
-                    NameConverter.convertToFirstLetterBig(surname),
+                    name.firstLetterUpperCase(),
+                    surname.firstLetterUpperCase(),
                     email,
                     null,
-                    DateUtil.stringToDate(birthdate),
-                    Sex.toBoolean(sex),
-                    UserRole.toString(UserRole.PLAYER),
+                    birthdate.toDate(),
+                    sex.toBoolean(),
+                    UserRole.PLAYER.toString(),
                     team.id,
                     team.name
                 )

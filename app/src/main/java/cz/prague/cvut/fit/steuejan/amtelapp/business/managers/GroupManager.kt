@@ -10,7 +10,7 @@ object GroupManager
 {
     private const val TAG = "GroupManager"
 
-    suspend fun addTeam(group: Group): Group? = withContext(Dispatchers.IO)
+    suspend fun addGroup(group: Group): Group? = withContext(Dispatchers.IO)
     {
         return@withContext try
         {

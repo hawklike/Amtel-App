@@ -2,8 +2,6 @@ package cz.prague.cvut.fit.steuejan.amtelapp.data.dao
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 
 class UserDAO : DAO
@@ -23,10 +21,5 @@ class UserDAO : DAO
 
     override suspend fun delete(documentId: String): Unit = delete(collection, documentId)
 
-    fun retrieveAll(orderBy: String): Query
-    {
-        return Firebase.firestore
-            .collection(collection)
-            .orderBy(orderBy, Query.Direction.ASCENDING)
-    }
+    fun retrieveAll(orderBy: String): Query = retrieveAll(collection, orderBy)
 }

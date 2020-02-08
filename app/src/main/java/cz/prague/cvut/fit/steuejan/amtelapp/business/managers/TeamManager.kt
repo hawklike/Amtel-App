@@ -5,6 +5,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.TeamDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
@@ -59,17 +60,22 @@ object TeamManager
         }
     }
 
+    fun retrieveAllTeams(orderBy: TeamOrderBy = TeamOrderBy.NAME): Query
+    {
+        var query: Query? = null
+        TeamOrderBy.values().forEach {
+            if(orderBy == it) query = TeamDAO().retrieveAll(it.toString())
+        }
+        return query!!
+    }
+
     fun retrieveAllUsers(teamId: String, orderBy: UserOrderBy = UserOrderBy.SURNAME): Query
     {
-        val dao = TeamDAO()
-        return when(orderBy)
-        {
-            UserOrderBy.NAME -> dao.retrieveAllUsers("name", teamId)
-            UserOrderBy.SURNAME -> dao.retrieveAllUsers("surname", teamId)
-            UserOrderBy.TEAM -> dao.retrieveAllUsers("teamName", teamId)
-            UserOrderBy.EMAIL -> dao.retrieveAllUsers("email", teamId)
-            UserOrderBy.SEX -> dao.retrieveAllUsers("sex", teamId)
+        var query: Query? = null
+        UserOrderBy.values().forEach {
+            if(orderBy == it) query = TeamDAO().retrieveAllUsers(it.toString(), teamId)
         }
+        return query!!
     }
 
     private const val TAG = "TeamManager"

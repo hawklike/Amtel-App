@@ -23,6 +23,8 @@ class TeamDAO : DAO
 
     override suspend fun delete(documentId: String): Unit = delete(collection, documentId)
 
+    fun retrieveAll(orderBy: String): Query = retrieveAll(collection, orderBy)
+
     fun retrieveAllUsers(orderBy: String, teamId: String): Query
     {
         return Firebase.firestore

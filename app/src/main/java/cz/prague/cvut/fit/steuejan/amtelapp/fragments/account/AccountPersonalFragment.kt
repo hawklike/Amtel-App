@@ -15,9 +15,11 @@ import com.afollestad.materialdialogs.datetime.datePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toSex
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountPersonalFragmentVM
@@ -103,14 +105,14 @@ class AccountPersonalFragment : AbstractBaseFragment()
         fullNameLayout.editText?.setText("${user.name} ${user.surname}")
 
         user.birthdate?.let {
-            birthdateLayout.editText?.setText(DateUtil.toString(it))
+            birthdateLayout.editText?.setText(it.toMyString())
         }
 
         user.phone?.let {
             phoneNumberLayout.editText?.setText(it)
         }
 
-        val rb: RadioButton = if(Sex.toSex(user.sex) == Sex.MAN) view!!.findViewById(R.id.account_personal_personal_information_sex_man)
+        val rb: RadioButton = if(user.sex.toSex() == Sex.MAN) view!!.findViewById(R.id.account_personal_personal_information_sex_man)
         else view!!.findViewById(R.id.account_personal_personal_information_sex_woman)
         rb.isChecked = true
     }
@@ -142,7 +144,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
             {
                 MaterialDialog(activity!!).show {
                     datePicker { _, datetime ->
-                        val dateText = DateUtil.toString(datetime)
+                        val dateText = datetime.toMyString()
                         birthdateLayout.editText?.setText(dateText)
                     }
                 }
@@ -172,9 +174,9 @@ class AccountPersonalFragment : AbstractBaseFragment()
         {
             user.name = state.name
             user.surname = state.surname
-            user.birthdate = DateUtil.stringToDate(state.birthdate)
+            user.birthdate = state.birthdate.toDate()
             user.phone = state.phoneNumber
-            user.sex = Sex.toBoolean(state.sex)
+            user.sex = state.sex.toBoolean()
             mainActivityModel.setUser(user)
         }
     }

@@ -1,18 +1,15 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.data.util
 
-enum class UserOrderBy
+enum class TeamOrderBy
 {
-    NAME, SURNAME, TEAM, EMAIL, SEX;
+    NAME, GROUP;
 
     override fun toString(): String
     {
         return when(this)
         {
             NAME -> "name"
-            SURNAME -> "surname"
-            TEAM -> "teamName"
-            EMAIL -> "email"
-            SEX -> "sex"
+            GROUP -> "group"
         }
     }
 }

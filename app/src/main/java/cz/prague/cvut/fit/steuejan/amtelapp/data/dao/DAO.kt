@@ -1,6 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.data.dao
 
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -47,5 +48,12 @@ interface DAO
             .document(documentId)
             .delete()
             .await()
+    }
+
+    fun retrieveAll(collectionName: String, orderBy: String): Query
+    {
+        return Firebase.firestore
+            .collection(collectionName)
+            .orderBy(orderBy, Query.Direction.ASCENDING)
     }
 }

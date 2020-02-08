@@ -6,18 +6,6 @@ import java.util.*
 
 object DateUtil
 {
-    fun toString(date: Date, format: String = "dd.MM.yyyy"): String
-    {
-        val formatter = SimpleDateFormat(format, Locale.getDefault())
-        return formatter.format(date)
-    }
-
-    fun toString(date: Calendar, format: String = "dd.MM.yyyy"): String
-    {
-        val formatter = SimpleDateFormat(format, Locale.getDefault())
-        return formatter.format(date.time)
-    }
-
     fun validateDate(date: String, dateFormat: String = "dd.MM.yyyy"): Boolean
     {
         return try
@@ -34,17 +22,23 @@ object DateUtil
     fun validateBirthdate(date: String, dateFormat: String = "dd.MM.yyyy"): Boolean
     {
         if(!validateDate(date, dateFormat)) throw Exception("Invalid date")
-        return stringToDate(dateToString(Date(), dateFormat), dateFormat) >= stringToDate(date, dateFormat)
+        return Date().toMyString(dateFormat).toDate(dateFormat) >= date.toDate(dateFormat)
     }
+}
 
-    fun stringToDate(date: String, dateFormat: String = "dd.MM.yyyy"): Date
-    {
-        return SimpleDateFormat(dateFormat, Locale.getDefault()).parse(date)
-    }
+fun Date.toMyString(format: String = "dd.MM.yyyy"): String
+{
+    val formatter = SimpleDateFormat(format, Locale.getDefault())
+    return formatter.format(this)
+}
 
-    private fun dateToString(date: Date, dateFormat: String): String
-    {
-        val sdf = SimpleDateFormat(dateFormat, Locale.getDefault())
-        return sdf.format(date)
-    }
+fun Calendar.toMyString(format: String = "dd.MM.yyyy"): String
+{
+    val formatter = SimpleDateFormat(format, Locale.getDefault())
+    return formatter.format(this.time)
+}
+
+fun String.toDate(dateFormat: String = "dd.MM.yyyy"): Date
+{
+    return SimpleDateFormat(dateFormat, Locale.getDefault()).parse(this)
 }

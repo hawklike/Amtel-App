@@ -10,8 +10,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
@@ -89,11 +89,11 @@ class AccountPersonalFragmentVM : ViewModel()
 
             viewModelScope.launch {
                 val success = UserManager.updateUser(AuthManager.currentUser!!.uid, mapOf(
-                    "name" to NameConverter.convertToFirstLetterBig(name),
-                    "surname" to NameConverter.convertToFirstLetterBig(surname),
-                    "birthdate" to DateUtil.stringToDate(birthdate),
+                    "name" to name.firstLetterUpperCase(),
+                    "surname" to surname.firstLetterUpperCase(),
+                    "birthdate" to birthdate.toDate(),
                     "phone" to phone,
-                    "sex" to Sex.toBoolean(sex)
+                    "sex" to sex.toBoolean()
                 ))
 
                 if(success) personalInfoChange.value = PersonalInfoSuccess(name, surname, birthdate, phone, sex)
