@@ -14,6 +14,7 @@ import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
@@ -139,7 +140,8 @@ class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
 
                 val (name, surname, email) = registration.credentials
                 launch {
-                    UserManager.addUser(name, surname, email, UserRole.TEAM_MANAGER, id = registration.uid)
+                    val user = User(registration.uid, name, surname, email, role = UserRole.toString(UserRole.TEAM_MANAGER))
+                    UserManager.addUser(user)
                     EmailSender.sendVerificationEmail(email, registration.password)
                 }
             }

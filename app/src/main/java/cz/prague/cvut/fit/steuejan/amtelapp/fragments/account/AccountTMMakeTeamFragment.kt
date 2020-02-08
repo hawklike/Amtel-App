@@ -38,6 +38,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     private val viewModel by viewModels<AccountTMMakeTeamFragmentVM>()
 
+    //TODO: get team from database in the fragment's view model
     private lateinit var team: TeamState
     private lateinit var user: User
 
@@ -49,6 +50,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
     private lateinit var addPlayer: ImageButton
 
     private var recyclerView: RecyclerView? = null
+    //TODO: use firestore recycler view
     private var adapter: ShowUserSimpleAdapter? = null
 
     private lateinit var createTeam: FloatingActionButton

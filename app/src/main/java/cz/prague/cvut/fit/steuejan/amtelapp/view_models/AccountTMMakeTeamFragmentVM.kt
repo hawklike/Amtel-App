@@ -73,13 +73,16 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
                 }
 
-                val team = TeamManager.addTeam(
+                var team: Team? = Team(
                     user.teamId,
                     name,
                     AuthManager.currentUser!!.uid,
                     _days.self,
                     NameConverter.convertToFirstLetterBig(place),
-                    usersId)
+                    usersId
+                )
+
+                team = TeamManager.addTeam(team!!)
 
                 if(team != null) teamState.value = ValidTeam(team)
                 else teamState.value = NoTeam

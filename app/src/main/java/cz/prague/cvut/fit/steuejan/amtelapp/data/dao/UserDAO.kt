@@ -5,7 +5,6 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import kotlinx.coroutines.tasks.await
 
 class UserDAO : DAO
 {
@@ -13,44 +12,18 @@ class UserDAO : DAO
 
     override suspend fun <T> insert(entity: T)
     {
-        if(entity is User)
-        {
-            val collection = Firebase.firestore.collection(collection)
-            val document = entity.id?.let { collection.document(it) } ?: collection.document()
-            entity.id = document.id
-            document.set(entity).await()
-        }
+        if(entity is User) insert(collection, entity)
         else throw IllegalArgumentException("UserDAO::insert(): entity is not type of User and should be")
     }
 
-    override suspend fun find(id: String): DocumentSnapshot
-    {
-        return Firebase.firestore
-            .collection(collection)
-            .document(id)
-            .get()
-            .await()
-    }
+    override suspend fun find(id: String): DocumentSnapshot = find(collection, id)
 
-    override suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>)
-    {
-        Firebase.firestore
-            .collection(collection)
-            .document(documentId)
-            .update(mapOfFieldsAndValues)
-            .await()
-    }
+    override suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Unit
+            = update(collection, documentId, mapOfFieldsAndValues)
 
-    override suspend fun delete(documentId: String)
-    {
-        Firebase.firestore
-            .collection(collection)
-            .document(documentId)
-            .delete()
-            .await()
-    }
+    override suspend fun delete(documentId: String): Unit = delete(collection, documentId)
 
-    override fun retrieveAll(orderBy: String): Query
+    fun retrieveAll(orderBy: String): Query
     {
         return Firebase.firestore
             .collection(collection)

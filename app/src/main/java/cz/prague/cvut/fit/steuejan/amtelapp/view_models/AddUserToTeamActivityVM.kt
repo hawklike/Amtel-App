@@ -13,6 +13,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
@@ -50,15 +51,20 @@ class AddUserToTeamActivityVM : ViewModel()
         if(confirmUser(name, surname, email, birthdate))
         {
             viewModelScope.launch {
-                val user = UserManager.addUser(
+                var user: User? = User(
+                    null,
                     NameConverter.convertToFirstLetterBig(name),
                     NameConverter.convertToFirstLetterBig(surname),
                     email,
-                    UserRole.PLAYER,
-                    sex = sex,
-                    birthdate = DateUtil.stringToDate(birthdate),
-                    teamId = team.id,
-                    teamName = team.name)
+                    null,
+                    DateUtil.stringToDate(birthdate),
+                    Sex.toBoolean(sex),
+                    UserRole.toString(UserRole.PLAYER),
+                    team.id,
+                    team.name
+                )
+
+                user = UserManager.addUser(user!!)
 
                 if(user != null)
                 {

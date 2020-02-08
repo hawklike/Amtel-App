@@ -5,29 +5,14 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.*
 
 object UserManager
 {
-    suspend fun addUser(name: String, surname: String, email: String, role: UserRole, id: String? = null,
-                        sex: Sex = Sex.MAN, birthdate: Date? = null, teamId: String? = null, teamName: String? = null): User? = withContext(Dispatchers.IO)
+    suspend fun addUser(user: User): User? = withContext(Dispatchers.IO)
     {
-        val user = User(
-            id,
-            name,
-            surname,
-            email,
-            birthdate = birthdate,
-            sex = Sex.toBoolean(sex),
-            role = UserRole.toString(role),
-            teamId = teamId,
-            teamName = teamName)
-
         return@withContext try
         {
             UserDAO().insert(user)
