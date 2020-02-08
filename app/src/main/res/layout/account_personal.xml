@@ -1,179 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:fillViewport="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
-        android:id="@+id/account_personal_change_password"
-        android:layout_width="match_parent"
+    <RelativeLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/rounded_object">
+        xmlns:tools="http://schemas.android.com/tools">
 
-        <TextView
-            android:id="@+id/account_personal_text"
+        <RelativeLayout
+            android:id="@+id/account_personal_change_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="center"
-            android:text="@string/change_password"
-            android:textColor="@color/darkGrey"
-            android:textSize="16sp" />
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_object">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/account_personal_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_below="@id/account_personal_text"
-            android:hint="@string/new_password"
-            app:errorEnabled="true"
-            app:counterEnabled="true"
-            app:counterMaxLength="30"
-            app:counterOverflowTextAppearance="@style/TextLimitError"
-            app:errorTextColor="@android:color/holo_red_dark">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/account_personal_password_editText1"
-                style="@style/TextInputEditTextStyle"
+            <TextView
+                android:id="@+id/account_personal_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:maxLines="1" />
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:text="@string/change_password"
+                android:textColor="@color/darkGrey"
+                android:textSize="16sp" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/account_personal_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_below="@id/account_personal_text"
+                android:hint="@string/new_password"
+                app:errorEnabled="true"
+                app:counterEnabled="true"
+                app:counterMaxLength="30"
+                app:counterOverflowTextAppearance="@style/TextLimitError"
+                app:errorTextColor="@android:color/holo_red_dark">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/account_personal_add_password_button"
-            style="@style/FloatingActionButton"
-            android:layout_width="wrap_content"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/account_personal_password_editText1"
+                    style="@style/TextInputEditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/account_personal_add_password_button"
+                style="@style/FloatingActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/account_personal_password"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:srcCompat="@drawable/ic_check_white_24dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/account_personal_personal_information"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/account_personal_password"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            app:srcCompat="@drawable/ic_check_white_24dp" />
+            android:layout_below="@id/account_personal_change_password"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_object">
+
+            <TextView
+                android:id="@+id/account_personal_personal_information_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:text="@string/personal_information"
+                android:textColor="@color/darkGrey"
+                android:textSize="16sp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/account_personal_personal_information_fullName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_below="@id/account_personal_personal_information_text"
+                android:hint="@string/full_name"
+                app:errorEnabled="true"
+                app:errorTextColor="@android:color/holo_red_dark">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/account_personal_password_personal_information_editText1"
+                    style="@style/TextInputEditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/account_personal_personal_information_birthdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_below="@id/account_personal_personal_information_fullName"
+                android:hint="@string/birthdate"
+                app:errorEnabled="true"
+                app:errorTextColor="@android:color/holo_red_dark">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/account_personal_password_personal_information_editText0"
+                    style="@style/TextInputEditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="date"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/account_personal_personal_information_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_below="@id/account_personal_personal_information_birthdate"
+                android:hint="@string/phone_number"
+                app:errorEnabled="true"
+                app:errorTextColor="@android:color/holo_red_dark">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/account_personal_password_personal_information_editText2"
+                    style="@style/TextInputEditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <RadioGroup
+                android:id="@+id/account_personal_personal_information_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/account_personal_personal_information_phone"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="24dp">
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/account_personal_personal_information_sex_man"
+                    android:text="@string/man"
+                    android:paddingEnd="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:textColor="@color/radio_button"
+                    android:theme="@style/CheckBoxStyle"
+                    tools:ignore="RtlSymmetry" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/account_personal_personal_information_sex_woman"
+                    android:text="@string/woman"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/CheckBoxStyle"
+                    android:textColor="@color/radio_button"
+                    android:layout_weight="1" />
+
+            </RadioGroup>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/account_personal_personal_information_add_button"
+                style="@style/FloatingActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/account_personal_personal_information_phone"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:srcCompat="@drawable/ic_add_white_24dp" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/account_personal_personal_information"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/account_personal_change_password"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/rounded_object">
-
-        <TextView
-            android:id="@+id/account_personal_personal_information_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="center"
-            android:text="@string/personal_information"
-            android:textColor="@color/darkGrey"
-            android:textSize="16sp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/account_personal_personal_information_birthdate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_below="@id/account_personal_personal_information_text"
-            android:hint="@string/birthdate"
-            app:errorEnabled="true"
-            app:errorTextColor="@android:color/holo_red_dark">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/account_personal_password_personal_information_editText1"
-                style="@style/TextInputEditTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="date"
-                android:maxLines="1" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/account_personal_personal_information_phone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_below="@id/account_personal_personal_information_birthdate"
-            android:hint="@string/phone_number"
-            app:errorEnabled="true"
-            app:errorTextColor="@android:color/holo_red_dark">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/account_personal_password_personal_information_editText2"
-                style="@style/TextInputEditTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:maxLines="1" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <RadioGroup
-            android:id="@+id/account_personal_personal_information_sex"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_below="@id/account_personal_personal_information_phone"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="24dp">
-
-            <androidx.appcompat.widget.AppCompatRadioButton
-                android:id="@+id/account_personal_personal_information_sex_man"
-                android:text="@string/man"
-                android:paddingEnd="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true"
-                android:textColor="@color/radio_button"
-                android:theme="@style/CheckBoxStyle"
-                tools:ignore="RtlSymmetry" />
-
-            <androidx.appcompat.widget.AppCompatRadioButton
-                android:id="@+id/account_personal_personal_information_sex_woman"
-                android:text="@string/woman"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:theme="@style/CheckBoxStyle"
-                android:textColor="@color/radio_button"
-                android:layout_weight="1" />
-
-        </RadioGroup>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/account_personal_personal_information_add_button"
-            style="@style/FloatingActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/account_personal_personal_information_phone"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            app:srcCompat="@drawable/ic_add_white_24dp" />
-
-    </RelativeLayout>
-
-</RelativeLayout>
+</ScrollView>

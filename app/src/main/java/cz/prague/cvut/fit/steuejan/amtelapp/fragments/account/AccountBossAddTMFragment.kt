@@ -31,7 +31,7 @@ class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
         fun newInstance(): AccountBossAddTMFragment = AccountBossAddTMFragment()
     }
 
-    override lateinit var job: Job
+    override val job: Job = Job()
 
     private val viewModel by viewModels<AccountBossAddTMFragmentVM>()
 
@@ -43,7 +43,6 @@ class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
-        job = Job()
         return inflater.inflate(R.layout.account_boss_add_tm, container, false)
     }
 

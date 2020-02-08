@@ -75,4 +75,6 @@
     <string name="delete_user_confirmation_message">Opravdu chcete smazat hráče?</string>
     <string name="create_team_dialog_title">Jste si jistý/á?</string>
     <string name="create_team_dialog_message">Název týmu již nepůjde změnit. Zbytek můžete změnit libovolněkrát.</string>
+    <string name="full_name">Jméno a příjmení</string>
+    <string name="invalid_fullName_error">Vyplňte prosím jméno a příjmení</string>
 </resources>

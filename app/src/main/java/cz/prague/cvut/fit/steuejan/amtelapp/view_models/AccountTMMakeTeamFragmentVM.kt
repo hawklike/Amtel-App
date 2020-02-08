@@ -22,27 +22,32 @@ import kotlinx.coroutines.launch
 class AccountTMMakeTeamFragmentVM : ViewModel()
 {
     private val nameState = MutableLiveData<NameState>()
-    fun confirmName(): LiveData<NameState> = nameState
+    val name: LiveData<NameState> = nameState
 
     /*---------------------------------------------------*/
 
     private val placeState = MutableLiveData<PlaceState>()
-    fun confirmPlace(): LiveData<PlaceState> = placeState
+    val place: LiveData<PlaceState> = placeState
 
     /*---------------------------------------------------*/
 
     private val playingDaysState = MutableLiveData<PlayingDaysState>()
-    fun confirmPlayingDays(): LiveData<PlayingDaysState> = playingDaysState
+    val playingDays: LiveData<PlayingDaysState> = playingDaysState
 
     /*---------------------------------------------------*/
 
     private val teamState = SingleLiveEvent<TeamState>()
-    fun isTeamCreated(): LiveData<TeamState> = teamState
+    val newTeam: LiveData<TeamState> = teamState
 
     /*---------------------------------------------------*/
 
-    private val teamUsers = MutableLiveData<List<User>>()
-    fun getTeamUsers(): LiveData<List<User>> = teamUsers
+    private val _team = MutableLiveData<Team>()
+    val team: LiveData<Team> = _team
+
+    /*---------------------------------------------------*/
+
+    private val _teamUsers = MutableLiveData<List<User>>()
+    val teamUsers: LiveData<List<User>> = _teamUsers
 
     /*---------------------------------------------------*/
 
@@ -63,7 +68,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
                         }
                     } ?: let {
                         this.add(user.id!!)
-                        teamUsers.value = listOf(user)
+                        _teamUsers.value = listOf(user)
                     }
 
                 }
@@ -85,7 +90,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
     fun setTeamUsers(team: Team)
     {
         viewModelScope.launch {
-            teamUsers.value = UserManager.findUsers(team.usersId)
+            _teamUsers.value = UserManager.findUsers(team.usersId)
         }
     }
 

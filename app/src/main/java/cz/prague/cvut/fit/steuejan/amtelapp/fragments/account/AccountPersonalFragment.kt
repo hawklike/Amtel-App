@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,9 +36,10 @@ class AccountPersonalFragment : AbstractBaseFragment()
     private lateinit var passwordLayout: TextInputLayout
     private lateinit var addNewPassword: FloatingActionButton
 
+    private lateinit var fullNameLayout: TextInputLayout
     private lateinit var birthdateLayout: TextInputLayout
     private lateinit var phoneNumberLayout: TextInputLayout
-    private lateinit var sexGroup: RadioGroup //hihi
+    private lateinit var sexGroup: RadioGroup
     private lateinit var addPersonalInfo: FloatingActionButton
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
@@ -53,6 +55,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
         passwordLayout = view.findViewById(R.id.account_personal_password)
         addNewPassword = view.findViewById(R.id.account_personal_add_password_button)
 
+        fullNameLayout = view.findViewById(R.id.account_personal_personal_information_fullName)
         birthdateLayout = view.findViewById(R.id.account_personal_personal_information_birthdate)
         phoneNumberLayout = view.findViewById(R.id.account_personal_personal_information_phone)
         sexGroup = view.findViewById(R.id.account_personal_personal_information_sex)
@@ -66,10 +69,19 @@ class AccountPersonalFragment : AbstractBaseFragment()
         setListeners()
     }
 
+    override fun onDestroy()
+    {
+        super.onDestroy()
+        sexGroup.setOnCheckedChangeListener(null)
+        addNewPassword.setOnClickListener(null)
+        addPersonalInfo.setOnClickListener(null)
+    }
+
     private fun setObservers()
     {
         getUser()
         updatePersonalInfo()
+        confirmName()
         confirmPassword()
         confirmBirthdate()
         confirmPhoneNumber()
@@ -85,10 +97,13 @@ class AccountPersonalFragment : AbstractBaseFragment()
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updatePersonalInfo()
     {
+        fullNameLayout.editText?.setText("${user.name} ${user.surname}")
+
         user.birthdate?.let {
-            birthdateLayout.editText?.setText(DateUtil.toString(it, "dd.MM.yyyy"))
+            birthdateLayout.editText?.setText(DateUtil.toString(it))
         }
 
         user.phone?.let {
@@ -115,10 +130,11 @@ class AccountPersonalFragment : AbstractBaseFragment()
         }
 
         addPersonalInfo.setOnClickListener {
-            val birthdate = birthdateLayout.editText?.text.toString()
-            val phoneNumber = phoneNumberLayout.editText?.text.toString()
+            val fullName = fullNameLayout.editText?.text.toString()
+            val birthdate = birthdateLayout.editText?.text.toString().trim()
+            val phoneNumber = phoneNumberLayout.editText?.text.toString().trim()
             deletePersonalInfo()
-            viewModel.savePersonalInfo(birthdate, phoneNumber, sex)
+            viewModel.savePersonalInfo(fullName, birthdate, phoneNumber, sex)
         }
 
         birthdateLayout.editText?.setOnFocusChangeListener { _, hasFocus ->
@@ -126,7 +142,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
             {
                 MaterialDialog(activity!!).show {
                     datePicker { _, datetime ->
-                        val dateText = DateUtil.toString(datetime, "dd.MM.yyyy")
+                        val dateText = DateUtil.toString(datetime)
                         birthdateLayout.editText?.setText(dateText)
                     }
                 }
@@ -154,6 +170,8 @@ class AccountPersonalFragment : AbstractBaseFragment()
     {
         if(state is PersonalInfoSuccess)
         {
+            user.name = state.name
+            user.surname = state.surname
             user.birthdate = DateUtil.stringToDate(state.birthdate)
             user.phone = state.phoneNumber
             user.sex = Sex.toBoolean(state.sex)
@@ -173,6 +191,14 @@ class AccountPersonalFragment : AbstractBaseFragment()
                 }
                 is ValidPassword -> displayDialog(password.self)
             }
+        }
+    }
+
+    private fun confirmName()
+    {
+        viewModel.confirmName().observe(viewLifecycleOwner) { nameState ->
+            if(nameState is InvalidName)
+                fullNameLayout.error = nameState.errorMessage
         }
     }
 
@@ -215,6 +241,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
 
     private fun deletePersonalInfo()
     {
+        fullNameLayout.error = null
         birthdateLayout.error = null
         phoneNumberLayout.error = null
     }

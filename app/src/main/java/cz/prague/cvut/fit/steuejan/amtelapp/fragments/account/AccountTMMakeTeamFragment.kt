@@ -21,7 +21,7 @@ import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Companion.TEAM
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.MakeTeamUsersAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowUserSimpleAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
@@ -48,8 +48,8 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
     private lateinit var playingDaysLayout: TextInputLayout
     private lateinit var addPlayer: ImageButton
 
-    private lateinit var recyclerView: RecyclerView
-    private var adapter: MakeTeamUsersAdapter? = null
+    private var recyclerView: RecyclerView? = null
+    private var adapter: ShowUserSimpleAdapter? = null
 
     private lateinit var createTeam: FloatingActionButton
 
@@ -74,9 +74,9 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
-        setupRecycler()
         getUser()
         getTeam()
+        setupRecycler()
         updateFields()
         populateAdapter()
         setObservers()
@@ -98,14 +98,15 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
     {
         super.onDestroy()
         adapter = null
+        recyclerView = null
     }
 
     private fun setupRecycler()
     {
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        adapter = MakeTeamUsersAdapter(activity!!, users)
-        recyclerView.adapter = adapter
+        recyclerView?.setHasFixedSize(true)
+        recyclerView?.layoutManager = LinearLayoutManager(context)
+        adapter = ShowUserSimpleAdapter(activity!!, users)
+        recyclerView?.adapter = adapter
     }
 
     private fun setListeners()
@@ -180,29 +181,22 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
             nameLayout.editText?.setText((team as ValidTeam).self.name)
             placeLayout.editText?.setText((team as ValidTeam).self.place)
             playingDaysLayout.editText?.setText((team as ValidTeam).self.playingDays.joinToString(", "))
-
-            nameLayout.editText?.text?.let {
-                if(it.isNotEmpty())
-                {
-                    nameLayout.editText?.isEnabled = false
-                    nameLayout.editText?.setTextColor(ContextCompat.getColor(activity!!, R.color.lightGrey))
-                }
-            }
+            disableName()
         }
     }
 
     private fun populateAdapter()
     {
-        viewModel.getTeamUsers().observe(viewLifecycleOwner) { users ->
+        viewModel.teamUsers.observe(viewLifecycleOwner) { users ->
             this.users.clear()
             this.users.addAll(users)
-            adapter?.notifyDataSetChanged()
+            adapter?.notifyItemRangeInserted(adapter?.itemCount?.minus(1) ?: 0, users.size)
         }
     }
 
     private fun confirmDays()
     {
-        viewModel.confirmPlayingDays().observe(viewLifecycleOwner) { daysState ->
+        viewModel.playingDays.observe(viewLifecycleOwner) { daysState ->
             if(daysState is InvalidPlayingDays)
                 playingDaysLayout.error = daysState.errorMessage
         }
@@ -210,7 +204,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     private fun confirmPlace()
     {
-        viewModel.confirmPlace().observe(viewLifecycleOwner) { placeState ->
+        viewModel.place.observe(viewLifecycleOwner) { placeState ->
             if(placeState is InvalidPlace)
                 placeLayout.error = placeState.errorMessage
         }
@@ -218,7 +212,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     private fun confirmName()
     {
-        viewModel.confirmName().observe(viewLifecycleOwner) { nameState ->
+        viewModel.name.observe(viewLifecycleOwner) { nameState ->
             if(nameState is InvalidName)
                 nameLayout.error = nameState.errorMessage
         }
@@ -242,7 +236,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     private fun isTeamCreated()
     {
-        viewModel.isTeamCreated().observe(viewLifecycleOwner) { teamState ->
+        viewModel.newTeam.observe(viewLifecycleOwner) { teamState ->
             val title = viewModel.displayAfterDialog(teamState, user).title
 
             MaterialDialog(activity!!)
@@ -265,6 +259,18 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
             viewModel.updateUser(user, team.self)
             mainActivityModel.setUser(user)
             mainActivityModel.setTeam(ValidTeam(team.self))
+            disableName()
+        }
+    }
+
+    private fun disableName()
+    {
+        nameLayout.editText?.text?.let {
+            if(it.isNotEmpty())
+            {
+                nameLayout.editText?.isEnabled = false
+                nameLayout.editText?.setTextColor(ContextCompat.getColor(activity!!, R.color.lightGrey))
+            }
         }
     }
 

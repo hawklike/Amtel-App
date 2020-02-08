@@ -11,6 +11,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
@@ -27,6 +28,11 @@ class AccountPersonalFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
+    private val nameState = MutableLiveData<NameState>()
+    fun confirmName(): LiveData<NameState> = nameState
+
+    /*---------------------------------------------------*/
+    
     private val birthdateState = MutableLiveData<BirthdateState>()
     fun confirmBirthdate(): LiveData<BirthdateState> = birthdateState
 
@@ -73,28 +79,40 @@ class AccountPersonalFragmentVM : ViewModel()
         return Pair(title, message)
     }
 
-    fun savePersonalInfo(birthdate: String, phoneNumber: String, sex: Sex)
+    fun savePersonalInfo(fullName: String, birthdate: String, phoneNumber: String, sex: Sex)
     {
-        if(confirmPersonalInfo(birthdate, phoneNumber))
+        if(confirmPersonalInfo(fullName, birthdate, phoneNumber))
         {
             val phone: String? = if(phoneNumber.isEmpty()) null else phoneNumber
+            val name = fullName.split(Regex("[ ]+"))[0]
+            val surname = fullName.split(Regex("[ ]+"))[1]
+
             viewModelScope.launch {
                 val success = UserManager.updateUser(AuthManager.currentUser!!.uid, mapOf(
+                    "name" to NameConverter.convertToFirstLetterBig(name),
+                    "surname" to NameConverter.convertToFirstLetterBig(surname),
                     "birthdate" to DateUtil.stringToDate(birthdate),
                     "phone" to phone,
                     "sex" to Sex.toBoolean(sex)
                 ))
 
-                if(success) personalInfoChange.value = PersonalInfoSuccess(birthdate, phone, sex)
+                if(success) personalInfoChange.value = PersonalInfoSuccess(name, surname, birthdate, phone, sex)
                 else personalInfoChange.value = PersonalInfoFailure
             }
         }
     }
 
-    private fun confirmPersonalInfo(birthdate: String, phoneNumber: String): Boolean
+    private fun confirmPersonalInfo(fullName: String, birthdate: String, phoneNumber: String): Boolean
     {
+        var okFullName = true
         var okBirthdate = true
         var okPhoneNumber = true
+        
+        if(fullName.isEmpty() || fullName.split(Regex("[ ]+")).size < 2)
+        {
+            okFullName = false
+            nameState.value = InvalidName(App.context.getString(R.string.invalid_fullName_error))
+        }
 
         with(BirthdateState.validate(birthdate)) {
             if(this is InvalidBirthdate)
@@ -112,7 +130,7 @@ class AccountPersonalFragmentVM : ViewModel()
             }
         }
 
-        return okBirthdate && okPhoneNumber
+        return okFullName && okBirthdate && okPhoneNumber
     }
 
     fun createAfterPersonalInfoDialog(state: PersonalInfoState): Message

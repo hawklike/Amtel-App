@@ -25,12 +25,10 @@ class AccountFragment : AbstractBaseFragment()
 {
     companion object
     {
-        const val DATA = "user"
-
         fun newInstance(): AccountFragment = AccountFragment()
     }
 
-    override lateinit var job: Job
+    override val job: Job = Job()
 
     private lateinit var viewPager: ViewPager
     private lateinit var tabs: TabLayout
@@ -40,7 +38,6 @@ class AccountFragment : AbstractBaseFragment()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
-        job = Job()
         return inflater.inflate(R.layout.fragment_account, container, false)
     }
 
@@ -83,6 +80,7 @@ class AccountFragment : AbstractBaseFragment()
         {
             adapter.addFragment(AccountBossAddTMFragment.newInstance(), getString(R.string.account_boss_adapter_add_TM))
             adapter.addFragment(AccountBossMakeGroupsFragment.newInstance(), getString(R.string.account_boss_adapter_make_groups))
+            adapter.addFragment(AccountBossPlayersFragment.newInstance(), getString(R.string.players))
             adapter.addFragment(AccountPersonalFragment.newInstance(), getString(R.string.account_adapter_personal))
         }
         else if(role == TEAM_MANAGER)

@@ -1,10 +1,12 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 
 import android.util.Log
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -89,6 +91,19 @@ object UserManager
         {
             Log.e(TAG, "deleteUser(): user with id $userId not deleted because $ex")
             false
+        }
+    }
+
+    fun retrieveAllUsers(orderBy: UserOrderBy = UserOrderBy.SURNAME): Query
+    {
+        val dao = UserDAO()
+        return when(orderBy)
+        {
+            UserOrderBy.NAME -> dao.retrieveAll("name")
+            UserOrderBy.SURNAME -> dao.retrieveAll("surname")
+            UserOrderBy.TEAM -> dao.retrieveAll("teamName")
+            UserOrderBy.EMAIL -> dao.retrieveAll("email")
+            UserOrderBy.SEX -> dao.retrieveAll("sex")
         }
     }
 
