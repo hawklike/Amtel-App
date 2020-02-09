@@ -2,6 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.data.dao
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -11,7 +12,8 @@ import kotlinx.coroutines.tasks.await
 interface DAO
 {
     suspend fun <T> insert(entity: T)
-    suspend fun find(id: String): DocumentSnapshot
+    suspend fun findById(id: String): DocumentSnapshot
+    suspend fun <T> find(field: String, value: T?): QuerySnapshot
     suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>)
     suspend fun delete(documentId: String)
 
@@ -23,7 +25,7 @@ interface DAO
         document.set(entity, SetOptions.merge()).await()
     }
 
-    suspend fun find(collectionName: String, id: String): DocumentSnapshot
+    suspend fun findById(collectionName: String, id: String): DocumentSnapshot
     {
         return Firebase.firestore
             .collection(collectionName)
@@ -31,6 +33,16 @@ interface DAO
             .get()
             .await()
     }
+
+    suspend fun <T> find(collectionName: String, field: String, value: T?): QuerySnapshot
+    {
+        return Firebase.firestore
+            .collection(collectionName)
+            .whereEqualTo(field, value)
+            .get()
+            .await()
+    }
+
 
     suspend fun update(collectionName: String, documentId: String, mapOfFieldsAndValues: Map<String, Any?>)
     {
@@ -55,5 +67,13 @@ interface DAO
         return Firebase.firestore
             .collection(collectionName)
             .orderBy(orderBy, Query.Direction.ASCENDING)
+    }
+
+    suspend fun retrieveAll(collectionName: String): QuerySnapshot
+    {
+        return Firebase.firestore
+            .collection(collectionName)
+            .get()
+            .await()
     }
 }

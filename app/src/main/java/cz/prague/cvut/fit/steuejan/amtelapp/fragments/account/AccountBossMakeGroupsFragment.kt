@@ -91,7 +91,7 @@ class AccountBossMakeGroupsFragment : AbstractBaseFragment()
 
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(context)
-        adapter = ShowTeamsFirestoreAdapter(activity!!, options, true)
+        adapter = ShowTeamsFirestoreAdapter(activity!!, options)
         recyclerView?.adapter = adapter
 
     }
@@ -108,14 +108,25 @@ class AccountBossMakeGroupsFragment : AbstractBaseFragment()
 
     private fun setObservers()
     {
+        getAllGroups()
         confirmGroupName()
         isGroupCreated()
+    }
+
+    private fun getAllGroups()
+    {
+        viewModel.getGroups()
+        viewModel.getAllGroups().observe(viewLifecycleOwner) {
+            adapter?.groups = it.map { group -> group.name }.sorted()
+        }
     }
 
     private fun isGroupCreated()
     {
         viewModel.group.observe(viewLifecycleOwner) {
             val title = viewModel.displayDialog(it).title
+
+            viewModel.updateGroups(it)
 
             MaterialDialog(activity!!)
                 .title(text = title)

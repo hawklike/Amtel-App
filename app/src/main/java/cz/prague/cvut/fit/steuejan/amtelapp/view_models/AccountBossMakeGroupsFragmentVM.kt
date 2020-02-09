@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,9 +10,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
-import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidName
-import cz.prague.cvut.fit.steuejan.amtelapp.states.NameState
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidName
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
 
 class AccountBossMakeGroupsFragmentVM : ViewModel()
@@ -21,8 +20,20 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val _group = MutableLiveData<Group?>()
-    val group: LiveData<Group?> = _group
+    private val _group = MutableLiveData<GroupState>()
+    val group: LiveData<GroupState> = _group
+
+    /*---------------------------------------------------*/
+
+    private val allGroups = MutableLiveData<List<Group>>()
+
+    private fun setAllGroups(groups: List<Group>)
+    {
+        Log.i("AccountBossMakeGroups", "$groups added")
+        allGroups.value = groups
+    }
+
+    fun getAllGroups(): LiveData<List<Group>> = allGroups
 
     /*---------------------------------------------------*/
 
@@ -31,8 +42,30 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
         if(confirmName(groupName))
         {
             viewModelScope.launch {
-                _group.value = GroupManager.addGroup(Group(groupName))
+                _group.value = GroupManager.addGroup(Group(groupName)).let {
+                    if(it is ValidGroup) ValidGroup(it.self)
+                    else NoGroup
+                }
             }
+        }
+    }
+
+    fun getGroups()
+    {
+        viewModelScope.launch {
+            GroupManager.retrieveAll().let {
+                if(it is ValidGroups) setAllGroups(it.self)
+            }
+        }
+    }
+
+    fun updateGroups(group: GroupState)
+    {
+        if(group is ValidGroup)
+        {
+            val groups = getAllGroups().value?.toMutableList() ?: mutableListOf()
+            groups.add(group.self)
+            setAllGroups(groups.toList())
         }
     }
 
@@ -50,12 +83,12 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
         }
     }
 
-    fun displayDialog(group: Group?): Message
+    fun displayDialog(group: GroupState): Message
     {
         val successTitle = context.getString(R.string.create_group_success_title)
         val failureTitle = context.getString(R.string.create_group_failure_title)
 
-        return if(group != null) Message(successTitle, null)
+        return if(group is ValidGroup) Message(successTitle, null)
         else Message(failureTitle, null)
     }
 

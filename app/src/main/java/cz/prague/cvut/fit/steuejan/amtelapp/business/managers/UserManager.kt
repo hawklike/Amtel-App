@@ -30,7 +30,7 @@ object UserManager
     {
         return@withContext try
         {
-            val user = UserDAO().find(id).toObject<User>()
+            val user = UserDAO().findById(id).toObject<User>()
             Log.i(TAG, "findUser(): $user found in database")
             user
         }
@@ -84,11 +84,11 @@ object UserManager
         val dao = UserDAO()
         return when(orderBy)
         {
-            UserOrderBy.NAME -> dao.retrieveAll("name")
-            UserOrderBy.SURNAME -> dao.retrieveAll("surname")
-            UserOrderBy.TEAM -> dao.retrieveAll("teamName")
-            UserOrderBy.EMAIL -> dao.retrieveAll("email")
-            UserOrderBy.SEX -> dao.retrieveAll("sex")
+            UserOrderBy.NAME -> dao.retrieveAllUsers("name")
+            UserOrderBy.SURNAME -> dao.retrieveAllUsers("surname")
+            UserOrderBy.TEAM -> dao.retrieveAllUsers("teamName")
+            UserOrderBy.EMAIL -> dao.retrieveAllUsers("email")
+            UserOrderBy.SEX -> dao.retrieveAllUsers("sex")
         }
     }
 

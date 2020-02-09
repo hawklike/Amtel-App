@@ -49,7 +49,7 @@ object TeamManager
     {
         return@withContext try
         {
-            val team = TeamDAO().find(id).toObject<Team>()
+            val team = TeamDAO().findById(id).toObject<Team>()
             Log.i(TAG, "findTeam(): $team found in database")
             team?.let { ValidTeam(team) } ?: NoTeam
         }
@@ -64,7 +64,7 @@ object TeamManager
     {
         var query: Query? = null
         TeamOrderBy.values().forEach {
-            if(orderBy == it) query = TeamDAO().retrieveAll(it.toString())
+            if(orderBy == it) query = TeamDAO().retrieveAllTeams(it.toString())
         }
         return query!!
     }
