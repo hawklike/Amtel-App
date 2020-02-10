@@ -53,7 +53,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
     fun getGroups()
     {
         viewModelScope.launch {
-            GroupManager.retrieveAll().let {
+            GroupManager.retrieveAllGroups().let {
                 if(it is ValidGroups) setAllGroups(it.self)
             }
         }

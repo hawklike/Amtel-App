@@ -40,7 +40,7 @@ class AddUserToTeamActivity : AbstractBaseActivity()
     {
         setContentView(R.layout.account_add_user_to_team_acitivity)
         super.onCreate(savedInstanceState)
-        setToolbarTitle("Přidat hráče")
+        setToolbarTitle(getString(R.string.add_player))
         setArrowBack()
 
         intent.extras?.let { team = it.getParcelable(TEAM)!! }

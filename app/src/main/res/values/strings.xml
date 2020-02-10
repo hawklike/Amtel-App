@@ -84,4 +84,6 @@
     <string name="create_group_success_title">Skupina byla úspěšně vytvořena</string>
     <string name="create_group_failure_title">Skupinu se nepodařilo vytvořit</string>
     <string name="choose_group">Vybrat skupinu</string>
+    <string name="groups">Skupiny</string>
+    <string name="generate_plan">Generovat plán</string>
 </resources>

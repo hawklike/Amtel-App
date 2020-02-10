@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.ShowGroupsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -103,6 +105,11 @@ class AccountBossMakeGroupsFragment : AbstractBaseFragment()
 
             nameLayout.error = null
             viewModel.createGroup(groupName)
+        }
+
+        showGroups.setOnClickListener {
+            val intent = Intent(activity!!, ShowGroupsActivity::class.java)
+            startActivity(intent)
         }
     }
 

@@ -1,6 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 
 import android.util.Log
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.GroupDAO
@@ -62,7 +63,7 @@ object GroupManager
         }
     }
 
-    suspend fun retrieveAll(): GroupState = withContext(Dispatchers.IO)
+    suspend fun retrieveAllGroups(): GroupState = withContext(Dispatchers.IO)
     {
         return@withContext try
         {
@@ -77,4 +78,7 @@ object GroupManager
             NoGroup
         }
     }
+
+    fun retrieveAllGroups(orderBy: String): Query
+            = GroupDAO().retrieveAllGroups(orderBy)
 }
