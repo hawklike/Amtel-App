@@ -6,12 +6,12 @@ import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 object UserManager
 {
-    suspend fun addUser(user: User): User? = withContext(Dispatchers.IO)
+    suspend fun addUser(user: User): User? = withContext(IO)
     {
         return@withContext try
         {
@@ -26,7 +26,7 @@ object UserManager
         }
     }
 
-    suspend fun findUser(id: String): User? = withContext(Dispatchers.IO)
+    suspend fun findUser(id: String): User? = withContext(IO)
     {
         return@withContext try
         {
@@ -41,7 +41,7 @@ object UserManager
         }
     }
 
-    suspend fun updateUser(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(Dispatchers.IO)
+    suspend fun updateUser(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
     {
         return@withContext try
         {
@@ -56,7 +56,7 @@ object UserManager
         }
     }
 
-    suspend fun findUsers(usersId: List<String>): List<User> = withContext(Dispatchers.IO)
+    suspend fun findUsers(usersId: List<String>): List<User> = withContext(IO)
     {
         return@withContext usersId.fold(mutableListOf<User>(), { acc, userId ->
             findUser(userId)?.let { acc.add(it) }
@@ -64,7 +64,7 @@ object UserManager
         })
     }
 
-    suspend fun deleteUser(userId: String): Boolean = withContext(Dispatchers.IO)
+    suspend fun deleteUser(userId: String): Boolean = withContext(IO)
     {
         return@withContext try
         {

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.RelativeLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -35,6 +36,9 @@ class AccountPersonalFragment : AbstractBaseFragment()
 
     private lateinit var user: User
 
+    private var changePasswordLayout: RelativeLayout? = null
+    private var personalInfoLayout: RelativeLayout? = null
+
     private lateinit var passwordLayout: TextInputLayout
     private lateinit var addNewPassword: FloatingActionButton
 
@@ -54,6 +58,9 @@ class AccountPersonalFragment : AbstractBaseFragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
+        changePasswordLayout = view.findViewById(R.id.account_personal_change_password)
+        personalInfoLayout = view.findViewById(R.id.account_personal_personal_information)
+
         passwordLayout = view.findViewById(R.id.account_personal_password)
         addNewPassword = view.findViewById(R.id.account_personal_add_password_button)
 
@@ -71,12 +78,18 @@ class AccountPersonalFragment : AbstractBaseFragment()
         setListeners()
     }
 
-    override fun onDestroy()
+    override fun onDestroyView()
     {
-        super.onDestroy()
+        super.onDestroyView()
         sexGroup.setOnCheckedChangeListener(null)
         addNewPassword.setOnClickListener(null)
         addPersonalInfo.setOnClickListener(null)
+
+        changePasswordLayout?.removeAllViews()
+        personalInfoLayout?.removeAllViews()
+
+        changePasswordLayout = null
+        personalInfoLayout = null
     }
 
     private fun setObservers()

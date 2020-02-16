@@ -17,6 +17,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class AccountTMMakeTeamFragmentVM : ViewModel()
@@ -99,6 +100,11 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     fun updateUser(user: User, team: Team)
     {
+        viewModelScope.async {
+
+        }
+
+
         viewModelScope.launch {
             UserManager.updateUser(user.id!!, mapOf(
                 "teamId" to user.teamId,

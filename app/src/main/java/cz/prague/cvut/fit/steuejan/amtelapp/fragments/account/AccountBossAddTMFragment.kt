@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -21,11 +22,10 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidRegistration
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossAddTMFragmentVM
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
+class AccountBossAddTMFragment : AbstractBaseFragment()
 {
     companion object
     {
@@ -35,6 +35,9 @@ class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
     override val job: Job = Job()
 
     private val viewModel by viewModels<AccountBossAddTMFragmentVM>()
+
+    private var addTeamManagerLayout: RelativeLayout? = null
+    private var chooseDeadlineLayout: RelativeLayout? = null
 
     private lateinit var nameLayout: TextInputLayout
     private lateinit var surnameLayout: TextInputLayout
@@ -71,10 +74,21 @@ class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
         if(::dialog.isInitialized) dialog.dismiss()
     }
 
+    override fun onDestroyView()
+    {
+        super.onDestroyView()
+        addUserButton.setOnClickListener(null)
+
+        addTeamManagerLayout?.removeAllViews()
+        chooseDeadlineLayout?.removeAllViews()
+
+        addTeamManagerLayout = null
+        chooseDeadlineLayout = null
+    }
+
     override fun onDestroy()
     {
         job.cancel()
-        Log.i(TAG, "job is canceled: ${job.isCancelled}")
         super.onDestroy()
     }
 
@@ -141,8 +155,9 @@ class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
                 val (name, surname, email) = registration.credentials
                 launch {
                     val user = User(registration.uid, name, surname, email, role = UserRole.TEAM_MANAGER.toString())
-                    UserManager.addUser(user)
-                    EmailSender.sendVerificationEmail(email, registration.password)
+                    UserManager.addUser(user)?.let {
+                        EmailSender.sendVerificationEmail(email, registration.password)
+                    }
                 }
             }
             else

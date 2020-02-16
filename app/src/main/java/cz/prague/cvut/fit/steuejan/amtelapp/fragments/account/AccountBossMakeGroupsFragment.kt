@@ -20,6 +20,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.activities.ShowGroupsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidName
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossMakeGroupsFragmentVM
@@ -86,7 +87,7 @@ class AccountBossMakeGroupsFragment : AbstractBaseFragment()
 
     private fun setupRecycler()
     {
-        val query = TeamManager.retrieveAllTeams()
+        val query = TeamManager.retrieveAllTeams(TeamOrderBy.GROUP)
         val options = FirestoreRecyclerOptions.Builder<Team>()
             .setQuery(query, Team::class.java)
             .build()
@@ -95,7 +96,6 @@ class AccountBossMakeGroupsFragment : AbstractBaseFragment()
         recyclerView?.layoutManager = LinearLayoutManager(context)
         adapter = ShowTeamsFirestoreAdapter(activity!!, options)
         recyclerView?.adapter = adapter
-
     }
 
     private fun setListeners()

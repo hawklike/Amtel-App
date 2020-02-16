@@ -11,6 +11,7 @@ import kotlinx.coroutines.tasks.await
 
 interface DAO
 {
+    val collection: String
     suspend fun <T> insert(entity: T)
     suspend fun findById(id: String): DocumentSnapshot
     suspend fun <T> find(field: String, value: T?): QuerySnapshot

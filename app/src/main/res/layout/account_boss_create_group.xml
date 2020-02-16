@@ -117,6 +117,7 @@
             android:id="@+id/account_boss_create_group_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:minHeight="200dp"
             android:layout_marginTop="8dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"

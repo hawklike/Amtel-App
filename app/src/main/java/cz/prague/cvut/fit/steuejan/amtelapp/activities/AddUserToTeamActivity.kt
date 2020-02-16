@@ -56,6 +56,14 @@ class AddUserToTeamActivity : AbstractBaseActivity()
         setObservers()
     }
 
+    override fun onDestroy()
+    {
+        super.onDestroy()
+        sexGroup.setOnCheckedChangeListener(null)
+        addButton.setOnClickListener(null)
+        birthdateLayout.editText?.onFocusChangeListener
+    }
+
     private fun setListeners()
     {
         var sex = Sex.MAN

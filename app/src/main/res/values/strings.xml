@@ -85,5 +85,7 @@
     <string name="create_group_failure_title">Skupinu se nepodařilo vytvořit</string>
     <string name="choose_group">Vybrat skupinu</string>
     <string name="groups">Skupiny</string>
-    <string name="generate_plan">Generovat plán</string>
+    <string name="generate_plan">Generovat zápasy</string>
+    <string name="generate_group_error_text">Zadejte prosím celé liché kladné číslo, které není menší než</string>
+    <string name="dot">.</string>
 </resources>

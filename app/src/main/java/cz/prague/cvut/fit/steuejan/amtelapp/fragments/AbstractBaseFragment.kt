@@ -35,8 +35,8 @@ abstract class AbstractBaseFragment : Fragment(), CoroutineScope
     protected fun setProgressBar(on: Boolean)
     {
         val main = activity as MainActivity
-        if(on) main.progressLayout.visibility = View.VISIBLE
-        else main.progressLayout.visibility = View.INVISIBLE
+        if(on) main.progressLayout?.visibility = View.VISIBLE
+        else main.progressLayout?.visibility = View.INVISIBLE
     }
 
     protected open fun setToolbarTitle(title: String)
