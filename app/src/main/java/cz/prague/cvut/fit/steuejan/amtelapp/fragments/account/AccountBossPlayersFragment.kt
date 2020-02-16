@@ -54,10 +54,15 @@ class AccountBossPlayersFragment : AbstractBaseFragment()
         adapter?.stopListening()
     }
 
+    override fun onDestroyView()
+    {
+        super.onDestroyView()
+        recyclerView = null
+    }
+
     override fun onDestroy()
     {
         super.onDestroy()
-        recyclerView = null
         adapter = null
     }
 

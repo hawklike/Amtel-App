@@ -5,16 +5,22 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Entity
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 
 class TeamDAO : DAO
 {
-    private val collection = "teams"
+    override val collection = "teams"
 
     override suspend fun <T> insert(entity: T)
     {
         if(entity is Team) insert(collection, entity)
         else throw IllegalArgumentException("TeamDAO::insert(): entity is not type of Team and should be")
+    }
+
+    override suspend fun insert(collectionName: String, entity: Entity)
+    {
+        super.insert(collectionName, entity)
     }
 
     override suspend fun findById(id: String): DocumentSnapshot

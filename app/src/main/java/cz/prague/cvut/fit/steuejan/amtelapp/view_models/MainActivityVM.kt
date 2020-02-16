@@ -4,10 +4,15 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
+import kotlinx.coroutines.launch
 
 class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 {
@@ -63,6 +68,18 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
     fun getTeam(): LiveData<TeamState> = team
 
     /*---------------------------------------------------*/
+
+    fun prepareUser(uid: String)
+    {
+        viewModelScope.launch {
+            val user = UserManager.findUser(uid)
+            user?.let {
+                setUserState(SignedUser(it))
+                setUser(it)
+                Log.i(AbstractBaseActivity.TAG, "displayAccount(): $user currently logged in")
+            }
+        }
+    }
 
     companion object
     {

@@ -9,7 +9,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 
 class GroupDAO : DAO
 {
-    private val collection = "groups"
+    override val collection = "groups"
 
     override suspend fun <T> insert(entity: T)
     {

@@ -10,14 +10,14 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.GroupState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoGroup
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroup
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroups
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 object GroupManager
 {
     private const val TAG = "GroupManager"
 
-    suspend fun addGroup(group: Group): GroupState = withContext(Dispatchers.IO)
+    suspend fun addGroup(group: Group): GroupState = withContext(IO)
     {
         return@withContext try
         {
@@ -32,7 +32,7 @@ object GroupManager
         }
     }
 
-    suspend fun findGroup(id: String): GroupState = withContext(Dispatchers.IO)
+    suspend fun findGroup(id: String): GroupState = withContext(IO)
     {
         return@withContext try
         {
@@ -47,23 +47,23 @@ object GroupManager
         }
     }
 
-    suspend fun <T> findGroup(field: String, value: T?): GroupState = withContext(Dispatchers.IO)
+    suspend fun <T> findGroup(field: String, value: T?): GroupState = withContext(IO)
     {
         return@withContext try
         {
             val querySnapshot = GroupDAO().find(field, value)
             val documents = querySnapshot.toObjects<Group>()
-            Log.i(TAG, "retrieveAll(): $documents found successfully")
+            Log.i(TAG, "findGroup(): $documents where $field is $value found successfully\"")
             ValidGroups(documents)
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "retrieveAll(): documents not found because $ex")
+            Log.e(TAG, "findGroup(): documents not found because $ex")
             NoGroup
         }
     }
 
-    suspend fun retrieveAllGroups(): GroupState = withContext(Dispatchers.IO)
+    suspend fun retrieveAllGroups(): GroupState = withContext(IO)
     {
         return@withContext try
         {

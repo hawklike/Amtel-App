@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -44,6 +45,8 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     private var users = mutableListOf<User>()
 
+    private var createTeamLayout: RelativeLayout? = null
+
     private lateinit var nameLayout: TextInputLayout
     private lateinit var placeLayout: TextInputLayout
     private lateinit var playingDaysLayout: TextInputLayout
@@ -65,6 +68,8 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
+        createTeamLayout = view.findViewById(R.id.account_tm_make_team)
+
         nameLayout = view.findViewById(R.id.account_tm_make_team_name)
         placeLayout = view.findViewById(R.id.account_tm_make_team_place)
         playingDaysLayout = view.findViewById(R.id.account_tm_make_team_playing_day)
@@ -96,11 +101,23 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
         }
     }
 
+    override fun onDestroyView()
+    {
+        super.onDestroyView()
+        recyclerView = null
+
+        createTeam.setOnClickListener(null)
+        addPlayer.setOnClickListener(null)
+        playingDaysLayout.editText?.onFocusChangeListener = null
+
+        createTeamLayout?.removeAllViews()
+        createTeamLayout = null
+    }
+
     override fun onDestroy()
     {
         super.onDestroy()
         adapter = null
-        recyclerView = null
     }
 
     private fun setupRecycler()

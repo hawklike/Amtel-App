@@ -1,18 +1,17 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.data.dao
 
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 
-class UserDAO : DAO
+class MatchDAO : DAO
 {
-    override val collection = "users"
+    override val collection: String = "matches"
 
     override suspend fun <T> insert(entity: T)
     {
-        if(entity is User) insert(collection, entity)
-        else throw IllegalArgumentException("UserDAO::insert(): entity is not type of User and should be")
+        if(entity is Match) insert(collection, entity)
+        else throw IllegalArgumentException("MatchDAO::insert(): entity is not type of Match and should be")
     }
 
     override suspend fun findById(id: String): DocumentSnapshot
@@ -26,7 +25,4 @@ class UserDAO : DAO
 
     override suspend fun delete(documentId: String): Unit
             = delete(collection, documentId)
-
-    fun retrieveAllUsers(orderBy: String): Query
-            = retrieveAll(collection, orderBy)
 }
