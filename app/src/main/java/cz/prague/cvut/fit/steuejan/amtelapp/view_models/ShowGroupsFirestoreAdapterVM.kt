@@ -42,6 +42,6 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
         tournament.createMatches(group).forEach {
             MatchManager.addMatch(it)
         }
-        Toast.makeText(context, "Skupina $group vygenerována", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Skupina $group byla úspěšně vygenerována.", Toast.LENGTH_SHORT).show()
     }
 }

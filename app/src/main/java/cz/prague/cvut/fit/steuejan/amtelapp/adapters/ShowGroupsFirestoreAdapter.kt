@@ -45,7 +45,7 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
                     title(text = "Vygenerovat plán pro skupinu ${name.text}?")
                     input(
                         waitForPositiveButton = false,
-                        hint = "Počet kol",
+                        hint = context.getString(R.string.rounds_number),
                         prefill = rounds.toString(),
                         inputType = InputType.TYPE_CLASS_NUMBER) { dialog, text ->
 
@@ -55,7 +55,7 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
                         else
                         {
                             dialog.getInputField().error = if(isValid) null
-                            else App.context.getString(R.string.generate_group_error_text) + " " + calculatedRounds + context.getString(R.string.dot)
+                            else App.context.getString(R.string.generate_group_error_text) + " " + calculatedRounds + "."
                             dialog.setActionButtonEnabled(WhichButton.POSITIVE, isValid)
                         }
                     }
