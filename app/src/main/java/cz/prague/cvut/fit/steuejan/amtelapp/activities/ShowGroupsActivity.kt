@@ -15,6 +15,7 @@ class ShowGroupsActivity : AbstractActivityWithRecyclerView()
         setContentView(R.layout.account_boss_groups)
         super.onCreate(savedInstanceState)
         setToolbarTitle(getString(R.string.groups))
+        setArrowBack()
     }
 
     override fun setupRecycler()

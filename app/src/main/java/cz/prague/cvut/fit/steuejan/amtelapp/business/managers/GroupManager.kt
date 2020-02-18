@@ -47,19 +47,18 @@ object GroupManager
         }
     }
 
-    suspend fun <T> findGroup(field: String, value: T?): GroupState = withContext(IO)
+    suspend fun updateGroup(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
     {
         return@withContext try
         {
-            val querySnapshot = GroupDAO().find(field, value)
-            val documents = querySnapshot.toObjects<Group>()
-            Log.i(TAG, "findGroup(): $documents where $field is $value found successfully\"")
-            ValidGroups(documents)
+            GroupDAO().update(documentId, mapOfFieldsAndValues)
+            Log.i(TAG, "updateGroup(): team with id $documentId successfully updated with $mapOfFieldsAndValues")
+            true
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "findGroup(): documents not found because $ex")
-            NoGroup
+            Log.e(TAG, "updateGroup(): team with id $documentId not updated because $ex")
+            false
         }
     }
 

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.RobinRoundTournament
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -42,6 +43,7 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
         tournament.createMatches(group).forEach {
             MatchManager.addMatch(it)
         }
+        GroupManager.updateGroup(group, mapOf("rounds" to rounds))
         Toast.makeText(context, "Skupina $group byla úspěšně vygenerována.", Toast.LENGTH_SHORT).show()
     }
 }

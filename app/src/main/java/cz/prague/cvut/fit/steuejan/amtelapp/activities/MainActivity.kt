@@ -17,6 +17,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.*
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.schedule.ScheduleGroupsMenuFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
@@ -117,7 +118,7 @@ class MainActivity : AbstractBaseActivity()
                             if(user is SignedUser) populateFragment(AccountFragment.newInstance())
                         } ?: populateFragment(LoginFragment.newInstance())
                         results -> populateFragment(ResultsFragment.newInstance())
-                        schedule -> populateFragment(ScheduleFragment.newInstance())
+                        schedule -> populateFragment(ScheduleGroupsMenuFragment.newInstance())
                         teams -> populateFragment(TeamsFragment.newInstance())
                         players -> populateFragment(PlayersFragment.newInstance())
                     }

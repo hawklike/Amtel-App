@@ -32,7 +32,7 @@ abstract class AbstractBaseFragment : Fragment(), CoroutineScope
         setProgressBar(false)
     }
 
-    protected fun setProgressBar(on: Boolean)
+    protected open fun setProgressBar(on: Boolean)
     {
         val main = activity as MainActivity
         if(on) main.progressLayout?.visibility = View.VISIBLE

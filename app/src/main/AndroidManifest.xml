@@ -26,7 +26,7 @@
         </activity>
         <activity android:name=".activities.AddUserToTeamActivity"/>
         <activity android:name=".activities.ShowGroupsActivity"/>
-        <activity android:name=".activities.ShowTeamsInGroupActivity"/>
+        <activity android:name=".activities.ScheduleRoundsActivity"/>
     </application>
 
 </manifest>

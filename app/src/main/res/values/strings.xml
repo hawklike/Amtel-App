@@ -2,7 +2,7 @@
     <string name="app_name">AMTEL app</string>
     <string name="profile">Účet</string>
     <string name="results">Výsledky</string>
-    <string name="schedule">Harmonogram</string>
+    <string name="schedule">Přehled utkání</string>
     <string name="teams">Týmy</string>
     <string name="players">Hráči</string>
     <string name="email">Email</string>
@@ -88,4 +88,9 @@
     <string name="generate_plan">Generovat zápasy</string>
     <string name="generate_group_error_text">Zadejte prosím celé liché kladné číslo, které není menší než</string>
     <string name="rounds_number">Počet kol</string>
+    <string name="show_group">zobrazit skupinu</string>
+    <string name="not_working_yet">Tato možnost není zatím funkční</string>
+    <string name="rounds">Přehled kol</string>
+    <string name="round">kolo</string>
+    <string name="no_rounds_text">Skupina neobsahuje žádné utkání.</string>
 </resources>

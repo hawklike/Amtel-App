@@ -12,7 +12,6 @@ abstract class AbstractActivityWithRecyclerView : AbstractBaseActivity()
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        setArrowBack()
         setupRecycler()
     }
 

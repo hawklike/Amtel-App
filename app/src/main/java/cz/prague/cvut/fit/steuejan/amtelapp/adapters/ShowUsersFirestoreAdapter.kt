@@ -51,7 +51,7 @@ class ShowUsersFirestoreAdapter(private val context: Context, options: Firestore
             }
 
             editButton.setOnClickListener {
-                Toast.makeText(context, "Tato možnost není zatím funkční.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.not_working_yet), Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +20,6 @@ import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsFirestoreAdapterVM
@@ -29,16 +30,49 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
         ShowGroupsFirestoreAdapterVM::class.java)
 
+    private var isNextVisible = false
+    private var onNextClick: (group: Group) -> Unit = {}
+
+    fun setNextButton(isVisible: Boolean, onClick: ((group: Group) -> Unit)? = null)
+    {
+        isNextVisible = isVisible
+        onNextClick = onClick?.let { it }
+            ?: { Toast.makeText(context, context.getString(R.string.not_working_yet), Toast.LENGTH_SHORT).show() }
+    }
+
+    @SuppressLint("SetTextI18n")
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
-        val name: TextView = itemView.findViewById(R.id.group_card_name)
-        val size: TextView = itemView.findViewById(R.id.group_card_size)
-        private val generate: Button = itemView.findViewById(R.id.group_card_generate)
+        lateinit var group: Group
 
-        var rounds = 0
-        var calculatedRounds = 0
+        private val name: TextView = itemView.findViewById(R.id.group_card_name)
+        private val size: TextView = itemView.findViewById(R.id.group_card_size)
+        private val generate: Button = itemView.findViewById(R.id.group_card_generate)
+        private val next: ImageButton = itemView.findViewById(R.id.group_card_next)
+
+        private var rounds = 0
+        private var calculatedRounds = 0
 
         init
+        {
+            generate()
+            next()
+        }
+
+        fun init(group: Group)
+        {
+            this.group = group
+            val size = group.teamIds.size
+
+            name.text = group.name
+            this.size.text = "Počet týmů: $size"
+
+            rounds = if(size % 2 == 0) (size - 1) else size
+            if(size == 1 || size == 0) rounds = 0
+            calculatedRounds = rounds
+        }
+
+        private fun generate()
         {
             generate.setOnClickListener {
                 MaterialDialog(context).show {
@@ -55,7 +89,7 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
                         else
                         {
                             dialog.getInputField().error = if(isValid) null
-                            else App.context.getString(R.string.generate_group_error_text) + " " + calculatedRounds + "."
+                            else context.getString(R.string.generate_group_error_text) + " " + calculatedRounds + "."
                             dialog.setActionButtonEnabled(WhichButton.POSITIVE, isValid)
                         }
                     }
@@ -63,9 +97,21 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
                         viewModel.generateMatches(name.text.toString(), rounds)
                     }
                 }
-
             }
         }
+
+        private fun next()
+        {
+            if(isNextVisible)
+            {
+                next.visibility = View.VISIBLE
+                generate.visibility = View.GONE
+                next.setOnClickListener {
+                    onNextClick.invoke(group)
+                }
+            }
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
@@ -75,16 +121,9 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
         return ViewHolder(view)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int, group: Group)
     {
-        holder.name.text = group.name
-
-        val size = group.teamIds.size
-        holder.size.text = "Počet týmů: $size"
-        holder.rounds = if(size % 2 == 0) (size - 1) else size
-        if(size == 1 || size == 0) holder.rounds = 0
-        holder.calculatedRounds = holder.rounds
+        holder.init(group)
     }
 
 }
