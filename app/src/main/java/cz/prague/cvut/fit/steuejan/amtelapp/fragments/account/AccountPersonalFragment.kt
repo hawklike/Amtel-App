@@ -21,11 +21,11 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toSex
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountPersonalFragmentVM
 
-class AccountPersonalFragment : AbstractBaseFragment()
+class AccountPersonalFragment : InsideMainActivityFragment()
 {
     companion object
     {
@@ -108,7 +108,7 @@ class AccountPersonalFragment : AbstractBaseFragment()
     {
         user = mainActivityModel.getUser().value ?: User()
         mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
-            user = observedUser.copy()
+            user = observedUser?.copy() ?: user
         }
     }
 

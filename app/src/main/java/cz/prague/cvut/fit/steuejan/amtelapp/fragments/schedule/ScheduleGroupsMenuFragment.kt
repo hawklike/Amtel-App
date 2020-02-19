@@ -14,9 +14,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.activities.ScheduleRoundsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
 
-class ScheduleGroupsMenuFragment : AbstractBaseFragment()
+class ScheduleGroupsMenuFragment : InsideMainActivityFragment()
 {
     companion object
     {
@@ -81,12 +81,13 @@ class ScheduleGroupsMenuFragment : AbstractBaseFragment()
         recyclerView?.layoutManager = LinearLayoutManager(activity!!)
         adapter = ShowGroupsFirestoreAdapter(activity!!, options)
 
-        adapter?.setNextButton(true) {
+        adapter?.setNextButton(true) { group ->
             val intent = Intent(activity!!, ScheduleRoundsActivity::class.java).apply {
-                putExtra(ScheduleRoundsActivity.GROUP, it)
+                putExtra(ScheduleRoundsActivity.GROUP, group)
+                putExtra(ScheduleRoundsActivity.USER, mainActivityModel.getUser().value)
             }
 
-            if(it.rounds != 0) startActivity(intent)
+            if(group.rounds != 0) startActivity(intent)
             else Toast.makeText(activity!!, getString(R.string.no_rounds_text), Toast.LENGTH_SHORT).show()
         }
         recyclerView?.adapter = adapter

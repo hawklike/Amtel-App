@@ -15,7 +15,11 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.*
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.LoginFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.PlayersFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.ResultsFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.TeamsFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.schedule.ScheduleGroupsMenuFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
@@ -50,6 +54,7 @@ class MainActivity : AbstractBaseActivity()
     {
         setToolbarTitle()
         displayAccount(savedInstanceState)
+        updateDrawer()
     }
 
     private fun setToolbarTitle()
@@ -127,8 +132,6 @@ class MainActivity : AbstractBaseActivity()
             }).build()
 
         drawer.drawerLayout.setStatusBarBackground(R.color.white)
-        //restores option before configuration change (i.e rotation...)
-        drawer.setSelectionAtPosition(viewModel.getDrawerSelectedPosition(), false)
 
         if(savedInstanceState == null)
         {
@@ -137,7 +140,14 @@ class MainActivity : AbstractBaseActivity()
         }
     }
 
-    private fun populateFragment(fragment: AbstractBaseFragment)
+    private fun updateDrawer()
+    {
+        viewModel.getDrawerSelectedPosition().observe(this) {
+            if(::drawer.isInitialized) drawer.setSelectionAtPosition(it, false)
+        }
+    }
+
+    private fun populateFragment(fragment: InsideMainActivityFragment)
     {
         progressLayout?.visibility = View.VISIBLE
         Log.i(TAG, "${fragment.getName()} populated")

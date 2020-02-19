@@ -14,14 +14,14 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.HEAD_OF_LEAGUE
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.TEAM_MANAGER
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
-class AccountFragment : AbstractBaseFragment()
+class AccountFragment : InsideMainActivityFragment()
 {
     companion object
     {
@@ -67,7 +67,7 @@ class AccountFragment : AbstractBaseFragment()
     {
         user = mainActivityModel.getUser().value ?: User()
         mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
-            user = observedUser.copy()
+            user = observedUser?.copy() ?: user
         }
     }
 

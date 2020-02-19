@@ -25,11 +25,11 @@ import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Com
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowUserSimpleAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountTMMakeTeamFragmentVM
 
-class AccountTMMakeTeamFragment : AbstractBaseFragment()
+class AccountTMMakeTeamFragment : InsideMainActivityFragment()
 {
     companion object
     {
@@ -249,7 +249,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
     {
         user = mainActivityModel.getUser().value ?: User()
         mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
-            user = observedUser.copy()
+            user = observedUser?.copy() ?: user
         }
     }
 

@@ -50,7 +50,7 @@
             android:singleLine="true"
             android:text="1:2"
             android:textColor="@color/darkGrey"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView

@@ -17,7 +17,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidRegistration
@@ -25,7 +25,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossAddTMFragment
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class AccountBossAddTMFragment : AbstractBaseFragment()
+class AccountBossAddTMFragment : InsideMainActivityFragment()
 {
     companion object
     {

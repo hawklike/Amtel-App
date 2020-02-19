@@ -1,23 +1,28 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
+import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
+import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
 
-class ShowMatchesFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<Match>)
+class ShowMatchesFirestoreAdapter(private val user: UserState, options: FirestoreRecyclerOptions<Match>)
     : FirestoreRecyclerAdapter<Match, ShowMatchesFirestoreAdapter.ViewHolder>(options)
 {
-//    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(MatchAdapterVM::class.java)
+    var onNextClickOwner: (match: Match) -> Unit = {}
+    var onNextClickGuest: (match: Match) -> Unit = {}
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -29,10 +34,22 @@ class ShowMatchesFirestoreAdapter(private val context: Context, options: Firesto
         val lowerText: TextView = itemView.findViewById(R.id.match_card_lower_text)
         val next: ImageButton = itemView.findViewById(R.id.match_card_next)
 
+        private val match by lazy { getItem(adapterPosition) }
+
         init
         {
             next.setOnClickListener {
-                Toast.makeText(context, context.getString(R.string.not_working_yet), Toast.LENGTH_SHORT).show()
+                if(user is SignedUser)
+                {
+                    val teamId = user.self.teamId
+
+                    val condition = user.self.role.toRole() == UserRole.HEAD_OF_LEAGUE ||
+                            (teamId != null && (teamId == match.homeId || teamId == match.awayId))
+
+                    if(condition) onNextClickOwner.invoke(match)
+                    else onNextClickGuest.invoke(match)
+                }
+                else onNextClickGuest.invoke(match)
             }
         }
     }
@@ -54,6 +71,21 @@ class ShowMatchesFirestoreAdapter(private val context: Context, options: Firesto
         holder.gems.visibility = View.GONE
         holder.upperText.visibility = View.GONE
         holder.lowerText.visibility = View.GONE
+
+        setColors(holder, match)
     }
 
+    private fun setColors(holder: ViewHolder, match: Match)
+    {
+        if(user is SignedUser && user.self.teamId != null)
+        {
+            val teamId = user.self.teamId!!
+            if(teamId == match.homeId || teamId == match.awayId)
+            {
+                holder.home.setTextColor(ContextCompat.getColor(context, R.color.blue))
+                holder.away.setTextColor(ContextCompat.getColor(context, R.color.blue))
+                holder.sets.setTextColor(ContextCompat.getColor(context, R.color.blue))
+            }
+        }
+    }
 }

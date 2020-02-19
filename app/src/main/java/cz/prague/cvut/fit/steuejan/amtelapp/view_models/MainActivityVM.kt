@@ -30,7 +30,7 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
         state.set(DRAWER_POSITION, position)
     }
 
-    fun getDrawerSelectedPosition(): Int = state[DRAWER_POSITION] ?: 0
+    fun getDrawerSelectedPosition(): LiveData<Int> = state.getLiveData(DRAWER_POSITION)
 
     /*---------------------------------------------------*/
 
@@ -45,15 +45,15 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val user = SingleLiveEvent<User>()
+    private val user = SingleLiveEvent<User?>()
 
-    fun setUser(user: User)
+    fun setUser(user: User?)
     {
         this.user.value = user
         Log.i(TAG, "setUser(): $user is set")
     }
 
-    fun getUser(): LiveData<User> = user
+    fun getUser(): LiveData<User?> = user
 
     /*---------------------------------------------------*/
 
