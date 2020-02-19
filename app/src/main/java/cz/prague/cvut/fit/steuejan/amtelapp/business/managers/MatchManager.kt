@@ -1,6 +1,8 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 
 import android.util.Log
+import com.google.firebase.firestore.Query
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.states.MatchState
@@ -27,4 +29,7 @@ object MatchManager
             NoMatch
         }
     }
+
+    fun getMatches(round: Int, group: String): Query
+            = MatchDAO().getMatches(round, group, DateUtil.actualYear)
 }

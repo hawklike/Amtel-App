@@ -3,7 +3,6 @@
     android:id="@+id/match_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingStart="16dp"
     android:paddingEnd="8dp"
     android:paddingTop="4dp"
@@ -11,14 +10,17 @@
     android:layout_marginBottom="8dp"
     android:background="@drawable/rounded_object">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <ImageButton
         android:id="@+id/match_card_next"
+        android:background="@drawable/ic_navigate_next_blue_24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/FloatingActionButton"
-        android:layout_marginTop="4dp"
         android:layout_alignParentEnd="true"
-        app:srcCompat="@drawable/ic_navigate_next_white_24dp"/>
+        android:layout_centerVertical="true"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/show_groups" />
 
     <TextView
         android:id="@+id/match_card_home"
@@ -36,8 +38,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/match_card_score"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
         android:layout_marginEnd="16dp"
         android:layout_toStartOf="@id/match_card_next"
         android:layout_below="@id/match_card_home">
@@ -89,7 +89,7 @@
         android:layout_below="@id/match_card_away"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="Doporučený termín: 22.05.2020"
+        android:text="Doporučený termín: není uveden"
         android:textColor="@color/darkGrey"
         android:textSize="12sp" />
 

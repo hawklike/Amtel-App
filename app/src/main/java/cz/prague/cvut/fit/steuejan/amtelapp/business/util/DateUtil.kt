@@ -24,6 +24,14 @@ object DateUtil
         if(!validateDate(date, dateFormat)) throw Exception("Invalid date")
         return Date().toMyString(dateFormat).toDate(dateFormat) >= date.toDate(dateFormat)
     }
+
+    val actualYear: Int
+        get()
+        {
+            val calendar = GregorianCalendar()
+            calendar.time = Date()
+            return calendar.get(Calendar.YEAR)
+        }
 }
 
 fun Date.toMyString(format: String = "dd.MM.yyyy"): String

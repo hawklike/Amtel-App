@@ -31,13 +31,9 @@
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/schedule_rounds_menu_tabs"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:tabTextColor="@color/white"
-                app:tabIndicatorColor="@android:color/black"
-                app:tabSelectedTextColor="@android:color/black"
-                app:tabGravity="fill"
-                app:tabMode="fixed" />
+                style="@style/TabLayoutStyle"/>
 
         </com.google.android.material.appbar.AppBarLayout>
 

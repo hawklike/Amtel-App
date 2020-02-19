@@ -1,7 +1,10 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.data.dao
 
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 
 class MatchDAO : DAO
@@ -25,4 +28,14 @@ class MatchDAO : DAO
 
     override suspend fun delete(documentId: String): Unit
             = delete(collection, documentId)
+
+    fun getMatches(round: Int, groupName: String, year: Int): Query
+    {
+        return Firebase.firestore
+            .collection(collection)
+            .whereEqualTo("round", round)
+            .whereEqualTo("group", groupName)
+            .whereEqualTo("year", year)
+            .orderBy("home", Query.Direction.ASCENDING)
+    }
 }

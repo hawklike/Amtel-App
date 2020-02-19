@@ -1,6 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.data.entities
 
 import android.os.Parcelable
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
@@ -25,8 +26,6 @@ data class Match(override var id: String? = null,
 {
     init
     {
-        val calendar = GregorianCalendar()
-        calendar.time = Date()
-        year = calendar.get(Calendar.YEAR)
+        year = DateUtil.actualYear
     }
 }

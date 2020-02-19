@@ -67,7 +67,7 @@ class MainActivity : AbstractBaseActivity()
                 viewModel.prepareUser(firebaseUser.uid)
         }
 
-        viewModel.getUserState().observe(this) { user ->
+        viewModel.isUserLoggedIn().observe(this) { user ->
             if(user is SignedUser)
             {
                 Log.i(TAG, "displayAccount(): ${user.self} is signed")
@@ -114,7 +114,7 @@ class MainActivity : AbstractBaseActivity()
                     when(drawerItem)
                     {
                         profile -> AuthManager.currentUser?.let {
-                            val user = viewModel.getUserState().value
+                            val user = viewModel.isUserLoggedIn().value
                             if(user is SignedUser) populateFragment(AccountFragment.newInstance())
                         } ?: populateFragment(LoginFragment.newInstance())
                         results -> populateFragment(ResultsFragment.newInstance())

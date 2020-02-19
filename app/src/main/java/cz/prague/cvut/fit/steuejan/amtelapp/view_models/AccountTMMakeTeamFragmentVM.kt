@@ -17,7 +17,6 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class AccountTMMakeTeamFragmentVM : ViewModel()
@@ -64,11 +63,11 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
                         val team = TeamManager.findTeam(it)
                         if(team is ValidTeam)
                         {
-                            if(team.self.usersId.isEmpty()) this.add(user.id!!)
-                            else this.addAll(team.self.usersId)
+                            if(team.self.usersId.isEmpty()) add(user.id!!)
+                            else addAll(team.self.usersId)
                         }
                     } ?: let {
-                        this.add(user.id!!)
+                        add(user.id!!)
                         _teamUsers.value = listOf(user)
                     }
 
@@ -100,11 +99,6 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     fun updateUser(user: User, team: Team)
     {
-        viewModelScope.async {
-
-        }
-
-
         viewModelScope.launch {
             UserManager.updateUser(user.id!!, mapOf(
                 "teamId" to user.teamId,

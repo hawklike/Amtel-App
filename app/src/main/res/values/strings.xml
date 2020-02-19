@@ -93,4 +93,5 @@
     <string name="rounds">Přehled kol</string>
     <string name="round">kolo</string>
     <string name="no_rounds_text">Skupina neobsahuje žádné utkání.</string>
+    <string name="group">Skupina</string>
 </resources>

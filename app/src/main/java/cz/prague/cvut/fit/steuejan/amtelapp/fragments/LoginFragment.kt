@@ -107,7 +107,7 @@ class LoginFragment : AbstractBaseFragment()
                     onDismiss {
                         if(user is SignedUser)
                         {
-                            mainActivityModel.setUserState(SignedUser(user.self, user.firstSign))
+                            mainActivityModel.isUserLoggedIn(SignedUser(user.self, user.firstSign))
                             mainActivityModel.setUser(user.self)
                         }
                     }

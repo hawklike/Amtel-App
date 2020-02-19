@@ -30,7 +30,7 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
     {
         viewModelScope.launch {
             with(TeamManager.findTeam("group", group)) {
-                if(this is ValidTeams) createMatches(this.self, rounds, group)
+                if(this is ValidTeams) createMatches(self, rounds, group)
             }
         }
     }

@@ -24,10 +24,10 @@ class ScheduleRoundsActivity : AbstractBaseActivity()
     {
         setContentView(R.layout.schedule_rounds_menu)
         super.onCreate(savedInstanceState)
-        setToolbarTitle(getString(R.string.rounds))
         setArrowBack()
 
         intent.extras?.let { group = it.getParcelable(GROUP)!! }
+        setToolbarTitle(getString(R.string.group) + " " + group.name)
 
         viewPager = findViewById(R.id.schedule_rounds_menu_viewPager)
         tabs = findViewById(R.id.schedule_rounds_menu_tabs)
@@ -46,10 +46,10 @@ class ScheduleRoundsActivity : AbstractBaseActivity()
     {
         val adapter = ViewPagerAdapter(supportFragmentManager)
 
-        (1..group.rounds).map {
+        (1..group.rounds).map { round ->
             adapter.addFragment(
-                ScheduleRoundFragment.newInstance(group),
-                it.toString() + "." + getString(R.string.round)
+                ScheduleRoundFragment.newInstance(round, group.name),
+                round.toString() + ". " + getString(R.string.round)
             )
         }
 

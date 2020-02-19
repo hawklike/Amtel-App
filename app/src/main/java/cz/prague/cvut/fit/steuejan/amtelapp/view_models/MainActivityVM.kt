@@ -36,12 +36,12 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     private val userState = SingleLiveEvent<UserState>()
 
-    fun setUserState(userState: UserState)
+    fun isUserLoggedIn(userState: UserState)
     {
         this.userState.value = userState
     }
 
-    fun getUserState(): LiveData<UserState> = userState
+    fun isUserLoggedIn(): LiveData<UserState> = userState
 
     /*---------------------------------------------------*/
 
@@ -74,7 +74,7 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
         viewModelScope.launch {
             val user = UserManager.findUser(uid)
             user?.let {
-                setUserState(SignedUser(it))
+                isUserLoggedIn(SignedUser(it))
                 setUser(it)
                 Log.i(AbstractBaseActivity.TAG, "displayAccount(): $user currently logged in")
             }
