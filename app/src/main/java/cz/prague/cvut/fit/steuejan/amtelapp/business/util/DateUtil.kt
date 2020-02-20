@@ -30,8 +30,20 @@ object DateUtil
         {
             val calendar = GregorianCalendar()
             calendar.time = Date()
-            return calendar.get(Calendar.YEAR)
+            return calendar[Calendar.YEAR]
         }
+
+    fun getWeekDate(week: Int): Pair<Date, Date>
+    {
+        val cal = Calendar.getInstance()
+        cal[Calendar.WEEK_OF_YEAR] = week
+        cal[Calendar.DAY_OF_WEEK] = Calendar.MONDAY
+
+        val first = cal.time
+        cal.add(Calendar.DATE, 6)
+        val last = cal.time
+        return Pair(first, last)
+    }
 }
 
 fun Date.toMyString(format: String = "dd.MM.yyyy"): String

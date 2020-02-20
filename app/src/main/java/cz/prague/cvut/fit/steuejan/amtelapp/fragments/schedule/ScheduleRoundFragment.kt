@@ -1,10 +1,14 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.schedule
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import android.widget.TextView
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -13,21 +17,29 @@ import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowMatchesFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideScheduleActivityFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ScheduleRoundFragmentVM
 
 class ScheduleRoundFragment : InsideScheduleActivityFragment()
 {
+    private val viewModel by viewModels<ScheduleRoundFragmentVM>()
+
     private var round = 0
-    private var groupName = ""
+    private lateinit var group: Group
     private lateinit var user: UserState
 
     private var chooseWeekLayout: RelativeLayout? = null
 
+    private lateinit var weekRange: TextView
     private lateinit var weekLayout: TextInputLayout
     private lateinit var setWeek: FloatingActionButton
 
@@ -37,14 +49,14 @@ class ScheduleRoundFragment : InsideScheduleActivityFragment()
     companion object
     {
         private const val ROUND = "round"
-        private const val NAME = "groupName"
+        private const val GROUP = "group"
 
-        fun newInstance(round: Int, groupName: String): ScheduleRoundFragment
+        fun newInstance(round: Int, group: Group): ScheduleRoundFragment
         {
             val fragment = ScheduleRoundFragment()
             fragment.arguments = Bundle().apply {
                 putInt(ROUND, round)
-                putString(NAME, groupName)
+                putParcelable(GROUP, group)
             }
             return fragment
         }
@@ -55,7 +67,7 @@ class ScheduleRoundFragment : InsideScheduleActivityFragment()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
         arguments?.getInt(ROUND)?.let { round = it }
-        arguments?.getString(NAME)?.let { groupName = it }
+        arguments?.getParcelable<Group>(GROUP)?.let { group = it }
         return inflater.inflate(R.layout.schedule_round, container, false)
     }
 
@@ -90,6 +102,7 @@ class ScheduleRoundFragment : InsideScheduleActivityFragment()
     {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.schedule_round_recyclerView)
+        weekRange = view.findViewById(R.id.schedule_round_week_text)
         chooseWeekLayout = view.findViewById(R.id.schedule_round_choose_week)
         weekLayout = view.findViewById(R.id.schedule_round_choose_week_week)
         setWeek = view.findViewById(R.id.schedule_round_choose_week_add)
@@ -104,23 +117,45 @@ class ScheduleRoundFragment : InsideScheduleActivityFragment()
             chooseWeekLayout?.visibility = View.VISIBLE
 
         setupRecycler()
+        getWeek()
         setListeners()
         setObservers()
     }
 
-    private fun setListeners()
+    private fun getWeek()
     {
+        viewModel.getWeek(group, round)
 
     }
 
+    private fun setListeners()
+    {
+        setWeek.setOnClickListener {
+            val week = weekLayout.editText?.text.toString().trim()
+            weekLayout.error = null
+            viewModel.addWeek(week, group, round)
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
     private fun setObservers()
     {
-
+        viewModel.week.observe(viewLifecycleOwner) { week ->
+            when(week)
+            {
+                is InvalidWeek -> weekLayout.error = week.errorMessage
+                is ValidWeek -> {
+                    weekRange.visibility = View.VISIBLE
+                    weekRange.text = "${week.range.first.toMyString()} - ${week.range.second.toMyString()}"
+                    weekLayout.editText?.setText(week.self.toString())
+                }
+            }
+        }
     }
 
     private fun setupRecycler()
     {
-        val query = MatchManager.getMatches(round, groupName)
+        val query = MatchManager.getMatches(round, group.name)
         val options = FirestoreRecyclerOptions.Builder<Match>()
             .setQuery(query, Match::class.java)
             .build()

@@ -11,13 +11,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/schedule_round_week_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            android:gravity="center"
+            android:text="12.2.2020 - 18.2.2020"
+            android:textColor="@color/darkGrey"
+            android:textSize="16sp" />
+
         <RelativeLayout
             android:id="@+id/schedule_round_choose_week"
+            android:layout_below="@id/schedule_round_week_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/rounded_object">
 

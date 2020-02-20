@@ -1,12 +1,9 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.os.Bundle
-import android.widget.RelativeLayout
 import androidx.activity.viewModels
 import androidx.viewpager.widget.ViewPager
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
@@ -26,11 +23,6 @@ class ScheduleRoundsActivity : AbstractBaseActivity()
 
     private lateinit var viewPager: ViewPager
     private lateinit var tabs: TabLayout
-
-    private var chooseWeekLayout: RelativeLayout? = null
-
-    private lateinit var weekLayout: TextInputLayout
-    private lateinit var setWeek: FloatingActionButton
 
     companion object
     {
@@ -72,7 +64,7 @@ class ScheduleRoundsActivity : AbstractBaseActivity()
 
         (1..group.rounds).map { round ->
             adapter.addFragment(
-                ScheduleRoundFragment.newInstance(round, group.name),
+                ScheduleRoundFragment.newInstance(round, group),
                 round.toString() + ". " + getString(R.string.round)
             )
         }
