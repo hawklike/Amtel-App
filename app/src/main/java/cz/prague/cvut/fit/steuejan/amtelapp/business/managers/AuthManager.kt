@@ -25,12 +25,13 @@ object AuthManager
         auth.currentUser?.let { context.getString(R.string.account) }
             ?: context.getString(R.string.login)
 
+    //TODO: [REFACTORING] get rid of context as a parameter
     suspend fun signUpUser(context: Context, email: String, password: String): String? = withContext(Dispatchers.IO)
     {
         val firebaseOptions = FirebaseOptions.Builder()
-            .setDatabaseUrl("https://amtel-app.firebaseio.com")
-            .setApiKey("AIzaSyD9jT0sInwya6lZ1nItWV4H-My3ndF5YFc")
-            .setApplicationId("amtel-app")
+            .setDatabaseUrl(context.getString(R.string.firebase_database_url))
+            .setApiKey(context.getString(R.string.google_api_key))
+            .setApplicationId(context.getString(R.string.project_id))
             .build()
 
         val auth2 = try

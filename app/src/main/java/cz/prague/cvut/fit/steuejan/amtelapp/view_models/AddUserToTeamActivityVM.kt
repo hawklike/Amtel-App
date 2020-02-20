@@ -10,9 +10,10 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
@@ -50,15 +51,20 @@ class AddUserToTeamActivityVM : ViewModel()
         if(confirmUser(name, surname, email, birthdate))
         {
             viewModelScope.launch {
-                val user = UserManager.addUser(
-                    NameConverter.convertToFirstLetterBig(name),
-                    NameConverter.convertToFirstLetterBig(surname),
+                var user: User? = User(
+                    null,
+                    name.firstLetterUpperCase(),
+                    surname.firstLetterUpperCase(),
                     email,
-                    UserRole.PLAYER,
-                    sex = sex,
-                    birthdate = DateUtil.stringToDate(birthdate),
-                    teamId = team.id,
-                    teamName = team.name)
+                    null,
+                    birthdate.toDate(),
+                    sex.toBoolean(),
+                    UserRole.PLAYER.toString(),
+                    team.id,
+                    team.name
+                )
+
+                user = UserManager.addUser(user!!)
 
                 if(user != null)
                 {

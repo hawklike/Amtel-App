@@ -5,8 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
 
-class TeamsFragment : AbstractBaseFragment()
+class TeamsFragment : InsideMainActivityFragment()
 {
     companion object
     {

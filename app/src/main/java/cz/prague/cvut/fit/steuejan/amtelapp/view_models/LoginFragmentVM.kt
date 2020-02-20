@@ -12,6 +12,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
 
@@ -62,7 +63,7 @@ class LoginFragmentVM : ViewModel()
             title = App.context.getString(R.string.user_login_success_title)
             message = when
             {
-                UserRole.toRole(user.self.role) != UserRole.TEAM_MANAGER -> null
+                user.self.role.toRole() != UserRole.TEAM_MANAGER -> null
                 user.firstSign -> App.context.getString(R.string.user_login_success_message)
                 else -> null
             }

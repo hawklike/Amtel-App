@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -14,26 +15,29 @@ import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidRegistration
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossAddTMFragmentVM
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
+class AccountBossAddTMFragment : InsideMainActivityFragment()
 {
     companion object
     {
         fun newInstance(): AccountBossAddTMFragment = AccountBossAddTMFragment()
     }
 
-    override lateinit var job: Job
+    override val job: Job = Job()
 
     private val viewModel by viewModels<AccountBossAddTMFragmentVM>()
+
+    private var addTeamManagerLayout: RelativeLayout? = null
+    private var chooseDeadlineLayout: RelativeLayout? = null
 
     private lateinit var nameLayout: TextInputLayout
     private lateinit var surnameLayout: TextInputLayout
@@ -43,7 +47,6 @@ class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
-        job = Job()
         return inflater.inflate(R.layout.account_boss_add_tm, container, false)
     }
 
@@ -71,10 +74,21 @@ class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
         if(::dialog.isInitialized) dialog.dismiss()
     }
 
+    override fun onDestroyView()
+    {
+        super.onDestroyView()
+        addUserButton.setOnClickListener(null)
+
+        addTeamManagerLayout?.removeAllViews()
+        chooseDeadlineLayout?.removeAllViews()
+
+        addTeamManagerLayout = null
+        chooseDeadlineLayout = null
+    }
+
     override fun onDestroy()
     {
         job.cancel()
-        Log.i(TAG, "job is canceled: ${job.isCancelled}")
         super.onDestroy()
     }
 
@@ -140,8 +154,10 @@ class AccountBossAddTMFragment : AbstractBaseFragment(), CoroutineScope
 
                 val (name, surname, email) = registration.credentials
                 launch {
-                    UserManager.addUser(name, surname, email, UserRole.TEAM_MANAGER, id = registration.uid)
-                    EmailSender.sendVerificationEmail(email, registration.password)
+                    val user = User(registration.uid, name, surname, email, role = UserRole.TEAM_MANAGER.toString())
+                    UserManager.addUser(user)?.let {
+                        EmailSender.sendVerificationEmail(email, registration.password)
+                    }
                 }
             }
             else

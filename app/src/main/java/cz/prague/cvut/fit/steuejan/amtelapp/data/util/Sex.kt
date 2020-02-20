@@ -4,24 +4,21 @@ enum class Sex
 {
     MAN, WOMAN;
 
-    companion object
+    fun toBoolean(): Boolean
     {
-        fun toBoolean(sex: Sex): Boolean
+        return when(this)
         {
-            return when(sex)
-            {
-                MAN -> true
-                WOMAN -> false
-            }
+            MAN -> true
+            WOMAN -> false
         }
+    }
+}
 
-        fun toSex(boolean: Boolean): Sex
-        {
-            return when(boolean)
-            {
-                true -> MAN
-                false -> WOMAN
-            }
-        }
+fun Boolean.toSex(): Sex
+{
+    return when(this)
+    {
+        true -> Sex.MAN
+        false -> Sex.WOMAN
     }
 }

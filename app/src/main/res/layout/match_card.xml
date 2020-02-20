@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/match_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="16dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/rounded_object">
+
+    <ImageButton
+        android:id="@+id/match_card_next"
+        android:background="@drawable/ic_navigate_next_blue_24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/show_groups" />
+
+    <TextView
+        android:id="@+id/match_card_home"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:layout_marginEnd="16dp"
+        android:layout_toStartOf="@id/match_card_next"
+        android:text="TK Horní Bludovice"
+        android:textColor="@color/darkGrey"
+        android:textSize="16sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/match_card_score"
+        android:layout_marginEnd="16dp"
+        android:layout_toStartOf="@id/match_card_next"
+        android:layout_below="@id/match_card_home">
+
+        <TextView
+            android:id="@+id/match_card_sets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="1:2"
+            android:textColor="@color/darkGrey"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/match_card_gems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/match_card_sets"
+            android:text="4:6, 7:5, 0:6"
+            android:textColor="@color/darkGrey"
+            android:textSize="13sp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/match_card_away"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:layout_marginEnd="16dp"
+        android:layout_below="@id/match_card_score"
+        android:layout_toStartOf="@id/match_card_next"
+        android:text="TK Dolní Datyně"
+        android:textColor="@color/darkGrey"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/match_card_upper_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_below="@id/match_card_away"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Doporučený termín: není uveden"
+        android:textColor="@color/darkGrey"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/match_card_lower_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/match_card_upper_text"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Místo: to nejlepší"
+        android:textColor="@color/darkGrey"
+        android:textSize="12sp" />
+
+</RelativeLayout>

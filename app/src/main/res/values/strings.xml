@@ -2,7 +2,7 @@
     <string name="app_name">AMTEL app</string>
     <string name="profile">Účet</string>
     <string name="results">Výsledky</string>
-    <string name="schedule">Harmonogram</string>
+    <string name="schedule">Přehled utkání</string>
     <string name="teams">Týmy</string>
     <string name="players">Hráči</string>
     <string name="email">Email</string>
@@ -75,4 +75,27 @@
     <string name="delete_user_confirmation_message">Opravdu chcete smazat hráče?</string>
     <string name="create_team_dialog_title">Jste si jistý/á?</string>
     <string name="create_team_dialog_message">Název týmu již nepůjde změnit. Zbytek můžete změnit libovolněkrát.</string>
+    <string name="full_name">Jméno a příjmení</string>
+    <string name="invalid_fullName_error">Vyplňte prosím jméno a příjmení</string>
+    <string name="group_name">Název skupiny</string>
+    <string name="create_group">Vytvořit skupinu</string>
+    <string name="show_groups">Zobrazit skupiny</string>
+    <string name="group_name_error_message">Vyplňte prosím název skupiny</string>
+    <string name="create_group_success_title">Skupina byla úspěšně vytvořena</string>
+    <string name="create_group_failure_title">Skupinu se nepodařilo vytvořit</string>
+    <string name="choose_group">Vybrat skupinu</string>
+    <string name="groups">Skupiny</string>
+    <string name="generate_plan">Generovat zápasy</string>
+    <string name="generate_group_error_text">Zadejte prosím celé liché kladné číslo, které není menší než</string>
+    <string name="rounds_number">Počet kol</string>
+    <string name="show_group">zobrazit skupinu</string>
+    <string name="not_working_yet">Tato možnost není zatím funkční</string>
+    <string name="rounds">Přehled kol</string>
+    <string name="round">kolo</string>
+    <string name="no_rounds_text">Skupina neobsahuje žádné utkání.</string>
+    <string name="group">Skupina</string>
+    <string name="week_failure_empty_text">Vyplňte prosím týden v roce.</string>
+    <string name="week_failure_not_number_text">Vyplňte prosím týden v roce jako číslo.</string>
+    <string name="week_failure_invalid_text">Týden v roce může nabývat hodnot 1–53.</string>
+    <string name="successfully_generated">byla úspěšně vygenerována.</string>
 </resources>

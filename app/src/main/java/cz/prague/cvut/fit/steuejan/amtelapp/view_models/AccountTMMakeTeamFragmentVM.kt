@@ -13,7 +13,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
@@ -22,27 +22,32 @@ import kotlinx.coroutines.launch
 class AccountTMMakeTeamFragmentVM : ViewModel()
 {
     private val nameState = MutableLiveData<NameState>()
-    fun confirmName(): LiveData<NameState> = nameState
+    val name: LiveData<NameState> = nameState
 
     /*---------------------------------------------------*/
 
     private val placeState = MutableLiveData<PlaceState>()
-    fun confirmPlace(): LiveData<PlaceState> = placeState
+    val place: LiveData<PlaceState> = placeState
 
     /*---------------------------------------------------*/
 
     private val playingDaysState = MutableLiveData<PlayingDaysState>()
-    fun confirmPlayingDays(): LiveData<PlayingDaysState> = playingDaysState
+    val playingDays: LiveData<PlayingDaysState> = playingDaysState
 
     /*---------------------------------------------------*/
 
     private val teamState = SingleLiveEvent<TeamState>()
-    fun isTeamCreated(): LiveData<TeamState> = teamState
+    val newTeam: LiveData<TeamState> = teamState
 
     /*---------------------------------------------------*/
 
-    private val teamUsers = MutableLiveData<List<User>>()
-    fun getTeamUsers(): LiveData<List<User>> = teamUsers
+    private val _team = MutableLiveData<Team>()
+    val team: LiveData<Team> = _team
+
+    /*---------------------------------------------------*/
+
+    private val _teamUsers = MutableLiveData<List<User>>()
+    val teamUsers: LiveData<List<User>> = _teamUsers
 
     /*---------------------------------------------------*/
 
@@ -58,23 +63,26 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
                         val team = TeamManager.findTeam(it)
                         if(team is ValidTeam)
                         {
-                            if(team.self.usersId.isEmpty()) this.add(user.id!!)
-                            else this.addAll(team.self.usersId)
+                            if(team.self.usersId.isEmpty()) add(user.id!!)
+                            else addAll(team.self.usersId)
                         }
                     } ?: let {
-                        this.add(user.id!!)
-                        teamUsers.value = listOf(user)
+                        add(user.id!!)
+                        _teamUsers.value = listOf(user)
                     }
 
                 }
 
-                val team = TeamManager.addTeam(
+                var team: Team? = Team(
                     user.teamId,
                     name,
                     AuthManager.currentUser!!.uid,
                     _days.self,
-                    NameConverter.convertToFirstLetterBig(place),
-                    usersId)
+                    place.firstLetterUpperCase(),
+                    usersId
+                )
+
+                team = TeamManager.addTeam(team!!)
 
                 if(team != null) teamState.value = ValidTeam(team)
                 else teamState.value = NoTeam
@@ -85,7 +93,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
     fun setTeamUsers(team: Team)
     {
         viewModelScope.launch {
-            teamUsers.value = UserManager.findUsers(team.usersId)
+            _teamUsers.value = UserManager.findUsers(team.usersId)
         }
     }
 

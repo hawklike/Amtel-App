@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -21,14 +22,14 @@ import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Companion.TEAM
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.MakeTeamUsersAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowUserSimpleAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.AbstractBaseFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountTMMakeTeamFragmentVM
 
-class AccountTMMakeTeamFragment : AbstractBaseFragment()
+class AccountTMMakeTeamFragment : InsideMainActivityFragment()
 {
     companion object
     {
@@ -38,20 +39,24 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     private val viewModel by viewModels<AccountTMMakeTeamFragmentVM>()
 
+    //TODO: [REFACTORING] get team from database in the fragment's view model
     private lateinit var team: TeamState
     private lateinit var user: User
 
     private var users = mutableListOf<User>()
 
+    private var createTeamLayout: RelativeLayout? = null
+
     private lateinit var nameLayout: TextInputLayout
     private lateinit var placeLayout: TextInputLayout
     private lateinit var playingDaysLayout: TextInputLayout
+    private lateinit var createTeam: FloatingActionButton
+
     private lateinit var addPlayer: ImageButton
 
-    private lateinit var recyclerView: RecyclerView
-    private var adapter: MakeTeamUsersAdapter? = null
-
-    private lateinit var createTeam: FloatingActionButton
+    private var recyclerView: RecyclerView? = null
+    //TODO: [REFACTORING] use firestore recycler view
+    private var adapter: ShowUserSimpleAdapter? = null
 
     override fun getName(): String = "AccountTMMakeTeamFragment"
 
@@ -63,6 +68,8 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
+        createTeamLayout = view.findViewById(R.id.account_tm_make_team)
+
         nameLayout = view.findViewById(R.id.account_tm_make_team_name)
         placeLayout = view.findViewById(R.id.account_tm_make_team_place)
         playingDaysLayout = view.findViewById(R.id.account_tm_make_team_playing_day)
@@ -74,9 +81,9 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
-        setupRecycler()
         getUser()
         getTeam()
+        setupRecycler()
         updateFields()
         populateAdapter()
         setObservers()
@@ -94,6 +101,19 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
         }
     }
 
+    override fun onDestroyView()
+    {
+        super.onDestroyView()
+        recyclerView = null
+
+        createTeam.setOnClickListener(null)
+        addPlayer.setOnClickListener(null)
+        playingDaysLayout.editText?.onFocusChangeListener = null
+
+        createTeamLayout?.removeAllViews()
+        createTeamLayout = null
+    }
+
     override fun onDestroy()
     {
         super.onDestroy()
@@ -102,10 +122,10 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     private fun setupRecycler()
     {
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        adapter = MakeTeamUsersAdapter(activity!!, users)
-        recyclerView.adapter = adapter
+        recyclerView?.setHasFixedSize(true)
+        recyclerView?.layoutManager = LinearLayoutManager(context)
+        adapter = ShowUserSimpleAdapter(activity!!, users)
+        recyclerView?.adapter = adapter
     }
 
     private fun setListeners()
@@ -153,6 +173,14 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     }
 
+    private fun setObservers()
+    {
+        confirmName()
+        confirmPlace()
+        confirmDays()
+        isTeamCreated()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
     {
         super.onActivityResult(requestCode, resultCode, data)
@@ -165,14 +193,6 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
         }
     }
 
-    private fun setObservers()
-    {
-        confirmName()
-        confirmPlace()
-        confirmDays()
-        isTeamCreated()
-    }
-
     private fun updateFields()
     {
         if(team is ValidTeam)
@@ -180,29 +200,22 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
             nameLayout.editText?.setText((team as ValidTeam).self.name)
             placeLayout.editText?.setText((team as ValidTeam).self.place)
             playingDaysLayout.editText?.setText((team as ValidTeam).self.playingDays.joinToString(", "))
-
-            nameLayout.editText?.text?.let {
-                if(it.isNotEmpty())
-                {
-                    nameLayout.editText?.isEnabled = false
-                    nameLayout.editText?.setTextColor(ContextCompat.getColor(activity!!, R.color.lightGrey))
-                }
-            }
+            disableName()
         }
     }
 
     private fun populateAdapter()
     {
-        viewModel.getTeamUsers().observe(viewLifecycleOwner) { users ->
+        viewModel.teamUsers.observe(viewLifecycleOwner) { users ->
             this.users.clear()
             this.users.addAll(users)
-            adapter?.notifyDataSetChanged()
+            adapter?.notifyItemRangeInserted(adapter?.itemCount?.minus(1) ?: 0, users.size)
         }
     }
 
     private fun confirmDays()
     {
-        viewModel.confirmPlayingDays().observe(viewLifecycleOwner) { daysState ->
+        viewModel.playingDays.observe(viewLifecycleOwner) { daysState ->
             if(daysState is InvalidPlayingDays)
                 playingDaysLayout.error = daysState.errorMessage
         }
@@ -210,7 +223,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     private fun confirmPlace()
     {
-        viewModel.confirmPlace().observe(viewLifecycleOwner) { placeState ->
+        viewModel.place.observe(viewLifecycleOwner) { placeState ->
             if(placeState is InvalidPlace)
                 placeLayout.error = placeState.errorMessage
         }
@@ -218,7 +231,7 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
 
     private fun confirmName()
     {
-        viewModel.confirmName().observe(viewLifecycleOwner) { nameState ->
+        viewModel.name.observe(viewLifecycleOwner) { nameState ->
             if(nameState is InvalidName)
                 nameLayout.error = nameState.errorMessage
         }
@@ -236,21 +249,20 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
     {
         user = mainActivityModel.getUser().value ?: User()
         mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
-            user = observedUser.copy()
+            user = observedUser?.copy() ?: user
         }
     }
 
     private fun isTeamCreated()
     {
-        viewModel.isTeamCreated().observe(viewLifecycleOwner) { teamState ->
+        viewModel.newTeam.observe(viewLifecycleOwner) { teamState ->
             val title = viewModel.displayAfterDialog(teamState, user).title
 
             MaterialDialog(activity!!)
                 .title(text = title)
                 .show {
                     positiveButton(R.string.ok)
-                    onDismiss {
-                    }
+                    onDismiss {}
                 }
 
             update(teamState)
@@ -265,6 +277,18 @@ class AccountTMMakeTeamFragment : AbstractBaseFragment()
             viewModel.updateUser(user, team.self)
             mainActivityModel.setUser(user)
             mainActivityModel.setTeam(ValidTeam(team.self))
+            disableName()
+        }
+    }
+
+    private fun disableName()
+    {
+        nameLayout.editText?.text?.let {
+            if(it.isNotEmpty())
+            {
+                nameLayout.editText?.isEnabled = false
+                nameLayout.editText?.setTextColor(ContextCompat.getColor(activity!!, R.color.lightGrey))
+            }
         }
     }
 

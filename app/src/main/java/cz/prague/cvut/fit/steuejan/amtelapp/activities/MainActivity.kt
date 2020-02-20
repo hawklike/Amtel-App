@@ -15,29 +15,28 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.*
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.LoginFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.PlayersFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.ResultsFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.TeamsFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.schedule.ScheduleGroupsMenuFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 class MainActivity : AbstractBaseActivity()
 {
-    override lateinit var job: Job
-
     private val viewModel by viewModels<MainActivityVM>()
 
     private lateinit var drawer: Drawer
-    lateinit var progressLayout: FrameLayout
+    var progressLayout: FrameLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         setContentView(R.layout.activity_main)
         progressLayout = findViewById(R.id.progressBar)
-        job = Job()
         super.onCreate(savedInstanceState)
 
         setObservers(savedInstanceState)
@@ -46,7 +45,8 @@ class MainActivity : AbstractBaseActivity()
 
     override fun onDestroy()
     {
-        job.cancel()
+        progressLayout?.removeAllViews()
+        progressLayout = null
         super.onDestroy()
     }
 
@@ -54,6 +54,7 @@ class MainActivity : AbstractBaseActivity()
     {
         setToolbarTitle()
         displayAccount(savedInstanceState)
+        updateDrawer()
     }
 
     private fun setToolbarTitle()
@@ -65,22 +66,13 @@ class MainActivity : AbstractBaseActivity()
 
     private fun displayAccount(savedInstanceState: Bundle?)
     {
-        progressLayout.visibility = View.VISIBLE
+        progressLayout?.visibility = View.VISIBLE
         AuthManager.currentUser?.let { firebaseUser ->
             if(savedInstanceState == null)
-            {
-                launch {
-                    val user =  UserManager.findUser(firebaseUser.uid)
-                    user?.let {
-                        viewModel.setUserState(SignedUser(it))
-                        viewModel.setUser(it)
-                        Log.i(TAG, "displayAccount(): $user currently logged in")
-                    }
-                }
-            }
+                viewModel.prepareUser(firebaseUser.uid)
         }
 
-        viewModel.getUserState().observe(this) { user ->
+        viewModel.isUserLoggedIn().observe(this) { user ->
             if(user is SignedUser)
             {
                 Log.i(TAG, "displayAccount(): ${user.self} is signed")
@@ -127,11 +119,11 @@ class MainActivity : AbstractBaseActivity()
                     when(drawerItem)
                     {
                         profile -> AuthManager.currentUser?.let {
-                            val user = viewModel.getUserState().value
+                            val user = viewModel.isUserLoggedIn().value
                             if(user is SignedUser) populateFragment(AccountFragment.newInstance())
                         } ?: populateFragment(LoginFragment.newInstance())
                         results -> populateFragment(ResultsFragment.newInstance())
-                        schedule -> populateFragment(ScheduleFragment.newInstance())
+                        schedule -> populateFragment(ScheduleGroupsMenuFragment.newInstance())
                         teams -> populateFragment(TeamsFragment.newInstance())
                         players -> populateFragment(PlayersFragment.newInstance())
                     }
@@ -140,8 +132,6 @@ class MainActivity : AbstractBaseActivity()
             }).build()
 
         drawer.drawerLayout.setStatusBarBackground(R.color.white)
-        //restores option before configuration change (i.e rotation...)
-        drawer.setSelectionAtPosition(viewModel.getDrawerSelectedPosition(), false)
 
         if(savedInstanceState == null)
         {
@@ -150,9 +140,16 @@ class MainActivity : AbstractBaseActivity()
         }
     }
 
-    private fun populateFragment(fragment: AbstractBaseFragment)
+    private fun updateDrawer()
     {
-        progressLayout.visibility = View.VISIBLE
+        viewModel.getDrawerSelectedPosition().observe(this) {
+            if(::drawer.isInitialized) drawer.setSelectionAtPosition(it, false)
+        }
+    }
+
+    private fun populateFragment(fragment: InsideMainActivityFragment)
+    {
+        progressLayout?.visibility = View.VISIBLE
         Log.i(TAG, "${fragment.getName()} populated")
         supportFragmentManager.commit {
             replace(R.id.main_container, fragment)

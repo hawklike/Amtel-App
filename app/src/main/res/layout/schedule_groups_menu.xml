@@ -4,11 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/schedule_groups_recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_centerVertical="true"
-        android:text="@string/schedule" />
+        android:layout_height="match_parent"
+        android:layout_margin="24dp" />
 
 </RelativeLayout>

@@ -1,20 +1,24 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 
 import android.util.Log
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.TeamDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
-import kotlinx.coroutines.Dispatchers
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 object TeamManager
 {
-    suspend fun addTeam(id: String? = null, name: String, tmId: String, playingDays: List<String>, place: String, usersId: MutableList<String> = mutableListOf()): Team? = withContext(Dispatchers.IO)
+    suspend fun addTeam(team: Team): Team? = withContext(IO)
     {
-        val team = Team(id = id, name = name, tmId = tmId, playingDays = playingDays, place = place, usersId = usersId)
         return@withContext try
         {
             TeamDAO().insert(team)
@@ -28,7 +32,7 @@ object TeamManager
         }
     }
 
-    suspend fun updateTeam(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(Dispatchers.IO)
+    suspend fun updateTeam(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
     {
         return@withContext try
         {
@@ -43,11 +47,11 @@ object TeamManager
         }
     }
 
-    suspend fun findTeam(id: String): TeamState = withContext(Dispatchers.IO)
+    suspend fun findTeam(id: String): TeamState = withContext(IO)
     {
         return@withContext try
         {
-            val team = TeamDAO().find(id).toObject<Team>()
+            val team = TeamDAO().findById(id).toObject<Team>()
             Log.i(TAG, "findTeam(): $team found in database")
             team?.let { ValidTeam(team) } ?: NoTeam
         }
@@ -56,6 +60,40 @@ object TeamManager
             Log.e(TAG, "findTeam(): team with $id not found in database because ${ex.message}")
             NoTeam
         }
+    }
+
+    suspend fun <T> findTeam(field: String, value: T?): TeamState = withContext(IO)
+    {
+        return@withContext try
+        {
+            val querySnapshot = TeamDAO().find(field, value)
+            val documents = querySnapshot.toObjects<Team>()
+            Log.i(TAG, "findTeams(): $documents where $field is $value found successfully")
+            ValidTeams(documents)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "findTeam(): documents not found because $ex")
+            NoTeam
+        }
+    }
+
+    fun retrieveAllTeams(orderBy: TeamOrderBy = TeamOrderBy.NAME): Query
+    {
+        var query: Query? = null
+        TeamOrderBy.values().forEach {
+            if(orderBy == it) query = TeamDAO().retrieveAllTeams(it.toString())
+        }
+        return query!!
+    }
+
+    fun retrieveAllUsers(teamId: String, orderBy: UserOrderBy = UserOrderBy.SURNAME): Query
+    {
+        var query: Query? = null
+        UserOrderBy.values().forEach {
+            if(orderBy == it) query = TeamDAO().retrieveAllUsers(it.toString(), teamId)
+        }
+        return query!!
     }
 
     private const val TAG = "TeamManager"

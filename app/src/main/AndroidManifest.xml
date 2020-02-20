@@ -25,6 +25,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.AddUserToTeamActivity"/>
+        <activity android:name=".activities.ShowGroupsActivity"/>
+        <activity android:name=".activities.ScheduleRoundsActivity"/>
     </application>
 
 </manifest>

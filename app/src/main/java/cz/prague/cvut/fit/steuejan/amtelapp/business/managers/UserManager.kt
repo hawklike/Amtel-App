@@ -1,31 +1,18 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 
 import android.util.Log
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
-import kotlinx.coroutines.Dispatchers
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
-import java.util.*
 
 object UserManager
 {
-    suspend fun addUser(name: String, surname: String, email: String, role: UserRole, id: String? = null,
-                        sex: Sex = Sex.MAN, birthdate: Date? = null, teamId: String? = null, teamName: String? = null): User? = withContext(Dispatchers.IO)
+    suspend fun addUser(user: User): User? = withContext(IO)
     {
-        val user = User(
-            id,
-            name,
-            surname,
-            email,
-            birthdate = birthdate,
-            sex = Sex.toBoolean(sex),
-            role = UserRole.toString(role),
-            teamId = teamId,
-            teamName = teamName)
-
         return@withContext try
         {
             UserDAO().insert(user)
@@ -39,11 +26,11 @@ object UserManager
         }
     }
 
-    suspend fun findUser(id: String): User? = withContext(Dispatchers.IO)
+    suspend fun findUser(id: String): User? = withContext(IO)
     {
         return@withContext try
         {
-            val user = UserDAO().find(id).toObject<User>()
+            val user = UserDAO().findById(id).toObject<User>()
             Log.i(TAG, "findUser(): $user found in database")
             user
         }
@@ -54,7 +41,7 @@ object UserManager
         }
     }
 
-    suspend fun updateUser(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(Dispatchers.IO)
+    suspend fun updateUser(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
     {
         return@withContext try
         {
@@ -69,7 +56,7 @@ object UserManager
         }
     }
 
-    suspend fun findUsers(usersId: List<String>): List<User> = withContext(Dispatchers.IO)
+    suspend fun findUsers(usersId: List<String>): List<User> = withContext(IO)
     {
         return@withContext usersId.fold(mutableListOf<User>(), { acc, userId ->
             findUser(userId)?.let { acc.add(it) }
@@ -77,7 +64,7 @@ object UserManager
         })
     }
 
-    suspend fun deleteUser(userId: String): Boolean = withContext(Dispatchers.IO)
+    suspend fun deleteUser(userId: String): Boolean = withContext(IO)
     {
         return@withContext try
         {
@@ -89,6 +76,19 @@ object UserManager
         {
             Log.e(TAG, "deleteUser(): user with id $userId not deleted because $ex")
             false
+        }
+    }
+
+    fun retrieveAllUsers(orderBy: UserOrderBy = UserOrderBy.SURNAME): Query
+    {
+        val dao = UserDAO()
+        return when(orderBy)
+        {
+            UserOrderBy.NAME -> dao.retrieveAllUsers("name")
+            UserOrderBy.SURNAME -> dao.retrieveAllUsers("surname")
+            UserOrderBy.TEAM -> dao.retrieveAllUsers("teamName")
+            UserOrderBy.EMAIL -> dao.retrieveAllUsers("email")
+            UserOrderBy.SEX -> dao.retrieveAllUsers("sex")
         }
     }
 

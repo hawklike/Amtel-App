@@ -3,6 +3,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.states
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
 import java.util.*
 
 sealed class BirthdateState
@@ -25,7 +26,7 @@ sealed class BirthdateState
             }
             catch(ex: Exception) { }
 
-            return ValidBirthdate(DateUtil.stringToDate(birthdate))
+            return ValidBirthdate(birthdate.toDate())
         }
     }
 }

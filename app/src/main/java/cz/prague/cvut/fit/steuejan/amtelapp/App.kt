@@ -9,7 +9,7 @@ class App : Application()
     override fun onCreate()
     {
         super.onCreate()
-        mContext= WeakReference(this)
+        mContext = WeakReference(this)
     }
 
     companion object

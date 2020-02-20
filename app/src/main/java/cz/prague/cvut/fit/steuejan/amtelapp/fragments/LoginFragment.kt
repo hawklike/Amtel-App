@@ -12,13 +12,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidEmail
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidPassword
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.LoginFragmentVM
 
-class LoginFragment : AbstractBaseFragment()
+class LoginFragment : InsideMainActivityFragment()
 {
     private val viewModel by viewModels<LoginFragmentVM>()
 
@@ -107,7 +108,7 @@ class LoginFragment : AbstractBaseFragment()
                     onDismiss {
                         if(user is SignedUser)
                         {
-                            mainActivityModel.setUserState(SignedUser(user.self, user.firstSign))
+                            mainActivityModel.isUserLoggedIn(SignedUser(user.self, user.firstSign))
                             mainActivityModel.setUser(user.self)
                         }
                     }

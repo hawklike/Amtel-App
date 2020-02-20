@@ -1,46 +1,48 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.data.dao
 
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Entity
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
-import kotlinx.coroutines.tasks.await
 
 class TeamDAO : DAO
 {
+    override val collection = "teams"
+
     override suspend fun <T> insert(entity: T)
     {
-        if(entity is Team)
-        {
-            val collection = Firebase.firestore.collection("teams")
-            val document = entity.id?.let { collection.document(it) } ?: collection.document()
-            entity.id = document.id
-            document.set(entity, SetOptions.merge()).await()
-        }
+        if(entity is Team) insert(collection, entity)
         else throw IllegalArgumentException("TeamDAO::insert(): entity is not type of Team and should be")
     }
 
-    override suspend fun find(id: String): DocumentSnapshot
+    override suspend fun insert(collectionName: String, entity: Entity)
+    {
+        super.insert(collectionName, entity)
+    }
+
+    override suspend fun findById(id: String): DocumentSnapshot
+            = findById(collection, id)
+
+    override suspend fun <T> find(field: String, value: T?): QuerySnapshot
+            = find(collection, field, value)
+
+    override suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Unit
+            = update(collection, documentId, mapOfFieldsAndValues)
+
+    override suspend fun delete(documentId: String): Unit
+            = delete(collection, documentId)
+
+    fun retrieveAllTeams(orderBy: String): Query
+            = retrieveAll(collection, orderBy)
+
+    fun retrieveAllUsers(orderBy: String, teamId: String): Query
     {
         return Firebase.firestore
-            .collection("teams")
-            .document(id)
-            .get()
-            .await()
-    }
-
-    override suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>)
-    {
-        Firebase.firestore
-            .collection("teams")
-            .document(documentId)
-            .update(mapOfFieldsAndValues)
-            .await()
-    }
-
-    override suspend fun delete(documentId: String)
-    {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            .collection("users")
+            .whereEqualTo("teamId", teamId)
+            .orderBy(orderBy, Query.Direction.ASCENDING)
     }
 }

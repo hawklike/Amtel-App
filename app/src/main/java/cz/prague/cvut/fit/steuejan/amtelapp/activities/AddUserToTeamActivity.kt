@@ -12,7 +12,7 @@ import com.afollestad.materialdialogs.datetime.datePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
@@ -40,7 +40,7 @@ class AddUserToTeamActivity : AbstractBaseActivity()
     {
         setContentView(R.layout.account_add_user_to_team_acitivity)
         super.onCreate(savedInstanceState)
-        setToolbarTitle("Přidat hráče")
+        setToolbarTitle(getString(R.string.add_player))
         setArrowBack()
 
         intent.extras?.let { team = it.getParcelable(TEAM)!! }
@@ -54,6 +54,14 @@ class AddUserToTeamActivity : AbstractBaseActivity()
 
         setListeners()
         setObservers()
+    }
+
+    override fun onDestroy()
+    {
+        super.onDestroy()
+        sexGroup.setOnCheckedChangeListener(null)
+        addButton.setOnClickListener(null)
+        birthdateLayout.editText?.onFocusChangeListener
     }
 
     private fun setListeners()
@@ -79,7 +87,7 @@ class AddUserToTeamActivity : AbstractBaseActivity()
             {
                 MaterialDialog(this).show {
                     datePicker { _, datetime ->
-                        val dateText = DateUtil.toString(datetime, "dd.MM.yyyy")
+                        val dateText = datetime.toMyString()
                         birthdateLayout.editText?.setText(dateText)
                     }
                 }
