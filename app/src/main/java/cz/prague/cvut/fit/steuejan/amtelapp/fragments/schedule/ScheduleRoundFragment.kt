@@ -164,10 +164,12 @@ class ScheduleRoundFragment : InsideScheduleActivityFragment()
         recyclerView?.layoutManager = LinearLayoutManager(context)
         adapter = ShowMatchesFirestoreAdapter(user, options)
 
+        //TODO: implement this
         adapter?.onNextClickOwner = { match ->
             toast(match.home)
         }
 
+        //TODO: implement this
         adapter?.onNextClickGuest = { match ->
             toast(match.away)
         }

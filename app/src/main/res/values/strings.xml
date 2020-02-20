@@ -94,4 +94,8 @@
     <string name="round">kolo</string>
     <string name="no_rounds_text">Skupina neobsahuje žádné utkání.</string>
     <string name="group">Skupina</string>
+    <string name="week_failure_empty_text">Vyplňte prosím týden v roce.</string>
+    <string name="week_failure_not_number_text">Vyplňte prosím týden v roce jako číslo.</string>
+    <string name="week_failure_invalid_text">Týden v roce může nabývat hodnot 1–53.</string>
+    <string name="successfully_generated">byla úspěšně vygenerována.</string>
 </resources>

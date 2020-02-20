@@ -4,13 +4,16 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
+import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.RobinRoundTournament
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
+import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ShowGroupsFirestoreAdapterVM : ViewModel()
 {
@@ -37,13 +40,16 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
 
     private suspend fun createMatches(teams: List<Team>, rounds: Int, group: String)
     {
-        val tournament = RobinRoundTournament()
-        tournament.setTeams(teams)
-        tournament.setRounds(rounds)
-        tournament.createMatches(group).forEach {
-            MatchManager.addMatch(it)
+        withContext(Default) {
+            val tournament = RobinRoundTournament()
+            tournament.setTeams(teams)
+            tournament.setRounds(rounds)
+            tournament.createMatches(group).forEach {
+                MatchManager.addMatch(it)
+            }
         }
+
         GroupManager.updateGroup(group, mapOf("rounds" to rounds))
-        Toast.makeText(context, "Skupina $group byla úspěšně vygenerována.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.group) + " $group " + context.getString(R.string.successfully_generated), Toast.LENGTH_SHORT).show()
     }
 }
