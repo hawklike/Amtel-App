@@ -6,7 +6,7 @@
     android:paddingEnd="16dp"
     android:paddingTop="4dp"
     android:paddingBottom="4dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="16dp"
     android:background="@drawable/rounded_object">
 
     <Button

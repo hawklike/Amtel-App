@@ -18,13 +18,17 @@
         android:theme="@style/AppTheme"
         android:name=".App"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.MainActivity">
+        <activity
+            android:name=".activities.MainActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.AddUserToTeamActivity"/>
+        <activity
+            android:name=".activities.AddUserToTeamActivity"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".activities.ShowGroupsActivity"/>
         <activity android:name=".activities.ScheduleRoundsActivity"/>
     </application>

@@ -1,9 +1,9 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.RobinRoundTournament
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
@@ -50,6 +50,6 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
         }
 
         GroupManager.updateGroup(group, mapOf("rounds" to rounds))
-        Toast.makeText(context, context.getString(R.string.group) + " $group " + context.getString(R.string.successfully_generated), Toast.LENGTH_SHORT).show()
+        toast(context.getString(R.string.group) + " $group " + context.getString(R.string.successfully_generated))
     }
 }

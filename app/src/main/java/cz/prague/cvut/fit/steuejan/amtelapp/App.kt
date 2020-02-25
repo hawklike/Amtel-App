@@ -2,6 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp
 
 import android.app.Application
 import android.content.Context
+import android.widget.Toast
 import java.lang.ref.WeakReference
 
 class App : Application()
@@ -17,5 +18,10 @@ class App : Application()
         private var mContext: WeakReference<Context>? = null
         val context: Context
             get() = mContext?.get()!!
+
+        fun toast(text: String, context: Context = this.context, length: Int = Toast.LENGTH_SHORT)
+        {
+            Toast.makeText(context, text, length).show()
+        }
     }
 }

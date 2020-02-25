@@ -82,14 +82,14 @@ class AddUserToTeamActivity : AbstractBaseActivity()
             viewModel.addUser(name, surname, email, birthdate, sex, team)
         }
 
-        birthdateLayout.editText?.setOnFocusChangeListener { _, hasFocus ->
-            if(hasFocus)
-            {
-                MaterialDialog(this).show {
-                    datePicker { _, datetime ->
-                        val dateText = datetime.toMyString()
-                        birthdateLayout.editText?.setText(dateText)
-                    }
+        birthdateLayout.editText?.setOnClickListener {
+            MaterialDialog(this).show {
+                val savedDate = birthdateLayout.editText?.text?.let {
+                    viewModel.setDialogBirthdate(it)
+                }
+
+                datePicker(currentDate = savedDate) { _, datetime ->
+                    birthdateLayout.editText?.setText(datetime.toMyString())
                 }
             }
         }

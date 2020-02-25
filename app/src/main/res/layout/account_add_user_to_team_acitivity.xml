@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:fitsSystemWindows="true"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
         android:orientation="vertical"
         tools:context=".activities.AddUserToTeamActivity">
 
@@ -99,6 +99,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="24dp"
+            android:layout_marginBottom="16dp"
             android:hint="@string/birthdate"
             app:errorEnabled="true"
             app:errorTextColor="@android:color/holo_red_dark">
@@ -109,6 +110,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="date"
+                android:clickable="true"
+                android:focusable="false"
                 android:maxLines="1" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -119,7 +122,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_below="@id/account_add_user_to_team_birthdate"
-            android:layout_marginTop="16dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp">
 

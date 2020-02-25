@@ -2,6 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +22,7 @@ import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsFirestoreAdapterVM
@@ -53,12 +56,6 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
         private var rounds = 0
         private var calculatedRounds = 0
 
-        init
-        {
-            generate()
-            next()
-        }
-
         fun init(group: Group)
         {
             this.group = group
@@ -70,10 +67,20 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
             rounds = if(size % 2 == 0) (size - 1) else size
             if(size == 1 || size == 0) rounds = 0
             calculatedRounds = rounds
+
+            generate()
+            next()
         }
 
         private fun generate()
         {
+            if(rounds == 0)
+            {
+                generate.isEnabled = false
+                generate.setTextColor(ContextCompat.getColor(App.context, R.color.lightGrey))
+            }
+            else if(group.rounds != 0) generate.setTextColor(Color.RED)
+
             generate.setOnClickListener {
                 MaterialDialog(context).show {
                     title(text = "Vygenerovat plán pro skupinu ${name.text}?")
@@ -95,6 +102,7 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
                     }
                     positiveButton(R.string.generate_plan) {
                         viewModel.generateMatches(name.text.toString(), rounds)
+                        generate.setTextColor(Color.RED)
                     }
                 }
             }
@@ -104,7 +112,9 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
         {
             if(isNextVisible)
             {
-                next.visibility = View.VISIBLE
+                if(group.rounds == 0) next.visibility = View.GONE
+                else next.visibility = View.VISIBLE
+
                 generate.visibility = View.GONE
                 next.setOnClickListener {
                     onNextClick.invoke(group)

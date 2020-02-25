@@ -62,3 +62,10 @@ fun String.toDate(dateFormat: String = "dd.MM.yyyy"): Date
 {
     return SimpleDateFormat(dateFormat, Locale.getDefault()).parse(this)
 }
+
+fun String.toCalendar(dateFormat: String = "dd.MM.yyyy"): Calendar
+{
+    return Calendar.getInstance().apply {
+        time = this@toCalendar.toDate(dateFormat)
+    }
+}

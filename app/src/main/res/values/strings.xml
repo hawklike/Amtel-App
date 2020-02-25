@@ -66,7 +66,7 @@
     <string name="create_team_failure_days_error">Vyplňte prosím hrací dny.</string>
     <string name="birthdate_failure_message_bad_format">Vyplňte prosím datum narození ve formátu dd.MM.yyyy</string>
     <string name="birthdate_failure_message_invalid">Datum narození neodpovídá realitě.</string>
-    <string name="phoneNumber_invalid_message">Zadejte prosím platné telefonní číslo i s předponou.</string>
+    <string name="phoneNumber_invalid_message">Zadejte prosím platné telefonní číslo i s předvolbou.</string>
     <string name="password_invalid_empty_message">Vyplňte prosím heslo.</string>
     <string name="password_invalid_short_message">Heslo musí mít minimálně 6 znaků.</string>
     <string name="email_failure_message">Zadejte prosím validní email.</string>
@@ -98,4 +98,13 @@
     <string name="week_failure_not_number_text">Vyplňte prosím týden v roce jako číslo.</string>
     <string name="week_failure_invalid_text">Týden v roce může nabývat hodnot 1–53.</string>
     <string name="successfully_generated">byla úspěšně vygenerována.</string>
+    <string name="monday">pondělí</string>
+    <string name="tuesday">úterý</string>
+    <string name="wednesday">středa</string>
+    <string name="thursday">čtvrtek</string>
+    <string name="friday">pátek</string>
+    <string name="saturday">sobota</string>
+    <string name="sunday">neděle</string>
+    <string name="team">Tým</string>
+    <string name="was_moved_to_group">byl přesunut do skupiny</string>
 </resources>
