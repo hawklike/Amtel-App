@@ -1,0 +1,102 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "29.0.1"
+    defaultConfig {
+        applicationId "cz.prague.cvut.fit.steuejan.amtelapp"
+        minSdkVersion 22
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    //ktx
+    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation "androidx.fragment:fragment-ktx:1.1.0"
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc03'
+
+    //view model
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    //viewModel scope
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc03'
+
+    //material drawer
+    implementation "com.mikepenz:materialdrawer:${release.versionName}"
+
+    //required support lib modules for material drawer
+    implementation "androidx.appcompat:appcompat:${versions.appcompat}"
+    implementation "androidx.recyclerview:recyclerview:${versions.recyclerView}"
+    implementation "androidx.annotation:annotation:${versions.annotation}"
+    implementation "com.google.android.material:material:${versions.material}"
+    implementation "androidx.constraintlayout:constraintlayout:${versions.constraintLayout}"
+
+    //navController support
+    implementation "com.mikepenz:materialdrawer-nav:${release.versionName}"
+
+    //icons
+    implementation "com.mikepenz:iconics-core:4.0.2"
+    implementation "androidx.appcompat:appcompat:${versions.appCompat}"
+    implementation "com.mikepenz:iconics-views:4.0.2"
+    implementation 'com.mikepenz:fontawesome-typeface:5.9.0.0-kotlin@aar'
+
+    //firebase authentication
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
+
+    //cloud firestore with kotlin syntax
+    implementation 'com.google.firebase:firebase-firestore-ktx:21.4.0'
+
+    // firebaseUI for Cloud Firestore
+    implementation 'com.firebaseui:firebase-ui-firestore:6.2.0'
+
+    //coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.0'
+
+    //material dialog
+    implementation 'com.afollestad.material-dialogs:core:3.2.1'
+    //date-time picker dialog
+    implementation 'com.afollestad.material-dialogs:datetime:3.1.1'
+    //input dialog
+    implementation 'com.afollestad.material-dialogs:input:3.2.1'
+
+    //send email in background
+    implementation 'com.github.luongvo:GmailBackground:2.1.1'
+
+    //phone number validator
+    implementation group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '8.4.2'
+
+    //leak canary
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.1'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
