@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.widget.RelativeLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,7 +37,7 @@ class AccountBossMakeGroupsFragment : InsideMainActivityFragment()
     private lateinit var nameLayout: TextInputLayout
     private lateinit var createGroup: FloatingActionButton
 
-    private lateinit var showGroups: ImageButton
+    private lateinit var showGroups: RelativeLayout
 
     private var recyclerView: RecyclerView? = null
     private var adapter: ShowTeamsFirestoreAdapter? = null
@@ -54,7 +54,7 @@ class AccountBossMakeGroupsFragment : InsideMainActivityFragment()
         super.onViewCreated(view, savedInstanceState)
         nameLayout = view.findViewById(R.id.account_boss_create_group_name)
         createGroup = view.findViewById(R.id.account_boss_create_group_add)
-        showGroups = view.findViewById(R.id.account_boss_create_group_show_groups_button)
+        showGroups = view.findViewById(R.id.account_boss_create_group_show_groups)
         recyclerView = view.findViewById(R.id.account_boss_create_group_recyclerView)
     }
 

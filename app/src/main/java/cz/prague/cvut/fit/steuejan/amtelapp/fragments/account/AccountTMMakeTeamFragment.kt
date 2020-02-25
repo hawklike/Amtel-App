@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -52,7 +51,7 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
     private lateinit var playingDaysLayout: TextInputLayout
     private lateinit var createTeam: FloatingActionButton
 
-    private lateinit var addPlayer: ImageButton
+    private lateinit var addPlayer: RelativeLayout
 
     private var recyclerView: RecyclerView? = null
     //TODO: [REFACTORING] use firestore recycler view
@@ -74,7 +73,7 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
         placeLayout = view.findViewById(R.id.account_tm_make_team_place)
         playingDaysLayout = view.findViewById(R.id.account_tm_make_team_playing_day)
         createTeam = view.findViewById(R.id.account_tm_make_team_create)
-        addPlayer = view.findViewById(R.id.account_tm_make_team_add_player_button)
+        addPlayer = view.findViewById(R.id.account_tm_make_team_add_player)
         recyclerView = view.findViewById(R.id.account_tm_make_team_players_recyclerView)
     }
 
@@ -108,7 +107,7 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
 
         createTeam.setOnClickListener(null)
         addPlayer.setOnClickListener(null)
-        playingDaysLayout.editText?.onFocusChangeListener = null
+        playingDaysLayout.editText?.setOnClickListener(null)
 
         createTeamLayout?.removeAllViews()
         createTeamLayout = null
@@ -130,15 +129,17 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
 
     private fun setListeners()
     {
-        playingDaysLayout.editText?.setOnFocusChangeListener { _, hasFocus ->
-            if(hasFocus)
-            {
-                MaterialDialog(activity!!).show {
-                    listItemsMultiChoice(R.array.days) { _, _, items ->
-                        playingDaysLayout.editText?.setText(items.joinToString(", "))
-                    }
-                    positiveButton(R.string.ok)
+        playingDaysLayout.editText?.setOnClickListener {
+            MaterialDialog(activity!!).show {
+                val indices = playingDaysLayout.editText?.text?.let {
+                    viewModel.setDialogDays(it)
+                } ?: intArrayOf()
+
+                listItemsMultiChoice(R.array.days, initialSelection = indices) { _, _, items ->
+                    val sortedDays = viewModel.getDialogDays(items)
+                    playingDaysLayout.editText?.setText(sortedDays.joinToString(", "))
                 }
+                positiveButton(R.string.ok)
             }
         }
 
@@ -160,17 +161,19 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
                 }
         }
 
-        addPlayer.setOnClickListener {
-            if(::team.isInitialized && team is ValidTeam)
-            {
-                val intent = Intent(activity!!, AddUserToTeamActivity::class.java).apply {
-                    putExtra(TEAM, (team as ValidTeam).self)
-                }
-                startActivityForResult(intent, NEW_USER_CODE)
-            }
-            else(Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet."))
-        }
+        addPlayer.setOnClickListener { addPlayer() }
+    }
 
+    private fun addPlayer()
+    {
+        if(::team.isInitialized && team is ValidTeam)
+        {
+            val intent = Intent(activity!!, AddUserToTeamActivity::class.java).apply {
+                putExtra(TEAM, (team as ValidTeam).self)
+            }
+            startActivityForResult(intent, NEW_USER_CODE)
+        }
+        else(Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet."))
     }
 
     private fun setObservers()

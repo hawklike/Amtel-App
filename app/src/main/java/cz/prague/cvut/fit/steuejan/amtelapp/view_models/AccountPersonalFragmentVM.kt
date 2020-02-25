@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
+import android.text.Editable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,10 +12,12 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
+import java.util.*
 
 class AccountPersonalFragmentVM : ViewModel()
 {
@@ -137,6 +140,12 @@ class AccountPersonalFragmentVM : ViewModel()
     {
         return if(state is PersonalInfoSuccess) Message(App.context.getString(R.string.personalInfo_change_success_title), null)
         else Message(App.context. getString(R.string.personalInfo_change_failure_title), null)
+    }
+
+    fun setDialogBirthdate(birthdate: Editable): Calendar?
+    {
+        return if(birthdate.isEmpty()) null
+        else birthdate.toString().toCalendar()
     }
 
 }

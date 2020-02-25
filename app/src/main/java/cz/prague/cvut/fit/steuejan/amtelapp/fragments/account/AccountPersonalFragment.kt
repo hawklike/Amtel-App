@@ -152,14 +152,15 @@ class AccountPersonalFragment : InsideMainActivityFragment()
             viewModel.savePersonalInfo(fullName, birthdate, phoneNumber, sex)
         }
 
-        birthdateLayout.editText?.setOnFocusChangeListener { _, hasFocus ->
-            if(hasFocus)
-            {
-                MaterialDialog(activity!!).show {
-                    datePicker { _, datetime ->
-                        val dateText = datetime.toMyString()
-                        birthdateLayout.editText?.setText(dateText)
-                    }
+        birthdateLayout.editText?.setOnClickListener {
+            MaterialDialog(activity!!).show {
+                val savedDate = birthdateLayout.editText?.text?.let {
+                    viewModel.setDialogBirthdate(it)
+                }
+
+                datePicker(currentDate = savedDate) { _, date ->
+                    val dateText = date.toMyString()
+                    birthdateLayout.editText?.setText(dateText)
                 }
             }
         }

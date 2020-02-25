@@ -2,6 +2,7 @@
 
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
+import android.text.Editable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,6 +17,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Day
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toDayInWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
 
@@ -145,5 +148,14 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
         return okName && okPlace && okDays
     }
+
+    fun setDialogDays(days: Editable): IntArray
+    {
+        return if(days.isEmpty()) intArrayOf()
+        else days.toString().split(Regex(",[ ]+")).map { day -> day.toDayInWeek().ordinal }.toIntArray()
+    }
+
+    fun getDialogDays(items: List<CharSequence>): List<Day> =
+        items.map { it.toString().toDayInWeek() }.sortedBy { it.ordinal }
 
 }
