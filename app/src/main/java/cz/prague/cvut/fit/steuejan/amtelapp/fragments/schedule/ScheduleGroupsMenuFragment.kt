@@ -14,9 +14,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.activities.ScheduleRoundsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 
-class ScheduleGroupsMenuFragment : InsideMainActivityFragment()
+class ScheduleGroupsMenuFragment : AbstractMainActivityFragment()
 {
     companion object
     {

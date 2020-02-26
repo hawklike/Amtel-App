@@ -14,14 +14,14 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.HEAD_OF_LEAGUE
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.TEAM_MANAGER
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
-class AccountFragment : InsideMainActivityFragment()
+class AccountFragment : AbstractMainActivityFragment()
 {
     companion object
     {
@@ -85,6 +85,10 @@ class AccountFragment : InsideMainActivityFragment()
         }
         else if(role == TEAM_MANAGER)
         {
+            tabs.tabMode = TabLayout.MODE_FIXED
+            tabs.tabGravity = TabLayout.GRAVITY_FILL
+            tabs.layoutParams.width= ViewGroup.LayoutParams.MATCH_PARENT
+
             launch {
                 setProgressBar(true)
                 user.teamId?.let {

@@ -21,11 +21,11 @@ import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidName
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossMakeGroupsFragmentVM
 
-class AccountBossMakeGroupsFragment : InsideMainActivityFragment()
+class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 {
     companion object
     {

@@ -19,7 +19,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.fragments.LoginFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.PlayersFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.ResultsFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.TeamsFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.schedule.ScheduleGroupsMenuFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
@@ -147,7 +147,7 @@ class MainActivity : AbstractBaseActivity()
         }
     }
 
-    private fun populateFragment(fragment: InsideMainActivityFragment)
+    private fun populateFragment(fragment: AbstractMainActivityFragment)
     {
         progressLayout?.visibility = View.VISIBLE
         Log.i(TAG, "${fragment.getName()} populated")

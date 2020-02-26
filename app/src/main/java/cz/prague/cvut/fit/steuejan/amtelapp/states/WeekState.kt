@@ -1,8 +1,10 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.states
 
+import android.os.Parcelable
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 sealed class WeekState
@@ -24,5 +26,7 @@ sealed class WeekState
     }
 }
 
-data class ValidWeek(val self: Int, val range: Pair<Date, Date>) : WeekState()
-data class InvalidWeek(val errorMessage: String) : WeekState()
+@Parcelize
+data class ValidWeek(val self: Int, val range: List<Date>) : WeekState(), Parcelable
+@Parcelize
+data class InvalidWeek(val errorMessage: String = "") : WeekState(), Parcelable

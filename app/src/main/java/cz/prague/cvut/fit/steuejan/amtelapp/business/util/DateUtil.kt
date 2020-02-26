@@ -33,16 +33,18 @@ object DateUtil
             return calendar[Calendar.YEAR]
         }
 
-    fun getWeekDate(week: Int): Pair<Date, Date>
+    fun getWeekDate(week: Int): List<Date>
     {
         val cal = Calendar.getInstance()
         cal[Calendar.WEEK_OF_YEAR] = week
         cal[Calendar.DAY_OF_WEEK] = Calendar.MONDAY
 
-        val first = cal.time
-        cal.add(Calendar.DATE, 6)
-        val last = cal.time
-        return Pair(first, last)
+        return mutableListOf<Date>(cal.time).apply {
+            (1..6).map {
+                cal.add(Calendar.DATE, 1)
+                this.add(cal.time)
+            }
+        }
     }
 }
 

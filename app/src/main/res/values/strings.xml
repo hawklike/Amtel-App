@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AMTEL app</string>
     <string name="profile">Účet</string>
-    <string name="results">Výsledky</string>
+    <string name="results">Pořadí</string>
     <string name="schedule">Přehled utkání</string>
     <string name="teams">Týmy</string>
     <string name="players">Hráči</string>

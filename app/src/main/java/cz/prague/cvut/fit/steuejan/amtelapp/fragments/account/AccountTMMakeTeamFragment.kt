@@ -24,11 +24,11 @@ import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Com
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowUserSimpleAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountTMMakeTeamFragmentVM
 
-class AccountTMMakeTeamFragment : InsideMainActivityFragment()
+class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
 {
     companion object
     {

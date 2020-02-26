@@ -6,7 +6,7 @@ import androidx.fragment.app.activityViewModels
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MainActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 
-abstract class InsideMainActivityFragment : AbstractBaseFragment()
+abstract class AbstractMainActivityFragment : AbstractBaseFragment()
 {
     protected val mainActivityModel by activityViewModels<MainActivityVM>()
 
