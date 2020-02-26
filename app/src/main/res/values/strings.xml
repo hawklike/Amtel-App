@@ -107,4 +107,7 @@
     <string name="sunday">neděle</string>
     <string name="team">Tým</string>
     <string name="was_moved_to_group">byl přesunut do skupiny</string>
+    <string name="match">zápas</string>
+    <string name="match_input">Zápis utkání</string>
+    <string name="match_result">Výsledek utkání</string>
 </resources>

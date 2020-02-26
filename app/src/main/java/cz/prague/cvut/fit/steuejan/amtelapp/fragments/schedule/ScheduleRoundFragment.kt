@@ -168,17 +168,17 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 
         //TODO: [FIX] start a new activity where a discussion among two team managers happen
         adapter?.onNextClickOwner = { match ->
-            startActivity(match, "Zápis utkání")
+            startMatchArrangementActivity(match)
         }
 
         adapter?.onNextClickGuest = { match ->
-            startActivity(match, "Výsledek utkání")
+            startMatchResultActivity(match, getString(R.string.match_result))
         }
 
         recyclerView?.adapter = adapter
     }
 
-    private fun startActivity(match: Match, title: String)
+    private fun startMatchResultActivity(match: Match, title: String)
     {
         val intent = Intent(activity!!, MatchMenuActivity::class.java).apply {
             putExtra(MatchMenuActivity.MATCH, match)
@@ -192,5 +192,11 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
         startActivity(intent)
 
     }
+
+    private fun startMatchArrangementActivity(match: Match)
+    {
+
+    }
+
 
 }

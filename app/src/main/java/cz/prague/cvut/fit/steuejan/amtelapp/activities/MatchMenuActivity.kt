@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
+import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.match.MatchViewFactory
@@ -54,7 +55,7 @@ class MatchMenuActivity : AbstractViewPagerActivity()
 
         val adapter = ViewPagerAdapter(supportFragmentManager)
         (1..3).map {
-            adapter.addFragment(MatchViewFactory.getFragment(title), "$it. zápas")
+            adapter.addFragment(MatchViewFactory.getFragment(title), "$it. " + getString(R.string.match))
         }
         viewPager.adapter = adapter
     }
