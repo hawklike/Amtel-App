@@ -110,4 +110,5 @@
     <string name="match">zápas</string>
     <string name="match_input">Zápis utkání</string>
     <string name="match_result">Výsledek utkání</string>
+    <string name="no_team_alert">Prvně prosím vytvořte tým.</string>
 </resources>
