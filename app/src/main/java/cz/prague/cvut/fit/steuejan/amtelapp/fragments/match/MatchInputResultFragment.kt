@@ -18,7 +18,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
-        return inflater.inflate(R.layout.dummy_layout, container, false)
+        return inflater.inflate(R.layout.match_input_result, container, false)
     }
 
 }

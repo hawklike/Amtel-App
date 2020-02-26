@@ -190,7 +190,6 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
             putExtra(MatchMenuActivity.TITLE, title)
         }
         startActivity(intent)
-
     }
 
     private fun startMatchArrangementActivity(match: Match)
