@@ -42,7 +42,6 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
                 if(user is SignedUser)
                 {
                     val teamId = user.self.teamId
-
                     val condition = user.self.role.toRole() == UserRole.HEAD_OF_LEAGUE ||
                             (teamId != null && (teamId == match.homeId || teamId == match.awayId))
 
@@ -66,7 +65,7 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
     {
         holder.home.text = match.home
         holder.away.text = match.away
-        holder.sets.text = match.homeSets?.let { "$it:${match.awaySets}" } ?: "N/A"
+        holder.sets.text = match.homeScore?.let { "$it:${match.awayScore}" } ?: "N/A"
 
         holder.gems.visibility = View.GONE
         holder.upperText.visibility = View.GONE

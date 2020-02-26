@@ -31,8 +31,8 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
 
     protected open val job: Job = Job()
 
-    private val handler = CoroutineExceptionHandler { _, exception ->
-        Log.e(TAG, "$exception handled !")
+    private val handler = CoroutineExceptionHandler { context, exception ->
+        Log.e(TAG, "Coroutines: $context - $exception handled !")
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -44,7 +44,7 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
 
     private fun handleLogout()
     {
-        baseActivityVM.getLogoutIconVisibility().observe(this) { visibility ->
+        baseActivityVM.logoutIcon.observe(this) { visibility ->
             if(visibility) logoutIcon.visibility = View.VISIBLE
             else logoutIcon.visibility = View.GONE
         }
@@ -78,7 +78,7 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
             setDrawerSelectedPosition(0)
         }
 
-        baseActivityVM.setLogoutIconVisibility(false)
+        baseActivityVM.setLogoutIcon(false)
     }
 
     protected fun setToolbarTitle(title: String)
@@ -97,9 +97,15 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
         }
     }
 
+    override fun onBackPressed()
+    {
+        super.onBackPressed()
+        finish()
+    }
+
     companion object
     {
-        const val TAG = "MainActivity"
+        const val TAG = "BaseActivity"
     }
 
 }

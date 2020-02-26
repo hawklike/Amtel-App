@@ -16,6 +16,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchArrangementActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchMenuActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowMatchesFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
@@ -38,6 +39,10 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
     private var round = 0
     private lateinit var group: Group
     private lateinit var user: UserState
+
+    private val week: ValidWeek? by lazy { viewModel.week.value?.let { week ->
+        if(week is ValidWeek) week else null  }
+    }
 
     private var chooseWeekLayout: RelativeLayout? = null
 
@@ -166,7 +171,6 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
         recyclerView?.layoutManager = LinearLayoutManager(context)
         adapter = ShowMatchesFirestoreAdapter(user, options)
 
-        //TODO: [FIX] start a new activity where a discussion among two team managers happen
         adapter?.onNextClickOwner = { match ->
             startMatchArrangementActivity(match)
         }
@@ -182,10 +186,6 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
     {
         val intent = Intent(activity!!, MatchMenuActivity::class.java).apply {
             putExtra(MatchMenuActivity.MATCH, match)
-            val week = viewModel.week.value?.let { week ->
-                if(week is ValidWeek) week
-                else null
-            }
             putExtra(MatchMenuActivity.WEEK, week)
             putExtra(MatchMenuActivity.TITLE, title)
         }
@@ -195,7 +195,11 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 
     private fun startMatchArrangementActivity(match: Match)
     {
-
+        val intent = Intent(activity!!, MatchArrangementActivity::class.java).apply {
+            putExtra(MatchArrangementActivity.MATCH, match)
+            putExtra(MatchArrangementActivity.WEEK, week)
+        }
+        startActivity(intent)
     }
 
 

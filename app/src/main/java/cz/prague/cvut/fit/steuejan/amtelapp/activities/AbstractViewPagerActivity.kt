@@ -28,10 +28,4 @@ abstract class AbstractViewPagerActivity : AbstractBaseActivity()
 
     protected abstract fun getData()
     protected abstract fun setupViewPager(viewPager: ViewPager)
-
-    override fun onBackPressed()
-    {
-        super.onBackPressed()
-        finish()
-    }
 }

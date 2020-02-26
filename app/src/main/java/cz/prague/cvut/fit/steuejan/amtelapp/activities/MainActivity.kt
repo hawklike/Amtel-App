@@ -78,7 +78,7 @@ class MainActivity : AbstractBaseActivity()
                 Log.i(TAG, "displayAccount(): ${user.self} is signed")
                 if(::drawer.isInitialized)
                     drawer.updateName(0, StringHolder(getString(R.string.account)))
-                baseActivityVM.setLogoutIconVisibility(true)
+                baseActivityVM.setLogoutIcon(true)
                 populateFragment(AccountFragment.newInstance())
             }
             else

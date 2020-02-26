@@ -34,11 +34,5 @@ abstract class AbstractActivityWithRecyclerView : AbstractBaseActivity()
         adapter?.stopListening()
     }
 
-    override fun onBackPressed()
-    {
-        super.onBackPressed()
-        finish()
-    }
-
     protected abstract fun setupRecycler()
 }

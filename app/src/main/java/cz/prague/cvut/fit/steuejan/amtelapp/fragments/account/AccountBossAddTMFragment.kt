@@ -18,7 +18,6 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidRegistration
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossAddTMFragmentVM
-import kotlinx.coroutines.Job
 
 class AccountBossAddTMFragment : AbstractMainActivityFragment()
 {
@@ -26,8 +25,6 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     {
         fun newInstance(): AccountBossAddTMFragment = AccountBossAddTMFragment()
     }
-
-    override val job: Job = Job()
 
     private val viewModel by viewModels<AccountBossAddTMFragmentVM>()
 
@@ -74,12 +71,6 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
         chooseDeadlineLayout = null
     }
 
-    override fun onDestroy()
-    {
-        job.cancel()
-        super.onDestroy()
-    }
-
     private fun setListeners()
     {
         addUserButton.setOnClickListener {
@@ -118,9 +109,7 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
             .message(text = "${credentials.name} ${credentials.surname}\n${credentials.email}")
             .show {
                 positiveButton(R.string.yes) {
-                    viewModel.createUser(
-                        credentials
-                    )
+                    viewModel.createUser(credentials)
                 }
                 negativeButton(R.string.no)
             }

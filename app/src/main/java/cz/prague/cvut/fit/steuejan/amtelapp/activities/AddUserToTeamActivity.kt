@@ -172,10 +172,4 @@ class AddUserToTeamActivity : AbstractBaseActivity()
         emailLayout.error = null
         birthdateLayout.error = null
     }
-
-    override fun onBackPressed()
-    {
-        super.onBackPressed()
-        finish()
-    }
 }

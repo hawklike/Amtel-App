@@ -40,7 +40,7 @@ class AccountBossAddTMFragmentVM : ViewModel()
                 UserManager.addUser(user)?.let {
                     EmailSender.sendVerificationEmail(email, password)
                     _registration.value = ValidRegistration
-                }
+                } ?: let { _registration.value = InvalidRegistration }
 
             } ?: let { _registration.value = InvalidRegistration }
         }
