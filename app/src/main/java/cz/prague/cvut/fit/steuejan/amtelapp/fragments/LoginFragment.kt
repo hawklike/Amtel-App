@@ -50,7 +50,7 @@ class LoginFragment : AbstractMainActivityFragment()
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
-        setToolbarTitle(AuthManager.getProfileDrawerOption(activity!!.applicationContext))
+        setToolbarTitle(AuthManager.profileDrawerOption)
         setListeners()
         setObservers()
     }

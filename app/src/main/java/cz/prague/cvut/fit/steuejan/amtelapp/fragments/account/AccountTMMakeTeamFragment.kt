@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -18,6 +19,7 @@ import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Companion.TEAM
@@ -166,14 +168,18 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
 
     private fun addPlayer()
     {
-        if(::team.isInitialized && team is ValidTeam)
+        if(team is ValidTeam)
         {
             val intent = Intent(activity!!, AddUserToTeamActivity::class.java).apply {
                 putExtra(TEAM, (team as ValidTeam).self)
             }
             startActivityForResult(intent, NEW_USER_CODE)
         }
-        else(Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet."))
+        else
+        {
+            toast(getString(R.string.no_team_alert))
+            (Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet."))
+        }
     }
 
     private fun setObservers()
@@ -204,6 +210,10 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
             placeLayout.editText?.setText((team as ValidTeam).self.place)
             playingDaysLayout.editText?.setText((team as ValidTeam).self.playingDays.joinToString(", "))
             disableName()
+        }
+        else
+        {
+            view!!.findViewById<ImageView>(R.id.account_tm_make_team_add_player_button).visibility = View.GONE
         }
     }
 
@@ -242,7 +252,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
 
     private fun getTeam()
     {
-        team = mainActivityModel.getTeam().value ?: ValidTeam(Team())
+        team = mainActivityModel.getTeam().value ?: NoTeam
         mainActivityModel.getTeam().observe(viewLifecycleOwner) { observedTeam ->
             team = observedTeam
         }
@@ -281,6 +291,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
             mainActivityModel.setUser(user)
             mainActivityModel.setTeam(ValidTeam(team.self))
             disableName()
+            view!!.findViewById<ImageView>(R.id.account_tm_make_team_add_player_button).visibility = View.VISIBLE
         }
     }
 

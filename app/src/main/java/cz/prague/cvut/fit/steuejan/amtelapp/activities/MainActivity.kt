@@ -93,7 +93,7 @@ class MainActivity : AbstractBaseActivity()
 
     private fun createNavigationDrawer(savedInstanceState: Bundle?)
     {
-        val profileTitle = AuthManager.getProfileDrawerOption(applicationContext)
+        val profileTitle = AuthManager.profileDrawerOption
         val profile = PrimaryDrawerItem().withIdentifier(0).withName(profileTitle).withIcon(FontAwesome.Icon.faw_user_edit)
         val results = PrimaryDrawerItem().withName(getString(R.string.results)).withIcon(FontAwesome.Icon.faw_list_ol)
         val schedule = PrimaryDrawerItem().withName(getString(R.string.schedule)).withIcon(FontAwesome.Icon.faw_calendar_alt)

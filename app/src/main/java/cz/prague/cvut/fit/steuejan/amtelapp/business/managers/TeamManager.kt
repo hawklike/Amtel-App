@@ -47,8 +47,9 @@ object TeamManager
         }
     }
 
-    suspend fun findTeam(id: String): TeamState = withContext(IO)
+    suspend fun findTeam(id: String?): TeamState = withContext(IO)
     {
+        if(id == null) return@withContext NoTeam
         return@withContext try
         {
             val team = TeamDAO().findById(id).toObject<Team>()

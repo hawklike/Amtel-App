@@ -14,7 +14,7 @@ class UsersAdapterVM : ViewModel()
     {
         viewModelScope.launch {
             UserManager.deleteUser(user.id!!)
-            val team = TeamManager.findTeam(user.teamId!!)
+            val team = TeamManager.findTeam(user.teamId)
             if(team is ValidTeam)
             {
                 val users = team.self.usersId

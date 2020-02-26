@@ -13,17 +13,12 @@ import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
-import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidRegistration
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossAddTMFragmentVM
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 class AccountBossAddTMFragment : AbstractMainActivityFragment()
 {
@@ -43,7 +38,6 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     private lateinit var surnameLayout: TextInputLayout
     private lateinit var emailLayout: TextInputLayout
     private lateinit var addUserButton: FloatingActionButton
-    private lateinit var dialog: MaterialDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
@@ -67,12 +61,6 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     }
 
     override fun getName(): String = "AccountBossAddTMFragment"
-
-    override fun onPause()
-    {
-        super.onPause()
-        if(::dialog.isInitialized) dialog.dismiss()
-    }
 
     override fun onDestroyView()
     {
@@ -112,27 +100,25 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
 
     private fun registerUser()
     {
-        viewModel.isCredentialsValid().observe(viewLifecycleOwner) { credentialsState ->
-            if(credentialsState is ValidCredentials)
-                displayDialog(credentialsState)
-            if(credentialsState is InvalidCredentials)
+        viewModel.credentials.observe(viewLifecycleOwner) { credentials ->
+            if(credentials is ValidCredentials) displayDialog(credentials)
+            if(credentials is InvalidCredentials)
             {
-                if(!credentialsState.name) nameLayout.error = getString(R.string.invalidName_error)
-                if(!credentialsState.surname) surnameLayout.error = getString(R.string.invalidSurname_error)
-                if(!credentialsState.email)  emailLayout.error = getString(R.string.invalidEmail_error)
+                if(!credentials.name) nameLayout.error = getString(R.string.invalidName_error)
+                if(!credentials.surname) surnameLayout.error = getString(R.string.invalidSurname_error)
+                if(!credentials.email)  emailLayout.error = getString(R.string.invalidEmail_error)
             }
         }
     }
 
     private fun displayDialog(credentials: ValidCredentials)
     {
-        dialog = MaterialDialog(activity!!)
+        MaterialDialog(activity!!)
             .title(R.string.user_registration_confirmation_title)
             .message(text = "${credentials.name} ${credentials.surname}\n${credentials.email}")
             .show {
                 positiveButton(R.string.yes) {
                     viewModel.createUser(
-                        activity!!,
                         credentials
                     )
                 }
@@ -143,7 +129,7 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     //TODO: refactor this
     private fun isRegistrationSuccessful()
     {
-        viewModel.isUserCreated().observe(viewLifecycleOwner) { registration ->
+        viewModel.registration.observe(viewLifecycleOwner) { registration ->
             val title: String
             val message: String
 
@@ -151,14 +137,6 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
             {
                 title = getString(R.string.user_registration_success_title)
                 message = getString(R.string.user_registration_success_message)
-
-                val (name, surname, email) = registration.credentials
-                launch {
-                    val user = User(registration.uid, name, surname, email, role = UserRole.TEAM_MANAGER.toString())
-                    UserManager.addUser(user)?.let {
-                        EmailSender.sendVerificationEmail(email, registration.password)
-                    }
-                }
             }
             else
             {
