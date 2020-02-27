@@ -287,6 +287,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         if(team is ValidTeam)
         {
             user.teamId = team.self.id
+            user.teamName = team.self.name
             viewModel.updateUser(user, team.self)
             mainActivityModel.setUser(user)
             mainActivityModel.setTeam(ValidTeam(team.self))

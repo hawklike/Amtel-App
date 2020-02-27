@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
+import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
 
 class MatchMenuActivityVM : ViewModel()
@@ -27,4 +28,26 @@ class MatchMenuActivityVM : ViewModel()
     }
 
     val week: LiveData<WeekState> = _week
+
+    /*---------------------------------------------------*/
+
+    private val _homeTeam = SingleLiveEvent<TeamState>()
+
+    fun setHomeTeam(homeTeam: TeamState)
+    {
+        _homeTeam.value = homeTeam
+    }
+
+    val homeTeam: LiveData<TeamState> = _homeTeam
+
+    /*---------------------------------------------------*/
+
+    private val _awayTeam = SingleLiveEvent<TeamState>()
+
+    fun setAwayTeam(awayTeam: TeamState)
+    {
+        _awayTeam.value = awayTeam
+    }
+
+    val awayTeam: LiveData<TeamState> = _awayTeam
 }

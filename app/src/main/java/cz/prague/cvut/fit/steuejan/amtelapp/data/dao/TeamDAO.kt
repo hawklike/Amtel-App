@@ -59,10 +59,12 @@ class TeamDAO : DAO
 
         teams.toObjects<Team>().forEach { team ->
             val oldUser = team.users.find { it.id == user.id }
-            team.users.remove(oldUser)
-            team.users.add(user)
+            team.users.apply {
+                remove(oldUser)
+                add(user)
+            }
+
             update(team.id!!, mapOf("users" to team.users))
         }
-
     }
 }

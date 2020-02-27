@@ -8,10 +8,9 @@ import com.google.android.material.tabs.TabLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.match.MatchViewFactory
-import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
-import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchMenuActivityVM
 
 class MatchMenuActivity : AbstractViewPagerActivity()
@@ -23,11 +22,16 @@ class MatchMenuActivity : AbstractViewPagerActivity()
 
     private lateinit var title: String
 
+    private var homeTeam: TeamState = NoTeam
+    private var awayTeam: TeamState = NoTeam
+
     companion object
     {
         const val MATCH = "match"
         const val WEEK = "week"
         const val TITLE = "title"
+        const val HOME_TEAM = "home"
+        const val AWAY_TEAM = "away"
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -35,6 +39,8 @@ class MatchMenuActivity : AbstractViewPagerActivity()
         super.onCreate(savedInstanceState)
         viewModel.setMatch(match)
         viewModel.setWeek(week)
+        viewModel.setHomeTeam(homeTeam)
+        viewModel.setAwayTeam(awayTeam)
         setToolbarTitle(title)
     }
 
@@ -44,6 +50,8 @@ class MatchMenuActivity : AbstractViewPagerActivity()
             match = bundle.getParcelable(MATCH)!!
             week = bundle.getParcelable<ValidWeek?>(WEEK)?.let { it } ?: InvalidWeek()
             title = bundle.getString(TITLE)!!
+            homeTeam = bundle.getParcelable<Team>(HOME_TEAM)?.let { ValidTeam(it) } ?: NoTeam
+            awayTeam = bundle.getParcelable<Team>(AWAY_TEAM)?.let { ValidTeam(it) } ?: NoTeam
         }
     }
 

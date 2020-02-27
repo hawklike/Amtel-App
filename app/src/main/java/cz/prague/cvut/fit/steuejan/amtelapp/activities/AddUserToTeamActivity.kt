@@ -20,9 +20,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AddUserToTeamActivityVM
 
 class AddUserToTeamActivity : AbstractBaseActivity()
 {
-    private lateinit var team: Team
-
     private val viewModel by viewModels<AddUserToTeamActivityVM>()
+
+    private lateinit var team: Team
 
     private lateinit var nameLayout: TextInputLayout
     private lateinit var surnameLayout: TextInputLayout

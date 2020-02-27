@@ -11,6 +11,8 @@ data class Team(override var id: String? = null,
                 var place: String = "",
                 var usersId: MutableList<String> = mutableListOf(),
                 var users: MutableList<User> = mutableListOf(),
+                var matchesId: MutableList<String> = mutableListOf(),
                 var matches: MutableList<Match> = mutableListOf(),
+                var points: MutableMap<String, Int> = mutableMapOf(),
                 var group: String? = null
                 ) : Parcelable, Entity()
