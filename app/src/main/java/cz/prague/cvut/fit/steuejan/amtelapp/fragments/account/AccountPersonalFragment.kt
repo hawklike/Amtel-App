@@ -149,7 +149,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
             val birthdate = birthdateLayout.editText?.text.toString().trim()
             val phoneNumber = phoneNumberLayout.editText?.text.toString().trim()
             deletePersonalInfo()
-            viewModel.savePersonalInfo(fullName, birthdate, phoneNumber, sex)
+            viewModel.savePersonalInfo(user, fullName, birthdate, phoneNumber, sex)
         }
 
         birthdateLayout.editText?.setOnClickListener {

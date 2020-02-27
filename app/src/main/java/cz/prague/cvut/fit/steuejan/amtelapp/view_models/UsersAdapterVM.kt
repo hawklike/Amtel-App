@@ -17,9 +17,11 @@ class UsersAdapterVM : ViewModel()
             val team = TeamManager.findTeam(user.teamId)
             if(team is ValidTeam)
             {
-                val users = team.self.usersId
-                users.remove(user.id!!)
-                TeamManager.updateTeam(team.self.id!!, mapOf("usersId" to users))
+                val users = team.self.users
+                val usersId = team.self.usersId
+                users.remove(user)
+                usersId.remove(user.id!!)
+                TeamManager.updateTeam(team.self.id!!, mapOf("users" to users, "usersId" to usersId))
             }
         }
     }

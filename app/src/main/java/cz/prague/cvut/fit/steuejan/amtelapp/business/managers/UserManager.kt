@@ -56,14 +56,6 @@ object UserManager
         }
     }
 
-    suspend fun findUsers(usersId: List<String>): List<User> = withContext(IO)
-    {
-        return@withContext usersId.fold(mutableListOf<User>(), { acc, userId ->
-            findUser(userId)?.let { acc.add(it) }
-            return@fold acc
-        })
-    }
-
     suspend fun deleteUser(userId: String): Boolean = withContext(IO)
     {
         return@withContext try

@@ -61,16 +61,16 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
             viewModelScope.launch {
                 val _days = playingDaysState.value as ValidPlayingDays
 
-                val usersId = mutableListOf<String>().apply {
+                val users = mutableListOf<User>().apply {
                     user.teamId?.let {
                         val team = TeamManager.findTeam(it)
                         if(team is ValidTeam)
                         {
-                            if(team.self.usersId.isEmpty()) add(user.id!!)
-                            else addAll(team.self.usersId)
+                            if(team.self.users.isEmpty()) add(user)
+                            else addAll(team.self.users)
                         }
                     } ?: let {
-                        add(user.id!!)
+                        add(user)
                         _teamUsers.value = listOf(user)
                     }
 
@@ -82,7 +82,8 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
                     AuthManager.currentUser!!.uid,
                     _days.self,
                     place.firstLetterUpperCase(),
-                    usersId
+                    users.map { it.id!! }.toMutableList(),
+                    users
                 )
 
                 team = TeamManager.addTeam(team!!)
@@ -96,7 +97,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
     fun setTeamUsers(team: Team)
     {
         viewModelScope.launch {
-            _teamUsers.value = UserManager.findUsers(team.usersId)
+            _teamUsers.value = team.users
         }
     }
 

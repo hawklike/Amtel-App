@@ -10,6 +10,7 @@ data class Team(override var id: String? = null,
                 var playingDays: List<String> = emptyList(),
                 var place: String = "",
                 var usersId: MutableList<String> = mutableListOf(),
-                var matchesId: MutableList<String> = mutableListOf(),
+                var users: MutableList<User> = mutableListOf(),
+                var matches: MutableList<Match> = mutableListOf(),
                 var group: String? = null
                 ) : Parcelable, Entity()

@@ -10,10 +10,12 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
@@ -82,7 +84,7 @@ class AccountPersonalFragmentVM : ViewModel()
         return Pair(title, message)
     }
 
-    fun savePersonalInfo(fullName: String, birthdate: String, phoneNumber: String, sex: Sex)
+    fun savePersonalInfo(user: User, fullName: String, birthdate: String, phoneNumber: String, sex: Sex)
     {
         if(confirmPersonalInfo(fullName, birthdate, phoneNumber))
         {
@@ -91,16 +93,21 @@ class AccountPersonalFragmentVM : ViewModel()
             val surname = fullName.split(Regex("[ ]+"))[1]
 
             viewModelScope.launch {
-                val success = UserManager.updateUser(AuthManager.currentUser!!.uid, mapOf(
-                    "name" to name.firstLetterUpperCase(),
-                    "surname" to surname.firstLetterUpperCase(),
-                    "birthdate" to birthdate.toDate(),
-                    "phone" to phone,
-                    "sex" to sex.toBoolean()
-                ))
 
-                if(success) personalInfoChange.value = PersonalInfoSuccess(name, surname, birthdate, phone, sex)
-                else personalInfoChange.value = PersonalInfoFailure
+                user.apply {
+                    this.name = name.firstLetterUpperCase()
+                    this.surname = surname.firstLetterUpperCase()
+                    this.birthdate = birthdate.toDate()
+                    this.phone = phone
+                    this.sex = sex.toBoolean()
+                }
+
+                val success = UserManager.addUser(user)
+
+                TeamManager.updateUserInTeam(user)
+
+                success?.let { personalInfoChange.value = PersonalInfoSuccess(name, surname, birthdate, phone, sex)  }
+                    ?: let { personalInfoChange.value = PersonalInfoFailure }
             }
         }
     }

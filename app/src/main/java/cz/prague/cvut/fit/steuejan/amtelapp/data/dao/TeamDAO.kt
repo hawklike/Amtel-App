@@ -4,9 +4,12 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Entity
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import kotlinx.coroutines.tasks.await
 
 class TeamDAO : DAO
 {
@@ -44,5 +47,22 @@ class TeamDAO : DAO
             .collection("users")
             .whereEqualTo("teamId", teamId)
             .orderBy(orderBy, Query.Direction.ASCENDING)
+    }
+
+    suspend fun updateUser(user: User)
+    {
+        val teams = Firebase.firestore
+            .collection(collection)
+            .whereArrayContains("usersId", user.id!!)
+            .get()
+            .await()
+
+        teams.toObjects<Team>().forEach { team ->
+            val oldUser = team.users.find { it.id == user.id }
+            team.users.remove(oldUser)
+            team.users.add(user)
+            update(team.id!!, mapOf("users" to team.users))
+        }
+
     }
 }

@@ -97,7 +97,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         if(::team.isInitialized && team is ValidTeam)
         {
             val tmpTeam = (team as ValidTeam).self
-            if(users.size != tmpTeam.usersId.size)
+            if(users.size != tmpTeam.users.size)
                 viewModel.setTeamUsers(tmpTeam)
         }
     }
