@@ -1,13 +1,19 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
 import android.text.Editable
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
+import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.setTime
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -30,26 +36,41 @@ class MatchArrangementActivityVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun getTeams(match: Match)
+    private val _match = MutableLiveData<Match>()
+    val match: LiveData<Match> = _match
+
+    fun setMatch(match: Match)
+    {
+        _match.value = match
+    }
+
+    /*---------------------------------------------------*/
+
+    fun getTeams(week: WeekState)
     {
         viewModelScope.launch {
-            val home = TeamManager.findTeam(match.homeId)
-            val away = TeamManager.findTeam(match.awayId)
+            val home = TeamManager.findTeam(match.value?.homeId)
+            val away = TeamManager.findTeam(match.value?.awayId)
 
             if(home is ValidTeam && away is ValidTeam)
+            {
                 _teams.value = Pair(home.self, away.self)
+                match.value?.dateAndTime?.let { _date.value = it }
+                    ?: findBestDate(home.self, away.self, week, match.value!!)
+            }
         }
     }
 
-    fun findBestDate(homeTeam: Team, awayTeam: Team, week: WeekState)
+    private fun findBestDate(homeTeam: Team, awayTeam: Team, week: WeekState, match: Match)
     {
-        if(week is ValidWeek)
-        {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if(week is ValidWeek)
+            {
                 val homeDays = homeTeam.playingDays.map { it.toDayInWeek() }
                 val awayDays = awayTeam.playingDays.map { it.toDayInWeek() }
 
-                _date.value = DateUtil.findDate(homeDays, awayDays, week.range)
+                _date.value = DateUtil.findDate(homeDays, awayDays, week.range)?.setTime(12, 0)
+                MatchManager.updateMatch(match.id!!, mapOf("dateAndTime" to date.value))
             }
         }
     }
@@ -59,4 +80,14 @@ class MatchArrangementActivityVM : ViewModel()
         return if(date.isEmpty()) null
         else date.toString().toCalendar()
     }
+
+    fun setDateTime(date: Calendar)
+    {
+        _date.value = date.time
+        viewModelScope.launch {
+            if(MatchManager.updateMatch(match.value?.id, mapOf("dateAndTime" to date.time)))
+                toast(context.getString(R.string.match_dateTime_change_success), length = Toast.LENGTH_LONG)
+        }
+    }
+
 }

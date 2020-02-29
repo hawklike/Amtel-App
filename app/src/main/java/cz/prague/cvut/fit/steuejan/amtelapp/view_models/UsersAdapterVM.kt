@@ -13,7 +13,7 @@ class UsersAdapterVM : ViewModel()
     fun deleteUser(user: User)
     {
         viewModelScope.launch {
-            UserManager.deleteUser(user.id!!)
+            UserManager.deleteUser(user.id)
             val team = TeamManager.findTeam(user.teamId)
             if(team is ValidTeam)
             {
@@ -21,7 +21,7 @@ class UsersAdapterVM : ViewModel()
                 val usersId = team.self.usersId
                 users.remove(user)
                 usersId.remove(user.id!!)
-                TeamManager.updateTeam(team.self.id!!, mapOf("users" to users, "usersId" to usersId))
+                TeamManager.updateTeam(team.self.id, mapOf("users" to users, "usersId" to usersId))
             }
         }
     }

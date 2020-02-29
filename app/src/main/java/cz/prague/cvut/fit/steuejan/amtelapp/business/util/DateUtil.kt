@@ -68,6 +68,15 @@ fun Date.toMyString(format: String = "dd.MM.yyyy"): String
     return formatter.format(this)
 }
 
+fun Date.setTime(hours: Int, minutes: Int): Date
+{
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.set(Calendar.HOUR_OF_DAY, hours)
+    cal.set(Calendar.MINUTE, minutes)
+    return cal.time
+}
+
 fun Calendar.toMyString(format: String = "dd.MM.yyyy"): String
 {
     val formatter = SimpleDateFormat(format, Locale.getDefault())

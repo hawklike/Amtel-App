@@ -104,7 +104,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
     fun updateUser(user: User, team: Team)
     {
         viewModelScope.launch {
-            UserManager.updateUser(user.id!!, mapOf(
+            UserManager.updateUser(user.id, mapOf(
                 "teamId" to user.teamId,
                 "teamName" to team.name))
         }

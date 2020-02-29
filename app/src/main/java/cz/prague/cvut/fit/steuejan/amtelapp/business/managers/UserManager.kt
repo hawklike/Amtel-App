@@ -26,8 +26,9 @@ object UserManager
         }
     }
 
-    suspend fun findUser(id: String): User? = withContext(IO)
+    suspend fun findUser(id: String?): User? = withContext(IO)
     {
+        if(id == null) return@withContext null
         return@withContext try
         {
             val user = UserDAO().findById(id).toObject<User>()
@@ -41,8 +42,9 @@ object UserManager
         }
     }
 
-    suspend fun updateUser(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
+    suspend fun updateUser(documentId: String?, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
     {
+        if(documentId == null) return@withContext false
         return@withContext try
         {
             UserDAO().update(documentId, mapOfFieldsAndValues)
@@ -56,8 +58,9 @@ object UserManager
         }
     }
 
-    suspend fun deleteUser(userId: String): Boolean = withContext(IO)
+    suspend fun deleteUser(userId: String?): Boolean = withContext(IO)
     {
+        if(userId == null) return@withContext false
         return@withContext try
         {
             UserDAO().delete(userId)

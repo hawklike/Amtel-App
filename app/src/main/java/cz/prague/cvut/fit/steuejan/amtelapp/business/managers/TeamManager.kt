@@ -33,8 +33,9 @@ object TeamManager
         }
     }
 
-    suspend fun updateTeam(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
+    suspend fun updateTeam(documentId: String?, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
     {
+        if(documentId == null) return@withContext false
         return@withContext try
         {
             TeamDAO().update(documentId, mapOfFieldsAndValues)

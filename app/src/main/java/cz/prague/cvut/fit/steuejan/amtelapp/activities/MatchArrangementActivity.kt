@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.datetime.datePicker
+import com.afollestad.materialdialogs.datetime.dateTimePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
@@ -88,7 +88,8 @@ class MatchArrangementActivity : AbstractBaseActivity()
             week = bundle.getParcelable<ValidWeek?>(WEEK)?.let { it } ?: InvalidWeek()
         }
 
-        viewModel.getTeams(match)
+        viewModel.setMatch(match)
+        viewModel.getTeams(week)
         viewModel.teams.observe(this) {
             homeTeam = it.first
             awayTeam = it.second
@@ -108,9 +109,8 @@ class MatchArrangementActivity : AbstractBaseActivity()
 
         changePlace.setText(homeTeam.place)
 
-        viewModel.findBestDate(homeTeam, awayTeam, week)
         viewModel.date.observe(this) { date ->
-            date?.let { changeDate.setText(it.toMyString()) }
+            date?.let { changeDate.setText(it.toMyString("dd.MM.yyyy 'v' HH:mm")) }
         }
     }
 
@@ -126,9 +126,8 @@ class MatchArrangementActivity : AbstractBaseActivity()
                     viewModel.setDialogDate(it)
                 }
 
-                datePicker(currentDate = savedDate) { _, date ->
-                    val dateText = date.toMyString()
-                    changeDate.setText(dateText)
+                dateTimePicker(currentDateTime = savedDate, autoFlipToTime = true, show24HoursView = true) { _, date ->
+                    viewModel.setDateTime(date)
                 }
             }
         }

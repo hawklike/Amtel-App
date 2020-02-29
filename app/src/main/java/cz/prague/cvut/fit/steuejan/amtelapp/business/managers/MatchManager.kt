@@ -25,8 +25,24 @@ object MatchManager
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addMatch(): $match not added to database because $ex")
+            Log.e(TAG, "addMatch(): $match not added to database because ${ex.message}")
             NoMatch
+        }
+    }
+
+    suspend fun updateMatch(documentId: String?, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
+    {
+        if(documentId == null) return@withContext false
+        return@withContext try
+        {
+            MatchDAO().update(documentId, mapOfFieldsAndValues)
+            Log.i(TAG, "updateMatch(): match with id $documentId successfully updated with $mapOfFieldsAndValues")
+            true
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "updateMatch(): match with id $documentId not updated because ${ex.message}")
+            false
         }
     }
 

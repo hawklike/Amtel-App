@@ -73,7 +73,7 @@ class AddUserToTeamActivityVM : ViewModel()
                 {
                     if(team.users.add(user) && team.usersId.add(user.id!!))
                     {
-                        TeamManager.updateTeam(team.id!!, mapOf("users" to team.users, "usersId" to team.usersId))
+                        TeamManager.updateTeam(team.id, mapOf("users" to team.users, "usersId" to team.usersId))
                         teamState.value = ValidTeam(team)
                     }
                     else teamState.value = NoTeam
