@@ -8,24 +8,36 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.datetime.datePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMatchActivityFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
-import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
+import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
+import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchInputResultFragmentVM
 
 class MatchInputResultFragment : AbstractMatchActivityFragment()
 {
+    private val viewModel by viewModels<MatchInputResultFragmentVM>()
+
     private lateinit var match: Match
-    private lateinit var homeTeam: TeamState
-    private lateinit var awayTeam: TeamState
+    private lateinit var homeTeam: Team
+    private lateinit var awayTeam: Team
+    private lateinit var week: WeekState
 
     private lateinit var homeName: TextView
     private lateinit var awayName: TextView
+
     private lateinit var changePlace: EditText
     private lateinit var changeDate: EditText
+
     private lateinit var updateButton: FloatingActionButton
 
     private lateinit var homePlayers: EditText
@@ -62,8 +74,10 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         super.onViewCreated(view, savedInstanceState)
         homeName = view.findViewById(R.id.match_input_home_name)
         awayName = view.findViewById(R.id.match_input_away_name)
+
         changePlace = view.findViewById(R.id.match_input_change_place)
         changeDate = view.findViewById(R.id.match_input_change_date)
+
         updateButton = view.findViewById(R.id.match_input_update_button)
 
         homePlayers = view.findViewById(R.id.match_input_players_home)
@@ -89,19 +103,44 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         super.onActivityCreated(savedInstanceState)
         getData()
         populateFields()
+        setListeners()
     }
 
     private fun getData()
     {
         match = matchViewModel.match.value?.let { it } ?: Match()
-        homeTeam = matchViewModel.homeTeam.value?.let { it } ?: NoTeam
-        awayTeam = matchViewModel.awayTeam.value?.let { it } ?: NoTeam
+        homeTeam = matchViewModel.homeTeam.value?.let { if(it is ValidTeam) it.self else Team() } ?: Team()
+        awayTeam = matchViewModel.awayTeam.value?.let { if(it is ValidTeam) it.self else Team() } ?: Team()
+        week = matchViewModel.week.value?.let { it } ?: InvalidWeek()
     }
 
     private fun populateFields()
     {
-        if(homeTeam is ValidTeam) homeName.text = match.home
-        if(awayTeam is ValidTeam) awayName.text = match.away
+        homeName.text = match.home
+        awayName.text = match.away
+
+        changePlace.setText(homeTeam.place)
+
+        viewModel.findBestDate(homeTeam, awayTeam, week)
+        viewModel.date.observe(viewLifecycleOwner) { date ->
+            date?.let { changeDate.setText(it.toMyString()) }
+        }
+    }
+
+    private fun setListeners()
+    {
+        changeDate.setOnClickListener {
+            MaterialDialog(activity!!).show {
+                val savedDate = changeDate.text?.let {
+                    viewModel.setDialogDate(it)
+                }
+
+                datePicker(currentDate = savedDate) { _, date ->
+                    val dateText = date.toMyString()
+                    changeDate.setText(dateText)
+                }
+            }
+        }
     }
 
 }

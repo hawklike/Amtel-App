@@ -18,7 +18,7 @@ data class Match(override var id: String? = null,
                  var rounds: List<Round> = listOf(Round(), Round(), Round()),
                  var year: Int = -1,
                  var place: String? = null,
-                 var date: Date? = null
+                 var dateAndTime: Date? = null
 ) : Parcelable, Entity()
 {
     init

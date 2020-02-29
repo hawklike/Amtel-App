@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Day
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -45,6 +46,19 @@ object DateUtil
                 this.add(cal.time)
             }
         }
+    }
+
+    fun findDate(homeDays: List<Day>, awayDays: List<Day>, range: List<Date>): Date?
+    {
+        val days = homeDays.intersect(awayDays)
+
+        if(days.isEmpty())
+        {
+            return try { range[homeDays.first().ordinal] }
+            catch(ex: NoSuchElementException) { null }
+        }
+
+        return range[days.first().ordinal]
     }
 }
 

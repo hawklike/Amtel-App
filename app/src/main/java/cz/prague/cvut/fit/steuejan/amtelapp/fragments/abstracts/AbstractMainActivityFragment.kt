@@ -20,7 +20,15 @@ abstract class AbstractMainActivityFragment : AbstractBaseFragment()
     {
         val main = activity as MainActivity
         if(on) main.progressLayout?.visibility = View.VISIBLE
-        else main.progressLayout?.visibility = View.INVISIBLE
+        else main.progressLayout?.visibility = View.GONE
+    }
+
+    override fun onDestroyView()
+    {
+        super.onDestroyView()
+        val main = activity as MainActivity
+        main.progressLayout?.removeAllViews()
+        main.progressLayout = null
     }
 
     protected open fun setToolbarTitle(title: String)

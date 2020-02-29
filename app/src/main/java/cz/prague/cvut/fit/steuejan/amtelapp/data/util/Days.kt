@@ -25,7 +25,7 @@ enum class Day
 
 fun String.toDayInWeek(): Day
 {
-    return when(this.toLowerCase(Locale.getDefault()))
+    return when(this.trim().toLowerCase(Locale.getDefault()))
     {
         context.getString(R.string.monday) -> Day.MONDAY
         context.getString(R.string.tuesday) -> Day.TUESDAY
