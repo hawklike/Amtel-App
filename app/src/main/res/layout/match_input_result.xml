@@ -15,10 +15,7 @@
             android:id="@+id/match_input_overview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="16dp"
+            android:padding="8dp"
             android:layout_marginTop="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
@@ -88,46 +85,28 @@
 
             </RelativeLayout>
 
-            <EditText
-                android:id="@+id/match_input_change_place"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_below="@id/match_input_away_layout"
-                android:hint="Změnit místo konání"
-                android:inputType="text"
-                android:layout_toStartOf="@id/match_input_update_button"
-                android:layout_marginEnd="24dp"
-                android:maxLines="1"
-                style="@style/TextInputEditTextStyle"
-                app:errorEnabled="true"
-                android:importantForAutofill="no" />
-
-            <EditText
-                android:id="@+id/match_input_change_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_below="@id/match_input_change_place"
-                android:hint="Změnit datum konání"
-                android:inputType="date"
-                android:clickable="true"
-                android:focusable="false"
-                android:layout_toStartOf="@id/match_input_update_button"
-                android:layout_marginEnd="24dp"
-                android:maxLines="1"
-                style="@style/TextInputEditTextStyle"
-                app:errorEnabled="true"
-                android:importantForAutofill="no" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/match_input_update_button"
-                style="@style/FloatingActionButton"
+            <TextView
+                android:id="@+id/match_input_sets"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/match_input_change_date"
+                android:layout_alignBottom="@id/match_input_report_button"
+                android:layout_marginBottom="12dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="1 : 2"
+                android:textColor="@color/darkGrey"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/match_input_report_button"
+                style="@style/FloatingActionButton"
+                android:layout_marginTop="12dp"
+                android:layout_below="@id/match_input_away_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                app:srcCompat="@drawable/ic_update_white_24dp" />
+                app:srcCompat="@drawable/ic_report_problem_white_24dp" />
 
         </RelativeLayout>
 
@@ -137,8 +116,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/match_input_overview"
             android:hint="Hráč/i domácího týmu"
+            android:clickable="true"
+            android:focusable="false"
             android:inputType="text"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:maxLines="1"
@@ -153,7 +134,9 @@
             android:layout_below="@id/match_input_players_home"
             android:hint="Hráč/i týmu hostů"
             android:inputType="text"
-            android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:focusable="false"
+            android:layout_marginTop="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:maxLines="1"
@@ -167,7 +150,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"

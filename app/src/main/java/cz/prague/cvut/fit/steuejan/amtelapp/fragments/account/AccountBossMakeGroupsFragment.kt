@@ -66,9 +66,9 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
         setObservers()
     }
 
-    override fun onDestroy()
+    override fun onDestroyView()
     {
-        super.onDestroy()
+        super.onDestroyView()
         adapter = null
         recyclerView = null
     }

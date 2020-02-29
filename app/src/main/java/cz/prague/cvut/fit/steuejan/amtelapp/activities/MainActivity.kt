@@ -15,12 +15,12 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.LoginFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.PlayersFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.ResultsFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.TeamsFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.LoginFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.schedule.ScheduleGroupsMenuFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM

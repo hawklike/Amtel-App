@@ -93,16 +93,11 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
     override fun onDestroyView()
     {
         super.onDestroyView()
+        if(::setWeek.isInitialized) setWeek.setOnClickListener(null)
         recyclerView = null
+        adapter = null
         chooseWeekLayout?.removeAllViews()
         chooseWeekLayout = null
-    }
-
-    override fun onDestroy()
-    {
-        super.onDestroy()
-        adapter = null
-        if(::setWeek.isInitialized) setWeek.setOnClickListener(null)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)

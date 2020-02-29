@@ -9,12 +9,10 @@ import android.widget.EditText
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.datetime.datePicker
+import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMatchActivityFragment
@@ -27,6 +25,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 {
     private val viewModel by viewModels<MatchInputResultFragmentVM>()
 
+    private var round = 0
     private lateinit var match: Match
     private lateinit var homeTeam: Team
     private lateinit var awayTeam: Team
@@ -34,11 +33,9 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private lateinit var homeName: TextView
     private lateinit var awayName: TextView
+    private lateinit var sets: TextView
 
-    private lateinit var changePlace: EditText
-    private lateinit var changeDate: EditText
-
-    private lateinit var updateButton: FloatingActionButton
+    private lateinit var reportButton: FloatingActionButton
 
     private lateinit var homePlayers: EditText
     private lateinit var awayPlayers: EditText
@@ -59,13 +56,23 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     companion object
     {
-        fun newInstance(): MatchInputResultFragment = MatchInputResultFragment()
+        private const val ROUND = "round"
+
+        fun newInstance(round: Int): MatchInputResultFragment
+        {
+            val fragment = MatchInputResultFragment()
+            fragment.arguments = Bundle().apply {
+                putInt(ROUND, round)
+            }
+            return fragment
+        }
     }
 
     override fun getName(): String = "MatchInputResultFragment"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
+        arguments?.getInt(ROUND)?.let { round = it }
         return inflater.inflate(R.layout.match_input_result, container, false)
     }
 
@@ -75,13 +82,11 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         homeName = view.findViewById(R.id.match_input_home_name)
         awayName = view.findViewById(R.id.match_input_away_name)
 
-        changePlace = view.findViewById(R.id.match_input_change_place)
-        changeDate = view.findViewById(R.id.match_input_change_date)
-
-        updateButton = view.findViewById(R.id.match_input_update_button)
+        reportButton = view.findViewById(R.id.match_input_report_button)
 
         homePlayers = view.findViewById(R.id.match_input_players_home)
         awayPlayers = view.findViewById(R.id.match_input_players_away)
+        sets = view.findViewById(R.id.match_input_sets)
 
         firstSetHome = view.findViewById(R.id.match_input_results_first_set_home)
         firstSetAway = view.findViewById(R.id.match_input_results_first_set_away)
@@ -106,6 +111,19 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         setListeners()
     }
 
+    override fun onDestroyView()
+    {
+        super.onDestroyView()
+        homePlayers.setOnLongClickListener(null)
+        awayPlayers.setOnLongClickListener(null)
+
+        overviewLayout?.removeAllViews()
+        resultsLayout?.removeAllViews()
+
+        overviewLayout = null
+        resultsLayout = null
+    }
+
     private fun getData()
     {
         match = matchViewModel.match.value?.let { it } ?: Match()
@@ -118,27 +136,31 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     {
         homeName.text = match.home
         awayName.text = match.away
-
-        changePlace.setText(homeTeam.place)
-
-        viewModel.findBestDate(homeTeam, awayTeam, week)
-        viewModel.date.observe(viewLifecycleOwner) { date ->
-            date?.let { changeDate.setText(it.toMyString()) }
-        }
     }
 
     private fun setListeners()
     {
-        changeDate.setOnClickListener {
+        homePlayers.setOnClickListener {
             MaterialDialog(activity!!).show {
-                val savedDate = changeDate.text?.let {
-                    viewModel.setDialogDate(it)
-                }
+                title(R.string.choose_players)
 
-                datePicker(currentDate = savedDate) { _, date ->
-                    val dateText = date.toMyString()
-                    changeDate.setText(dateText)
+                val players = homeTeam.users.map { "${it.name} ${it.surname}" }
+                listItemsMultiChoice(items = players) { _, _, items ->
+                    homePlayers.setText(items.joinToString(", "))
                 }
+                positiveButton(R.string.ok)
+            }
+        }
+
+        awayPlayers.setOnClickListener {
+            MaterialDialog(activity!!).show {
+                title(R.string.choose_players)
+
+                val players = awayTeam.users.map { "${it.name} ${it.surname}" }
+                listItemsMultiChoice(items = players) { _, _, items ->
+                    awayPlayers.setText(items.joinToString(", "))
+                }
+                positiveButton(R.string.ok)
             }
         }
     }

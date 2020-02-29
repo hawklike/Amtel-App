@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.fragments
+package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
 import android.os.Bundle
 import android.view.LayoutInflater

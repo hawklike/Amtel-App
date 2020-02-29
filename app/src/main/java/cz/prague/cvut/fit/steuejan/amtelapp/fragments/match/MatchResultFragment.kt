@@ -9,15 +9,27 @@ import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMatchAct
 
 class MatchResultFragment : AbstractMatchActivityFragment()
 {
+    private var round = 0
+
     companion object
     {
-        fun newInstance(): MatchResultFragment = MatchResultFragment()
+        private const val ROUND = "round"
+
+        fun newInstance(round: Int): MatchResultFragment
+        {
+            val fragment = MatchResultFragment()
+            fragment.arguments = Bundle().apply {
+                putInt(ROUND, round)
+            }
+            return fragment
+        }
     }
 
     override fun getName(): String = "MatchResultFragment"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
+        arguments?.getInt(ROUND)?.let { round = it }
         return inflater.inflate(R.layout.dummy_layout, container, false)
     }
 }

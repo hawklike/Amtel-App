@@ -150,6 +150,8 @@ class MatchArrangementActivity : AbstractBaseActivity()
     {
         changeDate.setOnClickListener {
             MaterialDialog(this).show {
+                title(R.string.change_dateTime_match)
+
                 val savedDate = changeDate.text?.let {
                     viewModel.setDialogDate(it)
                 }

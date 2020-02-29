@@ -63,7 +63,7 @@ class MatchMenuActivity : AbstractViewPagerActivity()
 
         val adapter = ViewPagerAdapter(supportFragmentManager)
         (1..3).map {
-            adapter.addFragment(MatchViewFactory.getFragment(title), "$it. " + getString(R.string.match))
+            adapter.addFragment(MatchViewFactory.getFragment(title, it), "$it. " + getString(R.string.match))
         }
         viewPager.adapter = adapter
     }

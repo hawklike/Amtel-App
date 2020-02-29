@@ -117,4 +117,6 @@
     <string name="change_place_match">Změnit místo utkání</string>
     <string name="change_dateTime_match">Změnit datum a čas konání</string>
     <string name="match_place_change_success">Místo utkání bylo úspěšně změněno.</string>
+    <string name="choose_playing_days">Zvolit hrací dny</string>
+    <string name="choose_players">Zvolit hráče</string>
 </resources>

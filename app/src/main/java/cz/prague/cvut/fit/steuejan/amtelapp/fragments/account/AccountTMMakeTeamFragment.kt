@@ -133,6 +133,8 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         playingDaysLayout.editText?.setOnClickListener {
             MaterialDialog(activity!!).show {
+                title(R.string.choose_playing_days)
+
                 val indices = playingDaysLayout.editText?.text?.let {
                     viewModel.setDialogDays(it)
                 } ?: intArrayOf()

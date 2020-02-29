@@ -92,7 +92,7 @@ class MatchArrangementActivityVM : ViewModel()
 
     fun updatePlace(place: String)
     {
-        if(place != teams.value?.first?.place ?: "")
+        if(place != match.value?.place ?: "")
         {
             viewModelScope.launch {
                 if(MatchManager.updateMatch(match.value?.id, mapOf("place" to place)))

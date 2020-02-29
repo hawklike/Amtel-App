@@ -50,11 +50,6 @@ class ScheduleGroupsMenuFragment : AbstractMainActivityFragment()
     {
         super.onDestroyView()
         recyclerView = null
-    }
-
-    override fun onDestroy()
-    {
-        super.onDestroy()
         adapter = null
     }
 
