@@ -11,6 +11,8 @@ import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.datetime.dateTimePicker
+import com.afollestad.materialdialogs.input.getInputField
+import com.afollestad.materialdialogs.input.input
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
@@ -97,6 +99,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
             progressBarLayout?.visibility = View.GONE
             matchInfoLayout?.visibility = View.VISIBLE
 
+            viewModel.initPlace()
             populateFields()
         }
     }
@@ -107,7 +110,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
         awayName.text = awayTeam.name
         score.text = match.homeScore?.let { "$it : ${match.awayScore}" } ?: "N/A"
 
-        changePlace.setText(homeTeam.place)
+        changePlace.setText(match.place?.let { it } ?: homeTeam.place )
 
         viewModel.date.observe(this) { date ->
             date?.let { changeDate.setText(it.toMyString("dd.MM.yyyy 'v' HH:mm")) }
@@ -116,10 +119,35 @@ class MatchArrangementActivity : AbstractBaseActivity()
 
     private fun setListeners()
     {
+        editButtonListener()
+        changePlaceListener()
+        changeDateListener()
+    }
+
+    private fun editButtonListener()
+    {
         editButton.setOnClickListener {
             startMatchInputResultActivity(match, getString(R.string.match_input))
         }
+    }
 
+    private fun changePlaceListener()
+    {
+        changePlace.setOnClickListener {
+            MaterialDialog(this).show {
+                title(R.string.change_place_match)
+                input(hint = getString(R.string.court_address), prefill = changePlace.text)
+                positiveButton(R.string.ok) {
+                    val place = this.getInputField().text
+                    changePlace.text = place
+                    viewModel.updatePlace(place.toString())
+                }
+            }
+        }
+    }
+
+    private fun changeDateListener()
+    {
         changeDate.setOnClickListener {
             MaterialDialog(this).show {
                 val savedDate = changeDate.text?.let {
@@ -127,7 +155,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
                 }
 
                 dateTimePicker(currentDateTime = savedDate, autoFlipToTime = true, show24HoursView = true) { _, date ->
-                    viewModel.setDateTime(date)
+                    viewModel.updateDateTime(date)
                 }
             }
         }

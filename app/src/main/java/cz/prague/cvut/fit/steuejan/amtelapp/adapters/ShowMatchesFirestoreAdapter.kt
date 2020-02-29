@@ -34,11 +34,11 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
         val lowerText: TextView = itemView.findViewById(R.id.match_card_lower_text)
         val next: ImageButton = itemView.findViewById(R.id.match_card_next)
 
-        private val match by lazy { getItem(adapterPosition) }
-
         init
         {
             next.setOnClickListener {
+                val match = getItem(adapterPosition)
+
                 if(user is SignedUser)
                 {
                     val teamId = user.self.teamId
@@ -65,7 +65,7 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
     {
         holder.home.text = match.home
         holder.away.text = match.away
-        holder.sets.text = match.homeScore?.let { "$it:${match.awayScore}" } ?: "N/A"
+        holder.sets.text = match.homeScore?.let { "$it : ${match.awayScore}" } ?: "N/A"
 
         holder.gems.visibility = View.GONE
         holder.upperText.visibility = View.GONE

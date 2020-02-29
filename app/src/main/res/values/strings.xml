@@ -114,4 +114,7 @@
     <string name="match_arrangement">Domluva utkání</string>
     <string name="amtel_opava">AMTEL Opava</string>
     <string name="match_dateTime_change_success">Datum a čas zápasu byly úspěšně změněny.</string>
+    <string name="change_place_match">Změnit místo utkání</string>
+    <string name="change_dateTime_match">Změnit datum a čas konání</string>
+    <string name="match_place_change_success">Místo utkání bylo úspěšně změněno.</string>
 </resources>

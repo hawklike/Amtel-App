@@ -81,12 +81,30 @@ class MatchArrangementActivityVM : ViewModel()
         else date.toString().toCalendar()
     }
 
-    fun setDateTime(date: Calendar)
+    fun updateDateTime(date: Calendar)
     {
         _date.value = date.time
         viewModelScope.launch {
             if(MatchManager.updateMatch(match.value?.id, mapOf("dateAndTime" to date.time)))
                 toast(context.getString(R.string.match_dateTime_change_success), length = Toast.LENGTH_LONG)
+        }
+    }
+
+    fun updatePlace(place: String)
+    {
+        if(place != teams.value?.first?.place ?: "")
+        {
+            viewModelScope.launch {
+                if(MatchManager.updateMatch(match.value?.id, mapOf("place" to place)))
+                    toast(context.getString(R.string.match_place_change_success), length = Toast.LENGTH_LONG)
+            }
+        }
+    }
+
+    fun initPlace()
+    {
+        match.value?.place ?: viewModelScope.launch {
+            MatchManager.updateMatch(match.value?.id, mapOf("place" to teams.value?.first?.place))
         }
     }
 
