@@ -4,37 +4,107 @@ import android.text.Editable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
-import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toDayInWeek
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
-import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
-import kotlinx.coroutines.launch
-import java.util.*
+import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
+import cz.prague.cvut.fit.steuejan.amtelapp.states.SetState
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidSet
 
 class MatchInputResultFragmentVM : ViewModel()
 {
-    private val _date = MutableLiveData<Date?>()
-    val date: LiveData<Date?> = _date
+    private val _firstHome = MutableLiveData<SetState>()
+    val firstHome: LiveData<SetState> = _firstHome
 
-    fun findBestDate(homeTeam: Team, awayTeam: Team, week: WeekState)
+    /*---------------------------------------------------*/
+
+    private val _firstAway = MutableLiveData<SetState>()
+    val firstAway: LiveData<SetState> = _firstAway
+
+    /*---------------------------------------------------*/
+
+    private val _secondHome = MutableLiveData<SetState>()
+    val secondHome: LiveData<SetState> = _secondHome
+
+    /*---------------------------------------------------*/
+
+    private val _secondAway = MutableLiveData<SetState>()
+    val secondAway: LiveData<SetState> = _secondAway
+
+    /*---------------------------------------------------*/
+
+    private val _thirdHome = MutableLiveData<SetState>()
+    val thirdHome: LiveData<SetState> = _thirdHome
+
+    /*---------------------------------------------------*/
+
+    private val _thirdAway = MutableLiveData<SetState>()
+    val thirdAway: LiveData<SetState> = _thirdAway
+
+    /*---------------------------------------------------*/
+
+    private var isInputOk = true
+
+    /*---------------------------------------------------*/
+
+    fun inputResult(
+        firstHome: String,
+        firstAway: String,
+        secondHome: String,
+        secondAway: String,
+        thirdHome: String,
+        thirdAway: String,
+        homePlayersText: Editable?,
+        awayPlayersText: Editable?
+    )
     {
-        if(week is ValidWeek)
-        {
-            viewModelScope.launch {
-                val homeDays = homeTeam.playingDays.map { it.toDayInWeek() }
-                val awayDays = awayTeam.playingDays.map { it.toDayInWeek() }
+        confirmInput(
+            firstHome,
+            firstAway,
+            secondHome,
+            secondAway,
+            thirdHome,
+            thirdAway,
+            homePlayersText,
+            awayPlayersText)
+    }
 
-                _date.value = DateUtil.findDate(homeDays, awayDays, week.range)
+    private fun confirmInput(
+        firstHome: String,
+        firstAway: String,
+        secondHome: String,
+        secondAway: String,
+        thirdHome: String,
+        thirdAway: String,
+        homePlayersText: Editable?,
+        awayPlayersText: Editable?
+    )
+    {
+        isInputOk = true
+        confirmGames(firstHome, _firstHome)
+        confirmGames(firstAway, _firstAway)
+        confirmGames(secondHome, _secondHome)
+        confirmGames(secondAway, _secondAway)
+        confirmGames(thirdHome, _thirdHome, optional = true)
+        confirmGames(thirdAway, _thirdAway, optional = true)
+
+        confirmSet(_firstHome, _firstAway)
+    }
+
+    private fun confirmSet(home: MutableLiveData<SetState>, away: MutableLiveData<SetState>)
+    {
+        if(home.value is ValidSet && away.value is ValidSet)
+        {
+            if(!SetState.validate((home.value as ValidSet).self, (away.value as ValidSet).self))
+            {
+                home.value = InvalidSet("Počet gemů v setu neodpovídá pravidlům.")
+                away.value = InvalidSet("Počet gemů v setu neodpovídá pravidlům.")
             }
         }
     }
 
-    fun setDialogDate(date: Editable): Calendar?
+    private fun confirmGames(games: String, data: MutableLiveData<SetState>, optional: Boolean = false)
     {
-        return if(date.isEmpty()) null
-        else date.toString().toCalendar()
+        with(SetState.validate(games, optional)) {
+            if(this is InvalidSet) isInputOk = false
+            data.value = this
+        }
     }
 }

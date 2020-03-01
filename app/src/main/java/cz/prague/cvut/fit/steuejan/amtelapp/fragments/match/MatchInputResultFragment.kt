@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -20,6 +21,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMatchActivityFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
@@ -113,6 +115,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         getData()
         populateFields()
         setListeners()
+        setObservers()
     }
 
     override fun onDestroyView()
@@ -173,27 +176,99 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             val thirdHome = thirdSetHome.text.toString()
             val thirdAway = thirdSetAway.text.toString()
 
-//            val homePlayers = homePlayers.text.trim().split(",")
-//            val awayPlayers = awayPlayers.text.trim().split(",")
+            val homePlayersText = homePlayers.text
+            val awayPlayersText = awayPlayers.text
+
+            deleteErrors()
+
+            viewModel.inputResult(
+                firstHome,
+                firstAway,
+                secondHome,
+                secondAway,
+                thirdHome,
+                thirdAway,
+                homePlayersText,
+                awayPlayersText)
         }
     }
 
+    private fun setObservers()
+    {
+        viewModel.firstHome.observe(viewLifecycleOwner) {
+            if(it is InvalidSet) firstSetHome.error = it.errorMessage
+        }
+
+        viewModel.secondHome.observe(viewLifecycleOwner) {
+            if(it is InvalidSet) secondSetHome.error = it.errorMessage
+        }
+
+        viewModel.thirdHome.observe(viewLifecycleOwner) {
+            if(it is InvalidSet) thirdSetHome.error = it.errorMessage
+        }
+
+        viewModel.firstAway.observe(viewLifecycleOwner) {
+            if(it is InvalidSet) firstSetAway.error = it.errorMessage
+        }
+
+        viewModel.secondAway.observe(viewLifecycleOwner) {
+            if(it is InvalidSet) secondSetAway.error = it.errorMessage
+        }
+
+        viewModel.thirdAway.observe(viewLifecycleOwner) {
+            if(it is InvalidSet) thirdSetAway.error = it.errorMessage
+        }
+    }
+
+    /**
+     *  If there is a group named '50+', two matches are doubles and one is single. Otherwise
+     *  two matches are singles and one is double. According to a round number and a group name,
+     *  a user may input only one or more players who played in the particular match.
+     */
     private fun addPlayersDialog(editText: EditText, team: Team, title: String): MaterialDialog
     {
         return MaterialDialog(activity!!).show {
             title(text = title)
-
             val players = team.users.map { "${it.name} ${it.surname}\n${it.email}" }
-            if(round == 3)
-                listItemsMultiChoice(items = players) { _, _, items ->
-                    editText.setText(items.joinToString(", ") { it.toString().replace("\n", " - ") })
-                }
+
+            if(round == 3) listItemMultiChoice(this, players, editText)
             else
-                listItemsSingleChoice(items = players) { _, _, item ->
-                    editText.setText(item.toString().replace("\n", " - "))
-                }
+            {
+                if(round == 2 && match.group == getString(R.string.fifty_plus_group)) listItemMultiChoice(this, players, editText)
+                else listItemSingleChoice(this, players, editText)
+            }
             positiveButton(R.string.ok)
         }
+    }
+
+    /**
+     * Output may look like this: John Newman - john.newman@google.com, i.e. <<name>> - <<email>>
+     */
+    private fun listItemSingleChoice(dialog: MaterialDialog, players: List<String>, editText: EditText): MaterialDialog
+    {
+        return dialog.listItemsSingleChoice(items = players) { _, _, item ->
+            editText.setText(item.toString().replace("\n", " - "))
+        }
+    }
+
+    /**
+     * Output looks like this: <<name>> - <<email>>, <<name>> - <<email>>
+     */
+    private fun listItemMultiChoice(dialog: MaterialDialog, players: List<String>, editText: EditText): MaterialDialog
+    {
+        return dialog.listItemsMultiChoice(items = players) { _, _, items ->
+            editText.setText(items.joinToString(", ") { it.toString().replace("\n", " - ") })
+        }
+    }
+
+    private fun deleteErrors()
+    {
+        firstSetHome.error = null
+        firstSetAway.error = null
+        secondSetHome.error = null
+        secondSetAway.error = null
+        thirdSetHome.error = null
+        thirdSetAway.error = null
     }
 
 
