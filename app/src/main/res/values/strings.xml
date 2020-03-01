@@ -122,4 +122,6 @@
     <string name="choose_player_home_team">Zvolit hráče domácího týmu</string>
     <string name="choose_player_away_team">Zvolit hráče týmu hostů</string>
     <string name="fifty_plus_group">50+</string>
+    <string name="games_invalid_rules_error">Počet gemů v setu neodpovídá pravidlům.</string>
+    <string name="empty_players_error">Zadejte prosím hráče.</string>
 </resources>

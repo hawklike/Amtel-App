@@ -32,6 +32,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private val viewModel by viewModels<MatchInputResultFragmentVM>()
 
     private var round = 0
+
     private lateinit var match: Match
     private lateinit var homeTeam: Team
     private lateinit var awayTeam: Team
@@ -113,6 +114,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     {
         super.onActivityCreated(savedInstanceState)
         getData()
+        viewModel.round = round
         populateFields()
         setListeners()
         setObservers()
@@ -189,7 +191,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                 thirdHome,
                 thirdAway,
                 homePlayersText,
-                awayPlayersText)
+                awayPlayersText,
+                match.group == getString(R.string.fifty_plus_group))
         }
     }
 
@@ -217,6 +220,14 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
         viewModel.thirdAway.observe(viewLifecycleOwner) {
             if(it is InvalidSet) thirdSetAway.error = it.errorMessage
+        }
+
+        viewModel.homePlayers.observe(viewLifecycleOwner) {
+            if(!it) homePlayers.error = getString(R.string.empty_players_error)
+        }
+
+        viewModel.awayPlayers.observe(viewLifecycleOwner) {
+            if(!it) awayPlayers.error = getString(R.string.empty_players_error)
         }
     }
 
@@ -269,6 +280,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         secondSetAway.error = null
         thirdSetHome.error = null
         thirdSetAway.error = null
+        homePlayers.error = null
+        awayPlayers.error = null
     }
 
 
