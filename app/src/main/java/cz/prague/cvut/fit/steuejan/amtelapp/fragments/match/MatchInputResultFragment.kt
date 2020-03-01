@@ -115,6 +115,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         super.onActivityCreated(savedInstanceState)
         getData()
         viewModel.round = round
+        viewModel.match = match
         populateFields()
         setListeners()
         setObservers()
@@ -183,7 +184,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
             deleteErrors()
 
-            viewModel.inputResult(
+            viewModel.confirmInput(
                 firstHome,
                 firstAway,
                 secondHome,
@@ -229,6 +230,23 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         viewModel.awayPlayers.observe(viewLifecycleOwner) {
             if(!it) awayPlayers.error = getString(R.string.empty_players_error)
         }
+
+        viewModel.isInputOk.observe(viewLifecycleOwner) {
+            if(it) displayConfirmationDialog()
+        }
+    }
+
+    private fun displayConfirmationDialog()
+    {
+        MaterialDialog(activity!!)
+            .title(R.string.create_team_dialog_title)
+            .message(R.string.match_input_confirmation_text)
+            .show {
+                positiveButton(R.string.yes) {
+                    viewModel.inputResult()
+                }
+                negativeButton(R.string.no)
+            }
     }
 
     /**

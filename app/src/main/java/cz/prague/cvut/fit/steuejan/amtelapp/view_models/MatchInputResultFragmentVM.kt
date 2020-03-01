@@ -8,11 +8,16 @@ import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SetState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidSet
 import kotlinx.coroutines.launch
 
+@Suppress("PrivatePropertyName")
 class MatchInputResultFragmentVM : ViewModel()
 {
     private val _firstHome = MutableLiveData<SetState>()
@@ -55,41 +60,98 @@ class MatchInputResultFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private var isInputOk = true
-    var round: Int = 0
+    private val _isInputOk = SingleLiveEvent<Boolean>()
+    val isInputOk: LiveData<Boolean> = _isInputOk
 
     /*---------------------------------------------------*/
 
-    fun inputResult(firstHome: String, firstAway: String, secondHome: String, secondAway: String, thirdHome: String, thirdAway: String, homePlayersText: Editable, awayPlayersText: Editable, isFiftyGroup: Boolean)
+    private var m_isInputOk = true
+    var round: Int = 1
+    lateinit var match: Match
+
+    /*---------------------------------------------------*/
+
+    //TODO: send an email after the result is input
+    //TODO: let a user to input the result twice (head of league unlimited)
+    //TODO: if a team manager is away's team manager, display only info overview
+    //TODO: retrieve updated match
+
+    /**
+     * Call this method before inputResult() method
+     */
+    fun confirmInput(firstHome: String, firstAway: String, secondHome: String, secondAway: String, thirdHome: String, thirdAway: String, homePlayersText: Editable, awayPlayersText: Editable, isFiftyGroup: Boolean)
     {
         viewModelScope.launch {
-            if(confirmInput(firstHome, firstAway, secondHome, secondAway, thirdHome, thirdAway, homePlayersText, awayPlayersText, isFiftyGroup))
-            {
-                val homeGems = firstHome.toInt() + secondHome.toInt() + if(thirdHome.isNotEmpty()) thirdHome.toInt() else 0
-                toast("OK")
-            }
+            m_isInputOk = true
 
+            confirmGames(firstHome, _firstHome)
+            confirmGames(firstAway, _firstAway)
+            confirmGames(secondHome, _secondHome)
+            confirmGames(secondAway, _secondAway)
+            confirmGames(thirdHome, _thirdHome, optional = true)
+            confirmGames(thirdAway, _thirdAway, optional = true)
+
+            confirmSet(_firstHome, _firstAway)
+            confirmSet(_secondHome, _secondAway)
+            if(!isFiftyGroup) confirmSet(_thirdHome, _thirdAway)
+
+            confirmPlayers(homePlayersText, _homePlayers)
+            confirmPlayers(awayPlayersText, _awayPlayers)
+
+            _isInputOk.value = m_isInputOk
         }
     }
 
-    private fun confirmInput(firstHome: String, firstAway: String, secondHome: String, secondAway: String, thirdHome: String, thirdAway: String, homePlayersText: Editable, awayPlayersText: Editable, isFiftyGroup: Boolean): Boolean
+    /**
+     * Call this method only if confirmInput() returns true
+     */
+    fun inputResult()
     {
-        isInputOk = true
-        confirmGames(firstHome, _firstHome)
-        confirmGames(firstAway, _firstAway)
-        confirmGames(secondHome, _secondHome)
-        confirmGames(secondAway, _secondAway)
-        confirmGames(thirdHome, _thirdHome, optional = true)
-        confirmGames(thirdAway, _thirdAway, optional = true)
+        viewModelScope.launch {
+            var match = this@MatchInputResultFragmentVM.match
 
-        confirmSet(_firstHome, _firstAway)
-        confirmSet(_secondHome, _secondAway)
-        if(!isFiftyGroup) confirmSet(_thirdHome, _thirdAway)
+            val home1: Int = (firstHome.value as ValidSet).self
+            val home2: Int = (secondHome.value as ValidSet).self
+            val home3: Int? = with((thirdHome.value as ValidSet).self) {
+                if(this == Int.MAX_VALUE) null
+                else this
+            }
 
-        confirmPlayers(homePlayersText, _homePlayers)
-        confirmPlayers(awayPlayersText, _awayPlayers)
+            val away1: Int = (firstAway.value as ValidSet).self
+            val away2: Int = (secondAway.value as ValidSet).self
+            val away3: Int? = with((thirdAway.value as ValidSet).self) {
+                if(this == Int.MAX_VALUE) null
+                else this
+            }
 
-        return isInputOk
+            match = calculateScore(match, home1, away1, home2, away2, home3, away3)
+            MatchManager.addMatch(match)
+            toast("OK")
+        }
+    }
+
+    private fun calculateScore(match: Match, home1: Int, away1: Int, home2: Int, away2: Int, home3: Int?, away3: Int?): Match
+    {
+        val homeGames = home1 + home2 + (home3 ?: 0)
+        val awayGames = away1 + away2 + (away3 ?: 0)
+
+        var homeSets = 0
+        var awaySets = 0
+
+        if(home1 > away1) homeSets++
+        else awaySets++
+
+        if(home2 > away2) homeSets++
+        else awaySets++
+
+        if(home3 != null && away3 != null)
+        {
+            if(home3 > away3) homeSets++
+            else awaySets++
+        }
+
+        match.rounds[round - 1] = Round(homeSets, awaySets, homeGames, awayGames, home1, away1, home2, away2, home3, away3)
+        return match
     }
 
     private fun confirmSet(home: MutableLiveData<SetState>, away: MutableLiveData<SetState>)
@@ -103,7 +165,7 @@ class MatchInputResultFragmentVM : ViewModel()
 
             if(!SetState.validate(homeGames, awayGames))
             {
-                isInputOk = false
+                m_isInputOk = false
                 home.value = InvalidSet(context.getString(R.string.games_invalid_rules_error))
                 away.value = InvalidSet(context.getString(R.string.games_invalid_rules_error))
             }
@@ -113,7 +175,7 @@ class MatchInputResultFragmentVM : ViewModel()
     private fun confirmGames(games: String, data: MutableLiveData<SetState>, optional: Boolean = false)
     {
         with(SetState.validate(games, optional)) {
-            if(this is InvalidSet) isInputOk = false
+            if(this is InvalidSet) m_isInputOk = false
             data.value = this
         }
     }
@@ -123,14 +185,14 @@ class MatchInputResultFragmentVM : ViewModel()
         if(players.isEmpty())
         {
             data.value = false
-            isInputOk = false
+            m_isInputOk = false
         }
         else
         {
             if(players.split(",").size > 2)
             {
                 data.value = false
-                isInputOk = false
+                m_isInputOk = false
             }
         }
     }
