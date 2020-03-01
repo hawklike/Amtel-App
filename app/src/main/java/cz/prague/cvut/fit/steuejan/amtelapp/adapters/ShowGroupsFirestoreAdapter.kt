@@ -11,7 +11,6 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +23,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsFirestoreAdapterVM
 
@@ -77,9 +77,9 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
             if(rounds == 0)
             {
                 generate.isEnabled = false
-                generate.setTextColor(ContextCompat.getColor(App.context, R.color.lightGrey))
+                generate.setTextColor(App.getColor(R.color.lightGrey))
             }
-            else if(group.rounds != 0) generate.setTextColor(Color.RED)
+            else if(group.rounds[DateUtil.actualYear.toString()] != 0) generate.setTextColor(Color.RED)
 
             generate.setOnClickListener {
                 MaterialDialog(context).show {
@@ -112,11 +112,12 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
         {
             if(isNextVisible)
             {
-                if(group.rounds == 0) next.visibility = View.GONE
+                if(group.rounds[DateUtil.actualYear.toString()] == 0) next.visibility = View.GONE
                 else next.visibility = View.VISIBLE
 
                 generate.visibility = View.GONE
                 next.setOnClickListener {
+                    println("rounds1: ${group.rounds[DateUtil.actualYear.toString()]}")
                     onNextClick.invoke(group)
                 }
             }

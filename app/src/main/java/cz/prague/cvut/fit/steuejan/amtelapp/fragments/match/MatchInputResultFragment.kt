@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.match
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +12,11 @@ import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
+import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMatchActivityFragment
@@ -114,8 +118,9 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     override fun onDestroyView()
     {
         super.onDestroyView()
-        homePlayers.setOnLongClickListener(null)
-        awayPlayers.setOnLongClickListener(null)
+        homePlayers.setOnClickListener(null)
+        awayPlayers.setOnClickListener(null)
+        inputResult.setOnClickListener(null)
 
         overviewLayout?.removeAllViews()
         resultsLayout?.removeAllViews()
@@ -134,6 +139,18 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private fun populateFields()
     {
+        when(AuthManager.currentUser!!.uid)
+        {
+            homeTeam.tmId -> {
+                reportButton.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
+                reportButton.isEnabled = false
+            }
+            awayTeam.tmId -> {
+                inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
+                inputResult.isEnabled = false
+            }
+        }
+
         homeName.text = match.home
         awayName.text = match.away
     }
@@ -141,28 +158,43 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private fun setListeners()
     {
         homePlayers.setOnClickListener {
-            MaterialDialog(activity!!).show {
-                title(R.string.choose_players)
-
-                val players = homeTeam.users.map { "${it.name} ${it.surname}" }
-                listItemsMultiChoice(items = players) { _, _, items ->
-                    homePlayers.setText(items.joinToString(", "))
-                }
-                positiveButton(R.string.ok)
-            }
+            addPlayersDialog(it as EditText, homeTeam, getString(R.string.choose_player_home_team))
         }
 
         awayPlayers.setOnClickListener {
-            MaterialDialog(activity!!).show {
-                title(R.string.choose_players)
+            addPlayersDialog(it as EditText, awayTeam, getString(R.string.choose_player_away_team))
+        }
 
-                val players = awayTeam.users.map { "${it.name} ${it.surname}" }
-                listItemsMultiChoice(items = players) { _, _, items ->
-                    awayPlayers.setText(items.joinToString(", "))
-                }
-                positiveButton(R.string.ok)
-            }
+        inputResult.setOnClickListener {
+            val firstHome = firstSetHome.text.toString()
+            val firstAway = firstSetAway.text.toString()
+            val secondHome = secondSetHome.text.toString()
+            val secondAway = secondSetAway.text.toString()
+            val thirdHome = thirdSetHome.text.toString()
+            val thirdAway = thirdSetAway.text.toString()
+
+//            val homePlayers = homePlayers.text.trim().split(",")
+//            val awayPlayers = awayPlayers.text.trim().split(",")
         }
     }
+
+    private fun addPlayersDialog(editText: EditText, team: Team, title: String): MaterialDialog
+    {
+        return MaterialDialog(activity!!).show {
+            title(text = title)
+
+            val players = team.users.map { "${it.name} ${it.surname}\n${it.email}" }
+            if(round == 3)
+                listItemsMultiChoice(items = players) { _, _, items ->
+                    editText.setText(items.joinToString(", ") { it.toString().replace("\n", " - ") })
+                }
+            else
+                listItemsSingleChoice(items = players) { _, _, item ->
+                    editText.setText(item.toString().replace("\n", " - "))
+                }
+            positiveButton(R.string.ok)
+        }
+    }
+
 
 }

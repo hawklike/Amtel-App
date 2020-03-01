@@ -119,4 +119,6 @@
     <string name="match_place_change_success">Místo utkání bylo úspěšně změněno.</string>
     <string name="choose_playing_days">Zvolit hrací dny</string>
     <string name="choose_players">Zvolit hráče</string>
+    <string name="choose_player_home_team">Zvolit hráče domácího týmu</string>
+    <string name="choose_player_away_team">Zvolit hráče týmu hostů</string>
 </resources>

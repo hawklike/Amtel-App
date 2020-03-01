@@ -16,13 +16,7 @@ data class Match(override var id: String? = null,
                  var homeScore: Int? = null,
                  var awayScore: Int? = null,
                  var rounds: List<Round> = listOf(Round(), Round(), Round()),
-                 var year: Int = -1,
+                 var year: Int = DateUtil.actualYear,
                  var place: String? = null,
                  var dateAndTime: Date? = null
-) : Parcelable, Entity()
-{
-    init
-    {
-        year = DateUtil.actualYear
-    }
-}
+                 ) : Parcelable, Entity()

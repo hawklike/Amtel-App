@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.viewpager.widget.ViewPager
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.schedule.ScheduleRoundFragment
@@ -44,7 +45,10 @@ class ScheduleRoundsActivity : AbstractViewPagerActivity()
     override fun setupViewPager(viewPager: ViewPager)
     {
         val adapter = ViewPagerAdapter(supportFragmentManager)
-        (1..group.rounds).map { round ->
+        val rounds = group.rounds[DateUtil.actualYear.toString()] ?: 0
+        println("rounds: $rounds")
+
+        (1..rounds).map { round ->
             adapter.addFragment(
                 ScheduleRoundFragment.newInstance(round, group),
                 round.toString() + ". " + getString(R.string.round)

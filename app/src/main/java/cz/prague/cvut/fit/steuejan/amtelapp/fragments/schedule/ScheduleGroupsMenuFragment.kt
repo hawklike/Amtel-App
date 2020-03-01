@@ -13,6 +13,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.ScheduleRoundsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 
@@ -82,7 +83,7 @@ class ScheduleGroupsMenuFragment : AbstractMainActivityFragment()
                 putExtra(ScheduleRoundsActivity.USER, mainActivityModel.getUser().value)
             }
 
-            if(group.rounds != 0) startActivity(intent)
+            if(group.rounds[DateUtil.actualYear.toString()] != 0) startActivity(intent)
             else Toast.makeText(activity!!, getString(R.string.no_rounds_text), Toast.LENGTH_SHORT).show()
         }
         recyclerView?.adapter = adapter

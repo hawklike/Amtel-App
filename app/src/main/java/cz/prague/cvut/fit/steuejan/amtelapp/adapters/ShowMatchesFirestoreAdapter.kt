@@ -6,11 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
@@ -81,9 +80,9 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
             val teamId = user.self.teamId!!
             if(teamId == match.homeId || teamId == match.awayId)
             {
-                holder.home.setTextColor(ContextCompat.getColor(context, R.color.blue))
-                holder.away.setTextColor(ContextCompat.getColor(context, R.color.blue))
-                holder.sets.setTextColor(ContextCompat.getColor(context, R.color.blue))
+                holder.home.setTextColor(App.getColor(R.color.blue))
+                holder.away.setTextColor(App.getColor(R.color.blue))
+                holder.sets.setTextColor(App.getColor(R.color.blue))
             }
         }
     }
