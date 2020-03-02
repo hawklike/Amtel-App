@@ -88,12 +88,12 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         super.onViewCreated(view, savedInstanceState)
         homeName = view.findViewById(R.id.match_input_home_name)
         awayName = view.findViewById(R.id.match_input_away_name)
+        sets = view.findViewById(R.id.match_input_sets)
 
         reportButton = view.findViewById(R.id.match_input_report_button)
 
         homePlayers = view.findViewById(R.id.match_input_players_home)
         awayPlayers = view.findViewById(R.id.match_input_players_away)
-        sets = view.findViewById(R.id.match_input_sets)
 
         firstSetHome = view.findViewById(R.id.match_input_results_first_set_home)
         firstSetAway = view.findViewById(R.id.match_input_results_first_set_away)
@@ -115,7 +115,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         super.onActivityCreated(savedInstanceState)
         getData()
         viewModel.round = round
-        viewModel.match = match
+        viewModel.setMatch(match)
         populateFields()
         setListeners()
         setObservers()
@@ -145,20 +145,30 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private fun populateFields()
     {
+        prepareLayout()
+        homeName.text = match.home
+        awayName.text = match.away
+    }
+
+    private fun prepareLayout()
+    {
         when(AuthManager.currentUser!!.uid)
         {
             homeTeam.tmId -> {
-                reportButton.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
-                reportButton.isEnabled = false
+                reportButton.visibility = View.GONE
+                if(match.edits == 0)
+                {
+                    inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
+                    inputResult.isEnabled = false
+                }
             }
             awayTeam.tmId -> {
-                inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
-                inputResult.isEnabled = false
+                inputResult.visibility = View.GONE
+                resultsLayout?.visibility = View.GONE
+                homePlayers.visibility = View.GONE
+                awayPlayers.visibility = View.GONE
             }
         }
-
-        homeName.text = match.home
-        awayName.text = match.away
     }
 
     private fun setListeners()
@@ -223,28 +233,42 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             if(it is InvalidSet) thirdSetAway.error = it.errorMessage
         }
 
-        viewModel.homePlayers.observe(viewLifecycleOwner) {
-            if(!it) homePlayers.error = getString(R.string.empty_players_error)
+        viewModel.homePlayers.observe(viewLifecycleOwner) { isOk ->
+            if(!isOk) homePlayers.error = getString(R.string.empty_players_error)
         }
 
-        viewModel.awayPlayers.observe(viewLifecycleOwner) {
-            if(!it) awayPlayers.error = getString(R.string.empty_players_error)
+        viewModel.awayPlayers.observe(viewLifecycleOwner) { isOk ->
+            if(!isOk) awayPlayers.error = getString(R.string.empty_players_error)
         }
 
-        viewModel.isInputOk.observe(viewLifecycleOwner) {
-            if(it) displayConfirmationDialog()
+        viewModel.isInputOk.observe(viewLifecycleOwner) { isOk ->
+            if(isOk)
+            {
+                displayConfirmationDialog(
+                    getString(R.string.create_team_dialog_title),
+                    getString(R.string.match_input_confirmation_text)) {
+                    viewModel.inputResult(false) }
+            }
+        }
+
+        viewModel.isTie.observe(viewLifecycleOwner) { isTie ->
+            if(isTie)
+            {
+                displayConfirmationDialog(
+                    getString(R.string.create_team_dialog_title),
+                    "Stav na sety odpovídá 1:1.") {
+                    viewModel.inputResult(true) }
+            }
         }
     }
 
-    private fun displayConfirmationDialog()
+    private fun displayConfirmationDialog(title: String, message: String, func: () -> Unit)
     {
         MaterialDialog(activity!!)
-            .title(R.string.create_team_dialog_title)
-            .message(R.string.match_input_confirmation_text)
+            .title(text = title)
+            .message(text = message)
             .show {
-                positiveButton(R.string.yes) {
-                    viewModel.inputResult()
-                }
+                positiveButton(R.string.yes) { func() }
                 negativeButton(R.string.no)
             }
     }

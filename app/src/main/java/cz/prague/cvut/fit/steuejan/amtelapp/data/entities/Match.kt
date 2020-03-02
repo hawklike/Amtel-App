@@ -18,5 +18,6 @@ data class Match(override var id: String? = null,
                  var rounds: MutableList<Round> = mutableListOf(Round(), Round(), Round()),
                  var year: Int = DateUtil.actualYear,
                  var place: String? = null,
-                 var dateAndTime: Date? = null
+                 var dateAndTime: Date? = null,
+                 var edits: Int = 2
                  ) : Parcelable, Entity()

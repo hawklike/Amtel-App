@@ -45,6 +45,8 @@ class MatchArrangementActivity : AbstractBaseActivity()
     private var matchInfoLayout: RelativeLayout? = null
     private var progressBarLayout: FrameLayout? = null
 
+    private var activityStarted: Boolean = false
+
     companion object
     {
         const val MATCH = "match"
@@ -71,6 +73,12 @@ class MatchArrangementActivity : AbstractBaseActivity()
 
         getData()
         setListeners()
+    }
+
+    override fun onResume()
+    {
+        super.onResume()
+        activityStarted = false
     }
 
     override fun onDestroy()
@@ -172,6 +180,11 @@ class MatchArrangementActivity : AbstractBaseActivity()
             putExtra(MatchMenuActivity.HOME_TEAM, homeTeam)
             putExtra(MatchMenuActivity.AWAY_TEAM, awayTeam)
         }
-        startActivity(intent)
+
+        if(!activityStarted)
+        {
+            activityStarted = true
+            startActivity(intent)
+        }
     }
 }

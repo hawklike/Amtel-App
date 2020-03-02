@@ -65,15 +65,33 @@ class MatchInputResultFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private var m_isInputOk = true
-    var round: Int = 1
-    lateinit var match: Match
+    private val _matchAdded = MutableLiveData<Match>()
+    val matchAdded: LiveData<Match> = _matchAdded
 
     /*---------------------------------------------------*/
 
+    private val _isTie = SingleLiveEvent<Boolean>()
+    val isTie: LiveData<Boolean> = _isTie
+
+    /*---------------------------------------------------*/
+
+    private var m_isInputOk = true
+    var round: Int = 1
+
+    /*---------------------------------------------------*/
+
+    private lateinit var match: Match
+    fun setMatch(match: Match)
+    {
+        this.match = match
+    }
+
+    /*---------------------------------------------------*/
+
+
     //TODO: send an email after the result is input
-    //TODO: let a user to input the result twice (head of league unlimited)
-    //TODO: if a team manager is away's team manager, display only info overview
+    //TODO: let a user to input the result twice (head of league unlimited) (DONE - need to be tested)
+    //TODO: if a team manager is away's team manager, display only info overview (DONE - need to be tested
     //TODO: retrieve updated match
 
     /**
@@ -105,11 +123,9 @@ class MatchInputResultFragmentVM : ViewModel()
     /**
      * Call this method only if confirmInput() returns true
      */
-    fun inputResult()
+    fun inputResult(ignoreTie: Boolean)
     {
         viewModelScope.launch {
-            var match = this@MatchInputResultFragmentVM.match
-
             val home1: Int = (firstHome.value as ValidSet).self
             val home2: Int = (secondHome.value as ValidSet).self
             val home3: Int? = with((thirdHome.value as ValidSet).self) {
@@ -124,13 +140,16 @@ class MatchInputResultFragmentVM : ViewModel()
                 else this
             }
 
-            match = calculateScore(match, home1, away1, home2, away2, home3, away3)
-            MatchManager.addMatch(match)
-            toast("OK")
+            if(calculateScore(match, home1, away1, home2, away2, home3, away3, ignoreTie))
+            {
+                MatchManager.addMatch(match)
+                match.edits--
+                toast("OK")
+            }
         }
     }
 
-    private fun calculateScore(match: Match, home1: Int, away1: Int, home2: Int, away2: Int, home3: Int?, away3: Int?): Match
+    private fun calculateScore(match: Match, home1: Int, away1: Int, home2: Int, away2: Int, home3: Int?, away3: Int?, ignoreTie: Boolean): Boolean
     {
         val homeGames = home1 + home2 + (home3 ?: 0)
         val awayGames = away1 + away2 + (away3 ?: 0)
@@ -150,8 +169,14 @@ class MatchInputResultFragmentVM : ViewModel()
             else awaySets++
         }
 
+        if(!ignoreTie && homeSets == awaySets)
+        {
+            _isTie.value = true
+            return false
+        }
+
         match.rounds[round - 1] = Round(homeSets, awaySets, homeGames, awayGames, home1, away1, home2, away2, home3, away3)
-        return match
+        return true
     }
 
     private fun confirmSet(home: MutableLiveData<SetState>, away: MutableLiveData<SetState>)
