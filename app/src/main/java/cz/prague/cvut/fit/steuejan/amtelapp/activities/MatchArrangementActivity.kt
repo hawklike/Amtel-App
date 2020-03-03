@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -23,6 +24,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchArrangementActivityVM
 
+//TODO: update overall score
 class MatchArrangementActivity : AbstractBaseActivity()
 {
     private val viewModel by viewModels<MatchArrangementActivityVM>()
@@ -51,6 +53,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
     {
         const val MATCH = "match"
         const val WEEK = "week"
+        const val MATCH_RESULT_CODE = 1
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -184,7 +187,16 @@ class MatchArrangementActivity : AbstractBaseActivity()
         if(!activityStarted)
         {
             activityStarted = true
-            startActivity(intent)
+            startActivityForResult(intent, MATCH_RESULT_CODE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == MATCH_RESULT_CODE && resultCode == Activity.RESULT_OK)
+        {
+            data?.let { match = it.getParcelableExtra(MATCH) }
         }
     }
 }

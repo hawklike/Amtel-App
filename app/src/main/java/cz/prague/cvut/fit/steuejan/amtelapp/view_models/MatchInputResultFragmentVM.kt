@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
@@ -96,10 +95,6 @@ class MatchInputResultFragmentVM : ViewModel()
 
 
     //TODO: send an email after the result is input
-    //TODO: let a user to input the result twice (head of league unlimited) (DONE - need to be tested)
-    //TODO: if a team manager is away's team manager, display only info overview (DONE - need to be tested
-    //TODO: retrieve updated match
-    //TODO: parse and input players
 
     /**
      * Call this method before inputResult() method
@@ -130,7 +125,7 @@ class MatchInputResultFragmentVM : ViewModel()
     /**
      * Call this method only if confirmInput() returns true
      */
-    fun inputResult(homePlayers: List<User>, awayPlayers: List<User>, ignoreTie: Boolean)
+    fun inputResult(homePlayers: List<User>, awayPlayers: List<User>, ignoreTie: Boolean, isHeadOfLeague: Boolean)
     {
         viewModelScope.launch {
             val home1: Int = (firstHome.value as ValidSet).self
@@ -150,8 +145,9 @@ class MatchInputResultFragmentVM : ViewModel()
             if(calculateScore(match, home1, away1, home2, away2, home3, away3, ignoreTie))
             {
                 parsePlayers(homePlayers, awayPlayers)
+                if(!isHeadOfLeague) match.edits[round.toString()] = match.edits[round.toString()]!! - 1
                 MatchManager.addMatch(match)
-                toast("OK")
+                _matchAdded.value = match
             }
         }
     }

@@ -5,6 +5,8 @@ import com.google.firebase.firestore.Query
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Results
 import cz.prague.cvut.fit.steuejan.amtelapp.states.MatchState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoMatch
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidMatch
@@ -44,6 +46,26 @@ object MatchManager
             Log.e(TAG, "updateMatch(): match with id $documentId not updated because ${ex.message}")
             false
         }
+    }
+
+    fun getResults(round: Round): Results
+    {
+        val sets = round.homeSets?.let { "${round.homeSets} : ${round.awaySets}" } ?: "N/A"
+
+        val tmpGames = "${round.homeGemsSet1}:${round.awayGemsSet1}, ${round.homeGemsSet2}:${round.awayGemsSet2}"
+        val games = when(round.homeGemsSet1)
+        {
+            null -> ""
+            else -> {
+                when(round.homeGemsSet3)
+                {
+                    null -> tmpGames
+                    else -> "$tmpGames, ${round.homeGemsSet3}:${round.awayGemsSet3}"
+                }
+            }
+        }
+
+        return Results(sets, games)
     }
 
     fun getMatches(round: Int, group: String): Query

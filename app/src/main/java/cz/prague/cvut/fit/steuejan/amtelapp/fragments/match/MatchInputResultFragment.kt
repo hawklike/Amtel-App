@@ -1,5 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.match
 
+import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,8 +16,11 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMatchActivityFragment
@@ -30,6 +35,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private val viewModel by viewModels<MatchInputResultFragmentVM>()
 
     private var round = 0
+    private var isHeadOfLeague = false
 
     private lateinit var match: Match
     private lateinit var homeTeam: Team
@@ -38,7 +44,9 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private lateinit var homeName: TextView
     private lateinit var awayName: TextView
+
     private lateinit var sets: TextView
+    private lateinit var games: TextView
 
     private lateinit var reportButton: FloatingActionButton
 
@@ -87,6 +95,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         homeName = view.findViewById(R.id.match_input_home_name)
         awayName = view.findViewById(R.id.match_input_away_name)
         sets = view.findViewById(R.id.match_input_sets)
+        games = view.findViewById(R.id.match_input_gems)
 
         reportButton = view.findViewById(R.id.match_input_report_button)
 
@@ -141,11 +150,25 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         week = matchViewModel.week.value?.let { it } ?: InvalidWeek()
     }
 
+    //TODO: populate players
     private fun populateFields()
     {
         prepareLayout()
+        val round = match.rounds[round - 1]
+
         homeName.text = match.home
         awayName.text = match.away
+        sets.text = MatchManager.getResults(round).sets
+        games.text = MatchManager.getResults(round).games
+
+        firstSetHome.setText(round.homeGemsSet1?.toString())
+        firstSetAway.setText(round.awayGemsSet1?.toString())
+
+        secondSetHome.setText(round.homeGemsSet2?.toString())
+        secondSetAway.setText(round.awayGemsSet2?.toString())
+
+        thirdSetHome.setText(round.homeGemsSet3?.toString())
+        thirdSetAway.setText(round.awayGemsSet3?.toString())
     }
 
     private fun prepareLayout()
@@ -153,22 +176,18 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         when(AuthManager.currentUser!!.uid)
         {
             homeTeam.tmId -> {
-                reportButton.visibility = View.GONE
-//                if(match.rounds[round - 1].edits == 0)
-//                {
-//                    inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
-//                    inputResult.isEnabled = false
-//                }
+                reportButton.visibility = View.INVISIBLE
+                reportButton.isEnabled = false
+                disableInputButtonIf { match.edits[round.toString()] == 0 }
             }
             awayTeam.tmId -> {
                 inputResult.visibility = View.GONE
-                resultsLayout?.visibility = View.GONE
-                homePlayers.visibility = View.GONE
-                awayPlayers.visibility = View.GONE
             }
+            else -> isHeadOfLeague = true
         }
     }
 
+    //TODO: handle report
     private fun setListeners()
     {
         homePlayers.setOnClickListener {
@@ -207,6 +226,54 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private fun setObservers()
     {
+        handleErrors()
+        handleDialogs()
+        isMatchAdded()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun isMatchAdded()
+    {
+        viewModel.matchAdded.observe(viewLifecycleOwner) {
+            match = it
+            val result = MatchManager.getResults(match.rounds[round - 1])
+            matchViewModel.setMatch(match)
+            sets.text = result.sets
+            games.text = result.games
+            disableInputButtonIf { !isHeadOfLeague && match.edits[round.toString()] == 0 }
+            toast(getString(R.string.match_added_success))
+        }
+    }
+
+    private fun handleDialogs()
+    {
+        viewModel.isInputOk.observe(viewLifecycleOwner) { isOk ->
+            if(isOk)
+            {
+                val title = if(!isHeadOfLeague && match.edits[round.toString()] == 1)
+                    getString(R.string.match_input_confirmation_last_attempt_text)
+                else getString(R.string.match_input_confirmation_text)
+
+                displayConfirmationDialog(
+                    getString(R.string.create_team_dialog_title),
+                    title) {
+                    viewModel.inputResult(homeTeam.users, awayTeam.users, false, isHeadOfLeague) }
+            }
+        }
+
+        viewModel.isTie.observe(viewLifecycleOwner) { isTie ->
+            if(isTie)
+            {
+                displayConfirmationDialog(
+                    getString(R.string.create_team_dialog_title),
+                    getString(R.string.match_tie_warning)) {
+                    viewModel.inputResult(homeTeam.users, awayTeam.users, true, isHeadOfLeague) }
+            }
+        }
+    }
+
+    private fun handleErrors()
+    {
         viewModel.firstHome.observe(viewLifecycleOwner) {
             if(it is InvalidSet) firstSetHome.error = it.errorMessage
         }
@@ -239,25 +306,6 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             if(!isOk) awayPlayers.error = getString(R.string.empty_players_error)
         }
 
-        viewModel.isInputOk.observe(viewLifecycleOwner) { isOk ->
-            if(isOk)
-            {
-                displayConfirmationDialog(
-                    getString(R.string.create_team_dialog_title),
-                    getString(R.string.match_input_confirmation_text)) {
-                    viewModel.inputResult(homeTeam.users, awayTeam.users, false) }
-            }
-        }
-
-        viewModel.isTie.observe(viewLifecycleOwner) { isTie ->
-            if(isTie)
-            {
-                displayConfirmationDialog(
-                    getString(R.string.create_team_dialog_title),
-                    getString(R.string.match_tie_warning)) {
-                    viewModel.inputResult(homeTeam.users, awayTeam.users, true) }
-            }
-        }
     }
 
     private fun displayConfirmationDialog(title: String, message: String, func: () -> Unit)
@@ -322,6 +370,15 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         thirdSetAway.error = null
         homePlayers.error = null
         awayPlayers.error = null
+    }
+
+    private fun disableInputButtonIf(predicate: () -> Boolean)
+    {
+        if(predicate())
+        {
+            inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
+            inputResult.isEnabled = false
+        }
     }
 
 

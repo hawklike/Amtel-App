@@ -1,8 +1,10 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.viewModels
+import androidx.lifecycle.observe
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
@@ -42,6 +44,14 @@ class MatchMenuActivity : AbstractViewPagerActivity()
         viewModel.setHomeTeam(homeTeam)
         viewModel.setAwayTeam(awayTeam)
         setToolbarTitle(title)
+        setObservers()
+    }
+
+    private fun setObservers()
+    {
+        viewModel.match.observe(this) {
+            match =  it
+        }
     }
 
     override fun getData()
@@ -66,5 +76,12 @@ class MatchMenuActivity : AbstractViewPagerActivity()
             adapter.addFragment(MatchViewFactory.getFragment(title, it), "$it. " + getString(R.string.match))
         }
         viewPager.adapter = adapter
+    }
+
+    override fun onBackPressed()
+    {
+        setResult(Activity.RESULT_OK, intent.putExtra(MatchArrangementActivity.MATCH, match))
+        super.onBackPressed()
+        finish()
     }
 }

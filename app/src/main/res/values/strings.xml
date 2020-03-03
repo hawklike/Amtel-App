@@ -126,4 +126,6 @@
     <string name="empty_players_error">Zadejte prosím hráče.</string>
     <string name="match_input_confirmation_text">Zapsat výsledek půjde již jenom jednou.</string>
     <string name="match_tie_warning">Stav na sety odpovídá 1:1.</string>
+    <string name="match_input_confirmation_last_attempt_text">Máte poslední pokus na zapsání výsledku.</string>
+    <string name="match_added_success">Zápas byl úspěšně přidán.</string>
 </resources>
