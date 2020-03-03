@@ -14,6 +14,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Player
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.match.MatchInputResultFragment.Companion.COMMA
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.match.MatchInputResultFragment.Companion.EM_DASH
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SetState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidSet
@@ -156,11 +158,11 @@ class MatchInputResultFragmentVM : ViewModel()
     {
         val round: Round = match.rounds[round - 1]
 
-        val homePlayersList = homePlayersText.split(" ♢ ")
-        val awayPlayersList = awayPlayersText.split(" ♢ ")
+        val homePlayersList = homePlayersText.split("$COMMA ")
+        val awayPlayersList = awayPlayersText.split("$COMMA ")
 
         homePlayersList.forEach { user ->
-            val email = user.removeWhitespaces().split("–").last()
+            val email = user.removeWhitespaces().split(EM_DASH).last()
             homePlayers.find { it.email == email }?.let {
                 round.homePlayers.add(Player(it.name, it.surname, it.email, it.birthdate, it.sex))
                 round.homePlayersId.add(it.id!!)
@@ -168,7 +170,7 @@ class MatchInputResultFragmentVM : ViewModel()
         }
 
         awayPlayersList.forEach { user ->
-            val email = user.removeWhitespaces().split("–").last()
+            val email = user.removeWhitespaces().split(EM_DASH).last()
             awayPlayers.find { it.email == email }?.let {
                 round.awayPlayers.add(Player(it.name, it.surname, it.email, it.birthdate, it.sex))
                 round.awayPlayersId.add(it.id!!)
@@ -203,7 +205,18 @@ class MatchInputResultFragmentVM : ViewModel()
         }
 
         match.rounds[this.round - 1] = Round(homeSets, awaySets, homeGames, awayGames, home1, away1, home2, away2, home3, away3)
+        setMatchScore(homeSets, awaySets)
         return true
+    }
+
+    private fun setMatchScore(homeSets: Int, awaySets: Int)
+    {
+        val round =  match.rounds[round - 1]
+        when
+        {
+            homeSets > awaySets -> round.homeWinner = true
+            homeSets < awaySets -> round.homeWinner = false
+        }
     }
 
     private fun confirmSet(home: MutableLiveData<SetState>, away: MutableLiveData<SetState>)
@@ -241,7 +254,7 @@ class MatchInputResultFragmentVM : ViewModel()
         }
         else
         {
-            if(round == 3 && players.split(" ♢ ").size != 2)
+            if(round == 3 && players.split("$COMMA ").size != 2)
             {
                 data.value = false
                 m_isInputOk = false

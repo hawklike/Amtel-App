@@ -24,7 +24,6 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchArrangementActivityVM
 
-//TODO: update overall score
 class MatchArrangementActivity : AbstractBaseActivity()
 {
     private val viewModel by viewModels<MatchArrangementActivityVM>()
@@ -196,7 +195,12 @@ class MatchArrangementActivity : AbstractBaseActivity()
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == MATCH_RESULT_CODE && resultCode == Activity.RESULT_OK)
         {
-            data?.let { match = it.getParcelableExtra(MATCH) }
+            data?.let {
+                match = it.getParcelableExtra(MATCH)
+                val (homeScore, awayScore) = viewModel.countTotalScore(match)
+                score.text = homeScore?.let {
+                    "$homeScore : $awayScore" } ?: "N/A"
+            }
         }
     }
 }

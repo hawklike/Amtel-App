@@ -70,6 +70,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     companion object
     {
         private const val ROUND = "round"
+        const val EM_DASH = "\u001B–\u001B"
+        const val COMMA = ",\u001B"
 
         fun newInstance(round: Int): MatchInputResultFragment
         {
@@ -150,7 +152,6 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         week = matchViewModel.week.value?.let { it } ?: InvalidWeek()
     }
 
-    //TODO: populate players
     private fun populateFields()
     {
         prepareLayout()
@@ -169,6 +170,9 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
         thirdSetHome.setText(round.homeGemsSet3?.toString())
         thirdSetAway.setText(round.awayGemsSet3?.toString())
+
+        homePlayers.setText(round.homePlayers.joinToString("$COMMA ") { "${it.name} ${it.surname} $EM_DASH ${it.email}" })
+        awayPlayers.setText(round.awayPlayers.joinToString("$COMMA ") { "${it.name} ${it.surname} $EM_DASH ${it.email}" })
     }
 
     private fun prepareLayout()
@@ -346,7 +350,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private fun listItemSingleChoice(dialog: MaterialDialog, players: List<String>, editText: EditText): MaterialDialog
     {
         return dialog.listItemsSingleChoice(items = players) { _, _, item ->
-            editText.setText(item.toString().replace("\n", " – "))
+            editText.setText(item.toString().replace("\n", " $EM_DASH "))
         }
     }
 
@@ -356,7 +360,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private fun listItemMultiChoice(dialog: MaterialDialog, players: List<String>, editText: EditText): MaterialDialog
     {
         return dialog.listItemsMultiChoice(items = players) { _, _, items ->
-            editText.setText(items.joinToString(" ♢ ") { it.toString().replace("\n", " – ") })
+            editText.setText(items.joinToString("$COMMA ") { it.toString().replace("\n", " $EM_DASH ") })
         }
     }
 
@@ -378,6 +382,14 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         {
             inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
             inputResult.isEnabled = false
+            homePlayers.isEnabled = false
+            awayPlayers.isEnabled = false
+            firstSetHome.isEnabled = false
+            firstSetAway.isEnabled = false
+            secondSetHome.isEnabled = false
+            secondSetAway.isEnabled = false
+            thirdSetHome.isEnabled = false
+            thirdSetAway.isEnabled = false
         }
     }
 

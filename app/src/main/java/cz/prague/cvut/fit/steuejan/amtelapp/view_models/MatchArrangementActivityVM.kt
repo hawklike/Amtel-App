@@ -108,4 +108,40 @@ class MatchArrangementActivityVM : ViewModel()
         }
     }
 
+    fun countTotalScore(match: Match): Pair<Int?, Int?>
+    {
+        var homeScore = 0
+        var awayScore = 0
+
+        match.rounds.forEach {
+            if(it.homeWinner == true) homeScore++
+            else if(it.homeWinner == false) awayScore++
+        }
+
+        if(homeScore + awayScore == 0)
+        {
+            if(match.homeScore != null || match.awayScore != null)
+            {
+                 viewModelScope.launch {
+                     match.homeScore = null
+                     match.awayScore = null
+                     MatchManager.addMatch(match)
+                 }
+            }
+            return Pair(null, null)
+        }
+        else
+        {
+            if(match.homeScore != homeScore || match.awayScore != awayScore)
+            {
+                viewModelScope.launch {
+                    match.homeScore = homeScore
+                    match.awayScore = awayScore
+                    MatchManager.addMatch(match)
+                }
+            }
+            return Pair(homeScore, awayScore)
+        }
+    }
+
 }
