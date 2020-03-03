@@ -14,6 +14,9 @@ data class Round(var homeSets: Int? = null,
                  var awayGemsSet2: Int? = null,
                  var homeGemsSet3: Int? = null,
                  var awayGemsSet3: Int? = null,
-                 var homePlayers: List<String> = emptyList(),
-                 var awayPlayers: List<String> = emptyList()
+                 var homePlayersId: MutableList<String> = mutableListOf(),
+                 var awayPlayersId: MutableList<String> = mutableListOf(),
+                 var homePlayers: MutableList<Player> = mutableListOf(),
+                 var awayPlayers: MutableList<Player> = mutableListOf(),
+                 var edits: Int = 2
                  ) : Parcelable

@@ -156,7 +156,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         {
             homeTeam.tmId -> {
                 reportButton.visibility = View.GONE
-                if(match.edits == 0)
+                if(match.rounds[round - 1].edits == 0)
                 {
                     inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
                     inputResult.isEnabled = false
@@ -247,7 +247,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                 displayConfirmationDialog(
                     getString(R.string.create_team_dialog_title),
                     getString(R.string.match_input_confirmation_text)) {
-                    viewModel.inputResult(false) }
+                    viewModel.inputResult(homeTeam.users, awayTeam.users, false) }
             }
         }
 
@@ -256,8 +256,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             {
                 displayConfirmationDialog(
                     getString(R.string.create_team_dialog_title),
-                    "Stav na sety odpovídá 1:1.") {
-                    viewModel.inputResult(true) }
+                    getString(R.string.match_tie_warning)) {
+                    viewModel.inputResult(homeTeam.users, awayTeam.users, true) }
             }
         }
     }
@@ -300,7 +300,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private fun listItemSingleChoice(dialog: MaterialDialog, players: List<String>, editText: EditText): MaterialDialog
     {
         return dialog.listItemsSingleChoice(items = players) { _, _, item ->
-            editText.setText(item.toString().replace("\n", " - "))
+            editText.setText(item.toString().replace("\n", " – "))
         }
     }
 
@@ -310,7 +310,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private fun listItemMultiChoice(dialog: MaterialDialog, players: List<String>, editText: EditText): MaterialDialog
     {
         return dialog.listItemsMultiChoice(items = players) { _, _, items ->
-            editText.setText(items.joinToString(", ") { it.toString().replace("\n", " - ") })
+            editText.setText(items.joinToString(" ♢ ") { it.toString().replace("\n", " – ") })
         }
     }
 
