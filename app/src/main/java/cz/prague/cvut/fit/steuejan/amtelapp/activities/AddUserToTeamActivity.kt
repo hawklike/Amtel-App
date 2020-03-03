@@ -12,6 +12,7 @@ import com.afollestad.materialdialogs.datetime.datePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.shrinkWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
@@ -38,7 +39,7 @@ class AddUserToTeamActivity : AbstractBaseActivity()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
-        setContentView(R.layout.account_add_user_to_team_acitivity)
+        setContentView(R.layout.account_add_user_to_team_activity)
         super.onCreate(savedInstanceState)
         setToolbarTitle(getString(R.string.add_player))
         setArrowBack()
@@ -73,8 +74,8 @@ class AddUserToTeamActivity : AbstractBaseActivity()
         }
 
         addButton.setOnClickListener {
-            val name = nameLayout.editText?.text.toString().trim()
-            val surname = surnameLayout.editText?.text.toString().trim()
+            val name = nameLayout.editText?.text.toString().trim().shrinkWhitespaces()
+            val surname = surnameLayout.editText?.text.toString().trim().shrinkWhitespaces()
             val email = emailLayout.editText?.text.toString().trim()
             val birthdate = birthdateLayout.editText?.text.toString().trim()
 

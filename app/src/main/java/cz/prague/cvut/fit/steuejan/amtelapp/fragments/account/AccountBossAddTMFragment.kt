@@ -13,6 +13,7 @@ import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.shrinkWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
@@ -74,8 +75,8 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     private fun setListeners()
     {
         addUserButton.setOnClickListener {
-            val name = nameLayout.editText?.text.toString().trim()
-            val surname = surnameLayout.editText?.text.toString().trim()
+            val name = nameLayout.editText?.text.toString().trim().shrinkWhitespaces()
+            val surname = surnameLayout.editText?.text.toString().trim().shrinkWhitespaces()
             val email = emailLayout.editText?.text.toString().trim()
 
             deleteErrors()

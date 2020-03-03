@@ -125,4 +125,5 @@
     <string name="games_invalid_rules_error">Počet gemů v setu neodpovídá pravidlům.</string>
     <string name="empty_players_error">Zadejte prosím hráče.</string>
     <string name="match_input_confirmation_text">Opravit výsledek půjde již jenom jednou.</string>
+    <string name="match_tie_warning">Stav na sety odpovídá 1:1.</string>
 </resources>

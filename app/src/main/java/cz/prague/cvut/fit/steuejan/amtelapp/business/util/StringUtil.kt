@@ -1,6 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
-object NameConverter
+object StringUtil
 {
     //TODO: uncomment this
     fun getRandomString(length: Int) : String
@@ -22,3 +22,9 @@ fun String.firstLetterUpperCase(): String
             .toUpperCase()
             .toString())
 }
+
+fun String.shrinkWhitespaces(): String =
+    this.replace("\\s+".toRegex(), " ")
+
+fun String.removeWhitespaces(): String =
+    this.replace("\\s".toRegex(), "")

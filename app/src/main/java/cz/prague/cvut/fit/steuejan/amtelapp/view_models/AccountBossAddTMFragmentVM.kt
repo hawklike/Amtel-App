@@ -7,7 +7,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
@@ -28,7 +28,7 @@ class AccountBossAddTMFragmentVM : ViewModel()
 
     fun createUser(credentials: ValidCredentials)
     {
-        val password = NameConverter.getRandomString(6)
+        val password = StringUtil.getRandomString(6)
 
         viewModelScope.launch {
             val uid = AuthManager.signUpUser(credentials.email, password)

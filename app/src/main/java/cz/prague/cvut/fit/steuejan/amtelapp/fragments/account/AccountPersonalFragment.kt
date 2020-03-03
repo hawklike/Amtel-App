@@ -16,6 +16,8 @@ import com.afollestad.materialdialogs.datetime.datePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.removeWhitespaces
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.shrinkWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
@@ -139,15 +141,15 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         }
 
         addNewPassword.setOnClickListener {
-            val password = passwordLayout.editText?.text.toString().trim()
+            val password = passwordLayout.editText?.text.toString()
             passwordLayout.error = null
             viewModel.confirmPassword(password)
         }
 
         addPersonalInfo.setOnClickListener {
-            val fullName = fullNameLayout.editText?.text.toString()
+            val fullName = fullNameLayout.editText?.text.toString().trim().shrinkWhitespaces()
             val birthdate = birthdateLayout.editText?.text.toString().trim()
-            val phoneNumber = phoneNumberLayout.editText?.text.toString().trim()
+            val phoneNumber = phoneNumberLayout.editText?.text.toString().removeWhitespaces()
             deletePersonalInfo()
             viewModel.savePersonalInfo(user, fullName, birthdate, phoneNumber, sex)
         }
