@@ -86,12 +86,10 @@ class MatchInputResultFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private lateinit var oldRound: Round
     private lateinit var match: Match
     fun setMatch(match: Match)
     {
         this.match = match
-        oldRound = match.rounds[round - 1].copy()
     }
 
     /*---------------------------------------------------*/
@@ -152,14 +150,8 @@ class MatchInputResultFragmentVM : ViewModel()
             if(calculateScore(match, home1, away1, home2, away2, home3, away3, ignoreTie))
             {
                 parsePlayers(homePlayers, awayPlayers)
-                val round = match.rounds[round - 1]
-                if(round != oldRound)
-                {
-                    round.edits--
-                    MatchManager.addMatch(match)
-                    oldRound = round.copy()
-                    toast("OK")
-                }
+                MatchManager.addMatch(match)
+                toast("OK")
             }
         }
     }
@@ -170,11 +162,6 @@ class MatchInputResultFragmentVM : ViewModel()
 
         val homePlayersList = homePlayersText.split(" ♢ ")
         val awayPlayersList = awayPlayersText.split(" ♢ ")
-
-        round.homePlayers.clear()
-        round.awayPlayers.clear()
-        round.homePlayersId.clear()
-        round.awayPlayersId.clear()
 
         homePlayersList.forEach { user ->
             val email = user.removeWhitespaces().split("–").last()
@@ -219,18 +206,7 @@ class MatchInputResultFragmentVM : ViewModel()
             return false
         }
 
-        match.rounds[this.round - 1].apply {
-            this.homeSets = homeSets
-            this.awaySets = awaySets
-            this.homeGems = homeGames
-            this.awayGems = awayGames
-            this.homeGemsSet1 = home1
-            this.awayGemsSet1 = away1
-            this.homeGemsSet2 = home2
-            this.awayGemsSet2 = away2
-            this.homeGemsSet3 = home3
-            this.awayGemsSet3 = away3
-        }
+        match.rounds[this.round - 1] = Round(homeSets, awaySets, homeGames, awayGames, home1, away1, home2, away2, home3, away3)
         return true
     }
 

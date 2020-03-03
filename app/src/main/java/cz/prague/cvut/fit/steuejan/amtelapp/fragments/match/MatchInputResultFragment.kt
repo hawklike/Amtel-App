@@ -1,6 +1,5 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.match
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +14,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -156,11 +154,11 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         {
             homeTeam.tmId -> {
                 reportButton.visibility = View.GONE
-                if(match.rounds[round - 1].edits == 0)
-                {
-                    inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
-                    inputResult.isEnabled = false
-                }
+//                if(match.rounds[round - 1].edits == 0)
+//                {
+//                    inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
+//                    inputResult.isEnabled = false
+//                }
             }
             awayTeam.tmId -> {
                 inputResult.visibility = View.GONE

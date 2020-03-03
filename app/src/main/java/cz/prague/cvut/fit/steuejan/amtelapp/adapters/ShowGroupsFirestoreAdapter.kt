@@ -79,7 +79,11 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
                 generate.isEnabled = false
                 generate.setTextColor(App.getColor(R.color.lightGrey))
             }
-            else if(group.rounds[DateUtil.actualYear.toString()] != 0) generate.setTextColor(Color.RED)
+            else
+            {
+                val rounds = group.rounds[DateUtil.actualYear.toString()]
+                if(rounds != null && rounds != 0) generate.setTextColor(Color.RED)
+            }
 
             generate.setOnClickListener {
                 MaterialDialog(context).show {
@@ -101,7 +105,7 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
                         }
                     }
                     positiveButton(R.string.generate_plan) {
-                        viewModel.generateMatches(name.text.toString(), rounds)
+                        viewModel.generateMatches(getItem(adapterPosition), rounds)
                         generate.setTextColor(Color.RED)
                     }
                 }
@@ -112,12 +116,12 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
         {
             if(isNextVisible)
             {
-                if(group.rounds[DateUtil.actualYear.toString()] == 0) next.visibility = View.GONE
+                val rounds = group.rounds[DateUtil.actualYear.toString()]
+                if(rounds == 0 || rounds == null) next.visibility = View.GONE
                 else next.visibility = View.VISIBLE
 
                 generate.visibility = View.GONE
                 next.setOnClickListener {
-                    println("rounds1: ${group.rounds[DateUtil.actualYear.toString()]}")
                     onNextClick.invoke(group)
                 }
             }

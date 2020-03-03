@@ -9,6 +9,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.RobinRoundTournamen
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
 import kotlinx.coroutines.Dispatchers.Default
@@ -29,27 +31,29 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
         return true
     }
 
-    fun generateMatches(group: String, rounds: Int)
+    fun generateMatches(group: Group, rounds: Int)
     {
         viewModelScope.launch {
-            with(TeamManager.findTeam("group", group)) {
+            with(TeamManager.findTeams("group", group.name)) {
                 if(this is ValidTeams) createMatches(self, rounds, group)
             }
         }
     }
 
-    private suspend fun createMatches(teams: List<Team>, rounds: Int, group: String)
+    private suspend fun createMatches(teams: List<Team>, rounds: Int, group: Group)
     {
         withContext(Default) {
             val tournament = RobinRoundTournament()
             tournament.setTeams(teams)
             tournament.setRounds(rounds)
-            tournament.createMatches(group).forEach {
+            tournament.createMatches(group.name).forEach {
                 MatchManager.addMatch(it)
             }
         }
 
-        GroupManager.updateGroup(group, mapOf("rounds" to rounds))
-        toast(context.getString(R.string.group) + " $group " + context.getString(R.string.successfully_generated))
+        val map = group.rounds
+        map[DateUtil.actualYear.toString()] = rounds
+        GroupManager.updateGroup(group.name, mapOf("rounds" to map))
+        toast(context.getString(R.string.group) + " ${group.name} " + context.getString(R.string.successfully_generated))
     }
 }

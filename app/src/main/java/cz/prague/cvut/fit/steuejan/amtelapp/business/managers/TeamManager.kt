@@ -65,7 +65,7 @@ object TeamManager
         }
     }
 
-    suspend fun <T> findTeam(field: String, value: T?): TeamState = withContext(IO)
+    suspend fun <T> findTeams(field: String, value: T?): TeamState = withContext(IO)
     {
         return@withContext try
         {
@@ -76,7 +76,7 @@ object TeamManager
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "findTeam(): documents not found because ${ex.message}")
+            Log.e(TAG, "findTeams(): documents not found because ${ex.message}")
             NoTeam
         }
     }
