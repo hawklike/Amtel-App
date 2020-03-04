@@ -1,7 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts
 
 import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.activityViewModels
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MainActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
@@ -18,9 +17,7 @@ abstract class AbstractMainActivityFragment : AbstractBaseFragment()
 
     protected open fun setProgressBar(on: Boolean)
     {
-        val main = activity as MainActivity
-        if(on) main.progressLayout?.visibility = View.VISIBLE
-        else main.progressLayout?.visibility = View.GONE
+        mainActivityModel.setProgressBar(on)
     }
 
     override fun onDestroyView()

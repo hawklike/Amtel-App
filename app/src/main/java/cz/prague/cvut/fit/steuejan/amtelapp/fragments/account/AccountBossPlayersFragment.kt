@@ -61,6 +61,7 @@ class AccountBossPlayersFragment : AbstractMainActivityFragment()
         adapter = null
     }
 
+    //TODO: use FirestorePagingAdapter
     private fun setupRecycler()
     {
         val query = UserManager.retrieveAllUsers()

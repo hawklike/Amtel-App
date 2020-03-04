@@ -38,7 +38,7 @@ class MainActivity : AbstractBaseActivity()
         setContentView(R.layout.activity_main)
         progressLayout = findViewById(R.id.progressBar)
         super.onCreate(savedInstanceState)
-
+        viewModel.initEmailPassword()
         setObservers(savedInstanceState)
         createNavigationDrawer(savedInstanceState)
     }
@@ -55,6 +55,15 @@ class MainActivity : AbstractBaseActivity()
         setToolbarTitle()
         displayAccount(savedInstanceState)
         updateDrawer()
+        showProgressBar()
+    }
+
+    private fun showProgressBar()
+    {
+        viewModel.progressBar.observe(this) { isOn ->
+            if(isOn) progressLayout?.visibility = View.VISIBLE
+            else progressLayout?.visibility = View.GONE
+        }
     }
 
     private fun setToolbarTitle()

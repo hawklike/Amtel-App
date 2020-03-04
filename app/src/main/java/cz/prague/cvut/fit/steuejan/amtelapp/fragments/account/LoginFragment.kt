@@ -62,6 +62,7 @@ class LoginFragment : AbstractMainActivityFragment()
             val password = passwordLayout.editText!!.text.toString().trim()
 
             deleteErrors()
+            loading(true)
             viewModel.loginUser(email, password)
         }
     }
@@ -91,7 +92,6 @@ class LoginFragment : AbstractMainActivityFragment()
 
     private fun getUser()
     {
-        //TODO: add loading bar [1]
         viewModel.getUser().observe(viewLifecycleOwner) { user ->
             val dialog = viewModel.createAfterDialog(user)
             val title = dialog.title
@@ -106,6 +106,7 @@ class LoginFragment : AbstractMainActivityFragment()
                 .show {
                     positiveButton(R.string.ok)
                     onDismiss {
+                        loading(false)
                         if(user is SignedUser)
                         {
                             mainActivityModel.isUserLoggedIn(SignedUser(user.self, user.firstSign))
@@ -116,12 +117,27 @@ class LoginFragment : AbstractMainActivityFragment()
         }
     }
 
-    @Suppress("PrivatePropertyName")
-    private val TAG = "LoginFragment"
-
     private fun deleteErrors()
     {
         emailLayout.error = null
         passwordLayout.error = null
+    }
+
+    private fun loading(on: Boolean)
+    {
+        setProgressBar(on)
+        when(on)
+        {
+            true -> {
+                emailLayout.visibility = View.GONE
+                passwordLayout.visibility = View.GONE
+                checkButton.visibility = View.GONE
+            }
+            false -> {
+                emailLayout.visibility = View.VISIBLE
+                passwordLayout.visibility = View.VISIBLE
+                checkButton.visibility = View.VISIBLE
+            }
+        }
     }
 }

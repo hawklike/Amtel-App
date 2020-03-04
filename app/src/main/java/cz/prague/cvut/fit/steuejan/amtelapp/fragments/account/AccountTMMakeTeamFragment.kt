@@ -56,7 +56,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     private lateinit var addPlayer: RelativeLayout
 
     private var recyclerView: RecyclerView? = null
-    //TODO: [REFACTORING] use firestore recycler view
+    //TODO: [REFACTORING] use firestore recycler view [HIGH PRIORITY]
     private var adapter: ShowUserSimpleAdapter? = null
 
     override fun getName(): String = "AccountTMMakeTeamFragment"

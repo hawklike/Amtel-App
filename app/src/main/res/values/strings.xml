@@ -128,4 +128,6 @@
     <string name="match_tie_warning">Stav na sety odpovídá 1:1.</string>
     <string name="match_input_confirmation_last_attempt_text">Máte poslední pokus na zapsání výsledku.</string>
     <string name="match_added_success">Zápas byl úspěšně přidán.</string>
+    <string name="email_password_key">EMAIL_PASSWORD</string>
+    <string name="aes_key">1Hbfh667adfDEJ78</string>
 </resources>

@@ -7,7 +7,6 @@ import android.widget.RadioGroup
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.datetime.datePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
@@ -142,19 +141,17 @@ class AddUserToTeamActivity : AbstractBaseActivity()
         viewModel.isUserAdded().observe(this) { teamState ->
             val title = viewModel.createDialog(teamState).title
 
-            MaterialDialog(this)
-                .title(text = title)
-                .show {
-                    positiveButton(R.string.ok)
-                    onDismiss {
-                    }
-                }
-
             if(teamState is ValidTeam)
             {
                 deleteInput()
                 setResult(Activity.RESULT_OK, intent.putExtra(TEAM, teamState.self))
             }
+
+            MaterialDialog(this)
+                .title(text = title)
+                .show {
+                    positiveButton(R.string.ok) { this@AddUserToTeamActivity.onBackPressed() }
+                }
         }
     }
 
