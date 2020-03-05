@@ -4,17 +4,21 @@ import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
+import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 object UserManager
 {
+    //TODO: add merged name and surname in english transcription
     suspend fun addUser(user: User): User? = withContext(IO)
     {
         return@withContext try
         {
+
             UserDAO().insert(user)
             Log.i(TAG, "addUser(): $user successfully added to database")
             user
@@ -87,24 +91,18 @@ object UserManager
         }
     }
 
-//    suspend fun addMatch(match: Match): Boolean = withContext(IO)
-//    {
-//        return@withContext try
-//        {
-//
-//
-//
-//
-//            UserDAO().update()
-//            Log.i(TAG, "deleteUser(): user with id $userId successfully deleted with")
-//            true
-//        }
-//        catch(ex: Exception)
-//        {
-//            Log.e(TAG, "deleteUser(): user with id $userId not deleted because $ex")
-//            false
-//        }
-//    }
+    suspend fun addMatch(match: Match, user: User): User? = withContext(Default)
+    {
+        val matchesId = user.matchesId.toMutableSet()
+        matchesId.add(match.id!!)
+        user.matchesId = matchesId.toList()
+
+        val matches = user.matches.toMutableSet()
+        matches.add(match)
+        user.matches = matches.toList()
+
+        addUser(user)
+    }
 
     private const val TAG = "UserManager"
 }

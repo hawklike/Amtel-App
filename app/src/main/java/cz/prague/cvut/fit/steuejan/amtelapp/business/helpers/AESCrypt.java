@@ -11,6 +11,9 @@ import javax.crypto.spec.SecretKeySpec;
 import cz.prague.cvut.fit.steuejan.amtelapp.App;
 import cz.prague.cvut.fit.steuejan.amtelapp.R;
 
+
+// https://stackoverflow.com/a/41223999/9723204
+
 public class AESCrypt
 {
     private static final String ALGORITHM = "AES";

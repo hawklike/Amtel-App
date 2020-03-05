@@ -1,6 +1,5 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -59,13 +58,12 @@ class ShowUserSimpleAdapter(private val context: Context, private val list: Muta
 
     override fun getItemCount(): Int = list.size
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int)
     {
         val user = getItem(position)
         if(user.role.toRole() == UserRole.TEAM_MANAGER) holder.deleteButton.visibility = View.GONE
 
-        holder.fullName.text = "${user.name} ${user.surname}"
+        holder.fullName.text = String.format(context.getString(R.string.full_name_placeholder), user.name, user.surname)
         holder.email.text = user.email
         user.birthdate?.let { holder.birthdate.text = it.toMyString() }
     }

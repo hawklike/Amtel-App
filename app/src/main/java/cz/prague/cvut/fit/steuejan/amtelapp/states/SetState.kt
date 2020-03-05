@@ -1,18 +1,27 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.states
 
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
+import cz.prague.cvut.fit.steuejan.amtelapp.R
+
 sealed class SetState
 {
     companion object
     {
-        fun validate(score: String, optional: Boolean): SetState
+        //TODO: test validation
+        fun validate(score: String, optional: Boolean, isFiftyGroup: Boolean): SetState
         {
-            if(score.isEmpty() && !optional) return InvalidSet("Zadejte prosím počet získaných gemů.")
+            if(score.isEmpty() && !optional) return InvalidSet(context.getString(R.string.gems_empty_error))
 
             var games = Int.MAX_VALUE
             try { games = score.toInt() }
-            catch(ex: NumberFormatException) { if(!optional) return InvalidSet("Zadejte prosím skóre v číselné podobě.")}
+            catch(ex: NumberFormatException) { if(!optional) return InvalidSet(context.getString(R.string.gems_not_number_error))}
 
-            if(games < 0) return InvalidSet("Počet gemů nesmí být záporné číslo.")
+            if(games < 0) 
+                return InvalidSet(context.getString(R.string.too_little_gems_error))
+            if(games > 7 && games != Int.MAX_VALUE && !isFiftyGroup)
+                return InvalidSet(String.format(context.getString(R.string.too_many_gems_error), 7))
+            if(games > 10 && games != Int.MAX_VALUE && isFiftyGroup)
+                return InvalidSet(String.format(context.getString(R.string.too_many_gems_error), 10))
 
             return ValidSet(games)
         }

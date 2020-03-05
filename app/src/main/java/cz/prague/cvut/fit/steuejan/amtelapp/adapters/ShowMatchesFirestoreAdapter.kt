@@ -59,7 +59,6 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
         return ViewHolder(view)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int, match: Match)
     {
         holder.home.text = match.home

@@ -1,6 +1,5 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -63,7 +62,7 @@ class ShowUsersFirestoreAdapter(private val context: Context, options: Firestore
         return ViewHolder(view)
     }
 
-    @SuppressLint("SetTextI18n")
+    //FIXME: sometimes wrong data passed in
     override fun onBindViewHolder(holder: ViewHolder, position: Int, user: User)
     {
         if(user.role.toRole() == UserRole.HEAD_OF_LEAGUE)
@@ -71,7 +70,7 @@ class ShowUsersFirestoreAdapter(private val context: Context, options: Firestore
         holder.team.visibility = View.VISIBLE
         holder.editButton.visibility = View.VISIBLE
 
-        holder.fullName.text = "${user.surname} ${user.name}"
+        holder.fullName.text = String.format(context.getString(R.string.full_name_placeholder), user.surname, user.name)
         if(user.role.toRole() == UserRole.TEAM_MANAGER)
             holder.fullName.setTextColor(App.getColor(R.color.blue))
 

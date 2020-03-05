@@ -9,6 +9,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.removeWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Player
@@ -97,6 +98,8 @@ class MatchInputResultFragmentVM : ViewModel()
 
 
     //TODO: send an email after the result is input
+    //TODO: add match to players
+    //TODO: add match to teams
 
     /**
      * Call this method before inputResult() method
@@ -110,8 +113,8 @@ class MatchInputResultFragmentVM : ViewModel()
             confirmGames(firstAway, _firstAway)
             confirmGames(secondHome, _secondHome)
             confirmGames(secondAway, _secondAway)
-            confirmGames(thirdHome, _thirdHome, optional = true)
-            confirmGames(thirdAway, _thirdAway, optional = true)
+            confirmGames(thirdHome, _thirdHome, optional = true, isFiftyGroup = isFiftyGroup)
+            confirmGames(thirdAway, _thirdAway, optional = true, isFiftyGroup = isFiftyGroup)
 
             confirmSet(_firstHome, _firstAway)
             confirmSet(_secondHome, _secondAway)
@@ -146,26 +149,31 @@ class MatchInputResultFragmentVM : ViewModel()
 
             if(calculateScore(match, home1, away1, home2, away2, home3, away3, ignoreTie))
             {
-                parsePlayers(homePlayers, awayPlayers)
+                val (homeUsers, awayUsers) = parsePlayers(homePlayers, awayPlayers)
                 if(!isHeadOfLeague) match.edits[round.toString()] = match.edits[round.toString()]!! - 1
                 MatchManager.addMatch(match)
                 _matchAdded.value = match
+                updatePlayers(homeUsers, awayUsers)
             }
         }
     }
 
-    private fun parsePlayers(homePlayers: List<User>, awayPlayers: List<User>)
+    private fun parsePlayers(homePlayers: List<User>, awayPlayers: List<User>): Pair<List<User>, List<User>>
     {
         val round: Round = match.rounds[round - 1]
 
         val homePlayersList = homePlayersText.split("$COMMA ")
         val awayPlayersList = awayPlayersText.split("$COMMA ")
 
+        val homeUsers = mutableListOf<User>()
+        val awayUsers = mutableListOf<User>()
+
         homePlayersList.forEach { user ->
             val email = user.removeWhitespaces().split(EM_DASH).last()
             homePlayers.find { it.email == email }?.let {
                 round.homePlayers.add(Player(it.name, it.surname, it.email, it.birthdate, it.sex))
                 round.homePlayersId.add(it.id!!)
+                homeUsers.add(it)
             }
         }
 
@@ -174,7 +182,21 @@ class MatchInputResultFragmentVM : ViewModel()
             awayPlayers.find { it.email == email }?.let {
                 round.awayPlayers.add(Player(it.name, it.surname, it.email, it.birthdate, it.sex))
                 round.awayPlayersId.add(it.id!!)
+                awayUsers.add(it)
             }
+        }
+
+        return Pair(homeUsers, awayUsers)
+    }
+
+    private suspend fun updatePlayers(homePlayers: List<User>, awayPlayers: List<User>)
+    {
+        homePlayers.forEach {user ->
+            UserManager.addMatch(match, user)
+        }
+
+        awayPlayers.forEach {user ->
+            UserManager.addMatch(match, user)
         }
     }
 
@@ -237,9 +259,9 @@ class MatchInputResultFragmentVM : ViewModel()
         }
     }
 
-    private fun confirmGames(games: String, data: MutableLiveData<SetState>, optional: Boolean = false)
+    private fun confirmGames(games: String, data: MutableLiveData<SetState>, optional: Boolean = false, isFiftyGroup: Boolean = false)
     {
-        with(SetState.validate(games, optional)) {
+        with(SetState.validate(games, optional, isFiftyGroup)) {
             if(this is InvalidSet) m_isInputOk = false
             data.value = this
         }

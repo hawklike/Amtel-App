@@ -55,6 +55,9 @@ class MatchArrangementActivity : AbstractBaseActivity()
         const val MATCH_RESULT_CODE = 1
     }
 
+    //TODO: update team overall score
+    //TODO: send email about change
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         setContentView(R.layout.match_arrangement)

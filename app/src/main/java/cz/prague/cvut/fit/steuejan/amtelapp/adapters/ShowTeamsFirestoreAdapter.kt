@@ -1,6 +1,5 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -65,7 +64,6 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
         return ViewHolder(view)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int, team: Team)
     {
         if(presentation == SIMPLE)

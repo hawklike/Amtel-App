@@ -76,6 +76,7 @@
     <string name="create_team_dialog_title">Jste si jistý/á?</string>
     <string name="create_team_dialog_message">Název týmu již nepůjde změnit. Zbytek můžete změnit libovolněkrát.</string>
     <string name="full_name">Jméno a příjmení</string>
+    <string name="full_name_placeholder">%1$s %2$s</string>
     <string name="invalid_fullName_error">Vyplňte prosím jméno a příjmení</string>
     <string name="group_name">Název skupiny</string>
     <string name="create_group">Vytvořit skupinu</string>
@@ -86,7 +87,7 @@
     <string name="choose_group">Vybrat skupinu</string>
     <string name="groups">Skupiny</string>
     <string name="generate_plan">Generovat zápasy</string>
-    <string name="generate_group_error_text">Zadejte prosím celé liché kladné číslo, které není menší než</string>
+    <string name="generate_group_error_text">Zadejte prosím celé liché kladné číslo, které není menší než %1$d.</string>
     <string name="rounds_number">Počet kol</string>
     <string name="show_group">zobrazit skupinu</string>
     <string name="not_working_yet">Tato možnost není zatím funkční</string>
@@ -130,4 +131,11 @@
     <string name="match_added_success">Zápas byl úspěšně přidán.</string>
     <string name="email_password_key">EMAIL_PASSWORD</string>
     <string name="aes_key">1Hbfh667adfDEJ78</string>
+    <string name="regenerate_matches">přegenerovat zápasy</string>
+    <string name="generate_matches_dialog_title">Zadejte počet kol ve skupině</string>
+    <string name="number_teams">Počet týmů: %1$d</string>
+    <string name="too_many_gems_error">Počet gemů nesmí být více než %1$d.</string>
+    <string name="too_little_gems_error">Počet gemů nesmí být záporné číslo.</string>
+    <string name="gems_empty_error">Zadejte prosím počet získaných gemů.</string>
+    <string name="gems_not_number_error">Zadejte prosím skóre v číselné podobě.</string>
 </resources>

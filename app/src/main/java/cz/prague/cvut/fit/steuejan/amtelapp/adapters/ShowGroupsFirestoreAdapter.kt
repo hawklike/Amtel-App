@@ -1,6 +1,5 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.text.InputType
@@ -43,7 +42,6 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
             ?: { Toast.makeText(context, context.getString(R.string.not_working_yet), Toast.LENGTH_SHORT).show() }
     }
 
-    @SuppressLint("SetTextI18n")
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
         lateinit var group: Group
@@ -62,7 +60,7 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
             val size = group.teamIds.size
 
             name.text = group.name
-            this.size.text = "Počet týmů: $size"
+            this.size.text = String.format(context.getString(R.string.number_teams), size)
 
             rounds = if(size % 2 == 0) (size - 1) else size
             if(size == 1 || size == 0) rounds = 0
@@ -72,6 +70,7 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
             next()
         }
 
+        //TODO: implement regenerating matches
         private fun generate()
         {
             if(rounds == 0)
@@ -82,12 +81,16 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
             else
             {
                 val rounds = group.rounds[DateUtil.actualYear.toString()]
-                if(rounds != null && rounds != 0) generate.setTextColor(Color.RED)
+                if(rounds != null && rounds != 0)
+                {
+                    generate.text = context.getString(R.string.regenerate_matches)
+                    generate.setTextColor(Color.RED)
+                }
             }
 
             generate.setOnClickListener {
                 MaterialDialog(context).show {
-                    title(text = "Vygenerovat plán pro skupinu ${name.text}?")
+                    title(text = context.getString(R.string.generate_matches_dialog_title) + " ${name.text}")
                     input(
                         waitForPositiveButton = false,
                         hint = context.getString(R.string.rounds_number),
@@ -100,7 +103,7 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
                         else
                         {
                             dialog.getInputField().error = if(isValid) null
-                            else context.getString(R.string.generate_group_error_text) + " " + calculatedRounds + "."
+                            else String.format(context.getString(R.string.generate_group_error_text), calculatedRounds)
                             dialog.setActionButtonEnabled(WhichButton.POSITIVE, isValid)
                         }
                     }
