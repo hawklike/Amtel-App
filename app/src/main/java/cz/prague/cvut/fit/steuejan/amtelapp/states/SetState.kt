@@ -7,7 +7,6 @@ sealed class SetState
 {
     companion object
     {
-        //TODO: test validation
         fun validate(score: String, optional: Boolean, isFiftyGroup: Boolean): SetState
         {
             if(score.isEmpty() && !optional) return InvalidSet(context.getString(R.string.gems_empty_error))
@@ -16,14 +15,13 @@ sealed class SetState
             try { games = score.toInt() }
             catch(ex: NumberFormatException) { if(!optional) return InvalidSet(context.getString(R.string.gems_not_number_error))}
 
-            if(games < 0) 
-                return InvalidSet(context.getString(R.string.too_little_gems_error))
-            if(games > 7 && games != Int.MAX_VALUE && !isFiftyGroup)
-                return InvalidSet(String.format(context.getString(R.string.too_many_gems_error), 7))
-            if(games > 10 && games != Int.MAX_VALUE && isFiftyGroup)
-                return InvalidSet(String.format(context.getString(R.string.too_many_gems_error), 10))
-
-            return ValidSet(games)
+            return when
+            {
+                games < 0 -> InvalidSet(context.getString(R.string.too_little_gems_error))
+                games > 7 && games != Int.MAX_VALUE && !isFiftyGroup -> InvalidSet(String.format(context.getString(R.string.too_many_gems_error), 7))
+                games > 10 && games != Int.MAX_VALUE && isFiftyGroup -> InvalidSet(String.format(context.getString(R.string.too_many_points_error), 10))
+                else -> ValidSet(games)
+            }
         }
 
         fun validate(gamesHome: Int, gamesAway: Int): Boolean

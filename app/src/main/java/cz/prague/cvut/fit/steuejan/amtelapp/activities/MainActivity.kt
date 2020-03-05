@@ -39,6 +39,7 @@ class MainActivity : AbstractBaseActivity()
         progressLayout = findViewById(R.id.progressBar)
         super.onCreate(savedInstanceState)
         viewModel.initEmailPassword()
+        viewModel.initHeadOfLeagueEmail()
         setObservers(savedInstanceState)
         createNavigationDrawer(savedInstanceState)
     }

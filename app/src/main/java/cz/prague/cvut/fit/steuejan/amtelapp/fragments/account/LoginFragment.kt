@@ -63,7 +63,8 @@ class LoginFragment : AbstractMainActivityFragment()
 
             deleteErrors()
             loading(true)
-            viewModel.loginUser(email, password)
+            //TODO: change back to password
+            viewModel.loginUser(email, "123456")
         }
     }
 

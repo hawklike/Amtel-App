@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
 import android.preference.PreferenceManager
@@ -9,46 +11,43 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.AESCrypt
 
 object EmailSender
 {
-    fun sendVerificationEmail(mailTo: String, genPassword: String)
+    fun sendEmail(mailTo: String, subject: String, message: String)
     {
-        var password = PreferenceManager
-            .getDefaultSharedPreferences(context)
-            ?.getString(context.getString(R.string.email_password_key), "")
-
-        if(password?.length == 0) password = null
-
         password?.let {
             BackgroundMail.newBuilder(context)
-                .withUsername("noreply.amtelopava@gmail.com")
+                .withUsername(USERNAME)
                 .withPassword(AESCrypt.decrypt(it))
                 .withMailTo(mailTo)
                 .withType(BackgroundMail.TYPE_PLAIN)
-                .withSubject(context.getString(R.string.verificationEmail_subject))
-                .withBody(createVerificationTemplate(mailTo, genPassword))
+                .withSubject(subject)
+                .withBody(message)
                 .withOnSuccessCallback(object : BackgroundMail.OnSendingCallback
                 {
                     override fun onSuccess()
                     {
-                        Log.i(TAG, "sendVerificationEmail(): email successfully sent")
+                        Log.i(TAG, "sendEmail(): email to $mailTo successfully sent")
                     }
 
-                    override fun onFail(e: Exception)
+                    override fun onFail(ex: Exception)
                     {
-                        Log.e(TAG, "sendVerificationEmail(): email not sent because ${e.message}")
+                        Log.e(TAG, "sendEmail(): email to $mailTo not sent because ${ex.message}")
                     }
                 })
                 .send()
-        }
+
+        } ?: let { Log.e(TAG, "sendEmail(): password not found") }
     }
 
-   private fun createVerificationTemplate(email: String, password: String): String
-   {
-       val head = context.getString(R.string.autoEmail_template_head)
-       val body = "email: $email\nheslo: $password\n\n"
-       val foot = context.getString(R.string.autoEmail_template_foot)
-       return "$head$body$foot"
-   }
+    private val password: String?
+    get()
+    {
+        return PreferenceManager
+            .getDefaultSharedPreferences(context)
+            ?.getString(context.getString(R.string.email_password_key), null)
+    }
 
     var hasPassword = false
+    var headOfLeagueEmail: String? = null
     private const val TAG = "EmailSender"
+    private const val USERNAME = "noreply.amtelopava@gmail.com"
 }

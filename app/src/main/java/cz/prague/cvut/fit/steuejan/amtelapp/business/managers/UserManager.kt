@@ -3,6 +3,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
@@ -42,6 +43,22 @@ object UserManager
         catch(ex: Exception)
         {
             Log.e(TAG, "findUser(): user with $id not found in database because ${ex.message}")
+            null
+        }
+    }
+
+    suspend fun <T> findUsers(field: String, value: T?): List<User>? = withContext(IO)
+    {
+        return@withContext try
+        {
+            val querySnapshot = UserDAO().find(field, value)
+            val documents = querySnapshot.toObjects<User>()
+            Log.i(TAG, "findUsers(): $documents where $field is $value found successfully")
+            documents
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "findUsers(): documents not found because ${ex.message}")
             null
         }
     }

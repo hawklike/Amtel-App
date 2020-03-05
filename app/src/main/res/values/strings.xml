@@ -135,7 +135,12 @@
     <string name="generate_matches_dialog_title">Zadejte počet kol ve skupině</string>
     <string name="number_teams">Počet týmů: %1$d</string>
     <string name="too_many_gems_error">Počet gemů nesmí být více než %1$d.</string>
+    <string name="too_many_points_error">Počet bodů nesmí být více než %1$d.</string>
     <string name="too_little_gems_error">Počet gemů nesmí být záporné číslo.</string>
     <string name="gems_empty_error">Zadejte prosím počet získaných gemů.</string>
     <string name="gems_not_number_error">Zadejte prosím skóre v číselné podobě.</string>
+    <string name="server_error_email_noTmAdded">Chyba serveru, vedoucí týmu nebude přidán.</string>
+    <string name="head_of_league">HEAD_OF_LEAGUE</string>
+    <string name="match_input_email">Dobrý den,\n\nvedoucí týmu %1$s právě zadal do aplikace výsledek %2$d. zápasu v utkání %3$s–%4$s ze dne %5$s.\n\nSkóre je: %6$s na sety a %7$s na gemy.\nHráči: %8$s a %9$s.\n\nNa tento email prosím neodpovídejte.\n\nAdministrátor aplikace AMTEL Opava</string>
+    <string name="match_input_email_headOfLeague">Dobrý den,\n\nvedoucí soutěže právě zadal do aplikace výsledek %1$d. zápasu v utkání %2$s–%3$s ze dne %4$s.\n\nSkóre je: %5$s na sety a %6$s na gemy.\nHráči: %7$s a %8$s.\n\nNa tento email prosím neodpovídejte.\n\nAdministrátor aplikace AMTEL Opava</string>
 </resources>

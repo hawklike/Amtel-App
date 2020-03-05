@@ -11,6 +11,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.EmailManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
@@ -104,6 +105,19 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
                         .edit()
                         .putString(context.getString(R.string.email_password_key), it)
                         .apply()
+                }
+            }
+        }
+    }
+
+    fun initHeadOfLeagueEmail()
+    {
+        if(EmailSender.headOfLeagueEmail == null)
+        {
+            viewModelScope.launch {
+                val headOfLeague = UserManager.findUsers("role", UserRole.HEAD_OF_LEAGUE.toString())?.first()
+                headOfLeague?.let {
+                    EmailSender.headOfLeagueEmail = it.email
                 }
             }
         }

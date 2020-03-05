@@ -12,7 +12,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.shrinkWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
@@ -75,6 +77,12 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     private fun setListeners()
     {
         addUserButton.setOnClickListener {
+            if(!EmailSender.hasPassword)
+            {
+                toast(getString(R.string.server_error_email_noTmAdded))
+                return@setOnClickListener
+            }
+
             val name = nameLayout.editText?.text.toString().trim().shrinkWhitespaces()
             val surname = surnameLayout.editText?.text.toString().trim().shrinkWhitespaces()
             val email = emailLayout.editText?.text.toString().trim()

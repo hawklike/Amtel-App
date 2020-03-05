@@ -1,6 +1,5 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.match
 
-import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -235,16 +234,16 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         isMatchAdded()
     }
 
-    @SuppressLint("SetTextI18n")
     private fun isMatchAdded()
     {
         viewModel.matchAdded.observe(viewLifecycleOwner) {
             match = it
-            val result = MatchManager.getResults(match.rounds[round - 1])
             matchViewModel.setMatch(match)
+            val result = MatchManager.getResults(match.rounds[round - 1])
             sets.text = result.sets
             games.text = result.games
             disableInputButtonIf { !isHeadOfLeague && match.edits[round.toString()] == 0 }
+            viewModel.sendEmail(homeTeam, awayTeam, sets.text, games.text, AuthManager.currentUser!!.uid)
             toast(getString(R.string.match_added_success))
         }
     }
@@ -261,7 +260,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                 displayConfirmationDialog(
                     getString(R.string.create_team_dialog_title),
                     title) {
-                    viewModel.inputResult(homeTeam.users, awayTeam.users, false, isHeadOfLeague) }
+                    viewModel.inputResult(homeTeam.users, awayTeam.users, isHeadOfLeague) }
             }
         }
 
@@ -271,7 +270,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                 displayConfirmationDialog(
                     getString(R.string.create_team_dialog_title),
                     getString(R.string.match_tie_warning)) {
-                    viewModel.inputResult(homeTeam.users, awayTeam.users, true, isHeadOfLeague) }
+                    viewModel.inputResult(homeTeam.users, awayTeam.users, isHeadOfLeague, ignoreTie = true) }
             }
         }
     }
