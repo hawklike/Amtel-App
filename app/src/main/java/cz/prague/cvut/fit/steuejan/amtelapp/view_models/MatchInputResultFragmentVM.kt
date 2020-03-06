@@ -76,6 +76,11 @@ class MatchInputResultFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
+    private val _isReported = SingleLiveEvent<Match>()
+    val isReported: LiveData<Match> = _isReported
+
+    /*---------------------------------------------------*/
+
     private val _isTie = SingleLiveEvent<Boolean>()
     val isTie: LiveData<Boolean> = _isTie
 
@@ -98,7 +103,6 @@ class MatchInputResultFragmentVM : ViewModel()
     /*---------------------------------------------------*/
 
 
-    //TODO: send an email after the result is input
     //TODO: add match to players
     //TODO: add match to teams
 
@@ -158,6 +162,7 @@ class MatchInputResultFragmentVM : ViewModel()
                     _matchAdded.value = match
                     updatePlayers(homeUsers, awayUsers)
                 }
+                else _isReported.value = match
             }
         }
     }
@@ -293,28 +298,16 @@ class MatchInputResultFragmentVM : ViewModel()
         }
     }
 
-    //TODO: implement this
     fun sendEmail(homeTeam: Team, awayTeam: Team, sets: CharSequence, games: CharSequence, user: String)
     {
         viewModelScope.launch {
             val homeManagerEmail = homeTeam.users.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
             val awayManagerEmail = awayTeam.users.find {it.role.toRole() == UserRole.TEAM_MANAGER}?.email
 
-            val subject = "AMTEL_${match.group}_${homeTeam.name}-${awayTeam.name}_vysledek_$round.hra"
-
             when(user)
             {
                 homeTeam.tmId -> {
-//                    val message = """
-//                    Dobrý den,
-//
-//                    vedoucí týmu ${homeTeam.name} právě zadal do aplikace výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} ze dne ${match.dateAndTime?.toMyString() ?: "nespecifikováno"}.
-//                    Skóre je: ${sets.toString().removeWhitespaces()} na sety a $games na gemy.
-//
-//                    Na tento email prosím neodpovídejte.
-//
-//                    Administrátor aplikace AMTEL Opava
-//                    """.trimIndent()
+                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})"
 
                     val message = String.format(
                         context.getString(R.string.match_input_email),
@@ -322,7 +315,7 @@ class MatchInputResultFragmentVM : ViewModel()
                         round,
                         homeTeam.name,
                         awayTeam.name,
-                        match.dateAndTime?.toMyString() ?: "nespecifikováno",
+                        match.dateAndTime?.toMyString() ?: context.getString(R.string.unspecified),
                         sets.toString().removeWhitespaces(),
                         games,
                         homePlayersText,
@@ -334,38 +327,35 @@ class MatchInputResultFragmentVM : ViewModel()
                 }
 
                 awayTeam.tmId -> {
+                    val subject = "Byla podána námitka k výsledku $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})"
+
                     val message = """
                     Dobrý den,
                     
                     vedoucí týmu ${awayTeam.name} právě podal námitku k $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} ze dne ${match.dateAndTime?.toMyString() ?: "nespecifikováno"}.
-                    Dle něj je správné skóre takové: ${sets.toString().removeWhitespaces()} na sety a $games na gemy.
+                    
+                    Dle něj je správný stav zápasu následující:
+                    Skóre: ${sets.toString().removeWhitespaces()} na sety a $games na gemy.
+                    Hráči: $homePlayersText a $awayPlayersText
                     
                     Na tento email prosím neodpovídejte.
                     
                     Administrátor aplikace AMTEL Opava
                     """.trimIndent()
+
+                    homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+                    EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
                 }
 
                 else -> {
-//                    val message = """
-//                    Dobrý den,
-//
-//                    vedoucí soutěže právě zadal do aplikace výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} ze dne ${match.dateAndTime?.toMyString() ?: "nespecifikováno"}.
-//
-//                    Skóre je: ${sets.toString().removeWhitespaces()} na sety a $games na gemy.
-//                    Hráči: $homePlayersText a $awayPlayersText.
-//
-//                    Na tento email prosím neodpovídejte.
-//
-//                    Administrátor aplikace AMTEL Opava
-//                    """.trimIndent()
+                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})"
 
                     val message = String.format(
                         context.getString(R.string.match_input_email_headOfLeague),
                         round,
                         homeTeam.name,
                         awayTeam.name,
-                        match.dateAndTime?.toMyString() ?: "nespecifikováno",
+                        match.dateAndTime?.toMyString() ?: context.getString(R.string.unspecified),
                         sets.toString().removeWhitespaces(),
                         games,
                         homePlayersText,

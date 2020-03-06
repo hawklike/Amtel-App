@@ -1,6 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -50,4 +51,15 @@ class MatchMenuActivityVM : ViewModel()
     }
 
     val awayTeam: LiveData<TeamState> = _awayTeam
+
+    /*---------------------------------------------------*/
+
+    private val _isReport = MutableLiveData<Boolean>()
+
+    fun isReport(isReport: Boolean)
+    {
+        _isReport.value = isReport
+    }
+
+    val isReport: LiveData<Boolean> = _isReport
 }

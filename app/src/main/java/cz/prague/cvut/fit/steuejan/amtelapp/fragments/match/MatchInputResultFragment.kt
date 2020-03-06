@@ -35,8 +35,11 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private var round = 0
     private var isHeadOfLeague = false
+    private var isReport = false
 
     private lateinit var match: Match
+    private lateinit var userId: String
+
     private lateinit var homeTeam: Team
     private lateinit var awayTeam: Team
     private lateinit var week: WeekState
@@ -135,6 +138,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         homePlayers.setOnClickListener(null)
         awayPlayers.setOnClickListener(null)
         inputResult.setOnClickListener(null)
+        reportButton.setOnClickListener(null)
 
         overviewLayout?.removeAllViews()
         resultsLayout?.removeAllViews()
@@ -145,6 +149,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private fun getData()
     {
+        userId = AuthManager.currentUser!!.uid
         match = matchViewModel.match.value?.let { it } ?: Match()
         homeTeam = matchViewModel.homeTeam.value?.let { if(it is ValidTeam) it.self else Team() } ?: Team()
         awayTeam = matchViewModel.awayTeam.value?.let { if(it is ValidTeam) it.self else Team() } ?: Team()
@@ -176,21 +181,29 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private fun prepareLayout()
     {
-        when(AuthManager.currentUser!!.uid)
+        when(userId)
         {
             homeTeam.tmId -> {
                 reportButton.visibility = View.INVISIBLE
                 reportButton.isEnabled = false
                 disableInputButtonIf { match.edits[round.toString()] == 0 }
             }
+
             awayTeam.tmId -> {
+                isReport = true
+                matchViewModel.isReport(true)
                 inputResult.visibility = View.GONE
             }
-            else -> isHeadOfLeague = true
+
+            else ->
+            {
+                isHeadOfLeague = true
+                reportButton.visibility = View.INVISIBLE
+                reportButton.isEnabled = false
+            }
         }
     }
 
-    //TODO: handle report
     private fun setListeners()
     {
         homePlayers.setOnClickListener {
@@ -202,29 +215,39 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         }
 
         inputResult.setOnClickListener {
-            val firstHome = firstSetHome.text.toString()
-            val firstAway = firstSetAway.text.toString()
-            val secondHome = secondSetHome.text.toString()
-            val secondAway = secondSetAway.text.toString()
-            val thirdHome = thirdSetHome.text.toString()
-            val thirdAway = thirdSetAway.text.toString()
-
-            val homePlayersText = homePlayers.text
-            val awayPlayersText = awayPlayers.text
-
-            deleteErrors()
-
-            viewModel.confirmInput(
-                firstHome,
-                firstAway,
-                secondHome,
-                secondAway,
-                thirdHome,
-                thirdAway,
-                homePlayersText,
-                awayPlayersText,
-                match.group == getString(R.string.fifty_plus_group))
+           getInputAndConfirm()
         }
+
+        reportButton.setOnClickListener {
+            getInputAndConfirm()
+        }
+    }
+
+    private fun getInputAndConfirm()
+    {
+        val firstHome = firstSetHome.text.toString()
+        val firstAway = firstSetAway.text.toString()
+        val secondHome = secondSetHome.text.toString()
+        val secondAway = secondSetAway.text.toString()
+        val thirdHome = thirdSetHome.text.toString()
+        val thirdAway = thirdSetAway.text.toString()
+
+        val homePlayersText = homePlayers.text
+        val awayPlayersText = awayPlayers.text
+
+        deleteErrors()
+
+        viewModel.confirmInput(
+            firstHome,
+            firstAway,
+            secondHome,
+            secondAway,
+            thirdHome,
+            thirdAway,
+            homePlayersText,
+            awayPlayersText,
+            match.group == getString(R.string.fifty_plus_group)
+        )
     }
 
     private fun setObservers()
@@ -232,18 +255,26 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         handleErrors()
         handleDialogs()
         isMatchAdded()
+        isReported()
+    }
+
+    private fun isReported()
+    {
+        viewModel.isReported.observe(viewLifecycleOwner) { match ->
+            val result = MatchManager.getResults(match.rounds[round - 1])
+            viewModel.sendEmail(homeTeam, awayTeam, result.sets, result.games, userId)
+            toast("Výsledek byl odeslán k posouzení.")
+        }
     }
 
     private fun isMatchAdded()
     {
         viewModel.matchAdded.observe(viewLifecycleOwner) {
-            match = it
-            matchViewModel.setMatch(match)
             val result = MatchManager.getResults(match.rounds[round - 1])
             sets.text = result.sets
             games.text = result.games
             disableInputButtonIf { !isHeadOfLeague && match.edits[round.toString()] == 0 }
-            viewModel.sendEmail(homeTeam, awayTeam, sets.text, games.text, AuthManager.currentUser!!.uid)
+            viewModel.sendEmail(homeTeam, awayTeam, sets.text, games.text, userId)
             toast(getString(R.string.match_added_success))
         }
     }
@@ -253,14 +284,26 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         viewModel.isInputOk.observe(viewLifecycleOwner) { isOk ->
             if(isOk)
             {
-                val title = if(!isHeadOfLeague && match.edits[round.toString()] == 1)
-                    getString(R.string.match_input_confirmation_last_attempt_text)
-                else getString(R.string.match_input_confirmation_text)
+                when(isReport)
+                {
+                    true-> {
+                        displayConfirmationDialog(
+                            "Chcete podat námitku?",
+                            "Vámi zapsané údaje budou poslány vedoucímu soutěže k posouzení.") {
+                            viewModel.inputResult(homeTeam.users, awayTeam.users, isHeadOfLeague, isReport = true) }
+                    }
 
-                displayConfirmationDialog(
-                    getString(R.string.create_team_dialog_title),
-                    title) {
-                    viewModel.inputResult(homeTeam.users, awayTeam.users, isHeadOfLeague) }
+                    false -> {
+                        val title = if(!isHeadOfLeague && match.edits[round.toString()] == 1)
+                            getString(R.string.match_input_confirmation_last_attempt_text)
+                        else getString(R.string.match_input_confirmation_text)
+
+                        displayConfirmationDialog(
+                            getString(R.string.create_team_dialog_title),
+                            title) {
+                            viewModel.inputResult(homeTeam.users, awayTeam.users, isHeadOfLeague) }
+                    }
+                }
             }
         }
 
@@ -270,7 +313,13 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                 displayConfirmationDialog(
                     getString(R.string.create_team_dialog_title),
                     getString(R.string.match_tie_warning)) {
-                    viewModel.inputResult(homeTeam.users, awayTeam.users, isHeadOfLeague, ignoreTie = true) }
+                    viewModel.inputResult(
+                        homeTeam.users,
+                        awayTeam.users,
+                        isHeadOfLeague,
+                        ignoreTie = true,
+                        isReport = isReport
+                    ) }
             }
         }
     }

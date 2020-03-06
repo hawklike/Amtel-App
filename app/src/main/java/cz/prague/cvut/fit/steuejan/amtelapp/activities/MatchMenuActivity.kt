@@ -22,6 +22,8 @@ class MatchMenuActivity : AbstractViewPagerActivity()
     private lateinit var match: Match
     private lateinit var week: WeekState
 
+    private var isReport = false
+
     private lateinit var title: String
 
     private var homeTeam: TeamState = NoTeam
@@ -52,6 +54,10 @@ class MatchMenuActivity : AbstractViewPagerActivity()
         viewModel.match.observe(this) {
             match =  it
         }
+
+        viewModel.isReport.observe(this) {
+            isReport =  it
+        }
     }
 
     override fun getData()
@@ -63,6 +69,8 @@ class MatchMenuActivity : AbstractViewPagerActivity()
             homeTeam = bundle.getParcelable<Team>(HOME_TEAM)?.let { ValidTeam(it) } ?: NoTeam
             awayTeam = bundle.getParcelable<Team>(AWAY_TEAM)?.let { ValidTeam(it) } ?: NoTeam
         }
+
+        println("zapas1: ${match.hashCode()}")
     }
 
     override fun setupViewPager(viewPager: ViewPager)
@@ -80,7 +88,7 @@ class MatchMenuActivity : AbstractViewPagerActivity()
 
     override fun onBackPressed()
     {
-        setResult(Activity.RESULT_OK, intent.putExtra(MatchArrangementActivity.MATCH, match))
+        if(!isReport) setResult(Activity.RESULT_OK, intent.putExtra(MatchArrangementActivity.MATCH, match))
         super.onBackPressed()
         finish()
     }

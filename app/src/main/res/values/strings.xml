@@ -143,4 +143,5 @@
     <string name="head_of_league">HEAD_OF_LEAGUE</string>
     <string name="match_input_email">Dobrý den,\n\nvedoucí týmu %1$s právě zadal do aplikace výsledek %2$d. zápasu v utkání %3$s–%4$s ze dne %5$s.\n\nSkóre je: %6$s na sety a %7$s na gemy.\nHráči: %8$s a %9$s.\n\nNa tento email prosím neodpovídejte.\n\nAdministrátor aplikace AMTEL Opava</string>
     <string name="match_input_email_headOfLeague">Dobrý den,\n\nvedoucí soutěže právě zadal do aplikace výsledek %1$d. zápasu v utkání %2$s–%3$s ze dne %4$s.\n\nSkóre je: %5$s na sety a %6$s na gemy.\nHráči: %7$s a %8$s.\n\nNa tento email prosím neodpovídejte.\n\nAdministrátor aplikace AMTEL Opava</string>
+    <string name="unspecified">nespecifikováno</string>
 </resources>
