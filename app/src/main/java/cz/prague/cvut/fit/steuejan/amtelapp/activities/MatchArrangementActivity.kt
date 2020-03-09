@@ -46,6 +46,9 @@ class MatchArrangementActivity : AbstractBaseActivity()
     private var matchInfoLayout: RelativeLayout? = null
     private var progressBarLayout: FrameLayout? = null
 
+    private lateinit var sendEmailOpponent: RelativeLayout
+    private lateinit var callOpponent: RelativeLayout
+
     private var activityStarted: Boolean = false
 
     companion object

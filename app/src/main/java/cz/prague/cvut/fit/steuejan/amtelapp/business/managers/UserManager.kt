@@ -5,6 +5,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
+import cz.prague.cvut.fit.steuejan.amtelapp.data.database.DatabaseHelper
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
@@ -14,12 +15,15 @@ import kotlinx.coroutines.withContext
 
 object UserManager
 {
-    //TODO: add merged name and surname in english transcription
+    //TODO: add merged name and surname in english transcription [TEST IT!!!]
     suspend fun addUser(user: User): User? = withContext(IO)
     {
+        val (englishName, englishSurname) = DatabaseHelper.prepareCzechOrdering(user.name, user.surname)
+        user.englishName = englishName
+        user.englishSurname = englishSurname
+
         return@withContext try
         {
-
             UserDAO().insert(user)
             Log.i(TAG, "addUser(): $user successfully added to database")
             user
@@ -74,7 +78,7 @@ object UserManager
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateUser(): user with id $documentId not updated because $ex")
+            Log.e(TAG, "updateUser(): user with id $documentId not updated because ${ex.message}")
             false
         }
     }
@@ -90,7 +94,7 @@ object UserManager
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "deleteUser(): user with id $userId not deleted because $ex")
+            Log.e(TAG, "deleteUser(): user with id $userId not deleted because ${ex.message}")
             false
         }
     }
@@ -100,8 +104,8 @@ object UserManager
         val dao = UserDAO()
         return when(orderBy)
         {
-            UserOrderBy.NAME -> dao.retrieveAllUsers("name")
-            UserOrderBy.SURNAME -> dao.retrieveAllUsers("surname")
+            UserOrderBy.NAME -> dao.retrieveAllUsers("englishName")
+            UserOrderBy.SURNAME -> dao.retrieveAllUsers("englishSurname")
             UserOrderBy.TEAM -> dao.retrieveAllUsers("teamName")
             UserOrderBy.EMAIL -> dao.retrieveAllUsers("email")
             UserOrderBy.SEX -> dao.retrieveAllUsers("sex")

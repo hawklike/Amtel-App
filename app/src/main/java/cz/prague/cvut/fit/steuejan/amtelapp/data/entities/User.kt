@@ -17,5 +17,7 @@ data class User(override var id: String? = null,
                 var teamName: String? = null,
                 var matchesId: List<String> = emptyList(),
                 var matches: List<Match> = emptyList(),
-                var firstSign: Boolean = true
+                var firstSign: Boolean = true,
+                var englishName: String = "",
+                var englishSurname: String = ""
                 ) : Parcelable, Entity()

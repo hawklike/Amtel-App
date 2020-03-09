@@ -1,145 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MatchArrangementActivity">
-
-    <include
-        layout="@layout/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <View
-        android:id="@+id/horizontal_line_match_arrangement"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/lightGrey"
-        android:layout_below="@id/toolbar" />
-
-    <FrameLayout
-        android:id="@+id/match_arrangement_progressBar"
-        android:layout_below="@id/horizontal_line_match_arrangement"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminateTint="@color/blue"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:max="100"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:layout_marginTop="50dp"
-            android:text="@string/amtel_opava"
-            android:textColor="@color/blue"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-    </FrameLayout>
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true"
+    tools:context=".activities.MatchArrangementActivity"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
-        android:id="@+id/match_arrangement"
-        android:layout_below="@id/horizontal_line_match_arrangement"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:paddingTop="8dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:paddingBottom="16dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/rounded_object">
+        android:layout_height="wrap_content">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/match_arrangement_edit_button"
-            style="@style/FloatingActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            app:srcCompat="@drawable/ic_edit_white_24dp" />
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/match_arrangement_home"
+        <View
+            android:id="@+id/horizontal_line_match_arrangement"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrey"
+            android:layout_below="@id/toolbar" />
+
+        <FrameLayout
+            android:id="@+id/match_arrangement_progressBar"
+            android:layout_below="@id/horizontal_line_match_arrangement"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/blue"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:max="100"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_marginTop="50dp"
+                android:text="@string/amtel_opava"
+                android:textColor="@color/blue"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/match_arrangement"
+            android:layout_below="@id/horizontal_line_match_arrangement"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:layout_marginEnd="16dp"
-            android:layout_toStartOf="@id/match_arrangement_edit_button"
-            android:text="TK Horní Bludovice"
-            android:textColor="@color/darkGrey"
-            android:textSize="16sp" />
+            android:visibility="gone"
+            android:paddingTop="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_object">
 
-        <TextView
-            android:id="@+id/match_arrangement_score"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/match_arrangement_edit_button"
+                style="@style/FloatingActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                app:srcCompat="@drawable/ic_edit_white_24dp" />
+
+            <TextView
+                android:id="@+id/match_arrangement_home"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@id/match_arrangement_edit_button"
+                android:text="TK Horní Bludovice"
+                android:textColor="@color/darkGrey"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/match_arrangement_score"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/match_arrangement_home"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@id/match_arrangement_edit_button"
+                android:text="1 : 2"
+                android:textColor="@color/darkGrey"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/match_arrangement_away"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@id/match_arrangement_edit_button"
+                android:layout_below="@id/match_arrangement_score"
+                android:text="TK Dolní Datyně"
+                android:textColor="@color/darkGrey"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/match_arrangement_change_place"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_below="@id/match_arrangement_away"
+                android:hint="@string/change_place_match"
+                android:clickable="true"
+                android:focusable="false"
+                android:inputType="text"
+                android:layout_toStartOf="@id/match_arrangement_edit_button"
+                android:maxLines="1"
+                style="@style/TextInputEditTextStyle"
+                app:errorEnabled="true"
+                android:importantForAutofill="no" />
+
+            <EditText
+                android:id="@+id/match_arrangement_change_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_below="@id/match_arrangement_change_place"
+                android:hint="@string/change_dateTime_match"
+                android:inputType="date"
+                android:layout_toStartOf="@id/match_arrangement_edit_button"
+                android:clickable="true"
+                android:focusable="false"
+                android:maxLines="1"
+                style="@style/TextInputEditTextStyle"
+                app:errorEnabled="true"
+                android:importantForAutofill="no" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/match_arrangement_send_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/match_arrangement_home"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_toStartOf="@id/match_arrangement_edit_button"
-            android:text="1 : 2"
-            android:textColor="@color/darkGrey"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:visibility="gone"
+            android:layout_below="@id/match_arrangement"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_object">
 
-        <TextView
-            android:id="@+id/match_arrangement_away"
+            <TextView
+                android:id="@+id/match_arrangement_send_email_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/send_email_opponent"
+                android:textColor="@color/darkGrey"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/match_arrangement_send_email_button"
+                android:background="@drawable/ic_email_blue_24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/match_arrangement_call"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_toStartOf="@id/match_arrangement_edit_button"
-            android:layout_below="@id/match_arrangement_score"
-            android:text="TK Dolní Datyně"
-            android:textColor="@color/darkGrey"
-            android:textSize="16sp" />
+            android:visibility="gone"
+            android:layout_below="@id/match_arrangement_send_email"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_object">
 
-        <EditText
-            android:id="@+id/match_arrangement_change_place"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_below="@id/match_arrangement_away"
-            android:hint="@string/change_place_match"
-            android:clickable="true"
-            android:focusable="false"
-            android:inputType="text"
-            android:layout_toStartOf="@id/match_arrangement_edit_button"
-            android:maxLines="1"
-            style="@style/TextInputEditTextStyle"
-            app:errorEnabled="true"
-            android:importantForAutofill="no" />
+            <TextView
+                android:id="@+id/match_arrangement_call_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/call_opponent"
+                android:textColor="@color/darkGrey"
+                android:textSize="16sp" />
 
-        <EditText
-            android:id="@+id/match_arrangement_change_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_below="@id/match_arrangement_change_place"
-            android:hint="@string/change_dateTime_match"
-            android:inputType="date"
-            android:layout_toStartOf="@id/match_arrangement_edit_button"
-            android:clickable="true"
-            android:focusable="false"
-            android:maxLines="1"
-            style="@style/TextInputEditTextStyle"
-            app:errorEnabled="true"
-            android:importantForAutofill="no" />
+            <ImageView
+                android:id="@+id/match_arrangement_call_button"
+                android:background="@drawable/ic_phone_blue_24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
-</RelativeLayout>
+</ScrollView>

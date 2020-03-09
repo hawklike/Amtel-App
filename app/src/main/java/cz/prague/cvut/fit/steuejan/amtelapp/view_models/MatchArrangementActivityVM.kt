@@ -12,12 +12,12 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.setTime
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.*
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toDayInWeek
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
@@ -70,7 +70,11 @@ class MatchArrangementActivityVM : ViewModel()
                 val awayDays = awayTeam.playingDays.map { it.toDayInWeek() }
 
                 _date.value = DateUtil.findDate(homeDays, awayDays, week.range)?.setTime(12, 0)
-                MatchManager.updateMatch(match.id!!, mapOf("dateAndTime" to date.value))
+                _date.value?.let { dateAndTime ->
+                    MatchManager.updateMatch(match.id!!, mapOf("dateAndTime" to dateAndTime))
+                    _match.value?.dateAndTime = dateAndTime
+                    sendEmail(dateAndTime = dateAndTime, place = match.place?.let { it } ?: homeTeam.place)
+                }
             }
         }
     }
@@ -86,7 +90,11 @@ class MatchArrangementActivityVM : ViewModel()
         _date.value = date.time
         viewModelScope.launch {
             if(MatchManager.updateMatch(match.value?.id, mapOf("dateAndTime" to date.time)))
+            {
                 toast(context.getString(R.string.match_dateTime_change_success), length = Toast.LENGTH_LONG)
+                _match.value?.dateAndTime = date.time
+                sendEmail(dateAndTime = date.time)
+            }
         }
     }
 
@@ -96,7 +104,11 @@ class MatchArrangementActivityVM : ViewModel()
         {
             viewModelScope.launch {
                 if(MatchManager.updateMatch(match.value?.id, mapOf("place" to place)))
+                {
                     toast(context.getString(R.string.match_place_change_success), length = Toast.LENGTH_LONG)
+                    _match.value?.place = place
+                    sendEmail(place = place)
+                }
             }
         }
     }
@@ -142,6 +154,33 @@ class MatchArrangementActivityVM : ViewModel()
             }
             return Pair(homeScore, awayScore)
         }
+    }
+
+    //TODO: add to string resources
+    private fun sendEmail(dateAndTime: Date? = null, place: String? = null)
+    {
+        val homeManagerEmail = teams.value?.first?.users?.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
+        val awayManagerEmail = teams.value?.second?.users?.find {it.role.toRole() == UserRole.TEAM_MANAGER}?.email
+
+        val match = _match.value ?: return
+
+        val subject = "Bylo nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.group}"
+
+        val message = """
+        Dobrý den,
+        
+        právě bylo v aplikaci nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.group}.
+        
+        Místo: ${match.place} ${place?.let { "<---" } ?: ""}
+        Datum a čas: ${match.dateAndTime?.toMyString("dd.MM.yyyy 'v' HH:mm") ?: "nespecifikováno"} ${dateAndTime?.let { "<---" } ?: ""}
+        
+        Na tento email prosím neodpovídejte.
+                            
+        Administrátor aplikace AMTEL Opava
+        """.trimIndent()
+
+        homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message)}
+        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message)}
     }
 
 }
