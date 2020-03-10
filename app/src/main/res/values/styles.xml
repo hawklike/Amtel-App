@@ -7,7 +7,6 @@
         <item name="colorAccent">@color/lightGrey</item>
         <item name="android:textColorPrimary">@color/darkGrey</item>
         <item name="android:windowBackground">@color/veryLightGrey</item>
-        <item name="android:statusBarColor">@color/green</item>
         <!-- Material dialog -->
         <item name="md_color_button_text">@color/blue</item>
         <item name="md_corner_radius">@dimen/rounded_corners</item>
@@ -18,20 +17,20 @@
     <!-- Toolbar custom theme -->
     <style name="ToolBarStyle" parent="Theme.AppCompat">
         <!-- This sets a hamburger icon in a toolbar to blue color -->
-        <item name="android:textColorSecondary">@color/darkBlue</item>
-        <item name="android:background">@color/green</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:background">@drawable/toolbar_gradient</item>
     </style>
 
     <style name="CardRelativeLayout">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">@dimen/common_margin</item>
-        <item name="android:layout_marginTop">@dimen/common_margin</item>
-        <item name="android:layout_marginEnd">@dimen/common_margin</item>
+        <item name="android:layout_marginStart">@dimen/card_margin</item>
+        <item name="android:layout_marginTop">@dimen/card_margin</item>
+        <item name="android:layout_marginEnd">@dimen/card_margin</item>
         <item name="android:background">@drawable/rounded_object</item>
         <item name="android:elevation">@dimen/elevation</item>
-        <item name="android:paddingStart">@dimen/common_padding</item>
-        <item name="android:paddingEnd">@dimen/common_padding</item>
+        <item name="android:paddingStart">@dimen/card_padding</item>
+        <item name="android:paddingEnd">@dimen/card_padding</item>
     </style>
 
     <!-- EditText custom theme -->
@@ -46,7 +45,9 @@
 
     <!-- Floating action button custom theme -->
     <style name="FloatingActionButton">
-        <item name="backgroundTint">@color/green</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="backgroundTint">@color/blue</item>
         <item name="borderWidth">0dp</item>
         <item name="elevation">@dimen/elevation</item>
         <item name="android:clickable">true</item>
@@ -55,9 +56,12 @@
 
     <!-- TextInputEditText custom theme so that error background is transparent -->
     <style name="TextInputEditTextStyle" parent="EditTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/input_text_layout_selector</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">7dp</item>
+        <item name="android:maxLines">1</item>
     </style>
 
     <!-- Color of an error when max text limit is exceeded -->
@@ -68,17 +72,61 @@
     <!-- Check box custom theme -->
     <style name="CheckBoxStyle">
         <item name="colorControlNormal">@color/lightGrey</item>
-        <item name="colorControlActivated">@color/darkBlue</item>
+        <item name="colorControlActivated">@color/blue</item>
         <item name="android:textSize">@dimen/common_text_size</item>
     </style>
     
     <style name="TextViewTitle">
-        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">8dp</item>
-        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/darkGrey</item>
         <item name="android:textSize">@dimen/common_text_size</item>
+    </style>
+
+    <style name="TextViewInClickableLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:textColor">@color/darkGrey</item>
+        <item name="android:textSize">@dimen/common_text_size</item>
+    </style>
+
+    <style name="ImageViewInClickableLayout">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentEnd">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
+
+    <style name="TextInputLayout" parent="Widget.Design.TextInputLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="errorTextColor">@android:color/holo_red_dark</item>
+    </style>
+
+    <style name="CustomCardView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:background">@drawable/rounded_object</item>
+        <item name="android:elevation">@dimen/elevation</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="AppBarLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/toolbar_gradient</item>
     </style>
 
     <style name="TabLayoutStyle" parent="Widget.Design.TabLayout">

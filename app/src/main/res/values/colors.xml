@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="blue">#3d8af7</color>
+    <color name="blue">#2FB7F4</color>
     <color name="darkBlue">#174090</color>
     <color name="lightBlue">#F7FEFF</color>
     <color name="darkGrey">#444444</color>
     <color name="green">#15eaa8</color>
-    <color name="darkGreen">#15eaa8</color>
+    <color name="darkGreen">#10BD87</color>
     <color name="lightGrey">#aaaaaa</color>
     <color name="veryLightGrey">#fafafa</color>
     <color name="white">#ffffff</color>
-    <color name="iconPrimaryColor">#15eaa8</color>
-    <color name="iconToolbarColor">#174090</color>
+    <color name="iconPrimaryColor">#2FB7F4</color>
+    <color name="iconFABColor">#ffffff</color>
+    <color name="iconToolbarColor">#ffffff</color>
 
     <!-- MaterialDrawer DEFAULT colors -->
     <color name="material_drawer_background">#ffffff</color>
