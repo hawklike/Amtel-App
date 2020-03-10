@@ -13,13 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <View
-        android:id="@+id/horizontal_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/lightGrey"
-        android:layout_below="@id/toolbar" />
-
     <FrameLayout
         android:id="@+id/progressBar"
         android:layout_width="match_parent"
@@ -49,6 +42,6 @@
         android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/horizontal_line" />
+        android:layout_below="@id/toolbar" />
 
 </RelativeLayout>

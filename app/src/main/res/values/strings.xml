@@ -147,4 +147,6 @@
     <string name="send_email">Poslat email</string>
     <string name="send_email_opponent">Napsat email soupeři</string>
     <string name="call_opponent">Zavolat soupeři</string>
+    <string name="write_email">Napsat email</string>
+    <string name="call">Zavolat</string>
 </resources>
