@@ -15,68 +15,52 @@
             android:id="@+id/schedule_round_week_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginStart="@dimen/card_margin"
             android:layout_marginTop="16dp"
-            android:visibility="gone"
+            android:layout_marginEnd="@dimen/card_margin"
             android:gravity="center"
-            android:text="12.2.2020 - 18.2.2020"
             android:textColor="@color/darkGrey"
-            android:textSize="16sp" />
+            android:textSize="@dimen/common_text_size"
+            android:visibility="gone" />
 
         <RelativeLayout
             android:id="@+id/schedule_round_choose_week"
-            android:layout_below="@id/schedule_round_week_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_marginStart="24dp"
+            android:layout_below="@id/schedule_round_week_text"
+            android:layout_marginStart="@dimen/card_margin"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/rounded_object">
+            android:layout_marginEnd="@dimen/card_margin"
+            android:background="@drawable/rounded_object"
+            android:elevation="@dimen/elevation"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/schedule_round_choose_week_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:gravity="center"
-                android:text="Zvolit hrací týden"
-                android:textColor="@color/darkGrey"
-                android:textSize="16sp" />
+                style="@style/TextViewTitle"
+                android:text="Zvolit hrací týden" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/schedule_round_choose_week_week"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
+                style="@style/TextInputLayout"
                 android:layout_below="@id/schedule_round_choose_week_text"
                 android:hint="Týden v roce"
-                app:errorEnabled="true"
-                app:errorTextColor="@android:color/holo_red_dark">
+                app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/schedule_round_choose_week_ediText1"
                     style="@style/TextInputEditTextStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberSigned"
-                    android:maxLines="1" />
+                    android:inputType="numberSigned" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/schedule_round_choose_week_add"
                 style="@style/FloatingActionButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_below="@id/schedule_round_choose_week_week"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 app:srcCompat="@drawable/ic_save_white_24dp" />
 
@@ -84,13 +68,13 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/schedule_round_recyclerView"
-            android:minHeight="200dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_below="@id/schedule_round_choose_week"/>
+            android:layout_below="@id/schedule_round_choose_week"
+            android:layout_marginStart="@dimen/card_margin"
+            android:layout_marginTop="@dimen/card_margin"
+            android:layout_marginEnd="@dimen/card_margin"
+            android:minHeight="200dp" />
 
     </RelativeLayout>
 

@@ -4,11 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.RelativeLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
@@ -23,9 +24,13 @@ class LoginFragment : AbstractMainActivityFragment()
 {
     private val viewModel by viewModels<LoginFragmentVM>()
 
-    private lateinit var checkButton: FloatingActionButton
     private lateinit var emailLayout: TextInputLayout
     private lateinit var passwordLayout: TextInputLayout
+    private lateinit var checkButton: Button
+
+    private lateinit var lostPassword: RelativeLayout
+
+    private var loginLayout: RelativeLayout? = null
 
     companion object
     {
@@ -45,6 +50,9 @@ class LoginFragment : AbstractMainActivityFragment()
         checkButton = view.findViewById(R.id.login_checkButton)
         emailLayout = view.findViewById(R.id.login_email)
         passwordLayout = view.findViewById(R.id.login_password)
+
+        lostPassword = view.findViewById(R.id.login_lost_password)
+        loginLayout = view.findViewById(R.id.login)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -53,6 +61,13 @@ class LoginFragment : AbstractMainActivityFragment()
         setToolbarTitle(AuthManager.profileDrawerOption)
         setListeners()
         setObservers()
+    }
+
+    override fun onDestroyView()
+    {
+        super.onDestroyView()
+        loginLayout?.removeAllViews()
+        loginLayout = null
     }
 
     private fun setListeners()
@@ -78,6 +93,7 @@ class LoginFragment : AbstractMainActivityFragment()
     private fun confirmEmail()
     {
         viewModel.confirmEmail().observe(viewLifecycleOwner) { credentialState ->
+            loading(false)
             if(credentialState is InvalidEmail)
                 emailLayout.error = credentialState.errorMessage
         }
@@ -86,6 +102,7 @@ class LoginFragment : AbstractMainActivityFragment()
     private fun confirmPassword()
     {
         viewModel.confirmPassword().observe(viewLifecycleOwner) { credentialState ->
+            loading(false)
             if(credentialState is InvalidPassword)
                 passwordLayout.error = credentialState.errorMessage
         }
@@ -130,14 +147,13 @@ class LoginFragment : AbstractMainActivityFragment()
         when(on)
         {
             true -> {
-                emailLayout.visibility = View.GONE
-                passwordLayout.visibility = View.GONE
-                checkButton.visibility = View.GONE
+                loginLayout?.visibility = View.GONE
+                lostPassword.visibility = View.GONE
+
             }
             false -> {
-                emailLayout.visibility = View.VISIBLE
-                passwordLayout.visibility = View.VISIBLE
-                checkButton.visibility = View.VISIBLE
+                loginLayout?.visibility = View.VISIBLE
+                lostPassword.visibility = View.VISIBLE
             }
         }
     }

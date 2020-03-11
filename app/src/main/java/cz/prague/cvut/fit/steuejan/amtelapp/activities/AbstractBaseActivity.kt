@@ -1,11 +1,16 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -39,7 +44,20 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
     {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
+        toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleFont)
         handleLogout()
+    }
+
+    /**
+     * The idea is to make transparent status bar and setting a background to the whole window,
+     * which will also cover the status bar in the same background.
+     */
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    fun backgroundColor(window: Window)
+    {
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = Color.TRANSPARENT
+        window.setBackgroundDrawableResource(R.drawable.toolbar_gradient)
     }
 
     private fun handleLogout()

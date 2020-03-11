@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <RelativeLayout
             android:id="@+id/match_input_overview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/rounded_object">
+            style="@style/CardRelativeLayout"
+            android:padding="8dp">
 
             <RelativeLayout
                 android:id="@+id/match_input_home_layout"
@@ -134,48 +129,42 @@
 
         <EditText
             android:id="@+id/match_input_players_home"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/CardRelativeLayout"
             android:layout_below="@id/match_input_overview"
-            android:hint="Hráč/i domácího týmu"
             android:clickable="true"
             android:focusable="false"
+            android:hint="Hráč/i domácího týmu"
+            android:importantForAutofill="no"
             android:inputType="text"
-            android:layout_marginTop="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
             android:maxLines="1"
-            style="@style/TextInputEditTextStyle"
-            app:errorEnabled="true"
-            android:importantForAutofill="no" />
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:textSize="@dimen/common_text_size"
+            app:errorEnabled="true" />
 
         <EditText
             android:id="@+id/match_input_players_away"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/CardRelativeLayout"
             android:layout_below="@id/match_input_players_home"
-            android:hint="Hráč/i týmu hostů"
-            android:inputType="text"
             android:clickable="true"
             android:focusable="false"
-            android:layout_marginTop="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
+            android:hint="Hráč/i týmu hostů"
+            android:importantForAutofill="no"
+            android:inputType="text"
             android:maxLines="1"
-            style="@style/TextInputEditTextStyle"
-            app:errorEnabled="true"
-            android:importantForAutofill="no" />
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:textSize="@dimen/common_text_size"
+            app:errorEnabled="true" />
 
         <RelativeLayout
             android:id="@+id/match_input_results"
+            style="@style/CardRelativeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
             android:layout_below="@id/match_input_players_away"
             android:background="@drawable/rounded_object">
 
@@ -364,18 +353,19 @@
             android:id="@+id/match_input_results_save_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/button"
+            android:layout_below="@id/match_input_results"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="4dp"
+            android:background="@drawable/button"
+            android:elevation="@dimen/elevation"
             android:minHeight="10dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:text="Zapsat výsledek"
-            android:textSize="16sp"
-            android:textColor="@color/white"
             android:stateListAnimator="@null"
-            android:layout_below="@id/match_input_results"/>
+            android:text="Zapsat výsledek"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
 
     </RelativeLayout>
 

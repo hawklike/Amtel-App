@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
+    android:background="@drawable/toolbar_gradient"
     tools:context=".activities.MainActivity">
 
     <include
@@ -13,22 +14,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <View
-        android:id="@+id/horizontal_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/lightGrey"
-        android:layout_below="@id/toolbar" />
-
     <FrameLayout
         android:id="@+id/progressBar"
+        android:background="@drawable/toolbar_gradient"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminateTint="@color/blue"
+            android:indeterminateTint="@color/darkBlue"
             android:layout_gravity="center_horizontal|center_vertical"
             android:max="100"/>
 
@@ -38,7 +33,7 @@
             android:layout_gravity="center_horizontal|center_vertical"
             android:text="@string/amtel_opava"
             android:layout_marginTop="50dp"
-            android:textColor="@color/blue"
+            android:textColor="@color/darkBlue"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -47,8 +42,9 @@
 
     <FrameLayout
         android:id="@+id/main_container"
+        android:background="@color/veryVeryLightGrey"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/horizontal_line" />
+        android:layout_below="@id/toolbar" />
 
 </RelativeLayout>

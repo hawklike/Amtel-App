@@ -1,49 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
-    android:layout_marginBottom="16dp"
-    android:background="@drawable/rounded_object">
+    style="@style/SimpleCardView"
+    android:layout_marginBottom="16dp">
 
     <Button
         android:id="@+id/group_card_generate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:elevation="0dp"
         android:minHeight="0dp"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
-        android:elevation="0dp"
-        android:layout_centerVertical="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="@string/generate_plan"
-        android:textSize="13sp"
         android:textColor="@color/blue"
-        android:background="?android:attr/selectableItemBackground"
-        android:layout_alignParentEnd="true" />
+        android:textSize="13sp" />
 
     <ImageButton
         android:id="@+id/group_card_next"
+        style="@style/ImageViewInClickableLayout"
         android:background="@drawable/ic_navigate_next_blue_24dp"
-        android:layout_width="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:visibility="gone"
+        android:contentDescription="@string/show_group"
         android:scaleX="1.5"
         android:scaleY="1.5"
-        android:contentDescription="@string/show_group" />
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/group_card_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
         android:layout_marginEnd="16dp"
         android:layout_toStartOf="@id/group_card_generate"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:text="A"
         android:textColor="@color/darkGrey"
         android:textSize="16sp" />
@@ -52,11 +43,11 @@
         android:id="@+id/group_card_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
         android:layout_below="@id/group_card_name"
         android:layout_marginEnd="16dp"
         android:layout_toStartOf="@id/group_card_generate"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:text="Počet týmů: 12"
         android:textColor="@color/darkGrey"
         android:textSize="12sp" />

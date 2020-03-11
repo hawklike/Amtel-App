@@ -24,6 +24,13 @@ object AuthManager
         get()
         {
             return auth.currentUser?.let { context.getString(R.string.account) }
+                ?: context.getString(R.string.amtel_opava)
+        }
+
+    val profileDrawerOptionMenu: String
+        get()
+        {
+            return auth.currentUser?.let { context.getString(R.string.account) }
                 ?: context.getString(R.string.login)
         }
 

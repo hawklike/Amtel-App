@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -35,6 +36,7 @@ class MainActivity : AbstractBaseActivity()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
+        backgroundColor(window)
         setContentView(R.layout.activity_main)
         progressLayout = findViewById(R.id.progressBar)
         super.onCreate(savedInstanceState)
@@ -63,7 +65,11 @@ class MainActivity : AbstractBaseActivity()
     {
         viewModel.progressBar.observe(this) { isOn ->
             if(isOn) progressLayout?.visibility = View.VISIBLE
-            else progressLayout?.visibility = View.GONE
+            else
+            {
+                progressLayout?.visibility = View.GONE
+                progressLayout?.setBackgroundColor(Color.TRANSPARENT)
+            }
         }
     }
 
@@ -104,7 +110,7 @@ class MainActivity : AbstractBaseActivity()
     //TODO: add rules
     private fun createNavigationDrawer(savedInstanceState: Bundle?)
     {
-        val profileTitle = AuthManager.profileDrawerOption
+        val profileTitle = AuthManager.profileDrawerOptionMenu
         val profile = PrimaryDrawerItem().withIdentifier(0).withName(profileTitle).withIcon(FontAwesome.Icon.faw_user_edit)
         val results = PrimaryDrawerItem().withName(getString(R.string.results)).withIcon(FontAwesome.Icon.faw_list_ol)
         val schedule = PrimaryDrawerItem().withName(getString(R.string.schedule)).withIcon(FontAwesome.Icon.faw_calendar_alt)

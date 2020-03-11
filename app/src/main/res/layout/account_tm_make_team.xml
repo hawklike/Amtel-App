@@ -17,7 +17,8 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
-            android:background="@drawable/rounded_object">
+            android:background="@drawable/rounded_object"
+            android:elevation="@dimen/elevation">
 
             <TextView
                 android:id="@+id/account_tm_make_team_text"
@@ -118,6 +119,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
+            android:elevation="@dimen/elevation"
             android:background="@drawable/rounded_object">
 
             <TextView

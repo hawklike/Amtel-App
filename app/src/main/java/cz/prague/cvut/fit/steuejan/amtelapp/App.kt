@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.widget.Toast
 import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import java.lang.ref.WeakReference
 
@@ -24,6 +25,11 @@ class App : Application()
         fun toast(text: String, context: Context = this.context, length: Int = Toast.LENGTH_SHORT)
         {
             Toast.makeText(context, text, length).show()
+        }
+
+        fun toast(@StringRes textRes: Int, context: Context = this.context, length: Int = Toast.LENGTH_SHORT)
+        {
+            Toast.makeText(context, context.getString(textRes), length).show()
         }
 
         fun getColor(@ColorRes color: Int): Int
