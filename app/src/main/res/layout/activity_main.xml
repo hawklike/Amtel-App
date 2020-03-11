@@ -42,7 +42,7 @@
 
     <FrameLayout
         android:id="@+id/main_container"
-        android:background="@color/veryLightGrey"
+        android:background="@color/veryVeryLightGrey"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar" />

@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
-        android:background="@color/veryLightGrey">
+        android:background="@color/veryVeryLightGrey">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/account_boss_groups_recyclerView"

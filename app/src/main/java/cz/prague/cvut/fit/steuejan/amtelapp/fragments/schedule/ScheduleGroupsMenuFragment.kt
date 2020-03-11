@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.ScheduleRoundsActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsFirestoreAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsMenuFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
@@ -25,7 +25,7 @@ class ScheduleGroupsMenuFragment : AbstractMainActivityFragment()
     }
 
     private var recyclerView: RecyclerView? = null
-    private var adapter: ShowGroupsFirestoreAdapter? = null
+    private var adapter: ShowGroupsMenuFirestoreAdapter? = null
 
     override fun getName(): String = "ScheduleFragment"
 
@@ -75,7 +75,7 @@ class ScheduleGroupsMenuFragment : AbstractMainActivityFragment()
 
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(activity!!)
-        adapter = ShowGroupsFirestoreAdapter(activity!!, options)
+        adapter = ShowGroupsMenuFirestoreAdapter(options)
 
         adapter?.setNextButton(true) { group ->
             val intent = Intent(activity!!, ScheduleRoundsActivity::class.java).apply {

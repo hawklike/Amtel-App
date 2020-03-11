@@ -353,18 +353,19 @@
             android:id="@+id/match_input_results_save_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/button"
+            android:layout_below="@id/match_input_results"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="4dp"
+            android:background="@drawable/button"
+            android:elevation="@dimen/elevation"
             android:minHeight="10dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:text="Zapsat výsledek"
-            android:textSize="16sp"
-            android:textColor="@color/white"
             android:stateListAnimator="@null"
-            android:layout_below="@id/match_input_results"/>
+            android:text="Zapsat výsledek"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
 
     </RelativeLayout>
 

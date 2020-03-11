@@ -44,6 +44,7 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
     {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
+        toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleFont)
         handleLogout()
     }
 
