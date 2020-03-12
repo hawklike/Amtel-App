@@ -173,13 +173,17 @@ class MatchArrangementActivityVM : ViewModel()
     {
         val year = DateUtil.actualYear.toString()
 
-        val pointsPerYear = team.points[year]
-        if(pointsPerYear == null) team.points[year] = mutableMapOf()
+        val pointsPerYear = team.pointsPerMatch[year]
+        if(pointsPerYear == null) team.pointsPerMatch[year] = mutableMapOf()
 
-        team.points[year]?.let { points ->
+        var sum = 0
+        team.pointsPerMatch[year]?.let { points ->
             points[match.id!!] = if(predicate.invoke()) 2 else 1
-            TeamManager.addTeam(team)
+            sum = points.values.sum()
         }
+
+        team.pointsPerYear[year] = sum
+        TeamManager.addTeam(team)
     }
 
 
