@@ -75,9 +75,9 @@ class ScheduleGroupsMenuFragment : AbstractMainActivityFragment()
 
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(activity!!)
-        adapter = ShowGroupsMenuFirestoreAdapter(options)
+        adapter = ShowGroupsMenuFirestoreAdapter(activity!!, options)
 
-        adapter?.setNextButton(true) { group ->
+        adapter?.onNextClick = { group ->
             val intent = Intent(activity!!, ScheduleRoundsActivity::class.java).apply {
                 putExtra(ScheduleRoundsActivity.GROUP, group)
                 putExtra(ScheduleRoundsActivity.USER, mainActivityModel.getUser().value)

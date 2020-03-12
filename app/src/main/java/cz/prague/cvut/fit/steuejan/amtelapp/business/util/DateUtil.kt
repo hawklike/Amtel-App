@@ -48,6 +48,14 @@ object DateUtil
         }
     }
 
+    fun getWeekNumber(date: Date): Int
+    {
+        val cal = Calendar.getInstance()
+        cal[Calendar.DAY_OF_WEEK] = Calendar.MONDAY
+        cal.time = date
+        return cal[Calendar.WEEK_OF_YEAR]
+    }
+
     fun findDate(homeDays: List<Day>, awayDays: List<Day>, range: List<Date>): Date?
     {
         val days = homeDays.intersect(awayDays)

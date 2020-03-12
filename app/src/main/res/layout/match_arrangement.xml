@@ -11,8 +11,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/toolbar_gradient">
+        android:layout_height="wrap_content">
 
         <include
             layout="@layout/toolbar"
@@ -24,6 +23,8 @@
             android:layout_height="match_parent"
             android:background="@color/veryVeryLightGrey"
             android:layout_below="@id/toolbar">
+
+            <include layout="@layout/curve" />
 
             <FrameLayout
                 android:id="@+id/match_arrangement_progressBar"

@@ -7,9 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
@@ -26,21 +24,11 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsFirestoreAdapterVM
 
-class ShowGroupsFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<Group>)
-    : FirestoreRecyclerAdapter<Group, ShowGroupsFirestoreAdapter.ViewHolder>(options)
+class ShowGroupsBossFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<Group>)
+    : FirestoreRecyclerAdapter<Group, ShowGroupsBossFirestoreAdapter.ViewHolder>(options)
 {
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
         ShowGroupsFirestoreAdapterVM::class.java)
-
-    private var isNextVisible = false
-    private var onNextClick: (group: Group) -> Unit = {}
-
-    fun setNextButton(isVisible: Boolean, onClick: ((group: Group) -> Unit)? = null)
-    {
-        isNextVisible = isVisible
-        onNextClick = onClick?.let { it }
-            ?: { Toast.makeText(context, context.getString(R.string.not_working_yet), Toast.LENGTH_SHORT).show() }
-    }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -49,7 +37,6 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
         private val name: TextView = itemView.findViewById(R.id.group_card_name)
         private val size: TextView = itemView.findViewById(R.id.group_card_size)
         private val generate: Button = itemView.findViewById(R.id.group_card_generate)
-        private val next: ImageButton = itemView.findViewById(R.id.group_card_next)
 
         private var rounds = 0
         private var calculatedRounds = 0
@@ -67,7 +54,6 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
             calculatedRounds = rounds
 
             generate()
-            next()
         }
 
         //TODO: implement regenerating matches
@@ -87,7 +73,11 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
                     generate.setTextColor(Color.RED)
                 }
             }
+            showDialog()
+        }
 
+        private fun showDialog()
+        {
             generate.setOnClickListener {
                 MaterialDialog(context).show {
                     title(text = context.getString(R.string.generate_matches_dialog_title) + " ${name.text}")
@@ -97,8 +87,7 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
                         prefill = rounds.toString(),
                         inputType = InputType.TYPE_CLASS_NUMBER) { dialog, text ->
 
-                        val isValid = viewModel.confirmInput(text.toString(), calculatedRounds)
-                        if(isValid) rounds = text.toString().toInt()
+                        val isValid = confirmInput(text)
                         if(rounds == 0) dialog.setActionButtonEnabled(WhichButton.POSITIVE, false)
                         else
                         {
@@ -107,29 +96,23 @@ class ShowGroupsFirestoreAdapter(private val context: Context, options: Firestor
                             dialog.setActionButtonEnabled(WhichButton.POSITIVE, isValid)
                         }
                     }
-                    positiveButton(R.string.generate_plan) {
-                        viewModel.generateMatches(getItem(adapterPosition), rounds)
-                        generate.setTextColor(Color.RED)
-                    }
+                    positiveButton(R.string.generate_plan) { generateSchedule() }
                 }
             }
         }
 
-        private fun next()
+        private fun confirmInput(text: CharSequence): Boolean
         {
-            if(isNextVisible)
-            {
-                val rounds = group.rounds[DateUtil.actualYear.toString()]
-                if(rounds == 0 || rounds == null) next.visibility = View.GONE
-                else next.visibility = View.VISIBLE
-
-                generate.visibility = View.GONE
-                next.setOnClickListener {
-                    onNextClick.invoke(group)
-                }
-            }
+            val isValid = viewModel.confirmInput(text.toString(), calculatedRounds)
+            if(isValid) rounds = text.toString().toInt()
+            return isValid
         }
 
+        private fun generateSchedule()
+        {
+            viewModel.generateMatches(getItem(adapterPosition), rounds)
+            generate.setTextColor(Color.RED)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder

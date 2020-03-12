@@ -7,11 +7,11 @@
     <color name="green">#15eaa8</color>
     <color name="darkGreen">#10BD87</color>
     <color name="lightGrey">#aaaaaa</color>
-    <color name="veryLightGrey">#E6E2E2</color>
-    <color name="tab_unselected">#8DE6E2E2</color>
+    <color name="veryLightGrey">#F5F5F5</color>
+    <color name="tab_unselected">@color/white</color>
     <color name="veryVeryLightGrey">#fafafa</color>
     <color name="white">#ffffff</color>
-    <color name="iconPrimaryColor">@color/toolbar_right</color>
+    <color name="iconPrimaryColor">@color/blue</color>
     <color name="iconFABColor">@color/white</color>
     <color name="iconToolbarColor">@color/white</color>
     <color name="red">#e84118</color>
@@ -27,10 +27,11 @@
     <color name="blue5">#37D4F9</color>
     <color name="blue6">#41EFFE</color>
 
-    <color name="toolbar_left">#472A57</color>
-    <color name="toolbar_left_alt">#412650</color>
-    <color name="toolbar_right">#38559D</color>
-    <color name="toolbar_right_alt">#38559D</color>
+    <color name="toolbar_up">#f12711</color>
+    <color name="toolbar_center">#f24613</color>
+    <color name="toolbar_down">#f36a15</color>
+    <color name="toolbar_left_alt">#C71D0D</color>
+    <color name="toolbar_right_alt">#C25310</color>
 
     <!-- MaterialDrawer DEFAULT colors -->
     <color name="material_drawer_background">#ffffff</color>

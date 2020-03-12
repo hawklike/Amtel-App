@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <include layout="@layout/curve" />
+
         <RelativeLayout
             android:id="@+id/account_boss_create_group"
             style="@style/CardRelativeLayout">
@@ -69,6 +71,7 @@
             android:layout_marginStart="@dimen/card_margin"
             android:layout_marginTop="@dimen/card_margin"
             android:layout_marginEnd="@dimen/card_margin"
+            android:textStyle="bold"
             android:gravity="center"
             android:text="@string/teams"
             android:textColor="@color/darkGrey"

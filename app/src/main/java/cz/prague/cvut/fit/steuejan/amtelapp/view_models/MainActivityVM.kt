@@ -95,19 +95,22 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     fun initEmailPassword()
     {
-        if(!EmailSender.hasPassword)
-        {
-            viewModelScope.launch {
-                EmailManager.getPassword()?.let {
-                    EmailSender.hasPassword = true
-                    PreferenceManager.
-                        getDefaultSharedPreferences(context)
-                        .edit()
-                        .putString(context.getString(R.string.email_password_key), it)
-                        .apply()
+        PreferenceManager
+            .getDefaultSharedPreferences(context)
+            ?.getString(context.getString(R.string.email_password_key), null)?.let {
+                EmailSender.hasPassword = true
+            } ?: let {
+                viewModelScope.launch {
+                    EmailManager.getPassword()?.let {
+                        EmailSender.hasPassword = true
+                        PreferenceManager.
+                            getDefaultSharedPreferences(context)
+                            .edit()
+                            .putString(context.getString(R.string.email_password_key), it)
+                            .apply()
+                    }
                 }
             }
-        }
     }
 
     fun initHeadOfLeagueEmail()

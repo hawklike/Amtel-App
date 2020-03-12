@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsFirestoreAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsBossFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 
@@ -30,7 +30,7 @@ class ShowGroupsActivity : AbstractActivityWithRecyclerView()
 
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(this)
-        adapter = ShowGroupsFirestoreAdapter(this, options)
+        adapter = ShowGroupsBossFirestoreAdapter(this, options)
         recyclerView?.adapter = adapter
     }
 }

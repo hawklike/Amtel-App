@@ -430,6 +430,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         {
             inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryVeryLightGrey))
             inputResult.isEnabled = false
+            inputResult.elevation = 0.0F
             homePlayers.isEnabled = false
             awayPlayers.isEnabled = false
             firstSetHome.isEnabled = false

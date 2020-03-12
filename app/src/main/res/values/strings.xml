@@ -149,4 +149,7 @@
     <string name="call_opponent">Zavolat soupeři</string>
     <string name="write_email">Napsat email</string>
     <string name="call">Zavolat</string>
+    <string name="rounds_number_input">Počet kol: %1$s</string>
+    <string name="actual_round">Aktuální kolo: %1$s</string>
+    <string name="is_not">není</string>
 </resources>

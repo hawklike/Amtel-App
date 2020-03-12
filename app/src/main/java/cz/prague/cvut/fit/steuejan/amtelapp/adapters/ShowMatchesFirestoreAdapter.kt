@@ -1,10 +1,10 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -25,17 +25,18 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
+        private val card: RelativeLayout = itemView.findViewById(R.id.match_card)
         val home: TextView = itemView.findViewById(R.id.match_card_home)
         val away: TextView = itemView.findViewById(R.id.match_card_away)
         val sets: TextView = itemView.findViewById(R.id.match_card_sets)
         val gems: TextView = itemView.findViewById(R.id.match_card_gems)
         val upperText: TextView = itemView.findViewById(R.id.match_card_upper_text)
         val lowerText: TextView = itemView.findViewById(R.id.match_card_lower_text)
-        val next: ImageButton = itemView.findViewById(R.id.match_card_next)
+        val next: ImageView = itemView.findViewById(R.id.match_card_next)
 
         init
         {
-            next.setOnClickListener {
+            card.setOnClickListener {
                 val match = getItem(adapterPosition)
 
                 if(user is SignedUser)

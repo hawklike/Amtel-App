@@ -1,12 +1,10 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
@@ -55,9 +53,9 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun backgroundColor(window: Window)
     {
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = Color.TRANSPARENT
-        window.setBackgroundDrawableResource(R.drawable.toolbar_gradient)
+//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+//        window.statusBarColor = Color.TRANSPARENT
+//        window.setBackgroundDrawableResource(R.drawable.toolbar_gradient)
     }
 
     private fun handleLogout()

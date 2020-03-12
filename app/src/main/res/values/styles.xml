@@ -2,14 +2,15 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/purple</item>
-        <item name="colorPrimaryDark">@color/purple</item>
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryDark">@color/blue</item>
         <item name="colorAccent">@color/lightGrey</item>
         <item name="android:textColorPrimary">@color/darkGrey</item>
         <item name="android:windowBackground">@color/veryVeryLightGrey</item>
         <item name="android:fontFamily">@font/sen_regular</item>
+        <item name="android:statusBarColor">@color/blue</item>
         <!-- Material dialog -->
-        <item name="md_color_button_text">@color/purple</item>
+        <item name="md_color_button_text">@color/blue</item>
         <item name="md_corner_radius">@dimen/rounded_corners</item>
         <!-- Custom animation between activities -->
         <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
@@ -19,7 +20,7 @@
     <style name="ToolBarStyle" parent="Theme.AppCompat">
         <!-- This sets a hamburger icon in a toolbar to blue color -->
         <item name="android:textColorSecondary">@color/white</item>
-        <item name="android:background">@drawable/toolbar_gradient</item>
+        <item name="android:background">@color/blue</item>
     </style>
 
     <style name="CardRelativeLayout">
@@ -48,7 +49,7 @@
     <style name="FloatingActionButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="backgroundTint">@color/toolbar_right</item>
+        <item name="backgroundTint">@color/blue</item>
         <item name="borderWidth">0dp</item>
         <item name="elevation">4dp</item>
         <item name="android:clickable">true</item>
@@ -73,7 +74,7 @@
     <!-- Check box custom theme -->
     <style name="CheckBoxStyle">
         <item name="colorControlNormal">@color/lightGrey</item>
-        <item name="colorControlActivated">@color/toolbar_right</item>
+        <item name="colorControlActivated">@color/blue</item>
         <item name="android:textSize">@dimen/common_text_size</item>
     </style>
     
@@ -83,6 +84,7 @@
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginBottom">4dp</item>
         <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/darkGrey</item>
         <item name="android:textSize">@dimen/common_text_size</item>
     </style>
@@ -135,14 +137,14 @@
 
     <style name="CustomMenuCardView" parent="CardViewBase">
         <item name="android:layout_marginBottom">16dp</item>
-        <item name="android:background">@drawable/rounded_card1</item>
-        <item name="android:elevation">2dp</item>
+        <item name="android:background">@drawable/rounded_object</item>
+        <item name="android:elevation">1.5dp</item>
     </style>
 
     <style name="AppBarLayout">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/toolbar_gradient</item>
+        <item name="android:background">@color/blue</item>
     </style>
 
     <style name="TabLayoutStyle" parent="Widget.Design.TabLayout">
@@ -162,9 +164,10 @@
     </style>
 
     <style name="ToolbarTitleFont">
-        <item name="android:fontFamily">@font/markazi_medium</item>
+        <item name="android:fontFamily">@font/proxima_nova_regular</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">24sp</item>
     </style>
 
 

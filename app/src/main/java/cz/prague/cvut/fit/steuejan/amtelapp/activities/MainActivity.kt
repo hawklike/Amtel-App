@@ -148,8 +148,6 @@ class MainActivity : AbstractBaseActivity()
                 }
             }).build()
 
-        drawer.drawerLayout.setStatusBarBackground(R.color.white)
-
         if(savedInstanceState == null)
         {
             drawer.setSelection(profile)

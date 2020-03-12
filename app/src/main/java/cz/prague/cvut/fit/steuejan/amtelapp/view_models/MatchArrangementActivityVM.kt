@@ -120,7 +120,7 @@ class MatchArrangementActivityVM : ViewModel()
         }
     }
 
-    fun countTotalScore(match: Match): Pair<Int?, Int?>
+    fun countTotalScore(match: Match)
     {
         var homeScore = 0
         var awayScore = 0
@@ -134,27 +134,54 @@ class MatchArrangementActivityVM : ViewModel()
         {
             if(match.homeScore != null || match.awayScore != null)
             {
-                 viewModelScope.launch {
-                     match.homeScore = null
-                     match.awayScore = null
+                match.homeScore = null
+                match.awayScore = null
+                viewModelScope.launch {
                      MatchManager.addMatch(match)
-                 }
+                }
             }
-            return Pair(null, null)
         }
         else
         {
             if(match.homeScore != homeScore || match.awayScore != awayScore)
             {
+                match.homeScore = homeScore
+                match.awayScore = awayScore
                 viewModelScope.launch {
-                    match.homeScore = homeScore
-                    match.awayScore = awayScore
                     MatchManager.addMatch(match)
+                    updatePoints(match)
                 }
             }
-            return Pair(homeScore, awayScore)
         }
     }
+
+    private suspend fun updatePoints(match: Match)
+    {
+        val homeTeam = teams.value?.first
+        val awayTeam = teams.value?.second
+
+        homeTeam?.let {
+            updatePoints(it, match) { match.homeScore!! > match.awayScore!! }
+        }
+
+        awayTeam?.let {
+            updatePoints(it, match) { match.awayScore!! > match.homeScore!! }
+        }
+    }
+
+    private suspend fun updatePoints(team: Team, match: Match, predicate: () -> Boolean)
+    {
+        val year = DateUtil.actualYear.toString()
+
+        val pointsPerYear = team.points[year]
+        if(pointsPerYear == null) team.points[year] = mutableMapOf()
+
+        team.points[year]?.let { points ->
+            points[match.id!!] = if(predicate.invoke()) 2 else 1
+            TeamManager.addTeam(team)
+        }
+    }
+
 
     //TODO: add to string resources
     private fun sendEmail(dateAndTime: Date? = null, place: String? = null)

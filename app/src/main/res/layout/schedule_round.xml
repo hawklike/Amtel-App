@@ -11,6 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <include layout="@layout/curve" />
+
         <TextView
             android:id="@+id/schedule_round_week_text"
             android:layout_width="match_parent"
@@ -19,7 +21,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="@dimen/card_margin"
             android:gravity="center"
-            android:textColor="@color/darkGrey"
+            android:textColor="@color/white"
             android:textSize="@dimen/common_text_size"
             android:visibility="gone" />
 

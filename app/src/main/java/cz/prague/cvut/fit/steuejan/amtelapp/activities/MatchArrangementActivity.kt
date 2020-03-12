@@ -250,9 +250,8 @@ class MatchArrangementActivity : AbstractBaseActivity()
         {
             data?.let {
                 match = it.getParcelableExtra(MATCH)
-                val (homeScore, awayScore) = viewModel.countTotalScore(match)
-                score.text = homeScore?.let {
-                    "$homeScore : $awayScore" } ?: "N/A"
+                viewModel.countTotalScore(match)
+                score.text = match.homeScore?.let { "${match.homeScore} : ${match.awayScore}" } ?: "N/A"
             }
         }
     }
