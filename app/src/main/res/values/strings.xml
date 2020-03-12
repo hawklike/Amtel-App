@@ -152,4 +152,6 @@
     <string name="rounds_number_input">Počet kol: %1$s</string>
     <string name="actual_round">Aktuální kolo: %1$s</string>
     <string name="is_not">není</string>
+    <string name="confirm_password">Potvrďte heslo</string>
+    <string name="password_invalid_no_match">Hesla se neshodují.</string>
 </resources>

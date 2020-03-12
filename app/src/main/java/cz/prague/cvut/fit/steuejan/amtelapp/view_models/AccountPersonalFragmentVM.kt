@@ -53,9 +53,9 @@ class AccountPersonalFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun confirmPassword(newPassword: String)
+    fun confirmPassword(newPassword: String, confirmation: String)
     {
-        passwordState.value = PasswordState.validate(newPassword)
+        passwordState.value = PasswordState.validate(newPassword, confirmation)
     }
 
     fun addNewPassword(newPassword: String)

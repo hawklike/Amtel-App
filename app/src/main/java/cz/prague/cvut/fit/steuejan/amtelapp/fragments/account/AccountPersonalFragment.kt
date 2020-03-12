@@ -41,14 +41,15 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     private var changePasswordLayout: RelativeLayout? = null
     private var personalInfoLayout: RelativeLayout? = null
 
-    private lateinit var passwordLayout: TextInputLayout
-    private lateinit var addNewPassword: FloatingActionButton
-
     private lateinit var fullNameLayout: TextInputLayout
     private lateinit var birthdateLayout: TextInputLayout
     private lateinit var phoneNumberLayout: TextInputLayout
     private lateinit var sexGroup: RadioGroup
     private lateinit var addPersonalInfo: FloatingActionButton
+
+    private lateinit var passwordLayout: TextInputLayout
+    private lateinit var confirmPasswordLayout: TextInputLayout
+    private lateinit var changePassword: FloatingActionButton
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
@@ -63,14 +64,15 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         changePasswordLayout = view.findViewById(R.id.account_personal_change_password)
         personalInfoLayout = view.findViewById(R.id.account_personal_personal_information)
 
-        passwordLayout = view.findViewById(R.id.account_personal_password)
-        addNewPassword = view.findViewById(R.id.account_personal_add_password_button)
-
         fullNameLayout = view.findViewById(R.id.account_personal_personal_information_fullName)
         birthdateLayout = view.findViewById(R.id.account_personal_personal_information_birthdate)
         phoneNumberLayout = view.findViewById(R.id.account_personal_personal_information_phone)
         sexGroup = view.findViewById(R.id.account_personal_personal_information_sex)
         addPersonalInfo = view.findViewById(R.id.account_personal_personal_information_add_button)
+
+        passwordLayout = view.findViewById(R.id.account_personal_password)
+        confirmPasswordLayout = view.findViewById(R.id.account_personal_password_confirmation)
+        changePassword = view.findViewById(R.id.account_personal_add_password_button)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -84,7 +86,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     {
         super.onDestroyView()
         sexGroup.setOnCheckedChangeListener(null)
-        addNewPassword.setOnClickListener(null)
+        changePassword.setOnClickListener(null)
         addPersonalInfo.setOnClickListener(null)
 
         changePasswordLayout?.removeAllViews()
@@ -140,10 +142,12 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
             sex = if(rb.id == R.id.account_personal_personal_information_sex_man) Sex.MAN else Sex.WOMAN
         }
 
-        addNewPassword.setOnClickListener {
+        changePassword.setOnClickListener {
             val password = passwordLayout.editText?.text.toString()
+            val confirmation = confirmPasswordLayout.editText?.text.toString()
             passwordLayout.error = null
-            viewModel.confirmPassword(password)
+            confirmPasswordLayout.error = null
+            viewModel.confirmPassword(password, confirmation)
         }
 
         addPersonalInfo.setOnClickListener {
@@ -204,6 +208,11 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
             {
                 is InvalidPassword ->
                 {
+                    if(password.errorMessage == getString(R.string.password_invalid_no_match))
+                    {
+                        confirmPasswordLayout.error = password.errorMessage
+                        confirmPasswordLayout.editText?.text?.clear()
+                    }
                     passwordLayout.error = password.errorMessage
                     passwordLayout.editText?.text?.clear()
                 }
@@ -268,13 +277,13 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     {
         MaterialDialog(activity!!)
             .title(R.string.password_change_confirmation_title)
-            .message(text = "Nové heslo: $newPassword")
             .show {
                 positiveButton(R.string.yes) {
                     viewModel.addNewPassword(newPassword)
                 }
                 negativeButton(R.string.no) {
                     passwordLayout.editText?.text?.clear()
+                    confirmPasswordLayout.editText?.text?.clear()
                 }
             }
     }
