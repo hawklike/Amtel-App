@@ -77,10 +77,11 @@ class ScheduleGroupsMenuFragment : AbstractMainActivityFragment()
         recyclerView?.layoutManager = LinearLayoutManager(activity!!)
         adapter = ShowGroupsMenuFirestoreAdapter(activity!!, options)
 
-        adapter?.onNextClick = { group ->
+        adapter?.onNextClick = { group, actualRound ->
             val intent = Intent(activity!!, ScheduleRoundsActivity::class.java).apply {
                 putExtra(ScheduleRoundsActivity.GROUP, group)
                 putExtra(ScheduleRoundsActivity.USER, mainActivityModel.getUser().value)
+                putExtra(ScheduleRoundsActivity.ACTUAL_ROUND, actualRound)
             }
 
             if(group.rounds[DateUtil.actualYear.toString()] != 0) startActivity(intent)

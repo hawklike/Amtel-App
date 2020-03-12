@@ -20,11 +20,13 @@ class ScheduleRoundsActivity : AbstractViewPagerActivity()
 
     private var group = Group()
     private var user: UserState = NoUser
+    private var actualRound = 0
 
     companion object
     {
         const val GROUP = "group"
         const val USER = "user"
+        const val ACTUAL_ROUND = "round"
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -39,6 +41,7 @@ class ScheduleRoundsActivity : AbstractViewPagerActivity()
         intent.extras?.let { bundle ->
             group = bundle.getParcelable(GROUP)!!
             user = bundle.getParcelable<User?>(USER)?.let { SignedUser(it) } ?: NoUser
+            actualRound = bundle.getInt(ACTUAL_ROUND)
         }
     }
 
@@ -55,5 +58,6 @@ class ScheduleRoundsActivity : AbstractViewPagerActivity()
             )
         }
         viewPager.adapter = adapter
+        viewPager.currentItem = actualRound
     }
 }

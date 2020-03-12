@@ -26,7 +26,7 @@ class ShowGroupsMenuFirestoreAdapter(context: Context, options: FirestoreRecycle
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
         ShowGroupsMenuFirestoreAdapterVM::class.java)
 
-    var onNextClick: (group: Group) -> Unit = { toast(R.string.not_working_yet) }
+    var onNextClick: (group: Group, actualRound: Int) -> Unit = { _, _ -> toast(R.string.not_working_yet) }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -41,8 +41,7 @@ class ShowGroupsMenuFirestoreAdapter(context: Context, options: FirestoreRecycle
         init
         {
             card.setOnClickListener {
-                toast(actualRoundInt.toString())
-                onNextClick.invoke(getItem(adapterPosition))
+                onNextClick.invoke(getItem(adapterPosition), actualRoundInt?.minus(1) ?: 0)
             }
         }
     }
