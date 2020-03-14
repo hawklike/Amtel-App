@@ -11,7 +11,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidMatch
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.launch
@@ -47,7 +49,9 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
             tournament.setTeams(teams)
             tournament.setRounds(rounds)
             tournament.createMatches(group.name).forEach {
-                MatchManager.addMatch(it)
+                with(MatchManager.addMatch(it)) {
+                    if(this is ValidMatch) addMatchToTeams(self, teams)
+                }
             }
         }
 
@@ -55,5 +59,17 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
         map[DateUtil.actualYear.toString()] = rounds
         GroupManager.updateGroup(group.name, mapOf("rounds" to map))
         toast(context.getString(R.string.group) + " ${group.name} " + context.getString(R.string.successfully_generated))
+    }
+
+    private suspend fun addMatchToTeams(match: Match, teams: List<Team>)
+    {
+        val homeTeam = teams.find { it.id == match.homeId }
+        val awayTeam = teams.find { it.id == match.awayId }
+
+        homeTeam?.matchesId?.add(match.id!!)
+        awayTeam?.matchesId?.add(match.id!!)
+
+        homeTeam?.let { TeamManager.addTeam(it) }
+        awayTeam?.let { TeamManager.addTeam(it) }
     }
 }
