@@ -15,7 +15,6 @@ import kotlinx.coroutines.withContext
 
 object UserManager
 {
-    //TODO: add merged name and surname in english transcription [TEST IT!!!]
     suspend fun addUser(user: User): User? = withContext(IO)
     {
         val (englishName, englishSurname) = DatabaseHelper.prepareCzechOrdering(user.name, user.surname)
@@ -101,15 +100,11 @@ object UserManager
 
     fun retrieveAllUsers(orderBy: UserOrderBy = UserOrderBy.SURNAME): Query
     {
-        val dao = UserDAO()
-        return when(orderBy)
-        {
-            UserOrderBy.NAME -> dao.retrieveAllUsers("englishName")
-            UserOrderBy.SURNAME -> dao.retrieveAllUsers("englishSurname")
-            UserOrderBy.TEAM -> dao.retrieveAllUsers("teamName")
-            UserOrderBy.EMAIL -> dao.retrieveAllUsers("email")
-            UserOrderBy.SEX -> dao.retrieveAllUsers("sex")
+        var query: Query? = null
+        UserOrderBy.values().forEach {
+            if(orderBy == it) query = UserDAO().retrieveAllUsers(it.toString())
         }
+        return query!!
     }
 
     suspend fun addMatch(match: Match, user: User): User? = withContext(Default)
@@ -118,9 +113,9 @@ object UserManager
         matchesId.add(match.id!!)
         user.matchesId = matchesId.toList()
 
-        val matches = user.matches.toMutableSet()
-        matches.add(match)
-        user.matches = matches.toList()
+//        val matches = user.matches.toMutableSet()
+//        matches.add(match)
+//        user.matches = matches.toList()
 
         addUser(user)
     }

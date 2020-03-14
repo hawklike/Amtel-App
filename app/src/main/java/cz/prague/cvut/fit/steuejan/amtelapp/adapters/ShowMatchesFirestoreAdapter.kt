@@ -29,9 +29,6 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
         val home: TextView = itemView.findViewById(R.id.match_card_home)
         val away: TextView = itemView.findViewById(R.id.match_card_away)
         val sets: TextView = itemView.findViewById(R.id.match_card_sets)
-        val gems: TextView = itemView.findViewById(R.id.match_card_gems)
-        val upperText: TextView = itemView.findViewById(R.id.match_card_upper_text)
-        val lowerText: TextView = itemView.findViewById(R.id.match_card_lower_text)
         val next: ImageView = itemView.findViewById(R.id.match_card_next)
 
         init
@@ -65,10 +62,6 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
         holder.home.text = match.home
         holder.away.text = match.away
         holder.sets.text = match.homeScore?.let { "$it : ${match.awayScore}" } ?: "N/A"
-
-        holder.gems.visibility = View.GONE
-        holder.upperText.visibility = View.GONE
-        holder.lowerText.visibility = View.GONE
 
         setColors(holder, match)
     }

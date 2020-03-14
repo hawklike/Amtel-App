@@ -36,7 +36,6 @@ class MainActivity : AbstractBaseActivity()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
-        backgroundColor(window)
         setContentView(R.layout.activity_main)
         progressLayout = findViewById(R.id.progressBar)
         super.onCreate(savedInstanceState)

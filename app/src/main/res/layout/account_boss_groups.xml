@@ -14,11 +14,29 @@
         android:layout_below="@+id/toolbar"
         android:background="@color/veryVeryLightGrey">
 
+        <include layout="@layout/curve" />
+
+        <TextView
+            android:id="@+id/account_boss_groups_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/card_margin"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="@dimen/card_margin"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="@string/generate_matches_in_groups"
+            android:textColor="@color/white"
+            android:textSize="@dimen/common_text_size" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/account_boss_groups_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="24dp" />
+            android:layout_below="@id/account_boss_groups_text"
+            android:layout_marginStart="@dimen/card_margin"
+            android:layout_marginEnd="@dimen/card_margin"
+            android:orientation="horizontal" />
 
     </RelativeLayout>
 

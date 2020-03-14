@@ -12,7 +12,6 @@ class ShowGroupsActivity : AbstractActivityWithRecyclerView()
 {
     override fun onCreate(savedInstanceState: Bundle?)
     {
-        backgroundColor(window)
         setContentView(R.layout.account_boss_groups)
         super.onCreate(savedInstanceState)
         setToolbarTitle(getString(R.string.groups))

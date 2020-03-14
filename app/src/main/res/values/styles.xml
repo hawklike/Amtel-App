@@ -7,7 +7,10 @@
         <item name="colorAccent">@color/lightGrey</item>
         <item name="android:textColorPrimary">@color/darkGrey</item>
         <item name="android:windowBackground">@color/veryVeryLightGrey</item>
-        <item name="android:fontFamily">@font/sen_regular</item>
+
+        <item name="fontFamily">@font/proxima_nova_regular</item>
+        <item name="android:fontFamily">@font/proxima_nova_regular</item>
+
         <item name="android:statusBarColor">@color/blue</item>
         <!-- Material dialog -->
         <item name="md_color_button_text">@color/blue</item>
@@ -23,16 +26,19 @@
         <item name="android:background">@color/blue</item>
     </style>
 
-    <style name="CardRelativeLayout">
+    <style name="CardRelativeLayoutBase">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">@dimen/card_margin</item>
-        <item name="android:layout_marginTop">@dimen/card_margin</item>
         <item name="android:layout_marginEnd">@dimen/card_margin</item>
         <item name="android:background">@drawable/rounded_object</item>
         <item name="android:elevation">@dimen/elevation</item>
         <item name="android:paddingStart">@dimen/card_padding</item>
         <item name="android:paddingEnd">@dimen/card_padding</item>
+    </style>
+
+    <style name="CardRelativeLayout" parent="CardRelativeLayoutBase">
+        <item name="android:layout_marginTop">@dimen/card_margin</item>
     </style>
 
     <!-- EditText custom theme -->
@@ -68,7 +74,7 @@
 
     <!-- Color of an error when max text limit is exceeded -->
     <style name="TextLimitError">
-        <item name="android:textColor">@android:color/holo_red_dark</item>
+        <item name="android:textColor">@color/red</item>
     </style>
 
     <!-- Check box custom theme -->
@@ -86,7 +92,7 @@
         <item name="android:gravity">center</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/darkGrey</item>
-        <item name="android:textSize">@dimen/common_text_size</item>
+        <item name="android:textSize">17sp</item>
     </style>
 
     <style name="TextViewInClickableLayout">
@@ -100,6 +106,18 @@
         <item name="android:textSize">@dimen/common_text_size</item>
     </style>
 
+    <style name="TextViewTitleLeft">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/card_margin</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_marginStart">@dimen/card_margin</item>
+        <item name="android:layout_marginEnd">@dimen/card_margin</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/darkGrey</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
     <style name="ImageViewInClickableLayout">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -111,7 +129,7 @@
     <style name="TextInputLayout" parent="Widget.Design.TextInputLayout">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="errorTextColor">@android:color/holo_red_dark</item>
+        <item name="errorTextColor">@color/red</item>
     </style>
 
     <style name="CardViewBase">

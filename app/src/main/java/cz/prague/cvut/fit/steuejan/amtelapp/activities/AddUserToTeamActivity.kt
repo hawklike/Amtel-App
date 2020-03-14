@@ -38,7 +38,6 @@ class AddUserToTeamActivity : AbstractBaseActivity()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
-        backgroundColor(window)
         setContentView(R.layout.account_add_user_to_team_activity)
         super.onCreate(savedInstanceState)
         setToolbarTitle(getString(R.string.add_player))

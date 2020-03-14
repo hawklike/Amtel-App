@@ -111,7 +111,7 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
         private fun generateSchedule()
         {
             viewModel.generateMatches(getItem(adapterPosition), rounds)
-            generate.setTextColor(Color.RED)
+            generate.setTextColor(App.getColor(R.color.red))
         }
     }
 

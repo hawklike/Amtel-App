@@ -69,8 +69,6 @@ class MatchMenuActivity : AbstractViewPagerActivity()
             homeTeam = bundle.getParcelable<Team>(HOME_TEAM)?.let { ValidTeam(it) } ?: NoTeam
             awayTeam = bundle.getParcelable<Team>(AWAY_TEAM)?.let { ValidTeam(it) } ?: NoTeam
         }
-
-        println("zapas1: ${match.hashCode()}")
     }
 
     override fun setupViewPager(viewPager: ViewPager)

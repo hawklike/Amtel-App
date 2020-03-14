@@ -46,18 +46,6 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
         handleLogout()
     }
 
-    /**
-     * The idea is to make transparent status bar and setting a background to the whole window,
-     * which will also cover the status bar in the same background.
-     */
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    fun backgroundColor(window: Window)
-    {
-//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-//        window.statusBarColor = Color.TRANSPARENT
-//        window.setBackgroundDrawableResource(R.drawable.toolbar_gradient)
-    }
-
     private fun handleLogout()
     {
         baseActivityVM.logoutIcon.observe(this) { visibility ->

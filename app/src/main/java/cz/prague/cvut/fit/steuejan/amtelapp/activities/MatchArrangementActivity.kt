@@ -68,11 +68,8 @@ class MatchArrangementActivity : AbstractBaseActivity()
         const val MATCH_RESULT_CODE = 1
     }
 
-    //TODO: update team overall score
-
     override fun onCreate(savedInstanceState: Bundle?)
     {
-        backgroundColor(window)
         setContentView(R.layout.match_arrangement)
         super.onCreate(savedInstanceState)
         setToolbarTitle(getString(R.string.match_arrangement))

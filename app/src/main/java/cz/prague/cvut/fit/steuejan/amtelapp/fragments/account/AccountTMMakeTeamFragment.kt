@@ -17,13 +17,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Companion.TEAM
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowUserSimpleAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowUsersSimpleFirestoreAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
@@ -44,8 +46,6 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     private lateinit var team: TeamState
     private lateinit var user: User
 
-    private var users = mutableListOf<User>()
-
     private var createTeamLayout: RelativeLayout? = null
 
     private lateinit var nameLayout: TextInputLayout
@@ -56,8 +56,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     private lateinit var addPlayer: RelativeLayout
 
     private var recyclerView: RecyclerView? = null
-    //TODO: [REFACTORING] use firestore recycler view [HIGH PRIORITY]
-    private var adapter: ShowUserSimpleAdapter? = null
+    private var adapter: ShowUsersSimpleFirestoreAdapter? = null
 
     override fun getName(): String = "AccountTMMakeTeamFragment"
 
@@ -86,20 +85,8 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         getTeam()
         setupRecycler()
         updateFields()
-        populateAdapter()
         setObservers()
         setListeners()
-    }
-
-    override fun onResume()
-    {
-        super.onResume()
-        if(::team.isInitialized && team is ValidTeam)
-        {
-            val tmpTeam = (team as ValidTeam).self
-            if(users.size != tmpTeam.users.size)
-                viewModel.setTeamUsers(tmpTeam)
-        }
     }
 
     override fun onDestroyView()
@@ -115,6 +102,18 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         createTeamLayout = null
     }
 
+    override fun onStart()
+    {
+        super.onStart()
+        adapter?.startListening()
+    }
+
+    override fun onStop()
+    {
+        super.onStop()
+        adapter?.stopListening()
+    }
+
     override fun onDestroy()
     {
         super.onDestroy()
@@ -123,10 +122,19 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
 
     private fun setupRecycler()
     {
-        recyclerView?.setHasFixedSize(true)
-        recyclerView?.layoutManager = LinearLayoutManager(context)
-        adapter = ShowUserSimpleAdapter(activity!!, users)
-        recyclerView?.adapter = adapter
+        if(team is ValidTeam)
+        {
+            recyclerView?.setHasFixedSize(true)
+            recyclerView?.layoutManager = LinearLayoutManager(context)
+
+            val query = TeamManager.retrieveAllUsers((team as ValidTeam).self.id!!)
+            val options = FirestoreRecyclerOptions.Builder<User>()
+                .setQuery(query, User::class.java)
+                .build()
+
+            adapter = ShowUsersSimpleFirestoreAdapter(activity!!, options)
+            recyclerView?.adapter = adapter
+        }
     }
 
     private fun setListeners()
@@ -216,15 +224,6 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         else
         {
             view!!.findViewById<ImageView>(R.id.account_tm_make_team_add_player_button).visibility = View.GONE
-        }
-    }
-
-    private fun populateAdapter()
-    {
-        viewModel.teamUsers.observe(viewLifecycleOwner) { users ->
-            this.users.clear()
-            this.users.addAll(users)
-            adapter?.notifyItemRangeInserted(adapter?.itemCount?.minus(1) ?: 0, users.size)
         }
     }
 

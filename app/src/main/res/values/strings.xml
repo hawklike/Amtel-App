@@ -84,9 +84,10 @@
     <string name="group_name_error_message">Vyplňte prosím název skupiny</string>
     <string name="create_group_success_title">Skupina byla úspěšně vytvořena</string>
     <string name="create_group_failure_title">Skupinu se nepodařilo vytvořit</string>
-    <string name="choose_group">Vybrat skupinu</string>
+    <string name="choose_group">Vyberte skupinu</string>
+    <string name="choose_group_input">Vybrat skupinu pro tým %1$s</string>
     <string name="groups">Skupiny</string>
-    <string name="generate_plan">Generovat zápasy</string>
+    <string name="generate_plan">Generovat utkání</string>
     <string name="generate_group_error_text">Zadejte prosím celé liché kladné číslo, které není menší než %1$d.</string>
     <string name="rounds_number">Počet kol</string>
     <string name="show_group">zobrazit skupinu</string>
@@ -131,7 +132,7 @@
     <string name="match_added_success">Zápas byl úspěšně přidán.</string>
     <string name="email_password_key">EMAIL_PASSWORD</string>
     <string name="aes_key">1Hbfh667adfDEJ78</string>
-    <string name="regenerate_matches">přegenerovat zápasy</string>
+    <string name="regenerate_matches">přegenerovat utkání</string>
     <string name="generate_matches_dialog_title">Zadejte počet kol ve skupině</string>
     <string name="number_teams">Počet týmů: %1$d</string>
     <string name="too_many_gems_error">Počet gemů nesmí být více než %1$d.</string>
@@ -154,4 +155,7 @@
     <string name="is_not">není</string>
     <string name="confirm_password">Potvrďte heslo</string>
     <string name="password_invalid_no_match">Hesla se neshodují.</string>
+    <string name="new_player">Nový hráč</string>
+    <string name="generate_matches_in_groups">Vygenerovat utkání ve skupinách</string>
+    <string name="birthdate_unknown">datum narození neznámé</string>
 </resources>

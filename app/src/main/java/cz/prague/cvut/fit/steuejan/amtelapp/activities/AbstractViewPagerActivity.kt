@@ -14,7 +14,6 @@ abstract class AbstractViewPagerActivity : AbstractBaseActivity()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
-        backgroundColor(window)
         setContentView(R.layout.activity_viewpager)
         super.onCreate(savedInstanceState)
         setArrowBack()

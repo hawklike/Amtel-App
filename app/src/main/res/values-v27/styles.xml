@@ -3,8 +3,11 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/blue</item>
         <item name="colorPrimaryDark">@color/blue</item>
-        <item name="colorAccent">@color/lightGrey</item>
+        <item name="colorAccent">@color/blue</item>
+
         <item name="fontFamily">@font/proxima_nova_regular</item>
+        <item name="android:fontFamily">@font/proxima_nova_regular</item>
+
         <item name="android:textColorPrimary">@color/darkGrey</item>
         <item name="android:windowBackground">@color/veryVeryLightGrey</item>
         <item name="android:statusBarColor">@color/blue</item>
