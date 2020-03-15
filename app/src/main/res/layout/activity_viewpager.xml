@@ -10,35 +10,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <View
-        android:id="@+id/horizontal_line_matches_plan"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/lightGrey"
-        android:layout_below="@id/toolbar" />
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/horizontal_line_matches_plan">
+        android:layout_below="@id/toolbar">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/blue"
-            android:elevation="0dp" >
+            style="@style/AppBarLayout"
+            app:elevation="0dp">
 
             <com.google.android.material.tabs.TabLayout
-                android:id="@+id/schedule_rounds_menu_tabs"
+                android:id="@+id/activity_viewpager_menu_tabs"
+                style="@style/TabLayoutStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/TabLayoutStyle"/>
+                android:layout_height="wrap_content" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager.widget.ViewPager
-            android:id="@+id/schedule_rounds_menu_viewPager"
+            android:id="@+id/activity_viewpager_menu_viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />

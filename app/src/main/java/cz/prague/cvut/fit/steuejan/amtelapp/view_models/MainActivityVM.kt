@@ -1,14 +1,17 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
+import android.preference.PreferenceManager
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
+import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.EmailManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
@@ -69,6 +72,15 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     /*---------------------------------------------------*/
 
+    private val _progressBar = MutableLiveData<Boolean>()
+    val progressBar: LiveData<Boolean> = _progressBar
+    fun setProgressBar(on: Boolean)
+    {
+        _progressBar.value = on
+    }
+
+    /*---------------------------------------------------*/
+
     fun prepareUser(uid: String)
     {
         viewModelScope.launch {
@@ -77,6 +89,39 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
                 isUserLoggedIn(SignedUser(it))
                 setUser(it)
                 Log.i(AbstractBaseActivity.TAG, "displayAccount(): $user currently logged in")
+            }
+        }
+    }
+
+    fun initEmailPassword()
+    {
+        PreferenceManager
+            .getDefaultSharedPreferences(context)
+            ?.getString(context.getString(R.string.email_password_key), null)?.let {
+                EmailSender.hasPassword = true
+            } ?: let {
+                viewModelScope.launch {
+                    EmailManager.getPassword()?.let {
+                        EmailSender.hasPassword = true
+                        PreferenceManager.
+                            getDefaultSharedPreferences(context)
+                            .edit()
+                            .putString(context.getString(R.string.email_password_key), it)
+                            .apply()
+                    }
+                }
+            }
+    }
+
+    fun initHeadOfLeagueEmail()
+    {
+        if(EmailSender.headOfLeagueEmail == null)
+        {
+            viewModelScope.launch {
+                val headOfLeague = UserManager.findUsers("role", UserRole.HEAD_OF_LEAGUE.toString())?.first()
+                headOfLeague?.let {
+                    EmailSender.headOfLeagueEmail = it.email
+                }
             }
         }
     }

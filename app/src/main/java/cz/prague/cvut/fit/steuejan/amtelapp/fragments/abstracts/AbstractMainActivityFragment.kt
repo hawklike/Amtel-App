@@ -1,12 +1,11 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts
 
 import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.activityViewModels
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MainActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
 
-abstract class InsideMainActivityFragment : AbstractBaseFragment()
+abstract class AbstractMainActivityFragment : AbstractBaseFragment()
 {
     protected val mainActivityModel by activityViewModels<MainActivityVM>()
 
@@ -18,9 +17,15 @@ abstract class InsideMainActivityFragment : AbstractBaseFragment()
 
     protected open fun setProgressBar(on: Boolean)
     {
+        mainActivityModel.setProgressBar(on)
+    }
+
+    override fun onDestroyView()
+    {
+        super.onDestroyView()
         val main = activity as MainActivity
-        if(on) main.progressLayout?.visibility = View.VISIBLE
-        else main.progressLayout?.visibility = View.INVISIBLE
+        main.progressLayout?.removeAllViews()
+        main.progressLayout = null
     }
 
     protected open fun setToolbarTitle(title: String)

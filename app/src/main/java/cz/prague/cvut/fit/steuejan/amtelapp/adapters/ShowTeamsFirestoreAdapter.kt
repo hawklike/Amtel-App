@@ -1,11 +1,10 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
@@ -34,11 +33,11 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
     {
         val teamName: TextView = itemView.findViewById(R.id.team_card_name)
         val group: TextView = itemView.findViewById(R.id.team_card_group)
-        private val editButton: ImageView = itemView.findViewById(R.id.team_card_add)
+        private val card: RelativeLayout = itemView.findViewById(R.id.team_card)
 
         init
         {
-            editButton.setOnClickListener {
+            card.setOnClickListener {
                 val team = getItem(adapterPosition)
 
                 val index = team.group?.let {
@@ -46,7 +45,7 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
                 } ?: -1
 
                 MaterialDialog(context).show {
-                    title(R.string.choose_group)
+                    title(text = String.format(context.getString(R.string.choose_group_input), teamName.text))
                     listItemsSingleChoice(items = groups, initialSelection = index) { _, _, item ->
                         viewModel.addToGroup(team, item.toString())
                         toast(context.getString(R.string.team) + " ${teamName.text} " + context.getString(
@@ -65,7 +64,6 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
         return ViewHolder(view)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int, team: Team)
     {
         if(presentation == SIMPLE)

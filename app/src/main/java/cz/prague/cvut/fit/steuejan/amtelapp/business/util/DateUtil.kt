@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Day
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,16 +34,39 @@ object DateUtil
             return calendar[Calendar.YEAR]
         }
 
-    fun getWeekDate(week: Int): Pair<Date, Date>
+    fun getWeekDate(week: Int): List<Date>
     {
         val cal = Calendar.getInstance()
         cal[Calendar.WEEK_OF_YEAR] = week
         cal[Calendar.DAY_OF_WEEK] = Calendar.MONDAY
 
-        val first = cal.time
-        cal.add(Calendar.DATE, 6)
-        val last = cal.time
-        return Pair(first, last)
+        return mutableListOf<Date>(cal.time).apply {
+            (1..6).map {
+                cal.add(Calendar.DATE, 1)
+                this.add(cal.time)
+            }
+        }
+    }
+
+    fun getWeekNumber(date: Date): Int
+    {
+        val cal = Calendar.getInstance()
+        cal[Calendar.DAY_OF_WEEK] = Calendar.MONDAY
+        cal.time = date
+        return cal[Calendar.WEEK_OF_YEAR]
+    }
+
+    fun findDate(homeDays: List<Day>, awayDays: List<Day>, range: List<Date>): Date?
+    {
+        val days = homeDays.intersect(awayDays)
+
+        if(days.isEmpty())
+        {
+            return try { range[homeDays.first().ordinal] }
+            catch(ex: NoSuchElementException) { null }
+        }
+
+        return range[days.first().ordinal]
     }
 }
 
@@ -50,6 +74,15 @@ fun Date.toMyString(format: String = "dd.MM.yyyy"): String
 {
     val formatter = SimpleDateFormat(format, Locale.getDefault())
     return formatter.format(this)
+}
+
+fun Date.setTime(hours: Int, minutes: Int): Date
+{
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.set(Calendar.HOUR_OF_DAY, hours)
+    cal.set(Calendar.MINUTE, minutes)
+    return cal.time
 }
 
 fun Calendar.toMyString(format: String = "dd.MM.yyyy"): String

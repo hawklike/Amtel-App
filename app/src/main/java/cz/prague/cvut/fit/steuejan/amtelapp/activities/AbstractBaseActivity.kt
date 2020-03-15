@@ -1,11 +1,14 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.Window
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -31,20 +34,21 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
 
     protected open val job: Job = Job()
 
-    private val handler = CoroutineExceptionHandler { _, exception ->
-        Log.e(TAG, "$exception handled !")
+    private val handler = CoroutineExceptionHandler { context, exception ->
+        Log.e(TAG, "Coroutines: $context - $exception handled !")
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
+        toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleFont)
         handleLogout()
     }
 
     private fun handleLogout()
     {
-        baseActivityVM.getLogoutIconVisibility().observe(this) { visibility ->
+        baseActivityVM.logoutIcon.observe(this) { visibility ->
             if(visibility) logoutIcon.visibility = View.VISIBLE
             else logoutIcon.visibility = View.GONE
         }
@@ -78,7 +82,7 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
             setDrawerSelectedPosition(0)
         }
 
-        baseActivityVM.setLogoutIconVisibility(false)
+        baseActivityVM.setLogoutIcon(false)
     }
 
     protected fun setToolbarTitle(title: String)
@@ -97,9 +101,15 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
         }
     }
 
+    override fun onBackPressed()
+    {
+        super.onBackPressed()
+        finish()
+    }
+
     companion object
     {
-        const val TAG = "MainActivity"
+        const val TAG = "BaseActivity"
     }
 
 }

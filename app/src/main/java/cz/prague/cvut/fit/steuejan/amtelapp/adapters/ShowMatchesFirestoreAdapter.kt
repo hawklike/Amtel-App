@@ -1,16 +1,15 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
@@ -26,23 +25,20 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
+        private val card: RelativeLayout = itemView.findViewById(R.id.match_card)
         val home: TextView = itemView.findViewById(R.id.match_card_home)
         val away: TextView = itemView.findViewById(R.id.match_card_away)
         val sets: TextView = itemView.findViewById(R.id.match_card_sets)
-        val gems: TextView = itemView.findViewById(R.id.match_card_gems)
-        val upperText: TextView = itemView.findViewById(R.id.match_card_upper_text)
-        val lowerText: TextView = itemView.findViewById(R.id.match_card_lower_text)
-        val next: ImageButton = itemView.findViewById(R.id.match_card_next)
-
-        private val match by lazy { getItem(adapterPosition) }
+        val next: ImageView = itemView.findViewById(R.id.match_card_next)
 
         init
         {
-            next.setOnClickListener {
+            card.setOnClickListener {
+                val match = getItem(adapterPosition)
+
                 if(user is SignedUser)
                 {
                     val teamId = user.self.teamId
-
                     val condition = user.self.role.toRole() == UserRole.HEAD_OF_LEAGUE ||
                             (teamId != null && (teamId == match.homeId || teamId == match.awayId))
 
@@ -61,16 +57,11 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
         return ViewHolder(view)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int, match: Match)
     {
         holder.home.text = match.home
         holder.away.text = match.away
-        holder.sets.text = match.homeSets?.let { "$it:${match.awaySets}" } ?: "N/A"
-
-        holder.gems.visibility = View.GONE
-        holder.upperText.visibility = View.GONE
-        holder.lowerText.visibility = View.GONE
+        holder.sets.text = match.homeScore?.let { "$it : ${match.awayScore}" } ?: "N/A"
 
         setColors(holder, match)
     }
@@ -82,9 +73,9 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
             val teamId = user.self.teamId!!
             if(teamId == match.homeId || teamId == match.awayId)
             {
-                holder.home.setTextColor(ContextCompat.getColor(context, R.color.blue))
-                holder.away.setTextColor(ContextCompat.getColor(context, R.color.blue))
-                holder.sets.setTextColor(ContextCompat.getColor(context, R.color.blue))
+                holder.home.setTextColor(App.getColor(R.color.blue))
+                holder.away.setTextColor(App.getColor(R.color.blue))
+                holder.sets.setTextColor(App.getColor(R.color.blue))
             }
         }
     }

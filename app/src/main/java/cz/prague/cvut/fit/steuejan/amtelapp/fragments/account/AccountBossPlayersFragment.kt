@@ -11,9 +11,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowUsersFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 
-class AccountBossPlayersFragment : InsideMainActivityFragment()
+class AccountBossPlayersFragment : AbstractMainActivityFragment()
 {
     companion object
     {
@@ -58,14 +58,10 @@ class AccountBossPlayersFragment : InsideMainActivityFragment()
     {
         super.onDestroyView()
         recyclerView = null
-    }
-
-    override fun onDestroy()
-    {
-        super.onDestroy()
         adapter = null
     }
 
+    //TODO: use FirestorePagingAdapter
     private fun setupRecycler()
     {
         val query = UserManager.retrieveAllUsers()

@@ -1,11 +1,11 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 
-import android.content.Context
 import android.util.Log
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidPassword
 import cz.prague.cvut.fit.steuejan.amtelapp.states.PasswordState
@@ -14,19 +14,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-
 object AuthManager
 {
     private const val TAG = "AuthManager"
 
     val auth by lazy { FirebaseAuth.getInstance() }
 
-    fun getProfileDrawerOption(context: Context): String =
-        auth.currentUser?.let { context.getString(R.string.account) }
-            ?: context.getString(R.string.login)
+    val profileDrawerOption: String
+        get()
+        {
+            return auth.currentUser?.let { context.getString(R.string.account) }
+                ?: context.getString(R.string.amtel_opava)
+        }
 
-    //TODO: [REFACTORING] get rid of context as a parameter
-    suspend fun signUpUser(context: Context, email: String, password: String): String? = withContext(Dispatchers.IO)
+    val profileDrawerOptionMenu: String
+        get()
+        {
+            return auth.currentUser?.let { context.getString(R.string.account) }
+                ?: context.getString(R.string.login)
+        }
+
+    suspend fun signUpUser(email: String, password: String): String? = withContext(Dispatchers.IO)
     {
         val firebaseOptions = FirebaseOptions.Builder()
             .setDatabaseUrl(context.getString(R.string.firebase_database_url))
@@ -49,7 +57,7 @@ object AuthManager
             auth2.createUserWithEmailAndPassword(email, password).await()
             val user = auth2.currentUser?.uid
             auth2.signOut()
-            Log.i(TAG, "signUpUser(): user with $email and $password successfully registered")
+            Log.i(TAG, "signUpUser(): user with $email successfully registered")
             user
         } catch(ex: Exception)
         {

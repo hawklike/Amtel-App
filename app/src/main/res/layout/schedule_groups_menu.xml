@@ -4,10 +4,28 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <include layout="@layout/curve" />
+
+    <TextView
+        android:id="@+id/schedule_groups_menu_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="@dimen/card_margin"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="@string/choose_group"
+        android:textColor="@color/white"
+        android:textSize="@dimen/common_text_size" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/schedule_groups_recyclerView"
+        android:layout_below="@id/schedule_groups_menu_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="24dp" />
+        android:layout_marginBottom="@dimen/card_margin"
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_marginEnd="@dimen/card_margin" />
 
 </RelativeLayout>

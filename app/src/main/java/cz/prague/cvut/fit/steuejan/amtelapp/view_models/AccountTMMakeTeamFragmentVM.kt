@@ -49,31 +49,22 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val _teamUsers = MutableLiveData<List<User>>()
-    val teamUsers: LiveData<List<User>> = _teamUsers
-
-    /*---------------------------------------------------*/
-
     fun createTeam(user: User, name: String, place: String, days: String)
     {
-        if(confirmInput(name, place, days))
+        if(confirmInput(name, days))
         {
             viewModelScope.launch {
                 val _days = playingDaysState.value as ValidPlayingDays
 
-                val usersId = mutableListOf<String>().apply {
+                val users = mutableListOf<User>().apply {
                     user.teamId?.let {
                         val team = TeamManager.findTeam(it)
                         if(team is ValidTeam)
                         {
-                            if(team.self.usersId.isEmpty()) add(user.id!!)
-                            else addAll(team.self.usersId)
+                            if(team.self.users.isEmpty()) add(user)
+                            else addAll(team.self.users)
                         }
-                    } ?: let {
-                        add(user.id!!)
-                        _teamUsers.value = listOf(user)
-                    }
-
+                    } ?: add(user)
                 }
 
                 var team: Team? = Team(
@@ -81,8 +72,9 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
                     name,
                     AuthManager.currentUser!!.uid,
                     _days.self,
-                    place.firstLetterUpperCase(),
-                    usersId
+                    if(place.isEmpty()) null else place.firstLetterUpperCase(),
+                    users.map { it.id!! }.toMutableList(),
+                    users
                 )
 
                 team = TeamManager.addTeam(team!!)
@@ -93,17 +85,10 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
         }
     }
 
-    fun setTeamUsers(team: Team)
-    {
-        viewModelScope.launch {
-            _teamUsers.value = UserManager.findUsers(team.usersId)
-        }
-    }
-
     fun updateUser(user: User, team: Team)
     {
         viewModelScope.launch {
-            UserManager.updateUser(user.id!!, mapOf(
+            UserManager.updateUser(user.id, mapOf(
                 "teamId" to user.teamId,
                 "teamName" to team.name))
         }
@@ -121,32 +106,24 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
         return Message(title, null)
     }
 
-    private fun confirmInput(name: String, place: String, playingDays: String): Boolean
+    private fun confirmInput(name: String, playingDays: String): Boolean
     {
-        var okName = true
-        var okPlace = true
-        var okDays = true
+        var isOk = true
 
         if(name.isEmpty())
         {
             nameState.value = InvalidName()
-            okName = false
-        }
-
-        if(place.isEmpty())
-        {
-            placeState.value = InvalidPlace()
-            okPlace = false
+            isOk = false
         }
 
         if(playingDays.isEmpty())
         {
             playingDaysState.value = InvalidPlayingDays()
-            okDays = false
+            isOk = false
         }
         else playingDaysState.value = ValidPlayingDays(playingDays.split(","))
 
-        return okName && okPlace && okDays
+        return isOk
     }
 
     fun setDialogDays(days: Editable): IntArray

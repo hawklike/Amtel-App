@@ -2,12 +2,12 @@ package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsFirestoreAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsBossFirestoreAdapter
 
 abstract class AbstractActivityWithRecyclerView : AbstractBaseActivity()
 {
     protected var recyclerView: RecyclerView? = null
-    protected var adapter: ShowGroupsFirestoreAdapter? = null
+    protected var adapter: ShowGroupsBossFirestoreAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -32,12 +32,6 @@ abstract class AbstractActivityWithRecyclerView : AbstractBaseActivity()
     {
         super.onStop()
         adapter?.stopListening()
-    }
-
-    override fun onBackPressed()
-    {
-        super.onBackPressed()
-        finish()
     }
 
     protected abstract fun setupRecycler()

@@ -3,19 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:theme="@style/ToolBarStyle"
+    android:elevation="0dp"
     android:minHeight="?attr/actionBarSize">
 
     <TextView
-        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
         android:id="@+id/toolbar_title"
+        style="@style/ToolbarTitleFont"
         android:layout_width="wrap_content"
-        android:textColor="@color/darkGrey"
+        android:background="@null"
         android:layout_height="wrap_content" />
 
     <ImageButton
         android:id="@+id/toolbar_logout"
         android:visibility="gone"
-        android:background="@drawable/ic_exit_to_app_blue_24dp"
+        android:background="@drawable/ic_exit_to_app_dark_blue_24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"

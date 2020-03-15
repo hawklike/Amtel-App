@@ -1,16 +1,19 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
@@ -18,7 +21,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.UsersAdapterVM
 
-class ShowUserSimpleAdapter(private val context: Context, private val list: MutableList<User>) : RecyclerView.Adapter<ShowUserSimpleAdapter.ViewHolder>()
+class ShowUsersSimpleFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<User>)
+    : FirestoreRecyclerAdapter<User, ShowUsersSimpleFirestoreAdapter.ViewHolder>(options)
 {
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(UsersAdapterVM::class.java)
 
@@ -28,6 +32,7 @@ class ShowUserSimpleAdapter(private val context: Context, private val list: Muta
         val email: TextView = itemView.findViewById(R.id.user_card_email)
         val birthdate: TextView = itemView.findViewById(R.id.user_card_birthdate)
         val deleteButton: ImageView = itemView.findViewById(R.id.user_card_delete)
+        val editButton: ImageView = itemView.findViewById(R.id.user_card_edit)
 
         init
         {
@@ -38,17 +43,16 @@ class ShowUserSimpleAdapter(private val context: Context, private val list: Muta
                     .show {
                         positiveButton(R.string.yes) {
                             viewModel.deleteUser(getItem(adapterPosition))
-                            list.removeAt(adapterPosition)
-                            notifyItemRemoved(adapterPosition)
-                            notifyItemRangeChanged(adapterPosition, list.size)
                         }
                         negativeButton(R.string.no)
                     }
             }
+
+            editButton.setOnClickListener {
+                Toast.makeText(context, context.getString(R.string.not_working_yet), Toast.LENGTH_SHORT).show()
+            }
         }
     }
-
-    fun getItem(position: Int): User = list[position]
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
     {
@@ -57,15 +61,18 @@ class ShowUserSimpleAdapter(private val context: Context, private val list: Muta
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int = list.size
-
-    @SuppressLint("SetTextI18n")
-    override fun onBindViewHolder(holder: ViewHolder, position: Int)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, user: User)
     {
-        val user = getItem(position)
-        if(user.role.toRole() == UserRole.TEAM_MANAGER) holder.deleteButton.visibility = View.GONE
+        if(user.role.toRole() == UserRole.TEAM_MANAGER)
+        {
+            holder.deleteButton.visibility = View.GONE
+            holder.fullName.setTextColor(App.getColor(R.color.blue))
+            holder.email.setTextColor(App.getColor(R.color.blue))
+            holder.birthdate.setTextColor(App.getColor(R.color.blue))
+        }
+        else holder.editButton.visibility = View.VISIBLE
 
-        holder.fullName.text = "${user.name} ${user.surname}"
+        holder.fullName.text = String.format(context.getString(R.string.full_name_placeholder), user.surname, user.name)
         holder.email.text = user.email
         user.birthdate?.let { holder.birthdate.text = it.toMyString() }
     }

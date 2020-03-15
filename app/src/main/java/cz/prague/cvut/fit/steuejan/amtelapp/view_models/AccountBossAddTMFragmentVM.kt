@@ -1,36 +1,53 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
-import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.NameConverter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
 
 class AccountBossAddTMFragmentVM : ViewModel()
 {
-    private val userCreated = SingleLiveEvent<RegistrationState>()
-    fun isUserCreated(): LiveData<RegistrationState> = userCreated
+    private val _registration = SingleLiveEvent<RegistrationState>()
+    val registration: LiveData<RegistrationState> = _registration
 
     /*---------------------------------------------------*/
 
-    private val credentials = MutableLiveData<CredentialsState>()
-    fun isCredentialsValid(): LiveData<CredentialsState> = credentials
+    private val _credentials = SingleLiveEvent<CredentialsState>()
+    val credentials: LiveData<CredentialsState> = _credentials
 
     /*---------------------------------------------------*/
 
-    fun createUser(context: Context, credentials: ValidCredentials)
+    fun createUser(credentials: ValidCredentials)
     {
-        val password = NameConverter.getRandomString(6)
+        val password = StringUtil.getRandomString(6)
+
         viewModelScope.launch {
-            val uid = AuthManager.signUpUser(context, credentials.email, password)
-            if(uid == null) userCreated.value = InvalidRegistration
-            else userCreated.value = ValidRegistration(uid, password, credentials)
+            val uid = AuthManager.signUpUser(credentials.email, password)
+
+            uid?.let {
+                val (name, surname, email) = credentials
+                val user = User(uid, name, surname, email, role = UserRole.TEAM_MANAGER.toString())
+
+                UserManager.addUser(user)?.let {
+                    EmailSender.sendEmail(
+                        email,
+                        App.context.getString(R.string.verificationEmail_subject),
+                        createVerificationTemplate(email, password))
+                    _registration.value = ValidRegistration
+                } ?: let { _registration.value = InvalidRegistration }
+
+            } ?: let { _registration.value = InvalidRegistration }
         }
     }
 
@@ -51,7 +68,15 @@ class AccountBossAddTMFragmentVM : ViewModel()
 
         if(EmailState.validate(email) is InvalidEmail) okEmail = false
 
-        if(okName && okSurname && okEmail) credentials.value = ValidCredentials(cName, cSurname, email)
-        else credentials.value = InvalidCredentials(okName, okSurname, okEmail)
+        if(okName && okSurname && okEmail) _credentials.value = ValidCredentials(cName, cSurname, email)
+        else _credentials.value = InvalidCredentials(okName, okSurname, okEmail)
+    }
+
+    private fun createVerificationTemplate(email: String, password: String): String
+    {
+        val head = App.context.getString(R.string.autoEmail_template_head)
+        val body = "email: $email\nheslo: $password\n\n"
+        val foot = App.context.getString(R.string.autoEmail_template_foot)
+        return "$head$body$foot"
     }
 }

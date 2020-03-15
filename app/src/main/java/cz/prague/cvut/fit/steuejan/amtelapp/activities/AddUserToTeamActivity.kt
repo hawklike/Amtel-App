@@ -7,11 +7,11 @@ import android.widget.RadioGroup
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.datetime.datePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.shrinkWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
@@ -20,9 +20,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AddUserToTeamActivityVM
 
 class AddUserToTeamActivity : AbstractBaseActivity()
 {
-    private lateinit var team: Team
-
     private val viewModel by viewModels<AddUserToTeamActivityVM>()
+
+    private lateinit var team: Team
 
     private lateinit var nameLayout: TextInputLayout
     private lateinit var surnameLayout: TextInputLayout
@@ -38,7 +38,7 @@ class AddUserToTeamActivity : AbstractBaseActivity()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
-        setContentView(R.layout.account_add_user_to_team_acitivity)
+        setContentView(R.layout.account_add_user_to_team_activity)
         super.onCreate(savedInstanceState)
         setToolbarTitle(getString(R.string.add_player))
         setArrowBack()
@@ -73,8 +73,8 @@ class AddUserToTeamActivity : AbstractBaseActivity()
         }
 
         addButton.setOnClickListener {
-            val name = nameLayout.editText?.text.toString().trim()
-            val surname = surnameLayout.editText?.text.toString().trim()
+            val name = nameLayout.editText?.text.toString().trim().shrinkWhitespaces()
+            val surname = surnameLayout.editText?.text.toString().trim().shrinkWhitespaces()
             val email = emailLayout.editText?.text.toString().trim()
             val birthdate = birthdateLayout.editText?.text.toString().trim()
 
@@ -141,19 +141,17 @@ class AddUserToTeamActivity : AbstractBaseActivity()
         viewModel.isUserAdded().observe(this) { teamState ->
             val title = viewModel.createDialog(teamState).title
 
-            MaterialDialog(this)
-                .title(text = title)
-                .show {
-                    positiveButton(R.string.ok)
-                    onDismiss {
-                    }
-                }
-
             if(teamState is ValidTeam)
             {
                 deleteInput()
                 setResult(Activity.RESULT_OK, intent.putExtra(TEAM, teamState.self))
             }
+
+            MaterialDialog(this)
+                .title(text = title)
+                .show {
+                    positiveButton(R.string.ok) { this@AddUserToTeamActivity.onBackPressed() }
+                }
         }
     }
 
@@ -171,11 +169,5 @@ class AddUserToTeamActivity : AbstractBaseActivity()
         surnameLayout.error = null
         emailLayout.error = null
         birthdateLayout.error = null
-    }
-
-    override fun onBackPressed()
-    {
-        super.onBackPressed()
-        finish()
     }
 }

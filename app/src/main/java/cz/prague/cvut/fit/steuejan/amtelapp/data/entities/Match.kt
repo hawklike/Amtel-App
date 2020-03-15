@@ -13,19 +13,16 @@ data class Match(override var id: String? = null,
                  var away: String = "",
                  var homeId: String = "",
                  var awayId: String = "",
-                 var homeSets: Int? = null,
-                 var awaySets: Int? = null,
-                 var homeGems: Int? = null,
-                 var awayGems: Int? = null,
-                 var homeUsers: List<String> = emptyList(),
-                 var awayUsers: List<String> = emptyList(),
-                 var year: Int = -1,
+                 var homeScore: Int? = null,
+                 var awayScore: Int? = null,
+                 var rounds: MutableList<Round> = mutableListOf(Round(), Round(), Round()),
+                 var year: Int = DateUtil.actualYear,
                  var place: String? = null,
-                 var date: Date? = null
-) : Parcelable, Entity()
+                 var dateAndTime: Date? = null,
+                 var edits: MutableMap<String, Int> = mutableMapOf("1" to 2, "2" to 2, "3" to 2),
+                 val usersId: MutableList<String?> = arrayOfNulls<String>(10).toMutableList()
+                 ) : Parcelable, Comparable<Match>, Entity()
 {
-    init
-    {
-        year = DateUtil.actualYear
-    }
+    override fun compareTo(other: Match): Int =
+        compareBy<Match> { it.id }.thenBy { it.home }.compare(this, other)
 }

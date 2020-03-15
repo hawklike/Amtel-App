@@ -39,7 +39,7 @@ class TeamsAdapterVM : ViewModel()
 
     private suspend fun removeFromGroup(team: Team)
     {
-        val group = GroupManager.findGroup(team.group!!)
+        val group = GroupManager.findGroup(team.group)
         if(group is ValidGroup)
         {
             group.self.teamIds.remove(team.id!!)

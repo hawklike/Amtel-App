@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -16,19 +17,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Companion.TEAM
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowUserSimpleAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowUsersSimpleFirestoreAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountTMMakeTeamFragmentVM
 
-class AccountTMMakeTeamFragment : InsideMainActivityFragment()
+class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
 {
     companion object
     {
@@ -42,8 +46,6 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
     private lateinit var team: TeamState
     private lateinit var user: User
 
-    private var users = mutableListOf<User>()
-
     private var createTeamLayout: RelativeLayout? = null
 
     private lateinit var nameLayout: TextInputLayout
@@ -54,8 +56,7 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
     private lateinit var addPlayer: RelativeLayout
 
     private var recyclerView: RecyclerView? = null
-    //TODO: [REFACTORING] use firestore recycler view
-    private var adapter: ShowUserSimpleAdapter? = null
+    private var adapter: ShowUsersSimpleFirestoreAdapter? = null
 
     override fun getName(): String = "AccountTMMakeTeamFragment"
 
@@ -84,20 +85,8 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
         getTeam()
         setupRecycler()
         updateFields()
-        populateAdapter()
         setObservers()
         setListeners()
-    }
-
-    override fun onResume()
-    {
-        super.onResume()
-        if(::team.isInitialized && team is ValidTeam)
-        {
-            val tmpTeam = (team as ValidTeam).self
-            if(users.size != tmpTeam.usersId.size)
-                viewModel.setTeamUsers(tmpTeam)
-        }
     }
 
     override fun onDestroyView()
@@ -113,6 +102,18 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
         createTeamLayout = null
     }
 
+    override fun onStart()
+    {
+        super.onStart()
+        adapter?.startListening()
+    }
+
+    override fun onStop()
+    {
+        super.onStop()
+        adapter?.stopListening()
+    }
+
     override fun onDestroy()
     {
         super.onDestroy()
@@ -121,16 +122,27 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
 
     private fun setupRecycler()
     {
-        recyclerView?.setHasFixedSize(true)
-        recyclerView?.layoutManager = LinearLayoutManager(context)
-        adapter = ShowUserSimpleAdapter(activity!!, users)
-        recyclerView?.adapter = adapter
+        if(team is ValidTeam)
+        {
+            recyclerView?.setHasFixedSize(true)
+            recyclerView?.layoutManager = LinearLayoutManager(context)
+
+            val query = TeamManager.retrieveAllUsers((team as ValidTeam).self.id!!)
+            val options = FirestoreRecyclerOptions.Builder<User>()
+                .setQuery(query, User::class.java)
+                .build()
+
+            adapter = ShowUsersSimpleFirestoreAdapter(activity!!, options)
+            recyclerView?.adapter = adapter
+        }
     }
 
     private fun setListeners()
     {
         playingDaysLayout.editText?.setOnClickListener {
             MaterialDialog(activity!!).show {
+                title(R.string.choose_playing_days)
+
                 val indices = playingDaysLayout.editText?.text?.let {
                     viewModel.setDialogDays(it)
                 } ?: intArrayOf()
@@ -166,14 +178,18 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
 
     private fun addPlayer()
     {
-        if(::team.isInitialized && team is ValidTeam)
+        if(team is ValidTeam)
         {
             val intent = Intent(activity!!, AddUserToTeamActivity::class.java).apply {
                 putExtra(TEAM, (team as ValidTeam).self)
             }
             startActivityForResult(intent, NEW_USER_CODE)
         }
-        else(Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet."))
+        else
+        {
+            toast(getString(R.string.no_team_alert))
+            (Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet."))
+        }
     }
 
     private fun setObservers()
@@ -205,14 +221,9 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
             playingDaysLayout.editText?.setText((team as ValidTeam).self.playingDays.joinToString(", "))
             disableName()
         }
-    }
-
-    private fun populateAdapter()
-    {
-        viewModel.teamUsers.observe(viewLifecycleOwner) { users ->
-            this.users.clear()
-            this.users.addAll(users)
-            adapter?.notifyItemRangeInserted(adapter?.itemCount?.minus(1) ?: 0, users.size)
+        else
+        {
+            view!!.findViewById<ImageView>(R.id.account_tm_make_team_add_player_button).visibility = View.GONE
         }
     }
 
@@ -242,7 +253,7 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
 
     private fun getTeam()
     {
-        team = mainActivityModel.getTeam().value ?: ValidTeam(Team())
+        team = mainActivityModel.getTeam().value ?: NoTeam
         mainActivityModel.getTeam().observe(viewLifecycleOwner) { observedTeam ->
             team = observedTeam
         }
@@ -277,10 +288,12 @@ class AccountTMMakeTeamFragment : InsideMainActivityFragment()
         if(team is ValidTeam)
         {
             user.teamId = team.self.id
+            user.teamName = team.self.name
             viewModel.updateUser(user, team.self)
             mainActivityModel.setUser(user)
             mainActivityModel.setTeam(ValidTeam(team.self))
             disableName()
+            view!!.findViewById<ImageView>(R.id.account_tm_make_team_add_player_button).visibility = View.VISIBLE
         }
     }
 

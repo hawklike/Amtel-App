@@ -27,13 +27,14 @@ object GroupManager
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addGroup(): $group not added to database because $ex")
+            Log.e(TAG, "addGroup(): $group not added to database because ${ex.message}")
             NoGroup
         }
     }
 
-    suspend fun findGroup(id: String): GroupState = withContext(IO)
+    suspend fun findGroup(id: String?): GroupState = withContext(IO)
     {
+        if(id == null) return@withContext NoGroup
         return@withContext try
         {
             val team = GroupDAO().findById(id).toObject<Group>()
@@ -47,8 +48,9 @@ object GroupManager
         }
     }
 
-    suspend fun updateGroup(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
+    suspend fun updateGroup(documentId: String?, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
     {
+        if(documentId == null) return@withContext false
         return@withContext try
         {
             GroupDAO().update(documentId, mapOfFieldsAndValues)

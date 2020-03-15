@@ -26,11 +26,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.AddUserToTeamActivity"
-            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".activities.AddUserToTeamActivity"/>
         <activity android:name=".activities.ShowGroupsActivity"/>
         <activity android:name=".activities.ScheduleRoundsActivity"/>
+        <activity android:name=".activities.MatchMenuActivity"/>
+        <activity android:name=".activities.MatchArrangementActivity"/>
     </application>
 
 </manifest>

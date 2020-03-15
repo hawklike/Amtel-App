@@ -11,12 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.ScheduleRoundsActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsFirestoreAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsMenuFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.InsideMainActivityFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 
-class ScheduleGroupsMenuFragment : InsideMainActivityFragment()
+class ScheduleGroupsMenuFragment : AbstractMainActivityFragment()
 {
     companion object
     {
@@ -24,7 +25,7 @@ class ScheduleGroupsMenuFragment : InsideMainActivityFragment()
     }
 
     private var recyclerView: RecyclerView? = null
-    private var adapter: ShowGroupsFirestoreAdapter? = null
+    private var adapter: ShowGroupsMenuFirestoreAdapter? = null
 
     override fun getName(): String = "ScheduleFragment"
 
@@ -50,11 +51,6 @@ class ScheduleGroupsMenuFragment : InsideMainActivityFragment()
     {
         super.onDestroyView()
         recyclerView = null
-    }
-
-    override fun onDestroy()
-    {
-        super.onDestroy()
         adapter = null
     }
 
@@ -79,15 +75,16 @@ class ScheduleGroupsMenuFragment : InsideMainActivityFragment()
 
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(activity!!)
-        adapter = ShowGroupsFirestoreAdapter(activity!!, options)
+        adapter = ShowGroupsMenuFirestoreAdapter(activity!!, options)
 
-        adapter?.setNextButton(true) { group ->
+        adapter?.onNextClick = { group, actualRound ->
             val intent = Intent(activity!!, ScheduleRoundsActivity::class.java).apply {
                 putExtra(ScheduleRoundsActivity.GROUP, group)
                 putExtra(ScheduleRoundsActivity.USER, mainActivityModel.getUser().value)
+                putExtra(ScheduleRoundsActivity.ACTUAL_ROUND, actualRound)
             }
 
-            if(group.rounds != 0) startActivity(intent)
+            if(group.rounds[DateUtil.actualYear.toString()] != 0) startActivity(intent)
             else Toast.makeText(activity!!, getString(R.string.no_rounds_text), Toast.LENGTH_SHORT).show()
         }
         recyclerView?.adapter = adapter

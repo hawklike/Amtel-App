@@ -6,6 +6,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.TeamDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
@@ -27,13 +28,14 @@ object TeamManager
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addUser(): $team not added to database because $ex")
+            Log.e(TAG, "addUser(): $team not added to database because ${ex.message}")
             null
         }
     }
 
-    suspend fun updateTeam(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
+    suspend fun updateTeam(documentId: String?, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
     {
+        if(documentId == null) return@withContext false
         return@withContext try
         {
             TeamDAO().update(documentId, mapOfFieldsAndValues)
@@ -42,13 +44,14 @@ object TeamManager
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateTeam(): team with id $documentId not updated because $ex")
+            Log.e(TAG, "updateTeam(): team with id $documentId not updated because ${ex.message}")
             false
         }
     }
 
-    suspend fun findTeam(id: String): TeamState = withContext(IO)
+    suspend fun findTeam(id: String?): TeamState = withContext(IO)
     {
+        if(id == null) return@withContext NoTeam
         return@withContext try
         {
             val team = TeamDAO().findById(id).toObject<Team>()
@@ -62,7 +65,7 @@ object TeamManager
         }
     }
 
-    suspend fun <T> findTeam(field: String, value: T?): TeamState = withContext(IO)
+    suspend fun <T> findTeams(field: String, value: T?): TeamState = withContext(IO)
     {
         return@withContext try
         {
@@ -73,7 +76,7 @@ object TeamManager
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "findTeam(): documents not found because $ex")
+            Log.e(TAG, "findTeams(): documents not found because ${ex.message}")
             NoTeam
         }
     }
@@ -85,6 +88,20 @@ object TeamManager
             if(orderBy == it) query = TeamDAO().retrieveAllTeams(it.toString())
         }
         return query!!
+    }
+
+    suspend fun updateUserInTeam(newUser: User): Boolean = withContext(IO)
+    {
+        return@withContext try
+        {
+            TeamDAO().updateUser(newUser)
+            true
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "updateUser(): user $newUser not updated because ${ex.message}")
+            false
+        }
     }
 
     fun retrieveAllUsers(teamId: String, orderBy: UserOrderBy = UserOrderBy.SURNAME): Query

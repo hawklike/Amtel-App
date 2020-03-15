@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <include layout="@layout/curve" />
+
         <RelativeLayout
             android:id="@+id/account_tm_make_team"
             android:layout_width="match_parent"
@@ -17,19 +19,13 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
-            android:background="@drawable/rounded_object">
+            android:background="@drawable/rounded_object"
+            android:elevation="@dimen/elevation">
 
             <TextView
                 android:id="@+id/account_tm_make_team_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:gravity="center"
-                android:text="@string/create_team"
-                android:textColor="@color/darkGrey"
-                android:textSize="16sp" />
+                style="@style/TextViewTitle"
+                android:text="@string/create_team" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/account_tm_make_team_name"
@@ -118,6 +114,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
+            android:elevation="@dimen/elevation"
             android:background="@drawable/rounded_object">
 
             <TextView
@@ -147,20 +144,14 @@
 
             <TextView
                 android:id="@+id/account_tm_make_team_players_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_below="@id/account_tm_make_team_add_player"
+                style="@style/TextViewTitleLeft"
                 android:gravity="center"
-                android:text="@string/players"
-                android:textColor="@color/darkGrey"
-                android:textSize="16sp" />
+                android:layout_below="@id/account_tm_make_team_add_player"
+                android:text="@string/players" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/account_tm_make_team_players_recyclerView"
-                android:minHeight="200dp"
+                android:minHeight="400dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="8dp"

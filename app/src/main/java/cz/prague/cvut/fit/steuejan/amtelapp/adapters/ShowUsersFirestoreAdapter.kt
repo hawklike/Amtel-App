@@ -1,6 +1,5 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -8,13 +7,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
@@ -22,6 +21,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.UsersAdapterVM
 
+//TODO: change to pagination adapter
 class ShowUsersFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<User>)
     : FirestoreRecyclerAdapter<User, ShowUsersFirestoreAdapter.ViewHolder>(options)
 {
@@ -63,7 +63,7 @@ class ShowUsersFirestoreAdapter(private val context: Context, options: Firestore
         return ViewHolder(view)
     }
 
-    @SuppressLint("SetTextI18n")
+    //FIXME: sometimes wrong data passed in
     override fun onBindViewHolder(holder: ViewHolder, position: Int, user: User)
     {
         if(user.role.toRole() == UserRole.HEAD_OF_LEAGUE)
@@ -71,9 +71,9 @@ class ShowUsersFirestoreAdapter(private val context: Context, options: Firestore
         holder.team.visibility = View.VISIBLE
         holder.editButton.visibility = View.VISIBLE
 
-        holder.fullName.text = "${user.surname} ${user.name}"
+        holder.fullName.text = String.format(context.getString(R.string.full_name_placeholder), user.surname, user.name)
         if(user.role.toRole() == UserRole.TEAM_MANAGER)
-            holder.fullName.setTextColor(ContextCompat.getColor(context, R.color.blue))
+            holder.fullName.setTextColor(App.getColor(R.color.blue))
 
         holder.email.text = user.email
         user.birthdate?.let { holder.birthdate.text = it.toMyString() }

@@ -1,21 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
-    android:layout_marginBottom="8dp"
-    android:background="@drawable/rounded_object">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/team_card"
+    style="@style/SimpleCardView"
+    android:layout_marginBottom="10dp">
 
     <ImageView
         android:id="@+id/team_card_add"
         android:layout_centerVertical="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_edit_blue_24dp"
         android:layout_alignParentEnd="true" />
 
     <TextView
@@ -39,7 +32,9 @@
         android:text="bez skupiny"
         android:layout_below="@id/team_card_name"
         android:layout_marginEnd="16dp"
-        android:textColor="@color/darkGrey"
-        android:textSize="13sp" />
+        android:textColor="@color/blue"
+        android:layout_marginTop="8dp"
+        android:textStyle="bold"
+        android:textSize="16sp" />
 
 </RelativeLayout>

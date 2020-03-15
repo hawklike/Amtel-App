@@ -14,6 +14,6 @@ class ScheduleRoundsActivityVM : ViewModel()
         _user.value = user
     }
 
-    fun getUser(): LiveData<UserState> = _user
+    val user: LiveData<UserState> = _user
 
 }
