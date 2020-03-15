@@ -158,4 +158,10 @@
     <string name="new_player">Nový hráč</string>
     <string name="generate_matches_in_groups">Vygenerovat utkání ve skupinách</string>
     <string name="birthdate_unknown">datum narození neznámé</string>
+    <string name="home">domácí</string>
+    <string name="away">hosté</string>
+    <string name="place_not_found">Místo není uvedeno</string>
+    <string name="dateTime_not_found">Datum a čas nejsou uvedeny</string>
+    <string name="dateTime_format">dd.MM.yyyy \'v\' HH:mm</string>
+    <string name="lost_password">Zapomněl/a jsem heslo</string>
 </resources>

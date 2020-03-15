@@ -175,7 +175,7 @@ class MatchInputResultFragmentVM : ViewModel()
         homePlayersList.forEach { user ->
             val email = user.removeWhitespaces().split(EM_DASH).last()
             homePlayers.find { it.email == email }?.let {
-                round.homePlayers.add(Player(it.id!!, it.name, it.surname, it.email, it.birthdate, it.sex))
+                round.homePlayers.add(Player(it.id!!, it.name, it.surname, it.email, it.birthdate, it.sex, true))
                 homeUsers.add(it)
             }
         }
@@ -183,7 +183,7 @@ class MatchInputResultFragmentVM : ViewModel()
         awayPlayersList.forEach { user ->
             val email = user.removeWhitespaces().split(EM_DASH).last()
             awayPlayers.find { it.email == email }?.let {
-                round.awayPlayers.add(Player(it.id!!, it.name, it.surname, it.email, it.birthdate, it.sex))
+                round.awayPlayers.add(Player(it.id!!, it.name, it.surname, it.email, it.birthdate, it.sex, false))
                 awayUsers.add(it)
             }
         }

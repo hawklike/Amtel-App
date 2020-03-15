@@ -19,7 +19,7 @@
             android:singleLine="true"
             android:text="TK Horní Bludovice"
             android:textColor="@color/darkGrey"
-            android:textSize="16sp" />
+            android:textSize="@dimen/common_text_size" />
 
         <RelativeLayout
             android:id="@+id/match_result_score"
@@ -64,7 +64,7 @@
             android:singleLine="true"
             android:text="TK Dolní Datyně"
             android:textColor="@color/darkGrey"
-            android:textSize="16sp" />
+            android:textSize="@dimen/common_text_size" />
 
         <TextView
             android:id="@+id/match_result_place"
@@ -127,7 +127,7 @@
                     android:layout_above="@+id/match_result_card_home_text"
                     android:layout_alignParentTop="true"
                     android:textColor="@color/darkGrey"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/common_text_size" />
 
                 <TextView
                     android:id="@+id/match_result_card_home_text"
@@ -135,10 +135,9 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_alignParentBottom="true"
-                    android:text="domácí"
-                    android:layout_marginEnd="16dp"
+                    android:text="@string/home"
                     android:textColor="@color/blue"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/common_text_size" />
 
             </RelativeLayout>
 
@@ -159,7 +158,7 @@
                     android:layout_above="@+id/match_result_card_away_text"
                     android:layout_alignParentTop="true"
                     android:textColor="@color/darkGrey"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/common_text_size" />
 
                 <TextView
                     android:id="@+id/match_result_card_away_text"
@@ -167,121 +166,29 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_alignParentBottom="true"
-                    android:text="hosté"
-                    android:layout_marginEnd="16dp"
+                    android:text="@string/away"
                     android:textColor="@color/blue"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/common_text_size" />
 
             </RelativeLayout>
 
         </LinearLayout>
 
-
     </HorizontalScrollView>
 
 
-<!--    <TextView-->
-<!--        android:id="@+id/match_result_title_players"-->
-<!--        style="@style/TextViewTitleLeft"-->
-<!--        android:layout_below="@id/match_result_teams_scrollView"-->
-<!--        android:text="@string/players" />-->
+    <TextView
+        android:id="@+id/match_result_title_players"
+        style="@style/TextViewTitleLeft"
+        android:layout_below="@id/match_result_teams_scrollView"
+        android:text="@string/players" />
 
-<!--    <RelativeLayout-->
-<!--        android:id="@+id/match_result_card_players1"-->
-<!--        style="@style/CardRelativeLayoutBase"-->
-<!--        android:layout_below="@id/match_result_title_players"-->
-<!--        android:layout_marginTop="12dp">-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/match_result_card_players1_text"-->
-<!--            style="@style/TextViewInClickableLayout"-->
-<!--            android:layout_marginEnd="16dp"-->
-<!--            android:layout_toStartOf="@id/foo3"-->
-<!--            android:ellipsize="end"-->
-<!--            android:singleLine="true"-->
-<!--            android:text="@string/call" />-->
-
-<!--        <ImageView-->
-<!--            android:id="@+id/foo3"-->
-<!--            style="@style/ImageViewInClickableLayout"-->
-<!--            android:background="@drawable/ic_navigate_next_blue_24dp"-->
-<!--            android:scaleX="1.5"-->
-<!--            android:scaleY="1.5" />-->
-
-<!--    </RelativeLayout>-->
-
-<!--    <RelativeLayout-->
-<!--        android:id="@+id/match_result_card_players2"-->
-<!--        style="@style/CardRelativeLayoutBase"-->
-<!--        android:layout_below="@id/match_result_card_players1"-->
-<!--        android:layout_marginTop="12dp">-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/match_result_card_players2_text"-->
-<!--            style="@style/TextViewInClickableLayout"-->
-<!--            android:layout_toStartOf="@id/foo4"-->
-<!--            android:layout_marginEnd="16dp"-->
-<!--            android:ellipsize="end"-->
-<!--            android:singleLine="true"-->
-<!--            android:text="@string/call" />-->
-
-<!--        <ImageView-->
-<!--            android:id="@+id/foo4"-->
-<!--            style="@style/ImageViewInClickableLayout"-->
-<!--            android:background="@drawable/ic_navigate_next_blue_24dp"-->
-<!--            android:scaleX="1.5"-->
-<!--            android:scaleY="1.5" />-->
-
-<!--    </RelativeLayout>-->
-
-<!--    <RelativeLayout-->
-<!--        android:id="@+id/match_result_card_players3"-->
-<!--        style="@style/CardRelativeLayoutBase"-->
-<!--        android:layout_below="@id/match_result_card_players2"-->
-<!--        android:layout_marginTop="24dp"-->
-<!--        android:visibility="visible">-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/match_result_card_players3_text"-->
-<!--            style="@style/TextViewInClickableLayout"-->
-<!--            android:layout_marginEnd="16dp"-->
-<!--            android:layout_toStartOf="@id/foo5"-->
-<!--            android:ellipsize="end"-->
-<!--            android:singleLine="true"-->
-<!--            android:text="@string/call" />-->
-
-<!--        <ImageView-->
-<!--            android:id="@+id/foo5"-->
-<!--            style="@style/ImageViewInClickableLayout"-->
-<!--            android:background="@drawable/ic_navigate_next_blue_24dp"-->
-<!--            android:scaleX="1.5"-->
-<!--            android:scaleY="1.5" />-->
-
-<!--    </RelativeLayout>-->
-
-<!--    <RelativeLayout-->
-<!--        android:id="@+id/match_result_card_players4"-->
-<!--        style="@style/CardRelativeLayoutBase"-->
-<!--        android:layout_below="@id/match_result_card_players3"-->
-<!--        android:layout_marginTop="12dp"-->
-<!--        android:visibility="visible">-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/match_result_card_players4_text"-->
-<!--            style="@style/TextViewInClickableLayout"-->
-<!--            android:layout_marginEnd="16dp"-->
-<!--            android:layout_toStartOf="@id/foo6"-->
-<!--            android:ellipsize="end"-->
-<!--            android:singleLine="true"-->
-<!--            android:text="@string/call" />-->
-
-<!--        <ImageView-->
-<!--            android:id="@+id/foo6"-->
-<!--            style="@style/ImageViewInClickableLayout"-->
-<!--            android:background="@drawable/ic_navigate_next_blue_24dp"-->
-<!--            android:scaleX="1.5"-->
-<!--            android:scaleY="1.5" />-->
-
-<!--    </RelativeLayout>-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/match_result_players_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_marginEnd="@dimen/card_margin"
+        android:layout_below="@id/match_result_title_players"/>
 
 </RelativeLayout>

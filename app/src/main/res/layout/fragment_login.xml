@@ -15,7 +15,7 @@
         <TextView
             android:id="@+id/account_boss_add_tm_text"
             style="@style/TextViewTitle"
-            android:text="Email &amp; Heslo" />
+            android:text="Přihlašovací údaje" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/login_email"
@@ -45,20 +45,22 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/login_lost_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_below="@id/login_password">
 
-    <RelativeLayout
-        android:id="@+id/login_lost_password"
-        style="@style/CardRelativeLayout"
-        android:layout_below="@id/login">
+            <TextView
+                style="@style/TextViewInClickableLayout"
+                android:text="@string/lost_password"
+                android:gravity="center"
+                android:layout_marginStart="8dp"
+                android:textSize="13dp"
+                android:textColor="@color/blue"/>
 
-        <TextView
-            style="@style/TextViewInClickableLayout"
-            android:text="Zapomněl/a jsem heslo" />
-
-        <ImageView
-            style="@style/ImageViewInClickableLayout"
-            android:background="@drawable/ic_vpn_key_blue_24dp" />
+        </RelativeLayout>
 
     </RelativeLayout>
 

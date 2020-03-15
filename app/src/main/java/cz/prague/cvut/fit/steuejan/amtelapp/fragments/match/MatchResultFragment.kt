@@ -6,7 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -34,6 +38,9 @@ class MatchResultFragment : AbstractMatchActivityFragment()
 
     private lateinit var cardHomeName: TextView
     private lateinit var cardAwayName: TextView
+
+    private var recyclerView: RecyclerView? = null
+    private var adapter: ShowPlayersAdapter? = null
 
     companion object
     {
@@ -74,6 +81,25 @@ class MatchResultFragment : AbstractMatchActivityFragment()
 
         cardHomeName = view.findViewById(R.id.match_result_card_home_name)
         cardAwayName = view.findViewById(R.id.match_result_card_away_name)
+
+        recyclerView = view.findViewById(R.id.match_result_players_recyclerView)
+    }
+
+    override fun onDestroyView()
+    {
+        super.onDestroyView()
+        cardHomeName.setOnClickListener(null)
+        cardAwayName.setOnClickListener(null)
+
+        homeCard?.removeAllViews()
+        awayCard?.removeAllViews()
+
+        recyclerView?.adapter = null
+        adapter = null
+        recyclerView = null
+
+        homeCard = null
+        awayCard = null
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -81,6 +107,20 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         super.onActivityCreated(savedInstanceState)
         getData()
         populateFields()
+        setListeners()
+    }
+
+    //TODO
+    private fun setListeners()
+    {
+        cardHomeName.setOnClickListener {
+            toast(match.homeId)
+        }
+
+        cardAwayName.setOnClickListener {
+            toast(match.awayId)
+        }
+
     }
 
     private fun getData()
@@ -98,11 +138,23 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         sets.text = MatchManager.getResults(round).sets
         games.text = MatchManager.getResults(round).games
 
-        place.text = match.place?.let { it } ?: "Místo není uvedeno"
-        date.text = match.dateAndTime?.toMyString("dd.MM.yyyy 'v' HH:mm") ?: "Datum a čas není uveden"
+        place.text = match.place?.let { it } ?: getString(R.string.place_not_found)
+        date.text = match.dateAndTime?.toMyString(getString(R.string.dateTime_format)) ?: getString(R.string.dateTime_not_found)
 
         cardHomeName.text = match.home
         cardAwayName.text = match.away
 
+        setupRecycler()
+    }
+
+    private fun setupRecycler()
+    {
+        recyclerView?.setHasFixedSize(true)
+        recyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        adapter = ShowPlayersAdapter(round.homePlayers + round.awayPlayers)
+        adapter?.onClick = {
+            //TODO
+        }
+        recyclerView?.adapter = adapter
     }
 }

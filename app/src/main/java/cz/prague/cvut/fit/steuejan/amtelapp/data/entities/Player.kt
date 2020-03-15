@@ -10,5 +10,6 @@ data class Player(var playerId: String = "",
                   var surname: String = "",
                   var email: String = "",
                   var birthdate: Date? = null,
-                  var sex: Boolean = true
+                  var sex: Boolean = true,
+                  var isHome: Boolean = true
                   ) : Parcelable
