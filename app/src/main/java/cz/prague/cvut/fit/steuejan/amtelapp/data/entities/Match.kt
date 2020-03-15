@@ -19,7 +19,8 @@ data class Match(override var id: String? = null,
                  var year: Int = DateUtil.actualYear,
                  var place: String? = null,
                  var dateAndTime: Date? = null,
-                 var edits: MutableMap<String, Int> = mutableMapOf("1" to 2, "2" to 2, "3" to 2)
+                 var edits: MutableMap<String, Int> = mutableMapOf("1" to 2, "2" to 2, "3" to 2),
+                 val usersId: MutableList<String?> = arrayOfNulls<String>(10).toMutableList()
                  ) : Parcelable, Comparable<Match>, Entity()
 {
     override fun compareTo(other: Match): Int =

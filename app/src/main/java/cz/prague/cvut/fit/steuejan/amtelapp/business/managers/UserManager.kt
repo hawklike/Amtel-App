@@ -7,6 +7,7 @@ import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.database.DatabaseHelper
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Player
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import kotlinx.coroutines.Dispatchers.Default
@@ -105,19 +106,6 @@ object UserManager
             if(orderBy == it) query = UserDAO().retrieveAllUsers(it.toString())
         }
         return query!!
-    }
-
-    suspend fun addMatch(match: Match, user: User): User? = withContext(Default)
-    {
-        val matchesId = user.matchesId.toMutableSet()
-        matchesId.add(match.id!!)
-        user.matchesId = matchesId.toList()
-
-//        val matches = user.matches.toMutableSet()
-//        matches.add(match)
-//        user.matches = matches.toList()
-
-        addUser(user)
     }
 
     private const val TAG = "UserManager"

@@ -27,7 +27,7 @@ object GroupManager
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addGroup(): $group not added to database because $ex")
+            Log.e(TAG, "addGroup(): $group not added to database because ${ex.message}")
             NoGroup
         }
     }
