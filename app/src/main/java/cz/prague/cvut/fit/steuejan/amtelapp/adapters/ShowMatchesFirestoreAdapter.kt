@@ -3,7 +3,6 @@ package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -29,7 +28,6 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
         val home: TextView = itemView.findViewById(R.id.match_card_home)
         val away: TextView = itemView.findViewById(R.id.match_card_away)
         val sets: TextView = itemView.findViewById(R.id.match_card_sets)
-        val next: ImageView = itemView.findViewById(R.id.match_card_next)
 
         init
         {

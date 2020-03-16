@@ -10,8 +10,6 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
@@ -20,8 +18,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsMenuFirestoreAdapterVM
 
-class ShowGroupsMenuFirestoreAdapter(context: Context, options: FirestoreRecyclerOptions<Group>, private val isRanking: Boolean)
-    : FirestoreRecyclerAdapter<Group, ShowGroupsMenuFirestoreAdapter.ViewHolder>(options)
+class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, private val isRanking: Boolean)
+    : RecyclerView.Adapter<ShowGroupsMenuAdapter.ViewHolder>()
 {
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
         ShowGroupsMenuFirestoreAdapterVM::class.java)
@@ -53,15 +51,16 @@ class ShowGroupsMenuFirestoreAdapter(context: Context, options: FirestoreRecycle
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int, group: Group)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int)
     {
+        val group = getItem(position)
         holder.name.text = group.name
         holder.logo.text = viewModel.createLabel(group)
 
         if(isRanking)
         {
             holder.actualRound.text = String.format(context.getString(R.string.last_active_season),
-                group.teamIds.keys.map { it.toInt() }.max() ?: "není")
+                group.teamIds.keys.map { it.toInt() }.max() ?: context.getString(R.string.is_not))
             holder.rounds.text = String.format(context.getString(R.string.teams_number_this_year),
                 group.teamIds[DateUtil.actualYear]?.size ?: 0)
             if(group.teamIds.isEmpty()) disableCard(holder)
@@ -96,5 +95,8 @@ class ShowGroupsMenuFirestoreAdapter(context: Context, options: FirestoreRecycle
         holder.logo.setTextColor(App.getColor(R.color.lightGrey))
         holder.actualRound.setTextColor(App.getColor(R.color.lightGrey))
     }
+
+    override fun getItemCount(): Int = list.size
+    private fun getItem(position: Int): Group = list[position]
 
 }
