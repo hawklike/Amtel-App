@@ -42,6 +42,11 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
         if(confirmName(groupName))
         {
             viewModelScope.launch {
+                if(GroupManager.findGroup(groupName) is ValidGroup)
+                {
+                    _group.value = NoGroup
+                    return@launch
+                }
                 _group.value = GroupManager.addGroup(Group(groupName)).let {
                     if(it is ValidGroup) ValidGroup(it.self)
                     else NoGroup
