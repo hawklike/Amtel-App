@@ -29,7 +29,7 @@
             <FrameLayout
                 android:id="@+id/match_arrangement_progressBar"
                 android:layout_width="match_parent"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_height="match_parent">
 
                 <ProgressBar
@@ -64,7 +64,7 @@
                 android:paddingTop="8dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="16dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/match_arrangement_edit_button"
@@ -146,6 +146,19 @@
                     style="@style/TextInputEditTextStyle"
                     app:errorEnabled="true"
                     android:importantForAutofill="no" />
+
+                <TextView
+                    android:id="@+id/match_arrangement_default"
+                    style="@style/TextViewInClickableLayout"
+                    android:layout_below="@id/match_arrangement_change_date"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="0dp"
+                    android:gravity="center"
+                    android:text="@string/choose_default_win_lose"
+                    android:textColor="@color/red"
+                    android:textSize="13sp"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
 

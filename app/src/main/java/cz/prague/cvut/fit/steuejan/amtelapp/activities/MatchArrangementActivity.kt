@@ -16,7 +16,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.datetime.dateTimePicker
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
+import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
@@ -61,6 +63,8 @@ class MatchArrangementActivity : AbstractBaseActivity()
     private lateinit var changePlace: EditText
     private lateinit var changeDate: EditText
 
+    private lateinit var defaultEndGame: TextView
+
     private lateinit var editButton: FloatingActionButton
 
     private var matchInfoLayout: RelativeLayout? = null
@@ -92,6 +96,8 @@ class MatchArrangementActivity : AbstractBaseActivity()
         changePlace = findViewById(R.id.match_arrangement_change_place)
         changeDate = findViewById(R.id.match_arrangement_change_date)
 
+        defaultEndGame = findViewById(R.id.match_arrangement_default)
+
         editButton = findViewById(R.id.match_arrangement_edit_button)
         progressBarLayout = findViewById(R.id.match_arrangement_progressBar)
         matchInfoLayout = findViewById(R.id.match_arrangement)
@@ -117,6 +123,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
 
         sendEmailOpponent.setOnClickListener(null)
         callOpponent.setOnClickListener(null)
+        defaultEndGame.setOnClickListener(null)
 
         progressBarLayout = null
         matchInfoLayout = null
@@ -156,6 +163,12 @@ class MatchArrangementActivity : AbstractBaseActivity()
         viewModel.date.observe(this) { date ->
             date?.let { changeDate.setText(it.toMyString("dd.MM.yyyy 'v' HH:mm")) }
         }
+
+        if(currentRole == AuthManager.SignedIn.HOME_MANAGER)
+        {
+            defaultEndGame.visibility = View.VISIBLE
+            if(match.defaultEndGameEdits <= 0) disableDefaultEndGame()
+        }
     }
 
     private fun setListeners()
@@ -165,6 +178,25 @@ class MatchArrangementActivity : AbstractBaseActivity()
         changeDateListener()
         sendEmail()
         call()
+        defaultEndGame()
+    }
+
+    private fun defaultEndGame()
+    {
+        defaultEndGame.setOnClickListener {
+            MaterialDialog(this).show {
+                title(text = "Kontumace")
+                message(text = "Zvolte prosím vítěze. Výsledek budete moct jednou opravit.")
+                listItemsSingleChoice(items = listOf(homeTeam.name, awayTeam.name)) { _, _, text ->
+                    val isHomeWinner = text == homeTeam.name
+                    if(--match.defaultEndGameEdits <= 0) disableDefaultEndGame()
+                    viewModel.defaultEndGame(match, isHomeWinner, homeTeam, awayTeam)
+                    score.text = if(isHomeWinner) "3 : 0" else "0 : 3"
+                }
+                positiveButton()
+                negativeButton()
+            }
+        }
     }
 
     private fun call()
@@ -261,5 +293,11 @@ class MatchArrangementActivity : AbstractBaseActivity()
                 score.text = match.homeScore?.let { "${match.homeScore} : ${match.awayScore}" } ?: "N/A"
             }
         }
+    }
+
+    private fun disableDefaultEndGame()
+    {
+        defaultEndGame.isEnabled = false
+        defaultEndGame.setTextColor(App.getColor(R.color.middleLightGrey))
     }
 }
