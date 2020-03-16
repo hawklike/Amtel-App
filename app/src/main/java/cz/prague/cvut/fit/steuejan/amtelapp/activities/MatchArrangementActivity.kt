@@ -19,6 +19,7 @@ import com.afollestad.materialdialogs.input.input
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -43,6 +44,15 @@ class MatchArrangementActivity : AbstractBaseActivity()
 
     private val homeManager: User? by lazy { homeTeam.users.find { it.role.toRole() == UserRole.TEAM_MANAGER } }
     private val awayManager: User? by lazy { awayTeam.users.find { it.role.toRole() == UserRole.TEAM_MANAGER } }
+
+    private val currentRole: AuthManager.SignedIn by lazy { AuthManager.getCurrentRole(homeManager?.id, awayManager?.id) }
+
+    private val opponent: User?
+        get()
+        {
+            return if(currentRole == AuthManager.SignedIn.HOME_MANAGER) awayManager
+            else homeManager
+        }
 
     private lateinit var homeName: TextView
     private lateinit var awayName: TextView
@@ -160,11 +170,11 @@ class MatchArrangementActivity : AbstractBaseActivity()
     private fun call()
     {
         callOpponent.setOnClickListener {
-            awayManager?.phone?.let {
+            opponent?.phone?.let {
                 val intent = Intent(Intent.ACTION_DIAL)
                 intent.data = Uri.parse("tel:$it")
                 startActivity(intent)
-            } ?: toast("${awayManager?.name} ${awayManager?.surname} nemá uložené telefonní číslo.")
+            } ?: toast("${opponent?.name} ${opponent?.surname} nemá uložené telefonní číslo.")
         }
     }
 
@@ -174,7 +184,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
             val intent = Intent(Intent.ACTION_SENDTO).apply {
                 type = "message/rfc822"
                 data = Uri.parse("mailto:")
-                putExtra(Intent.EXTRA_EMAIL, arrayOf(awayManager?.email ?: ""))
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(opponent?.email ?: ""))
                 putExtra(Intent.EXTRA_SUBJECT, "Zápas ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})")
                 putExtra(Intent.EXTRA_TEXT, "")
             }

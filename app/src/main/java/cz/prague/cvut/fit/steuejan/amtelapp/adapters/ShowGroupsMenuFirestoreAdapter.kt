@@ -60,8 +60,10 @@ class ShowGroupsMenuFirestoreAdapter(context: Context, options: FirestoreRecycle
 
         if(isRanking)
         {
-            holder.actualRound.text = "Poslední sezóna: ${group.teamIds.keys.map { it.toInt() }.max() ?: "není"}"
-            holder.rounds.text = "Počet letoších týmů: ${group.teamIds[DateUtil.actualYear]?.size ?: 0}"
+            holder.actualRound.text = String.format(context.getString(R.string.last_active_season),
+                group.teamIds.keys.map { it.toInt() }.max() ?: "není")
+            holder.rounds.text = String.format(context.getString(R.string.teams_number_this_year),
+                group.teamIds[DateUtil.actualYear]?.size ?: 0)
             if(group.teamIds.isEmpty()) disableCard(holder)
             return
         }

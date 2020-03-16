@@ -114,6 +114,23 @@ object AuthManager
             }
     }
 
+    fun getCurrentRole(homeManagerId: String?, awayManagerId: String?): SignedIn
+    {
+        return currentUser?.let {
+            when(it.uid)
+            {
+                homeManagerId -> SignedIn.HOME_MANAGER
+                awayManagerId -> SignedIn.AWAY_MANAGER
+                else -> SignedIn.HEAD_OF_LEAGUE
+            }
+        } ?: SignedIn.NONE
+    }
+
+    enum class SignedIn
+    {
+        HOME_MANAGER, AWAY_MANAGER, HEAD_OF_LEAGUE, NONE
+    }
+
     val currentUser: FirebaseUser?
     get() { return auth.currentUser }
 }

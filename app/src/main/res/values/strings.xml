@@ -170,4 +170,6 @@
     <string name="lost_password_title">Zapomenuté heslo</string>
     <string name="empty_email_message">Vyplňte prosím email.</string>
     <string name="reset_email_message">Nové heslo vám bude zasláno na email: %1$s\n\nMějte prosím trpělivost, může to pár minut trvat.</string>
+    <string name="last_active_season">Poslední sezóna: %1$s</string>
+    <string name="teams_number_this_year">Počet letošních týmů: %1$d</string>
 </resources>

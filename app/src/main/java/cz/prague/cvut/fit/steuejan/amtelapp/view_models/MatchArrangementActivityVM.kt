@@ -188,6 +188,9 @@ class MatchArrangementActivityVM : ViewModel()
 
         team.pointsPerYear[year] = sum
         team.winsPerYear[year] = wins
+        team.lossesPerYear[year] = team.pointsPerMatch[year]!!.size - wins
+        team.matchesPerYear[year] = team.pointsPerMatch[year]!!.size
+
         TeamManager.addTeam(team)
     }
 
