@@ -181,7 +181,7 @@ class MatchArrangementActivityVM : ViewModel()
 
         var sum = 0
         var wins = 0
-        team.pointsPerMatch[year]?.let { points ->
+        team.pointsPerMatch[year]!!.let { points ->
             points[match.id!!] = when
             {
                 isWinner.invoke() -> POINTS_WIN
@@ -197,7 +197,36 @@ class MatchArrangementActivityVM : ViewModel()
         team.lossesPerYear[year] = team.pointsPerMatch[year]!!.size - wins
         team.matchesPerYear[year] = team.pointsPerMatch[year]!!.size
 
+        setsStatistics(team, match)
+
         TeamManager.addTeam(team)
+    }
+
+    private fun setsStatistics(team: Team, match: Match)
+    {
+        val year = DateUtil.actualYear
+
+        val positiveSetsPerYear = team.setsPositivePerMatch[year]
+        if(positiveSetsPerYear == null) team.setsPositivePerMatch[year] = mutableMapOf()
+
+        val negativeSetsPerYear = team.setsNegativePerMatch[year]
+        if(negativeSetsPerYear == null) team.setsNegativePerMatch[year] = mutableMapOf()
+
+        team.setsPositivePerMatch[year]!!.let { sets ->
+            sets[match.id!!] = when(team.id)
+            {
+                match.homeId -> match.rounds.fold(0) { acc, round -> round.homeSets?.let { acc + it } ?: acc }
+                else -> match.rounds.fold(0) { acc, round -> round.awaySets?.let { acc + it } ?: acc }
+            }
+        }
+
+        team.setsNegativePerMatch[year]!!.let { sets ->
+            sets[match.id!!] = when(team.id)
+            {
+                match.homeId -> match.rounds.fold(0) { acc, round -> round.awaySets?.let { acc + it } ?: acc }
+                else -> match.rounds.fold(0) { acc, round -> round.homeSets?.let { acc + it } ?: acc }
+            }
+        }
     }
 
 
