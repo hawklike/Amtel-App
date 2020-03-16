@@ -31,6 +31,7 @@
         <activity android:name=".activities.ScheduleRoundsActivity"/>
         <activity android:name=".activities.MatchMenuActivity"/>
         <activity android:name=".activities.MatchArrangementActivity"/>
+        <activity android:name=".activities.RankingActivity"/>
     </application>
 
 </manifest>

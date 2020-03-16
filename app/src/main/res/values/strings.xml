@@ -164,4 +164,10 @@
     <string name="dateTime_not_found">Datum a čas nejsou uvedeny</string>
     <string name="dateTime_format">dd.MM.yyyy \'v\' HH:mm</string>
     <string name="lost_password">Zapomněl/a jsem heslo</string>
+    <string name="credentials">Přihlašovací údaje</string>
+    <string name="reset_email_sent">Email byl úspěšně odeslán.</string>
+    <string name="reset_email_failure">Email se nepodařilo odeslat.</string>
+    <string name="lost_password_title">Zapomenuté heslo</string>
+    <string name="empty_email_message">Vyplňte prosím email.</string>
+    <string name="reset_email_message">Nové heslo vám bude zasláno na email: %1$s\n\nMějte prosím trpělivost, může to pár minut trvat.</string>
 </resources>

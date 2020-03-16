@@ -20,7 +20,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsMenuFirestoreAdapterVM
 
-class ShowGroupsMenuFirestoreAdapter(context: Context, options: FirestoreRecyclerOptions<Group>)
+class ShowGroupsMenuFirestoreAdapter(context: Context, options: FirestoreRecyclerOptions<Group>, private val isRanking: Boolean)
     : FirestoreRecyclerAdapter<Group, ShowGroupsMenuFirestoreAdapter.ViewHolder>(options)
 {
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
@@ -58,16 +58,18 @@ class ShowGroupsMenuFirestoreAdapter(context: Context, options: FirestoreRecycle
         holder.name.text = group.name
         holder.logo.text = viewModel.createLabel(group)
 
-        val rounds = group.rounds[DateUtil.actualYear.toString()]
+        if(isRanking)
+        {
+            holder.actualRound.text = "Poslední sezóna: ${group.teamIds.keys.map { it.toInt() }.max() ?: "není"}"
+            holder.rounds.text = "Počet letoších týmů: ${group.teamIds[DateUtil.actualYear]?.size ?: 0}"
+            if(group.teamIds.isEmpty()) disableCard(holder)
+            return
+        }
+
+        val rounds = group.rounds[DateUtil.actualYear]
         if(rounds == 0 || rounds == null)
         {
-            holder.card.isEnabled = false
-            holder.card.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
-            holder.card.elevation = 0.0F
-            holder.name.setTextColor(App.getColor(R.color.lightGrey))
-            holder.rounds.setTextColor(App.getColor(R.color.lightGrey))
-            holder.logo.setTextColor(App.getColor(R.color.lightGrey))
-            holder.actualRound.setTextColor(App.getColor(R.color.lightGrey))
+            disableCard(holder)
             holder.rounds.text = String.format(context.getString(R.string.rounds_number_input), "0")
             holder.actualRound.text = String.format(context.getString(R.string.actual_round), context.getString(R.string.is_not))
         }
@@ -81,4 +83,16 @@ class ShowGroupsMenuFirestoreAdapter(context: Context, options: FirestoreRecycle
             }
         }
     }
+
+    private fun disableCard(holder: ViewHolder)
+    {
+        holder.card.isEnabled = false
+        holder.card.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
+        holder.card.elevation = 0.0F
+        holder.name.setTextColor(App.getColor(R.color.lightGrey))
+        holder.rounds.setTextColor(App.getColor(R.color.lightGrey))
+        holder.logo.setTextColor(App.getColor(R.color.lightGrey))
+        holder.actualRound.setTextColor(App.getColor(R.color.lightGrey))
+    }
+
 }

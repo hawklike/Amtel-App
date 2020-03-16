@@ -14,5 +14,6 @@ data class Team(override var id: String? = null,
                 var matchesId: MutableList<String> = mutableListOf(),
                 var pointsPerMatch: MutableMap<String, MutableMap<String, Int>> = mutableMapOf(), //(year, (id_match, points)),
                 var pointsPerYear:  MutableMap<String, Int> = mutableMapOf(), //(year, points),
-                var group: String? = null
+                var group: String? = null,
+                var winsPerYear: MutableMap<String, Int> = mutableMapOf() //(year, #wins),
                 ) : Parcelable, Entity()

@@ -56,7 +56,7 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
         }
 
         val map = group.rounds
-        map[DateUtil.actualYear.toString()] = rounds
+        map[DateUtil.actualYear] = rounds
         GroupManager.updateGroup(group.name, mapOf("rounds" to map))
         toast(context.getString(R.string.group) + " ${group.name} " + context.getString(R.string.successfully_generated))
     }

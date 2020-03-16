@@ -69,5 +69,5 @@ object MatchManager
     }
 
     fun getMatches(round: Int, group: String): Query
-            = MatchDAO().getMatches(round, group, DateUtil.actualYear)
+            = MatchDAO().getMatches(round, group, DateUtil.actualYear.toInt())
 }

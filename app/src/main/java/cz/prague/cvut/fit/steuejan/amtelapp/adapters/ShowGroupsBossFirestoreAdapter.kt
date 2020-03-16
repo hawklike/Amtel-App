@@ -44,7 +44,7 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
         fun init(group: Group)
         {
             this.group = group
-            val size = group.teamIds.size
+            val size = group.teamIds[DateUtil.actualYear]?.size ?: 0
 
             name.text = group.name
             this.size.text = String.format(context.getString(R.string.number_teams), size)
@@ -66,7 +66,7 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
             }
             else
             {
-                val rounds = group.rounds[DateUtil.actualYear.toString()]
+                val rounds = group.rounds[DateUtil.actualYear]
                 if(rounds != null && rounds != 0)
                 {
                     generate.text = context.getString(R.string.regenerate_matches)
