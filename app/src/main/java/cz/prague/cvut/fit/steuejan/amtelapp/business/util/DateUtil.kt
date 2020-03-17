@@ -1,6 +1,8 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Day
+import org.joda.time.DateTime
+import org.joda.time.Days
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -67,6 +69,14 @@ object DateUtil
         }
 
         return range[days.first().ordinal]
+    }
+
+    fun getRemainingDaysUntil(week: Int): Int
+    {
+        val lastDay = DateTime(getWeekDate(week).last().time).withHourOfDay(23).withMinuteOfHour(59)
+        val today = DateTime()
+        val remainingDays = Days.daysBetween(today, lastDay).days
+        return if(remainingDays < 0) 0 else remainingDays
     }
 }
 

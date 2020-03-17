@@ -197,12 +197,12 @@ class MatchArrangementActivityVM : ViewModel()
         team.lossesPerYear[year] = team.pointsPerMatch[year]!!.size - wins
         team.matchesPerYear[year] = team.pointsPerMatch[year]!!.size
 
-        setsStatistics(team, match)
+        initSetsStatistics(team, match)
 
         TeamManager.addTeam(team)
     }
 
-    private fun setsStatistics(team: Team, match: Match)
+    private fun initSetsStatistics(team: Team, match: Match)
     {
         val year = DateUtil.actualYear
 
@@ -218,6 +218,7 @@ class MatchArrangementActivityVM : ViewModel()
                 match.homeId -> match.rounds.fold(0) { acc, round -> round.homeSets?.let { acc + it } ?: acc }
                 else -> match.rounds.fold(0) { acc, round -> round.awaySets?.let { acc + it } ?: acc }
             }
+            team.positiveSetsPerYear[year] = sets.values.sum()
         }
 
         team.setsNegativePerMatch[year]!!.let { sets ->
@@ -226,6 +227,7 @@ class MatchArrangementActivityVM : ViewModel()
                 match.homeId -> match.rounds.fold(0) { acc, round -> round.awaySets?.let { acc + it } ?: acc }
                 else -> match.rounds.fold(0) { acc, round -> round.homeSets?.let { acc + it } ?: acc }
             }
+            team.negativeSetsPerYear[year] = sets.values.sum()
         }
     }
 

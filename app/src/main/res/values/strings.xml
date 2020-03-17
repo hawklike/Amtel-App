@@ -173,4 +173,7 @@
     <string name="last_active_season">Poslední sezóna: %1$s</string>
     <string name="teams_number_this_year">Počet letošních týmů: %1$d</string>
     <string name="choose_default_win_lose">Zvolit kontumační prohru/výhru</string>
+    <string name="choose_week">Zvolit hrací týden</string>
+    <string name="round_state">Stav %1$d. kola</string>
+    <string name="round_countdown">Počet dní do konce: %1$d</string>
 </resources>

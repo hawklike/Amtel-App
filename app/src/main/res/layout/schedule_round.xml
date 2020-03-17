@@ -36,19 +36,30 @@
             android:background="@drawable/rounded_object"
             android:elevation="@dimen/elevation"
             android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:visibility="gone">
+            android:paddingEnd="8dp">
 
             <TextView
                 android:id="@+id/schedule_round_choose_week_text"
                 style="@style/TextViewTitle"
-                android:text="Zvolit hrací týden" />
+                android:text="@string/choose_week" />
+
+            <TextView
+                android:id="@+id/schedule_round_deadline_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/schedule_round_choose_week_week"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Dny do konce kola: 42"
+                android:textColor="@color/darkGrey"
+                android:textSize="@dimen/common_text_size" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/schedule_round_choose_week_week"
                 style="@style/TextInputLayout"
                 android:layout_below="@id/schedule_round_choose_week_text"
                 android:hint="Týden v roce"
+                android:visibility="gone"
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -64,6 +75,7 @@
                 android:layout_below="@id/schedule_round_choose_week_week"
                 android:layout_alignParentEnd="true"
                 android:layout_marginBottom="8dp"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_save_white_24dp" />
 
         </RelativeLayout>
