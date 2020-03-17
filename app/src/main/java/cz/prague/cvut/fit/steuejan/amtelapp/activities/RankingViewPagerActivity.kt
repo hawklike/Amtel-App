@@ -3,9 +3,11 @@ package cz.prague.cvut.fit.steuejan.amtelapp.activities
 import android.os.Bundle
 import androidx.viewpager.widget.ViewPager
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.ranking.RankingFragment
 
-class RankingActivity : AbstractViewPagerActivity()
+class RankingViewPagerActivity : AbstractViewPagerActivity()
 {
     private var group = Group()
 
@@ -29,6 +31,10 @@ class RankingActivity : AbstractViewPagerActivity()
 
     override fun setupViewPager(viewPager: ViewPager)
     {
-        //TODO
+        val adapter = ViewPagerAdapter(supportFragmentManager)
+        group.teamIds.keys.forEach {
+            adapter.addFragment(RankingFragment.newInstance(group, it.toInt()), it)
+        }
+        viewPager.adapter = adapter
     }
 }

@@ -192,6 +192,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
                     if(--match.defaultEndGameEdits <= 0) disableDefaultEndGame()
                     viewModel.defaultEndGame(match, isHomeWinner, homeTeam, awayTeam)
                     score.text = if(isHomeWinner) "3 : 0" else "0 : 3"
+                    toast("Tým ${if(isHomeWinner) homeTeam.name else awayTeam.name} kontumačně vyhrál.")
                 }
                 positiveButton()
                 negativeButton()
@@ -267,12 +268,12 @@ class MatchArrangementActivity : AbstractBaseActivity()
 
     private fun startMatchInputResultActivity(match: Match, title: String)
     {
-         val intent = Intent(this, MatchMenuActivity::class.java).apply {
-            putExtra(MatchMenuActivity.MATCH, match)
-            putExtra(MatchMenuActivity.WEEK, if(week is ValidWeek) week as ValidWeek else null)
-            putExtra(MatchMenuActivity.TITLE, title)
-            putExtra(MatchMenuActivity.HOME_TEAM, homeTeam)
-            putExtra(MatchMenuActivity.AWAY_TEAM, awayTeam)
+         val intent = Intent(this, MatchViewPagerActivity::class.java).apply {
+            putExtra(MatchViewPagerActivity.MATCH, match)
+            putExtra(MatchViewPagerActivity.WEEK, if(week is ValidWeek) week as ValidWeek else null)
+            putExtra(MatchViewPagerActivity.TITLE, title)
+            putExtra(MatchViewPagerActivity.HOME_TEAM, homeTeam)
+            putExtra(MatchViewPagerActivity.AWAY_TEAM, awayTeam)
         }
 
         if(!activityStarted)

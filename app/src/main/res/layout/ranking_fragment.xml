@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/curve" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <TextView
+            android:id="@+id/ranking_team"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tým"
+            android:layout_toStartOf="@id/ranking_matches"
+            android:textSize="@dimen/common_text_size"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/ranking_matches"
+            android:layout_width="28dp"
+            android:layout_height="wrap_content"
+            android:text="Z"
+            android:gravity="center"
+            android:layout_toStartOf="@id/ranking_wins"
+            android:textSize="@dimen/common_text_size"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/ranking_wins"
+            android:layout_width="28dp"
+            android:layout_height="wrap_content"
+            android:text="V"
+            android:gravity="center"
+            android:layout_toStartOf="@id/ranking_losses"
+            android:textSize="@dimen/common_text_size"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/ranking_losses"
+            android:layout_width="28dp"
+            android:layout_height="wrap_content"
+            android:text="P"
+            android:gravity="center"
+            android:layout_toStartOf="@id/ranking_sets_positive"
+            android:textSize="@dimen/common_text_size"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/ranking_sets_positive"
+            android:layout_width="28dp"
+            android:layout_height="wrap_content"
+            android:text="S+"
+            android:gravity="center"
+            android:layout_toStartOf="@id/ranking_sets_negative"
+            android:textSize="@dimen/common_text_size"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/ranking_sets_negative"
+            android:layout_width="28dp"
+            android:layout_height="wrap_content"
+            android:text="S-"
+            android:gravity="center"
+            android:layout_toStartOf="@id/ranking_points"
+            android:textSize="@dimen/common_text_size"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/ranking_points"
+            android:layout_width="28dp"
+            android:layout_height="wrap_content"
+            android:text="B"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"
+            android:textSize="@dimen/common_text_size"
+            android:textColor="@color/white"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="110dp">
+
+        <include layout="@layout/ranking_team_card" />
+
+    </RelativeLayout>
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/ranking_recyclerView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_marginTop="110dp"/>-->
+
+</RelativeLayout>

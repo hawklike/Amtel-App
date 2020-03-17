@@ -19,7 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchArrangementActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchMenuActivity
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchViewPagerActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowMatchesFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
@@ -200,10 +200,10 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 
     private fun startMatchResultActivity(match: Match, title: String)
     {
-        val intent = Intent(activity!!, MatchMenuActivity::class.java).apply {
-            putExtra(MatchMenuActivity.MATCH, match)
-            putExtra(MatchMenuActivity.WEEK, week)
-            putExtra(MatchMenuActivity.TITLE, title)
+        val intent = Intent(activity!!, MatchViewPagerActivity::class.java).apply {
+            putExtra(MatchViewPagerActivity.MATCH, match)
+            putExtra(MatchViewPagerActivity.WEEK, week)
+            putExtra(MatchViewPagerActivity.TITLE, title)
         }
         startActivity(intent)
     }

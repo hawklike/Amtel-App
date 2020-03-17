@@ -11,7 +11,7 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.activities.RankingActivity
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.RankingViewPagerActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.ScheduleRoundsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsMenuAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
@@ -91,8 +91,8 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
         if(isRanking)
         {
             adapter?.onNextClick = { group, _ ->
-                val intent = Intent(activity!!, RankingActivity::class.java).apply {
-                    putExtra(RankingActivity.GROUP, group)
+                val intent = Intent(activity!!, RankingViewPagerActivity::class.java).apply {
+                    putExtra(RankingViewPagerActivity.GROUP, group)
                 }
                 if(group.teamIds.isNotEmpty()) startActivity(intent)
             }

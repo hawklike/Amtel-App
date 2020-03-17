@@ -13,11 +13,11 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.match.MatchViewFactory
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchMenuActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchViewPagerActivityVM
 
-class MatchMenuActivity : AbstractViewPagerActivity()
+class MatchViewPagerActivity : AbstractViewPagerActivity()
 {
-    private val viewModel by viewModels<MatchMenuActivityVM>()
+    private val viewModel by viewModels<MatchViewPagerActivityVM>()
 
     private lateinit var match: Match
     private lateinit var week: WeekState
