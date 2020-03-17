@@ -21,8 +21,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.UsersAdapterVM
 
-class ShowUsersSimpleFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<User>)
-    : FirestoreRecyclerAdapter<User, ShowUsersSimpleFirestoreAdapter.ViewHolder>(options)
+class ShowTeamPlayersFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<User>)
+    : FirestoreRecyclerAdapter<User, ShowTeamPlayersFirestoreAdapter.ViewHolder>(options)
 {
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(UsersAdapterVM::class.java)
 

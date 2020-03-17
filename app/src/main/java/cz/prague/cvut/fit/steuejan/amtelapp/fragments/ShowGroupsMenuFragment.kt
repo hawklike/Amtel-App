@@ -80,7 +80,7 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
             progressBar.visibility = View.GONE
             recyclerView?.setHasFixedSize(true)
             recyclerView?.layoutManager = LinearLayoutManager(activity!!)
-            adapter = ShowGroupsMenuAdapter(activity!!, it.self, isRanking)
+            adapter = ShowGroupsMenuAdapter(activity!!, it, isRanking)
             onNextClick(adapter)
             recyclerView?.adapter = adapter
         }

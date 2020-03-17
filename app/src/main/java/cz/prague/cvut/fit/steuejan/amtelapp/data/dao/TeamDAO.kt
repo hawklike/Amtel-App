@@ -67,4 +67,13 @@ class TeamDAO : DAO
             update(team.id!!, mapOf("users" to team.users))
         }
     }
+
+    suspend fun retrieveTeamsInSeason(group: String, year: Int): QuerySnapshot
+    {
+        return Firebase.firestore
+            .collection(collection)
+            .whereArrayContains("seasons", mapOf(year.toString() to group))
+            .get()
+            .await()
+    }
 }

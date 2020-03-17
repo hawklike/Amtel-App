@@ -24,7 +24,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Companion.TEAM
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowUsersSimpleFirestoreAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamPlayersFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
@@ -56,7 +56,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     private lateinit var addPlayer: RelativeLayout
 
     private var recyclerView: RecyclerView? = null
-    private var adapter: ShowUsersSimpleFirestoreAdapter? = null
+    private var adapter: ShowTeamPlayersFirestoreAdapter? = null
 
     override fun getName(): String = "AccountTMMakeTeamFragment"
 
@@ -132,7 +132,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
                 .setQuery(query, User::class.java)
                 .build()
 
-            adapter = ShowUsersSimpleFirestoreAdapter(activity!!, options)
+            adapter = ShowTeamPlayersFirestoreAdapter(activity!!, options)
             recyclerView?.adapter = adapter
         }
     }

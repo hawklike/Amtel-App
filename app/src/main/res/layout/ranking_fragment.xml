@@ -84,19 +84,10 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ranking_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="110dp">
-
-        <include layout="@layout/ranking_team_card" />
-
-    </RelativeLayout>
-
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/ranking_recyclerView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_marginTop="110dp"/>-->
+        android:layout_marginTop="110dp"/>
 
 </RelativeLayout>

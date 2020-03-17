@@ -86,23 +86,12 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ranking_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="110dp"
         android:layout_marginStart="@dimen/card_margin"
-        android:layout_marginEnd="@dimen/card_margin">
-
-        <include layout="@layout/ranking_team_card" />
-
-    </RelativeLayout>
-
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/ranking_recyclerView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_marginTop="110dp"-->
-<!--        android:layout_marginStart="@dimen/card_margin"-->
-<!--        android:layout_marginEnd="@dimen/card_margin"/>-->
+        android:layout_marginEnd="@dimen/card_margin"/>
 
 </RelativeLayout>
