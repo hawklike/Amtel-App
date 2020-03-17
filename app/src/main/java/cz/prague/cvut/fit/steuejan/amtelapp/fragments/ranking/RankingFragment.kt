@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsRankingAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
@@ -25,6 +27,15 @@ class RankingFragment : AbstractBaseFragment()
 
     private val teams: MutableList<Team> = mutableListOf()
     private var orderBy = RankingOrderBy.POINTS
+
+    private lateinit var actualSortOption: TextView
+
+    private lateinit var sortByMatches: TextView
+    private lateinit var sortByWins: TextView
+    private lateinit var sortByLosses: TextView
+    private lateinit var sortByPositiveSets: TextView
+    private lateinit var sortByNegativeSets: TextView
+    private lateinit var sortByPoints: TextView
 
     private var recyclerView: RecyclerView? = null
     private var adapter: ShowTeamsRankingAdapter? = null
@@ -65,7 +76,14 @@ class RankingFragment : AbstractBaseFragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
+        sortByMatches = view.findViewById(R.id.ranking_matches)
+        sortByWins = view.findViewById(R.id.ranking_wins)
+        sortByLosses = view.findViewById(R.id.ranking_losses)
+        sortByPositiveSets = view.findViewById(R.id.ranking_sets_positive)
+        sortByNegativeSets = view.findViewById(R.id.ranking_sets_negative)
+        sortByPoints = view.findViewById(R.id.ranking_points)
         recyclerView = view.findViewById(R.id.ranking_recyclerView)
+        actualSortOption = sortByPoints
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -73,6 +91,8 @@ class RankingFragment : AbstractBaseFragment()
         super.onActivityCreated(savedInstanceState)
         loadData()
         setupRecycler()
+        setBoldStyle(sortByPoints)
+        setListeners()
     }
 
     private fun loadData()
@@ -80,6 +100,7 @@ class RankingFragment : AbstractBaseFragment()
         viewModel.loadTeams(group.name, year)
     }
 
+    //TODO: implement sorting teams
     private fun setupRecycler()
     {
         viewModel.teams.observe(viewLifecycleOwner) {
@@ -89,6 +110,56 @@ class RankingFragment : AbstractBaseFragment()
             adapter = ShowTeamsRankingAdapter(teams, year.toString(), orderBy)
             recyclerView?.adapter = adapter
         }
+    }
+
+    private fun setListeners()
+    {
+        sortByMatches.setOnClickListener {
+            highlightOption(it as TextView)
+            //TODO
+        }
+
+        sortByWins.setOnClickListener {
+            highlightOption(it as TextView)
+            //TODO
+        }
+
+        sortByLosses.setOnClickListener {
+            highlightOption(it as TextView)
+            //TODO
+        }
+
+        sortByPositiveSets.setOnClickListener {
+            highlightOption(it as TextView)
+            //TODO
+        }
+
+        sortByNegativeSets.setOnClickListener {
+            highlightOption(it as TextView)
+            //TODO
+        }
+
+        sortByPoints.setOnClickListener {
+            highlightOption(it as TextView)
+            //TODO
+        }
+    }
+
+    private fun highlightOption(view: TextView)
+    {
+        setNormalStyle(actualSortOption)
+        setBoldStyle(view)
+        actualSortOption = view
+    }
+
+    private fun setNormalStyle(view: TextView)
+    {
+        view.setTextColor(App.getColor(R.color.darkGrey))
+    }
+
+    private fun setBoldStyle(view: TextView)
+    {
+        view.setTextColor(App.getColor(R.color.blue))
     }
 
 }

@@ -1,13 +1,13 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
 import android.annotation.SuppressLint
-import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -66,12 +66,12 @@ class ShowTeamsRankingAdapter(private val list: List<Team>, private val year: St
     {
         when(orderBy)
         {
-            RankingOrderBy.POINTS -> with(holder.points) { setTypeface(this.typeface, Typeface.BOLD) }
-            RankingOrderBy.MATCHES -> with(holder.matches) { setTypeface(this.typeface, Typeface.BOLD) }
-            RankingOrderBy.WINS -> with(holder.wins) { setTypeface(this.typeface, Typeface.BOLD) }
-            RankingOrderBy.LOSSES -> with(holder.losses) { setTypeface(this.typeface, Typeface.BOLD) }
-            RankingOrderBy.POSITIVE_SETS -> with(holder.positiveSets) { setTypeface(this.typeface, Typeface.BOLD) }
-            RankingOrderBy.NEGATIVE_SETS -> with(holder.negativeSets) { setTypeface(this.typeface, Typeface.BOLD) }
+            RankingOrderBy.POINTS -> holder.points.setTextColor(App.getColor(R.color.blue))
+            RankingOrderBy.MATCHES -> holder.matches.setTextColor(App.getColor(R.color.blue))
+            RankingOrderBy.WINS -> holder.wins.setTextColor(App.getColor(R.color.blue))
+            RankingOrderBy.LOSSES -> holder.losses.setTextColor(App.getColor(R.color.blue))
+            RankingOrderBy.POSITIVE_SETS -> holder.positiveSets.setTextColor(App.getColor(R.color.blue))
+            RankingOrderBy.NEGATIVE_SETS -> holder.negativeSets.setTextColor(App.getColor(R.color.blue))
         }
     }
 }
