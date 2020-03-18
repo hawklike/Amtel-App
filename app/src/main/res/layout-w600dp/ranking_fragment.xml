@@ -104,6 +104,31 @@
 
     </RelativeLayout>
 
+    <FrameLayout
+        android:id="@+id/ranking_progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ranking_sortBy"
+        android:visibility="visible">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/blue"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:max="100"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginTop="50dp"
+            android:text="@string/amtel_opava"
+            android:textColor="@color/blue"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ranking_recyclerView"

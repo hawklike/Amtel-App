@@ -64,7 +64,7 @@
     <string name="create_team_failure_name_error">Vyplňte prosím jméno.</string>
     <string name="create_team_failure_place_error">Vyplňte prosím adresu kurtu.</string>
     <string name="create_team_failure_days_error">Vyplňte prosím hrací dny.</string>
-    <string name="birthdate_failure_message_bad_format">Vyplňte prosím datum narození ve formátu dd.MM.yyyy</string>
+    <string name="birthdate_failure_message_bad_format">Vyplňte prosím datum narození</string>
     <string name="birthdate_failure_message_invalid">Datum narození neodpovídá realitě.</string>
     <string name="phoneNumber_invalid_message">Zadejte prosím platné telefonní číslo i s předvolbou.</string>
     <string name="password_invalid_empty_message">Vyplňte prosím heslo.</string>
