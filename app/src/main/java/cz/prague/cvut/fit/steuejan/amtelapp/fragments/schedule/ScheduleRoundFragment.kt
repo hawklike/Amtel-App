@@ -178,7 +178,7 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 
     private fun setupRecycler()
     {
-        val query = MatchManager.getMatches(round, group.name)
+        val query = MatchManager.getMatches(round, group)
         val options = FirestoreRecyclerOptions.Builder<Match>()
             .setQuery(query, Match::class.java)
             .build()

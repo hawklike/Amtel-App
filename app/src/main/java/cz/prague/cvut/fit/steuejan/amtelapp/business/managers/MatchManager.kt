@@ -2,10 +2,13 @@ package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 
 import android.util.Log
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Results
 import cz.prague.cvut.fit.steuejan.amtelapp.states.MatchState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoMatch
@@ -19,6 +22,7 @@ object MatchManager
 
     suspend fun addMatch(match: Match): MatchState = withContext(IO)
     {
+        match.teams = listOf(match.homeId, match.awayId)
         return@withContext try
         {
             MatchDAO().insert(match)
@@ -68,6 +72,22 @@ object MatchManager
         return Results(sets, games)
     }
 
-    fun getMatches(round: Int, group: String): Query
-            = MatchDAO().getMatches(round, group, DateUtil.actualYear.toInt())
+    fun getMatches(round: Int, group: Group): Query
+            = MatchDAO().getMatches(round, group.name, DateUtil.actualYear.toInt())
+
+    suspend fun getCommonMatches(team1: Team, team2: Team, year: Int): List<Match> = withContext(IO)
+    {
+        return@withContext try
+        {
+            val matchesTeam1 = MatchDAO().getMatches(team1.id!!, year).toObjects<Match>()
+            val matches = matchesTeam1.filter { it.teams.contains(team2.id!!) }
+            Log.i(TAG, "getCommonMatches(): $matches for $team1 and $team2 in $year successfully retrieved from database")
+            matches
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "getCommonMatches(): matches for $team1 and $team2 in $year not found in database because ${ex.message}")
+            listOf<Match>()
+        }
+    }
 }

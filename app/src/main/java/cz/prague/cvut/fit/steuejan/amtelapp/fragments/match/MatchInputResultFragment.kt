@@ -119,6 +119,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
         overviewLayout = view.findViewById(R.id.match_input_overview)
         resultsLayout = view.findViewById(R.id.match_input_results)
+
+        inputResult.text = "Zapsat   $round. zápas"
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)

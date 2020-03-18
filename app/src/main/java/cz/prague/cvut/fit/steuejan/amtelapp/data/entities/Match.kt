@@ -21,9 +21,12 @@ data class Match(override var id: String? = null,
                  var dateAndTime: Date? = null,
                  var edits: MutableMap<String, Int> = mutableMapOf("1" to 2, "2" to 2, "3" to 2), //(round, free edits)
                  val usersId: MutableList<String?> = arrayOfNulls<String>(10).toMutableList(),
-                 var defaultEndGameEdits: Int = 2
-                 ) : Parcelable, Comparable<Match>, Entity()
+                 var defaultEndGameEdits: Int = 2,
+                 var teams: List<String> = listOf() //list of teamIds
+                 ) : Parcelable, Entity()
 {
-    override fun compareTo(other: Match): Int =
-        compareBy<Match> { it.id }.thenBy { it.home }.compare(this, other)
+    override fun toString(): String
+    {
+        return "$home - $away"
+    }
 }

@@ -177,4 +177,5 @@
     <string name="round_state">Stav %1$d. kola</string>
     <string name="round_countdown">Počet dní do konce: %1$d</string>
     <string name="sort_by">Řadit podle:</string>
+    <string name="not_successfully_generated">nebyla úspěšně vygenerovaná.</string>
 </resources>

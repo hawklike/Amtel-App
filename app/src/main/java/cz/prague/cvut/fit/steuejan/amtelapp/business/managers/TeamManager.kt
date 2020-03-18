@@ -69,10 +69,9 @@ object TeamManager
     {
         return@withContext try
         {
-            val querySnapshot = TeamDAO().find(field, value)
-            val documents = querySnapshot.toObjects<Team>()
-            Log.i(TAG, "findTeams(): $documents where $field is $value found successfully")
-            ValidTeams(documents)
+            val teams = TeamDAO().find(field, value).toObjects<Team>()
+            Log.i(TAG, "findTeams(): $teams where $field is $value found successfully")
+            ValidTeams(teams)
         }
         catch(ex: Exception)
         {
@@ -118,10 +117,9 @@ object TeamManager
     {
         return@withContext try
         {
-            val querySnapshot = TeamDAO().retrieveTeamsInSeason(group, year)
-            val documents = querySnapshot.toObjects<Team>()
-            Log.i(TAG, "retrieveTeamsInSeason(): $documents which contains pair $group, $year found successfully")
-            ValidTeams(documents)
+            val teams = TeamDAO().retrieveTeamsInSeason(group, year).toObjects<Team>()
+            Log.i(TAG, "retrieveTeamsInSeason(): $teams which contains pair $group, $year found successfully")
+            ValidTeams(teams)
         }
         catch(ex: Exception)
         {

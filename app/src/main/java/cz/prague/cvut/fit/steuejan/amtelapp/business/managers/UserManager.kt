@@ -6,11 +6,8 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.database.DatabaseHelper
-import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
-import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Player
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
-import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
@@ -55,10 +52,9 @@ object UserManager
     {
         return@withContext try
         {
-            val querySnapshot = UserDAO().find(field, value)
-            val documents = querySnapshot.toObjects<User>()
-            Log.i(TAG, "findUsers(): $documents where $field is $value found successfully")
-            documents
+            val users = UserDAO().find(field, value).toObjects<User>()
+            Log.i(TAG, "findUsers(): $users where $field is $value found successfully")
+            users
         }
         catch(ex: Exception)
         {

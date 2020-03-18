@@ -1,11 +1,13 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.RobinRoundTournament
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
@@ -16,11 +18,18 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidMatch
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
 import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ShowGroupsFirestoreAdapterVM : ViewModel()
 {
+    private val _matchesGenerated = SingleLiveEvent<Boolean>()
+    val matchesGenerated: LiveData<Boolean> = _matchesGenerated
+
+    /*---------------------------------------------------*/
+
     fun confirmInput(text: String, rounds: Int): Boolean
     {
         val n: Int
@@ -35,9 +44,23 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
 
     fun generateMatches(group: Group, rounds: Int)
     {
-        viewModelScope.launch {
+        GlobalScope.launch {
             with(TeamManager.findTeams("group", group.name)) {
-                if(this is ValidTeams) createMatches(self, rounds, group)
+                if(this is ValidTeams)
+                {
+                    try
+                    {
+                        createMatches(self, rounds, group)
+                        Log.i("GenerateMatches", "matches successfully generated")
+                        withContext(Main) {
+                            toast(context.getString(R.string.group) + " ${group.name} " + context.getString(R.string.successfully_generated))
+                        }
+                    }
+                    catch(ex: Exception)
+                    {
+                        Log.e("GenerateMatches", "matches not generated generated because ${ex.message}")
+                    }
+                }
             }
         }
     }
@@ -58,7 +81,10 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
         val map = group.rounds
         map[DateUtil.actualYear] = rounds
         GroupManager.updateGroup(group.name, mapOf("rounds" to map))
-        toast(context.getString(R.string.group) + " ${group.name} " + context.getString(R.string.successfully_generated))
+        try
+        {
+        }
+        catch(ex: Exception) {}
     }
 
     private suspend fun addMatchToTeams(match: Match, teams: List<Team>, group: Group)

@@ -3,7 +3,10 @@ package cz.prague.cvut.fit.steuejan.amtelapp.fragments.ranking
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -36,6 +39,8 @@ class RankingFragment : AbstractBaseFragment()
     private lateinit var sortByPositiveSets: TextView
     private lateinit var sortByNegativeSets: TextView
     private lateinit var sortByPoints: TextView
+
+    private lateinit var progressBar: FrameLayout
 
     private var recyclerView: RecyclerView? = null
     private var adapter: ShowTeamsRankingAdapter? = null
@@ -83,6 +88,7 @@ class RankingFragment : AbstractBaseFragment()
         sortByNegativeSets = view.findViewById(R.id.ranking_sets_negative)
         sortByPoints = view.findViewById(R.id.ranking_points)
         recyclerView = view.findViewById(R.id.ranking_recyclerView)
+        progressBar = view.findViewById(R.id.ranking_progressBar)
         actualSortOption = sortByPoints
     }
 
@@ -97,7 +103,8 @@ class RankingFragment : AbstractBaseFragment()
 
     private fun loadData()
     {
-        viewModel.loadTeams(group.name, year)
+        progressBar.visibility = VISIBLE
+        viewModel.loadTeams(group.name, year, orderBy)
     }
 
     //TODO: implement sorting teams
@@ -105,12 +112,30 @@ class RankingFragment : AbstractBaseFragment()
     {
         viewModel.teams.observe(viewLifecycleOwner) {
             teams.addAll(it)
+            progressBar.visibility = GONE
             recyclerView?.setHasFixedSize(true)
             recyclerView?.layoutManager = LinearLayoutManager(activity!!)
             adapter = ShowTeamsRankingAdapter(teams, year.toString(), orderBy)
             recyclerView?.adapter = adapter
         }
     }
+
+    /*
+    var list: MutableList<Pair<Int, Int>> = mutableListOf(Pair(10, 0), Pair(13,3), Pair(15,2), Pair(15,1), Pair(20,0), Pair(13,1), Pair(13,2))
+    println(list)
+    list = list.sortedWith(compareBy({it.first}, {it.second})).reversed().toMutableList()
+
+    val teams = listOf("a", "b", "c", "d")
+    val matches = mutableListOf<Pair<String, String>>()
+
+    for(i in 0 until teams.size)
+    {
+     	for(j in i+1 until teams.size)
+        {
+        	matches.add(Pair(teams[i], teams[j]))
+        }
+    }
+     */
 
     private fun setListeners()
     {
