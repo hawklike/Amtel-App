@@ -26,10 +26,7 @@ data class Team(override var id: String? = null,
                 ) : Parcelable, Comparable<Team>, Entity()
 {
     override fun compareTo(other: Team): Int =
-        compareBy <Team> { it.id } . compare(this, other)
+        compareBy<Team>{ it.id }.compare(this, other)
 
-    override fun toString(): String
-    {
-        return this.name
-    }
+    override fun toString(): String = this.name
 }

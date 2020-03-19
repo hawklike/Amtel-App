@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
@@ -93,8 +93,14 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
         val successTitle = context.getString(R.string.create_group_success_title)
         val failureTitle = context.getString(R.string.create_group_failure_title)
 
-        return if(group is ValidGroup) Message(successTitle, null)
-        else Message(failureTitle, null)
+        return if(group is ValidGroup) Message(
+            successTitle,
+            null
+        )
+        else Message(
+            failureTitle,
+            null
+        )
     }
 
 }
