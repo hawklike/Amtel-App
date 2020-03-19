@@ -26,10 +26,11 @@ class RankingFragmentVM : ViewModel()
             val teams = TeamManager.retrieveTeamsInSeason(group, year)
             if(teams is ValidTeams)
             {
+                var sortedTeams: List<Team> = listOf()
                 withContext(Default) {
-                    val sortedTeams = RankingSolver(teams.self, year).withOrder(orderBy).sort()
+                    sortedTeams = RankingSolver(teams.self, year).withOrder(orderBy).sort()
                 }
-                _teams.value = teams.self
+                _teams.value = sortedTeams
             }
         }
     }

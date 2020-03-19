@@ -9,11 +9,10 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Score
 
 class RankingSolver(private val teams: List<Team>, private val year: Int)
 {
+    private val mYear = year.toString()
     private var orderBy = RankingOrderBy.POINTS
 
     private val pointsAndTeams = mutableMapOf<Int, MutableList<Team>>()
-
-    //list of Pair(Team, bonus points)
     private val overallRanking = mutableListOf<Team>()
 
     fun withOrder(orderBy: RankingOrderBy): RankingSolver
@@ -22,25 +21,33 @@ class RankingSolver(private val teams: List<Team>, private val year: Int)
         return this
     }
 
-    //TODO: return List<Team>
     suspend fun sort(): List<Team>
     {
-        sortByPoints()
-        TODO()
-        return overallRanking
+        return when(orderBy)
+        {
+            RankingOrderBy.POINTS -> sortByPoints()
+            RankingOrderBy.MATCHES -> teams.sortedByDescending { it.matchesPerYear[mYear] }
+            RankingOrderBy.WINS -> teams.sortedByDescending { it.winsPerYear[mYear] }
+            RankingOrderBy.LOSSES -> teams.sortedByDescending { it.lossesPerYear[mYear] }
+            RankingOrderBy.POSITIVE_SETS -> teams.sortedByDescending { it.positiveSetsPerYear[mYear] }
+            RankingOrderBy.NEGATIVE_SETS -> teams.sortedByDescending { it.negativeSetsPerYear[mYear] }
+        }
     }
 
-    private suspend fun sortByPoints()
+    private suspend fun sortByPoints(): List<Team>
     {
         setPointsAndTeams()
         setOverallRanking()
+        return overallRanking
     }
 
-    //is working
+    /*
+    Divide teams by points.
+     */
     private fun setPointsAndTeams()
     {
         teams.forEach { team ->
-            team.pointsPerYear[year.toString()]?.let { points ->
+            team.pointsPerYear[mYear]?.let { points ->
                 val tmp = pointsAndTeams[points]
                 if(tmp == null) pointsAndTeams[points] = mutableListOf()
 
@@ -50,10 +57,10 @@ class RankingSolver(private val teams: List<Team>, private val year: Int)
     }
 
     /*
-    The function sorts map by points (descending), then checks number of teams with
-    the same number of points, if there is only one team, inputs the team
-    into overallResults list, otherwise determines ranking of the teams and
-    inputs them later
+    The function sorts the map of pointsAndTeams by points (descending), then checks
+    number of teams with the same number of points, if there is only one team,
+    inputs the team into the overallResults list, otherwise determines
+    ranking of the teams and inputs them later on.
     */
     private suspend fun setOverallRanking()
     {
@@ -63,6 +70,13 @@ class RankingSolver(private val teams: List<Team>, private val year: Int)
         }
     }
 
+    /*
+    As the name of the function says, this function differs teams with the same
+    number of points according to these rules:
+            1. if there are only two same ranked teams, divide them by their common match
+            2. otherwise, create small table (table of sets and games gained among other
+               same ranked teams) and divide them by this table
+     */
     private suspend fun diffTeamsWithSamePoints(teams: MutableList<Team>): List<Team>
     {
         //(teamId, score)
@@ -76,14 +90,13 @@ class RankingSolver(private val teams: List<Team>, private val year: Int)
         //already sorted by score
         results = setResults(results, matches).toMutableMap()
         return checkResults(results)
-
-//        return results.keys.toList()
-//
-//        results.keys.forEach { team ->
-//            overallRanking.add(team)
-//        }
     }
 
+    /*
+    Checks if two and more teams don't have the same number of sets and games.
+    If so, calls the diffTeamsWithSamePoints function again with the same ranked teams
+    and the result merges with other teams that are in the right order.
+     */
     private suspend fun checkResults(results: MutableMap<Team, Score>): List<Team>
     {
         val teamsWithSameScore = mutableSetOf<Team>()
@@ -102,19 +115,21 @@ class RankingSolver(private val teams: List<Team>, private val year: Int)
             previousTeam = team
         }
 
+        val teams = results.keys.toList()
         return if(teamsWithSameScore.isNotEmpty())
         {
-            val teams = results.keys.toList()
             val leftIndex = teams.indexOf(teamsWithSameScore.first())
             val rightIndex = teams.indexOf(teamsWithSameScore.last())
-            val preTeams = teams.take(leftIndex)
-            val postTeams = teams.drop(rightIndex + 1)
-            preTeams + diffTeamsWithSamePoints(teamsWithSameScore.toMutableList()) + postTeams
+            teams.take(leftIndex) + diffTeamsWithSamePoints(teamsWithSameScore.toMutableList()) + teams.drop(rightIndex + 1)
         }
-        else results.keys.toList()
+        else teams
     }
 
-    //is working
+    /*
+    Create a score for each team in the results map. Score is a pair of total sets and games
+    got in the matches. After that, the function sort the map of results according to
+    first sets and then games.
+     */
     private fun setResults(results: MutableMap<Team, Score>, matches: List<Match>): Map<Team, Score>
     {
         matches.forEach { match ->
@@ -139,7 +154,10 @@ class RankingSolver(private val teams: List<Team>, private val year: Int)
         return results.toList().sortedBy{ it.second }.toMap()
     }
 
-    //is working
+
+    /*
+    Returns matches of the teams given as a parameter.
+     */
     private suspend fun getMatches(teams: MutableList<Team>): List<Match>
     {
         val combinedTeams = mutableListOf<Pair<Team, Team>>()

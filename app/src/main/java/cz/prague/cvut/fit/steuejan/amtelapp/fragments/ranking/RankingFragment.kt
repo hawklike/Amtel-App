@@ -95,8 +95,8 @@ class RankingFragment : AbstractBaseFragment()
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
-        loadData()
         setupRecycler()
+        loadData()
         setBoldStyle(sortByPoints)
         setListeners()
     }
@@ -107,74 +107,61 @@ class RankingFragment : AbstractBaseFragment()
         viewModel.loadTeams(group.name, year, orderBy)
     }
 
-    //TODO: implement sorting teams
     private fun setupRecycler()
     {
-        viewModel.teams.observe(viewLifecycleOwner) {
-            teams.addAll(it)
-            progressBar.visibility = GONE
-            recyclerView?.setHasFixedSize(true)
-            recyclerView?.layoutManager = LinearLayoutManager(activity!!)
-            adapter = ShowTeamsRankingAdapter(teams, year.toString(), orderBy)
-            recyclerView?.adapter = adapter
-        }
+        recyclerView?.setHasFixedSize(true)
+        recyclerView?.layoutManager = LinearLayoutManager(activity!!)
+        adapter = ShowTeamsRankingAdapter(teams, year.toString(), orderBy)
+        recyclerView?.adapter = adapter
+        populateAdapter()
     }
 
-    /*
-    var list: MutableList<Pair<Int, Int>> = mutableListOf(Pair(10, 0), Pair(13,3), Pair(15,2), Pair(15,1), Pair(20,0), Pair(13,1), Pair(13,2))
-    println(list)
-    list = list.sortedWith(compareBy({it.first}, {it.second})).reversed().toMutableList()
-
-    val teams = listOf("a", "b", "c", "d")
-    val matches = mutableListOf<Pair<String, String>>()
-
-    for(i in 0 until teams.size)
+    private fun populateAdapter()
     {
-     	for(j in i+1 until teams.size)
-        {
-        	matches.add(Pair(teams[i], teams[j]))
+        viewModel.teams.observe(viewLifecycleOwner) {
+            progressBar.visibility = GONE
+            teams.clear()
+            teams.addAll(it)
+            adapter?.orderBy = orderBy
+            adapter?.notifyDataSetChanged()
         }
     }
-     */
 
     private fun setListeners()
     {
         sortByMatches.setOnClickListener {
-            highlightOption(it as TextView)
-            //TODO
+            setOption(it as TextView, RankingOrderBy.MATCHES)
         }
 
         sortByWins.setOnClickListener {
-            highlightOption(it as TextView)
-            //TODO
+            setOption(it as TextView, RankingOrderBy.WINS)
         }
 
         sortByLosses.setOnClickListener {
-            highlightOption(it as TextView)
-            //TODO
+            setOption(it as TextView, RankingOrderBy.LOSSES)
         }
 
         sortByPositiveSets.setOnClickListener {
-            highlightOption(it as TextView)
-            //TODO
+            setOption(it as TextView, RankingOrderBy.POSITIVE_SETS)
         }
 
         sortByNegativeSets.setOnClickListener {
-            highlightOption(it as TextView)
-            //TODO
+            setOption(it as TextView, RankingOrderBy.NEGATIVE_SETS)
         }
 
         sortByPoints.setOnClickListener {
-            highlightOption(it as TextView)
-            //TODO
+            setOption(it as TextView, RankingOrderBy.POINTS)
         }
     }
 
-    private fun highlightOption(view: TextView)
+    private fun setOption(view: TextView, orderBy: RankingOrderBy)
     {
+        progressBar.visibility = VISIBLE
         setNormalStyle(actualSortOption)
         setBoldStyle(view)
         actualSortOption = view
+        this.orderBy = orderBy
+        viewModel.loadTeams(group.name, year, orderBy)
     }
 
     private fun setNormalStyle(view: TextView)
