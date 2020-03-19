@@ -5,11 +5,9 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.CalendarContract
 import android.view.View
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -22,6 +20,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -32,6 +31,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchArrangementActivityVM
+import java.util.*
 
 
 class MatchArrangementActivity : AbstractBaseActivity()
@@ -65,6 +65,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
 
     private lateinit var defaultEndGame: TextView
 
+    private lateinit var addToCalendar: ImageButton
     private lateinit var editButton: FloatingActionButton
 
     private var matchInfoLayout: RelativeLayout? = null
@@ -98,6 +99,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
 
         defaultEndGame = findViewById(R.id.match_arrangement_default)
 
+        addToCalendar = findViewById(R.id.match_arrangement_calendar)
         editButton = findViewById(R.id.match_arrangement_edit_button)
         progressBarLayout = findViewById(R.id.match_arrangement_progressBar)
         matchInfoLayout = findViewById(R.id.match_arrangement)
@@ -118,12 +120,13 @@ class MatchArrangementActivity : AbstractBaseActivity()
     override fun onDestroy()
     {
         super.onDestroy()
-        progressBarLayout?.removeAllViews()
-        matchInfoLayout?.removeAllViews()
-
         sendEmailOpponent.setOnClickListener(null)
         callOpponent.setOnClickListener(null)
         defaultEndGame.setOnClickListener(null)
+        addToCalendar.setOnClickListener(null)
+
+        progressBarLayout?.removeAllViews()
+        matchInfoLayout?.removeAllViews()
 
         progressBarLayout = null
         matchInfoLayout = null
@@ -179,6 +182,43 @@ class MatchArrangementActivity : AbstractBaseActivity()
         sendEmail()
         call()
         defaultEndGame()
+        addToCalendar()
+    }
+
+    private fun addToCalendar()
+    {
+        addToCalendar.setOnClickListener {
+            MaterialDialog(this).show {
+                title(text = "Přidat utkání do kalendáře?")
+                positiveButton(R.string.yes) {
+                    addToCalendarIntent()
+                }
+                negativeButton()
+            }
+        }
+    }
+
+    private fun addToCalendarIntent()
+    {
+        val startMillis = match.dateAndTime?.toCalendar()?.run {
+            timeInMillis
+        } ?: run { toast("Nebyl nalezen čas utkání."); return }
+
+        val endMillis = match.dateAndTime?.toCalendar()?.run {
+            this.add(Calendar.HOUR_OF_DAY, 3)
+            timeInMillis
+        }
+
+        val intent = Intent(Intent.ACTION_INSERT).apply {
+            data = CalendarContract.Events.CONTENT_URI
+            putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startMillis)
+            putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endMillis)
+            putExtra(CalendarContract.Events.TITLE, "Utkání ${homeTeam.name}–${awayTeam.name} (${match.round}. kolo) [AMTEL Opava]")
+            putExtra(CalendarContract.Events.DESCRIPTION, "Utkání ${homeTeam.name}–${awayTeam.name} v ${match.round}. kole soutěže AMTEL Opava. Oponent: ${opponent?.name ?: ""} ${opponent?.surname ?: ""}.")
+            putExtra(CalendarContract.Events.EVENT_LOCATION, match.place)
+        }
+
+        startActivity(Intent.createChooser(intent, "Přidat utkání" + "..."))
     }
 
     private fun defaultEndGame()
@@ -244,7 +284,9 @@ class MatchArrangementActivity : AbstractBaseActivity()
                     val place = this.getInputField().text
                     changePlace.text = place
                     viewModel.updatePlace(place.toString())
+                    match.place = place.toString()
                 }
+                negativeButton()
             }
         }
     }
@@ -260,6 +302,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
                 }
 
                 dateTimePicker(currentDateTime = savedDate, autoFlipToTime = true, show24HoursView = true) { _, date ->
+                    match.dateAndTime = date.time
                     viewModel.updateDateTime(date)
                 }
             }
