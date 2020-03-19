@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -17,9 +19,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchArrangementActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchMenuActivity
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchViewPagerActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowMatchesFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -46,7 +49,9 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 
     private var chooseWeekLayout: RelativeLayout? = null
 
+    private lateinit var title: TextView
     private lateinit var weekRange: TextView
+    private lateinit var deadline: TextView
     private lateinit var weekLayout: TextInputLayout
     private lateinit var setWeek: FloatingActionButton
 
@@ -104,7 +109,9 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
     {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.schedule_round_recyclerView)
+        title = view.findViewById(R.id.schedule_round_choose_week_text)
         weekRange = view.findViewById(R.id.schedule_round_week_text)
+        deadline = view.findViewById(R.id.schedule_round_deadline_text)
         chooseWeekLayout = view.findViewById(R.id.schedule_round_choose_week)
         weekLayout = view.findViewById(R.id.schedule_round_choose_week_week)
         setWeek = view.findViewById(R.id.schedule_round_choose_week_add)
@@ -115,19 +122,33 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
         super.onActivityCreated(savedInstanceState)
         user = scheduleViewModel.user.value!!
 
-        if(user is SignedUser && (user as SignedUser).self.role.toRole() == UserRole.HEAD_OF_LEAGUE)
-            chooseWeekLayout?.visibility = View.VISIBLE
-
+        populateFields()
         setupRecycler()
         getWeek()
         setListeners()
         setObservers()
     }
 
+    private fun populateFields()
+    {
+        if(user is SignedUser && (user as SignedUser).self.role.toRole() == UserRole.HEAD_OF_LEAGUE)
+        {
+            deadline.visibility = GONE
+            weekLayout.visibility = VISIBLE
+            setWeek.visibility = VISIBLE
+        }
+        else
+        {
+            group.roundDates[round.toString()]?.let { weekNumber ->
+                title.text = String.format(getString(R.string.round_state), round)
+                deadline.text = String.format(getString(R.string.round_countdown), DateUtil.getRemainingDaysUntil(weekNumber))
+            } ?: let { chooseWeekLayout?.visibility = GONE }
+        }
+    }
+
     private fun getWeek()
     {
         viewModel.getWeek(group, round)
-
     }
 
     private fun setListeners()
@@ -157,7 +178,7 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 
     private fun setupRecycler()
     {
-        val query = MatchManager.getMatches(round, group.name)
+        val query = MatchManager.getMatches(round, group)
         val options = FirestoreRecyclerOptions.Builder<Match>()
             .setQuery(query, Match::class.java)
             .build()
@@ -179,10 +200,10 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 
     private fun startMatchResultActivity(match: Match, title: String)
     {
-        val intent = Intent(activity!!, MatchMenuActivity::class.java).apply {
-            putExtra(MatchMenuActivity.MATCH, match)
-            putExtra(MatchMenuActivity.WEEK, week)
-            putExtra(MatchMenuActivity.TITLE, title)
+        val intent = Intent(activity!!, MatchViewPagerActivity::class.java).apply {
+            putExtra(MatchViewPagerActivity.MATCH, match)
+            putExtra(MatchViewPagerActivity.WEEK, week)
+            putExtra(MatchViewPagerActivity.TITLE, title)
         }
         startActivity(intent)
     }

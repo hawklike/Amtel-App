@@ -12,7 +12,7 @@
     <string name="user_login_success_title">Přihlášení proběhlo úspěšně</string>
     <string name="user_login_success_message">Vítejte!\n\nZdá se, že jste se přihlásil/a poprvé. Jako první prosím vyplňte Vaše osobní údaje v sekci:\n\nÚčet > OSOBNÍ.</string>
     <string name="user_login_failure_title">Přihlášení se nezdařilo</string>
-    <string name="user_login_failure_message">Zadali jste neplatnou kombinaci emailu a hesla. Možná jenom nemáte připojení k internetu.</string>
+    <string name="user_login_failure_message">Zadali jste neplatnou kombinaci emailu a hesla. Jste připojen/a k internetu?</string>
     <string name="invalidEmail_error">Zadejte prosím validní email.</string>
     <string name="invalidPassword_error">Vyplňte prosím heslo.</string>
     <string name="logout">Odhlášení</string>
@@ -64,7 +64,7 @@
     <string name="create_team_failure_name_error">Vyplňte prosím jméno.</string>
     <string name="create_team_failure_place_error">Vyplňte prosím adresu kurtu.</string>
     <string name="create_team_failure_days_error">Vyplňte prosím hrací dny.</string>
-    <string name="birthdate_failure_message_bad_format">Vyplňte prosím datum narození ve formátu dd.MM.yyyy</string>
+    <string name="birthdate_failure_message_bad_format">Vyplňte prosím datum narození</string>
     <string name="birthdate_failure_message_invalid">Datum narození neodpovídá realitě.</string>
     <string name="phoneNumber_invalid_message">Zadejte prosím platné telefonní číslo i s předvolbou.</string>
     <string name="password_invalid_empty_message">Vyplňte prosím heslo.</string>
@@ -164,4 +164,18 @@
     <string name="dateTime_not_found">Datum a čas nejsou uvedeny</string>
     <string name="dateTime_format">dd.MM.yyyy \'v\' HH:mm</string>
     <string name="lost_password">Zapomněl/a jsem heslo</string>
+    <string name="credentials">Přihlašovací údaje</string>
+    <string name="reset_email_sent">Email byl úspěšně odeslán.</string>
+    <string name="reset_email_failure">Email se nepodařilo odeslat.</string>
+    <string name="lost_password_title">Zapomenuté heslo</string>
+    <string name="empty_email_message">Vyplňte prosím email.</string>
+    <string name="reset_email_message">Nové heslo vám bude zasláno na email: %1$s\n\nMějte prosím trpělivost, může to pár minut trvat.</string>
+    <string name="last_active_season">Poslední sezóna: %1$s</string>
+    <string name="teams_number_this_year">Počet letošních týmů: %1$d</string>
+    <string name="choose_default_win_lose">Zvolit kontumační prohru/výhru</string>
+    <string name="choose_week">Zvolit hrací týden</string>
+    <string name="round_state">Stav %1$d. kola</string>
+    <string name="round_countdown">Počet dní do konce: %1$d</string>
+    <string name="sort_by">Řadit podle:</string>
+    <string name="not_successfully_generated">nebyla úspěšně vygenerovaná.</string>
 </resources>

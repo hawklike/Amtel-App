@@ -6,6 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_DEFAULT_LOSS
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_LOOSE
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_WIN
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
@@ -120,7 +123,7 @@ class MatchArrangementActivityVM : ViewModel()
         }
     }
 
-    fun countTotalScore(match: Match)
+    fun countTotalScore(match: Match, isDefaultLoss: Boolean = false)
     {
         var homeScore = 0
         var awayScore = 0
@@ -149,41 +152,83 @@ class MatchArrangementActivityVM : ViewModel()
                 match.awayScore = awayScore
                 viewModelScope.launch {
                     MatchManager.addMatch(match)
-                    updatePoints(match)
+                    updatePoints(match, isDefaultLoss)
                 }
             }
         }
     }
 
-    private suspend fun updatePoints(match: Match)
+    private suspend fun updatePoints(match: Match, isDefaultLoss: Boolean)
     {
         val homeTeam = teams.value?.first
         val awayTeam = teams.value?.second
 
         homeTeam?.let {
-            updatePoints(it, match) { match.homeScore!! > match.awayScore!! }
+            updatePoints(it, match, isDefaultLoss) { match.homeScore!! > match.awayScore!! }
         }
 
         awayTeam?.let {
-            updatePoints(it, match) { match.awayScore!! > match.homeScore!! }
+            updatePoints(it, match, isDefaultLoss) { match.awayScore!! > match.homeScore!! }
         }
     }
 
-    private suspend fun updatePoints(team: Team, match: Match, predicate: () -> Boolean)
+    private suspend fun updatePoints(team: Team, match: Match, isDefaultLoss: Boolean, isWinner: () -> Boolean)
     {
-        val year = DateUtil.actualYear.toString()
+        val year = DateUtil.actualYear
 
         val pointsPerYear = team.pointsPerMatch[year]
         if(pointsPerYear == null) team.pointsPerMatch[year] = mutableMapOf()
 
         var sum = 0
-        team.pointsPerMatch[year]?.let { points ->
-            points[match.id!!] = if(predicate.invoke()) 2 else 1
+        var wins = 0
+        team.pointsPerMatch[year]!!.let { points ->
+            points[match.id!!] = when
+            {
+                isWinner.invoke() -> POINTS_WIN
+                isDefaultLoss -> POINTS_DEFAULT_LOSS
+                else -> POINTS_LOOSE
+            }
             sum = points.values.sum()
+            points.values.forEach { if(it == POINTS_WIN) wins++ }
         }
 
         team.pointsPerYear[year] = sum
+        team.winsPerYear[year] = wins
+        team.lossesPerYear[year] = team.pointsPerMatch[year]!!.size - wins
+        team.matchesPerYear[year] = team.pointsPerMatch[year]!!.size
+
+        initSetsStatistics(team, match)
+
         TeamManager.addTeam(team)
+    }
+
+    private fun initSetsStatistics(team: Team, match: Match)
+    {
+        val year = DateUtil.actualYear
+
+        val positiveSetsPerYear = team.setsPositivePerMatch[year]
+        if(positiveSetsPerYear == null) team.setsPositivePerMatch[year] = mutableMapOf()
+
+        val negativeSetsPerYear = team.setsNegativePerMatch[year]
+        if(negativeSetsPerYear == null) team.setsNegativePerMatch[year] = mutableMapOf()
+
+        team.setsPositivePerMatch[year]!!.let { sets ->
+            sets[match.id!!] = when(team.id)
+            {
+                match.homeId -> match.rounds.fold(0) { acc, round -> round.homeSets?.let { acc + it } ?: acc }
+                else -> match.rounds.fold(0) { acc, round -> round.awaySets?.let { acc + it } ?: acc }
+            }
+            team.positiveSetsPerYear[year] = sets.values.sum()
+        }
+
+        team.setsNegativePerMatch[year]!!.let { sets ->
+            sets[match.id!!] = when(team.id)
+            {
+                match.homeId -> match.rounds.fold(0) { acc, round -> round.awaySets?.let { acc + it } ?: acc }
+                else -> match.rounds.fold(0) { acc, round -> round.homeSets?.let { acc + it } ?: acc }
+            }
+            team.negativeSetsPerYear[year] = sets.values.sum()
+        }
     }
 
 
@@ -210,8 +255,64 @@ class MatchArrangementActivityVM : ViewModel()
         Administrátor aplikace AMTEL Opava
         """.trimIndent()
 
-        homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message)}
-        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message)}
+        homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+    }
+
+    fun defaultEndGame(match: Match, isHomeWinner: Boolean, homeTeam: Team, awayTeam: Team)
+    {
+        if(isHomeWinner) setDefaultResult(match, 6, 0)
+        else setDefaultResult(match, 0, 6)
+        countTotalScore(match, true)
+        sendDefaultResultEmail(match, homeTeam, awayTeam)
+    }
+
+    private fun sendDefaultResultEmail(match: Match, homeTeam: Team, awayTeam: Team)
+    {
+        val subject = "Byla zvolena kontumační prohra/výhra v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})"
+
+        val message = """
+                    Dobrý den,
+                    
+                    vedoucí týmu ${homeTeam.name} právě zvolil kontumační prohru/výhru v utkání ${homeTeam.name}–${awayTeam.name} ze dne ${match.dateAndTime?.toMyString() ?: "nespecifikováno"}.
+                    
+                    Kontumačně vyhrál tým: ${if(match.homeScore!! > match.awayScore!!) homeTeam.name else awayTeam.name}
+                    Tým ${if(match.homeScore!! < match.awayScore!!) homeTeam.name else awayTeam.name} se rozhodl do utkání nenastoupit a kontumačně prohrál.
+                    
+                    Na tento email prosím neodpovídejte.
+                    
+                    Administrátor aplikace AMTEL Opava
+                    """.trimIndent()
+
+        val awayManagerEmail = teams.value?.second?.users?.find {it.role.toRole() == UserRole.TEAM_MANAGER}?.email
+        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+        EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
+    }
+
+    private fun setDefaultResult(match: Match, homePoints: Int, awayPoints: Int)
+    {
+        match.rounds.forEach {
+            it.homeGemsSet1 = homePoints
+            it.homeGemsSet2 = homePoints
+            it.awayGemsSet1 = awayPoints
+            it.awayGemsSet2 = awayPoints
+
+            it.homeGems = 2 * homePoints
+            it.awayGems = 2* awayPoints
+
+            if(homePoints > awayPoints)
+            {
+                it.homeWinner = true
+                it.homeSets = 2
+                it.awaySets = 0
+            }
+            else
+            {
+                it.homeWinner = false
+                it.homeSets = 0
+                it.awaySets = 2
+            }
+        }
     }
 
 }

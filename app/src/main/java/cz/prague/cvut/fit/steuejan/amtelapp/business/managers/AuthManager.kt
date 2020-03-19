@@ -6,6 +6,7 @@ import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidPassword
 import cz.prague.cvut.fit.steuejan.amtelapp.states.PasswordState
@@ -102,6 +103,32 @@ object AuthManager
             Log.e(TAG, "changePassword(): new password failed because there is no signed user")
             InvalidPassword()
         }
+    }
+
+    fun sendResetPassword(email: String)
+    {
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful) toast(R.string.reset_email_sent)
+                else toast(R.string.reset_email_failure)
+            }
+    }
+
+    fun getCurrentRole(homeManagerId: String?, awayManagerId: String?): SignedIn
+    {
+        return currentUser?.let {
+            when(it.uid)
+            {
+                homeManagerId -> SignedIn.HOME_MANAGER
+                awayManagerId -> SignedIn.AWAY_MANAGER
+                else -> SignedIn.HEAD_OF_LEAGUE
+            }
+        } ?: SignedIn.NONE
+    }
+
+    enum class SignedIn
+    {
+        HOME_MANAGER, AWAY_MANAGER, HEAD_OF_LEAGUE, NONE
     }
 
     val currentUser: FirebaseUser?

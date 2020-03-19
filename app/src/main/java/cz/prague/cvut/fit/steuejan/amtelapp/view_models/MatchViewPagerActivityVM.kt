@@ -8,7 +8,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
 
-class MatchMenuActivityVM : ViewModel()
+class MatchViewPagerActivityVM : ViewModel()
 {
     private val _match = SingleLiveEvent<Match>()
 

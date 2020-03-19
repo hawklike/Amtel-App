@@ -119,6 +119,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
         overviewLayout = view.findViewById(R.id.match_input_overview)
         resultsLayout = view.findViewById(R.id.match_input_results)
+
+        inputResult.text = "Zapsat   $round. zápas"
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -428,7 +430,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     {
         if(predicate())
         {
-            inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryVeryLightGrey))
+            inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.middleLightGrey))
             inputResult.isEnabled = false
             inputResult.elevation = 0.0F
             homePlayers.isEnabled = false

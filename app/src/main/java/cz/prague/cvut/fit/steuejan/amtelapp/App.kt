@@ -36,5 +36,9 @@ class App : Application()
         {
             return ContextCompat.getColor(context, color)
         }
+
+        const val POINTS_WIN = 2
+        const val POINTS_LOOSE = 1
+        const val POINTS_DEFAULT_LOSS = 0
     }
 }

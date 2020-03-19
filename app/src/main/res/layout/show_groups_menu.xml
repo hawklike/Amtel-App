@@ -6,8 +6,33 @@
 
     <include layout="@layout/curve" />
 
+    <FrameLayout
+        android:id="@+id/show_groups_progressBar"
+        android:layout_width="match_parent"
+        android:visibility="visible"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/blue"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:max="100"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginTop="50dp"
+            android:text="@string/amtel_opava"
+            android:textColor="@color/blue"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
     <TextView
-        android:id="@+id/schedule_groups_menu_text"
+        android:id="@+id/show_groups_menu_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/card_margin"
@@ -20,8 +45,8 @@
         android:textSize="@dimen/common_text_size" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/schedule_groups_recyclerView"
-        android:layout_below="@id/schedule_groups_menu_text"
+        android:id="@+id/show_groups_recyclerView"
+        android:layout_below="@id/show_groups_menu_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/card_margin"

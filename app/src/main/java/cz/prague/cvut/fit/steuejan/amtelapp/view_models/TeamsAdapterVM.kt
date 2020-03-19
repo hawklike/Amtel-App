@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroup
 import kotlinx.coroutines.launch
@@ -32,7 +33,12 @@ class TeamsAdapterVM : ViewModel()
         val group = GroupManager.findGroup(name)
         if(group is ValidGroup)
         {
-            group.self.teamIds.add(teamId)
+            val year = DateUtil.actualYear
+
+            val teamIds = group.self.teamIds[year]
+            if(teamIds == null) group.self.teamIds[year] = mutableListOf()
+
+            group.self.teamIds[year]?.add(teamId)
             GroupManager.addGroup(group.self)
         }
     }
@@ -42,7 +48,9 @@ class TeamsAdapterVM : ViewModel()
         val group = GroupManager.findGroup(team.group)
         if(group is ValidGroup)
         {
-            group.self.teamIds.remove(team.id!!)
+            val season = group.self.teamIds[DateUtil.actualYear]
+            season?.remove(team.id!!)
+            if(season != null && season.isEmpty()) group.self.teamIds.remove(DateUtil.actualYear)
             GroupManager.addGroup(group.self)
         }
     }

@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
@@ -19,6 +20,7 @@ import com.afollestad.materialdialogs.input.input
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
@@ -44,7 +46,7 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
         fun init(group: Group)
         {
             this.group = group
-            val size = group.teamIds.size
+            val size = group.teamIds[DateUtil.actualYear]?.size ?: 0
 
             name.text = group.name
             this.size.text = String.format(context.getString(R.string.number_teams), size)
@@ -54,6 +56,15 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
             calculatedRounds = rounds
 
             generate()
+            setObserver()
+        }
+
+        private fun setObserver()
+        {
+            viewModel.matchesGenerated.observe(context as FragmentActivity) { isSuccess ->
+                if(isSuccess) toast(context.getString(R.string.group) + " ${group.name} " + App.context.getString(R.string.successfully_generated))
+                else toast(context.getString(R.string.group) + " ${group.name} " + App.context.getString(R.string.not_successfully_generated))
+            }
         }
 
         //TODO: implement regenerating matches
@@ -66,7 +77,7 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
             }
             else
             {
-                val rounds = group.rounds[DateUtil.actualYear.toString()]
+                val rounds = group.rounds[DateUtil.actualYear]
                 if(rounds != null && rounds != 0)
                 {
                     generate.text = context.getString(R.string.regenerate_matches)

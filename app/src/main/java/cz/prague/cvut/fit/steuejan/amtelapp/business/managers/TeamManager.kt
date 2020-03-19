@@ -69,10 +69,9 @@ object TeamManager
     {
         return@withContext try
         {
-            val querySnapshot = TeamDAO().find(field, value)
-            val documents = querySnapshot.toObjects<Team>()
-            Log.i(TAG, "findTeams(): $documents where $field is $value found successfully")
-            ValidTeams(documents)
+            val teams = TeamDAO().find(field, value).toObjects<Team>()
+            Log.i(TAG, "findTeams(): $teams where $field is $value found successfully")
+            ValidTeams(teams)
         }
         catch(ex: Exception)
         {
@@ -95,11 +94,12 @@ object TeamManager
         return@withContext try
         {
             TeamDAO().updateUser(newUser)
+            Log.i(TAG, "updateUserInTeam() $newUser succesfully updated")
             true
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateUser(): user $newUser not updated because ${ex.message}")
+            Log.e(TAG, "updateUserInTeam(): user $newUser not updated because ${ex.message}")
             false
         }
     }
@@ -111,6 +111,21 @@ object TeamManager
             if(orderBy == it) query = TeamDAO().retrieveAllUsers(it.toString(), teamId)
         }
         return query!!
+    }
+
+    suspend fun retrieveTeamsInSeason(group: String, year: Int): TeamState = withContext(IO)
+    {
+        return@withContext try
+        {
+            val teams = TeamDAO().retrieveTeamsInSeason(group, year).toObjects<Team>()
+            Log.i(TAG, "retrieveTeamsInSeason(): $teams which contains pair $group, $year found successfully")
+            ValidTeams(teams)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveTeamsInSeason(): documents not found because ${ex.message}")
+            NoTeam
+        }
     }
 
     private const val TAG = "TeamManager"

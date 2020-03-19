@@ -15,7 +15,7 @@
         <TextView
             android:id="@+id/account_boss_add_tm_text"
             style="@style/TextViewTitle"
-            android:text="Přihlašovací údaje" />
+            android:text="@string/credentials" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/login_email"
@@ -45,24 +45,24 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <RelativeLayout
-            android:id="@+id/login_lost_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_below="@id/login_password">
-
             <TextView
+                android:id="@+id/login_lost_password"
                 style="@style/TextViewInClickableLayout"
-                android:text="@string/lost_password"
-                android:gravity="center"
+                android:layout_below="@id/login_password"
                 android:layout_marginStart="8dp"
-                android:textSize="13dp"
-                android:textColor="@color/blue"/>
-
-        </RelativeLayout>
+                android:gravity="center"
+                android:text="@string/lost_password"
+                android:textColor="@color/blue"
+                android:textSize="13sp" />
 
     </RelativeLayout>
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="210dp"
+        android:layout_marginStart="12dp"
+        android:background="@drawable/tennis_players"
+        android:layout_above="@id/login_checkButton"/>
 
     <Button
         android:id="@+id/login_checkButton"

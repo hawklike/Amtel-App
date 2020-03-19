@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
@@ -145,8 +145,15 @@ class AccountPersonalFragmentVM : ViewModel()
 
     fun createAfterPersonalInfoDialog(state: PersonalInfoState): Message
     {
-        return if(state is PersonalInfoSuccess) Message(App.context.getString(R.string.personalInfo_change_success_title), null)
-        else Message(App.context. getString(R.string.personalInfo_change_failure_title), null)
+        return if(state is PersonalInfoSuccess) Message(
+            App.context.getString(R.string.personalInfo_change_success_title),
+            null
+        )
+        else Message(
+            App.context.getString(
+                R.string.personalInfo_change_failure_title
+            ), null
+        )
     }
 
     fun setDialogBirthdate(birthdate: Editable): Calendar?

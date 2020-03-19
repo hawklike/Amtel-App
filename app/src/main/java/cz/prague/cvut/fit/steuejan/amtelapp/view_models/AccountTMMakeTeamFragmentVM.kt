@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
@@ -103,7 +103,10 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
         val title: String = if(teamState is ValidTeam) user.teamId?.let { actualizationTitle } ?: successTitle
         else failureTitle
 
-        return Message(title, null)
+        return Message(
+            title,
+            null
+        )
     }
 
     private fun confirmInput(name: String, playingDays: String): Boolean

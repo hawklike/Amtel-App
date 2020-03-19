@@ -68,10 +68,9 @@ object GroupManager
     {
         return@withContext try
         {
-            val documentSnapshot = GroupDAO().retrieveAll()
-            val documents = documentSnapshot.toObjects<Group>()
-            Log.i(TAG, "retrieveAll(): $documents retrieved successfully")
-            ValidGroups(documents)
+            val groups = GroupDAO().retrieveAll().toObjects<Group>()
+            Log.i(TAG, "retrieveAll(): $groups retrieved successfully")
+            ValidGroups(groups)
         }
         catch(ex: Exception)
         {

@@ -48,7 +48,7 @@ class ScheduleRoundsActivity : AbstractViewPagerActivity()
     override fun setupViewPager(viewPager: ViewPager)
     {
         val adapter = ViewPagerAdapter(supportFragmentManager)
-        val rounds = group.rounds[DateUtil.actualYear.toString()] ?: 0
+        val rounds = group.rounds[DateUtil.actualYear] ?: 0
         println("rounds: $rounds")
 
         (1..rounds).map { round ->
