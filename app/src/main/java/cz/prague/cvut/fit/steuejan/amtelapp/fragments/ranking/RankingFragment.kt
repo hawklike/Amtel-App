@@ -21,6 +21,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractBaseFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.RankingFragmentVM
 
+//TODO: resolve data when screen rotates
 class RankingFragment : AbstractBaseFragment()
 {
     private val viewModel by viewModels<RankingFragmentVM>()
