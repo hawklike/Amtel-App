@@ -179,4 +179,6 @@
     <string name="sort_by">Řadit podle:</string>
     <string name="not_successfully_generated">nebyla úspěšně vygenerovaná.</string>
     <string name="private_name_playOff">zzzzzzzzzz_baraz</string>
+    <string name="week_in_year">Týden v roce</string>
+    <string name="start_playOff">Zvolit začátek baráže</string>
 </resources>

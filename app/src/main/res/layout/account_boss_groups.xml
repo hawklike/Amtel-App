@@ -24,13 +24,13 @@
             <TextView
                 android:id="@+id/account_boss_groups_choose_week_text"
                 style="@style/TextViewTitle"
-                android:text="Zvolit termín baráže" />
+                android:text="@string/start_playOff" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/account_boss_groups_choose_week_week"
                 style="@style/TextInputLayout"
                 android:layout_below="@id/account_boss_groups_choose_week_text"
-                android:hint="Týden v roce"
+                android:hint="@string/week_in_year"
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText

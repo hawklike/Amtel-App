@@ -40,6 +40,7 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
 
         private val name: TextView = itemView.findViewById(R.id.group_card_name)
         private val size: TextView = itemView.findViewById(R.id.group_card_size)
+        private val playingPlayOff: TextView = itemView.findViewById(R.id.group_card_playingPlayOff)
         private val generate: Button = itemView.findViewById(R.id.group_card_generate)
         private val card: RelativeLayout = itemView.findViewById(R.id.group_card)
 
@@ -48,10 +49,14 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
 
         fun init(group: Group)
         {
-            viewModel.setRank(group, adapterPosition)
-            if(group.playOff) card.visibility = GONE
             this.group = group
+            viewModel.setRank(group, adapterPosition)
+
             val size = group.teamIds[DateUtil.actualYear]?.size ?: 0
+
+            if(group.playOff) card.visibility = GONE
+            if(group.playingPlayOff) playingPlayOff.text = "Hraje baráž: ano"
+            else playingPlayOff.text = "Hraje baráž: ne"
 
             name.text = group.name
             this.size.text = String.format(context.getString(R.string.number_teams), size)

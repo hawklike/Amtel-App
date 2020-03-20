@@ -1,17 +1,14 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
-import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
@@ -60,19 +57,20 @@ class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, pri
 
         if(isRanking)
         {
-            if(group.playOff) holder.card.visibility = GONE
-            holder.actualRound.text = String.format(context.getString(R.string.last_active_season),
-                group.teamIds.keys.map { it.toInt() }.max() ?: context.getString(R.string.is_not))
-            holder.rounds.text = String.format(context.getString(R.string.teams_number_this_year),
-                group.teamIds[DateUtil.actualYear]?.size ?: 0)
-            if(group.teamIds.isEmpty()) disableCard(holder)
+            viewModel.isRanking(holder, group)
+            return
+        }
+
+        if(group.playOff)
+        {
+            viewModel.getPlayOffDate(holder, group)
             return
         }
 
         val rounds = group.rounds[DateUtil.actualYear]
         if(rounds == 0 || rounds == null)
         {
-            disableCard(holder)
+            viewModel.disableCard(holder)
             holder.rounds.text = String.format(context.getString(R.string.rounds_number_input), "0")
             holder.actualRound.text = String.format(context.getString(R.string.actual_round), context.getString(R.string.is_not))
         }
@@ -85,17 +83,6 @@ class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, pri
                         ?: String.format(context.getString(R.string.actual_round), context.getString(R.string.is_not))
             }
         }
-    }
-
-    private fun disableCard(holder: ViewHolder)
-    {
-        holder.card.isEnabled = false
-        holder.card.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryLightGrey))
-        holder.card.elevation = 0.0F
-        holder.name.setTextColor(App.getColor(R.color.lightGrey))
-        holder.rounds.setTextColor(App.getColor(R.color.lightGrey))
-        holder.logo.setTextColor(App.getColor(R.color.lightGrey))
-        holder.actualRound.setTextColor(App.getColor(R.color.lightGrey))
     }
 
     override fun getItemCount(): Int = list.size
