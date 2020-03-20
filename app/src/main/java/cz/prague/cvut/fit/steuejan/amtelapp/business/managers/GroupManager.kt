@@ -97,6 +97,11 @@ object GroupManager
         }
     }
 
+    //TODO: implement retrieveAllGroupsExceptPlayOff function which returns List<Group>
+
     fun retrieveAllGroups(orderBy: String): Query
             = GroupDAO().retrieveAllGroups(orderBy)
+
+    fun retrieveAllGroupsExceptPlayOff(orderBy: String): Query
+            = GroupDAO().retrieveAllGroupsExceptPlayOff(orderBy)
 }

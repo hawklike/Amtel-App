@@ -5,10 +5,8 @@ import android.graphics.Color
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
@@ -24,12 +22,16 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.ItemMoveCallback
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsFirestoreAdapterVM
+import java.util.*
 
+
+//TODO: change to a usual adapter
 class ShowGroupsBossFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<Group>)
-    : FirestoreRecyclerAdapter<Group, ShowGroupsBossFirestoreAdapter.ViewHolder>(options)
+    : FirestoreRecyclerAdapter<Group, ShowGroupsBossFirestoreAdapter.ViewHolder>(options), ItemMoveCallback.ItemTouchHelperContract
 {
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
         ShowGroupsFirestoreAdapterVM::class.java)
@@ -42,7 +44,6 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
         private val size: TextView = itemView.findViewById(R.id.group_card_size)
         private val playingPlayOff: TextView = itemView.findViewById(R.id.group_card_playingPlayOff)
         private val generate: Button = itemView.findViewById(R.id.group_card_generate)
-        private val card: RelativeLayout = itemView.findViewById(R.id.group_card)
 
         private var rounds = 0
         private var calculatedRounds = 0
@@ -54,7 +55,6 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
 
             val size = group.teamIds[DateUtil.actualYear]?.size ?: 0
 
-            if(group.playOff) card.visibility = GONE
             if(group.playingPlayOff) playingPlayOff.text = "Hraje baráž: ano"
             else playingPlayOff.text = "Hraje baráž: ne"
 
@@ -146,6 +146,25 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
     override fun onBindViewHolder(holder: ViewHolder, position: Int, group: Group)
     {
         holder.init(group)
+    }
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int)
+    {
+        if(fromPosition < toPosition)
+        {
+            for(i in fromPosition until toPosition)
+            {
+                Collections.swap(snapshots.toList(), i, i + 1)
+            }
+        }
+        else
+        {
+            for(i in fromPosition downTo toPosition + 1)
+            {
+                Collections.swap(snapshots.toList(), i, i - 1)
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition)
     }
 
 }

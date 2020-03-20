@@ -56,6 +56,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
         }
     }
 
+    //TODO: user retrieveAllGroupsExceptPlayOff
     fun getGroups()
     {
         viewModelScope.launch {

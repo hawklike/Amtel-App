@@ -38,6 +38,14 @@ class GroupDAO : DAO
     fun retrieveAllGroups(orderBy: String): Query
             = retrieveAll(collection, orderBy)
 
+    fun retrieveAllGroupsExceptPlayOff(orderBy: String): Query
+    {
+        return Firebase.firestore
+            .collection(collection)
+            .whereEqualTo("playOff", false)
+            .orderBy(orderBy, Query.Direction.ASCENDING)
+    }
+
     suspend fun retrieveAll(): QuerySnapshot
             = retrieveAll(collection)
 }
