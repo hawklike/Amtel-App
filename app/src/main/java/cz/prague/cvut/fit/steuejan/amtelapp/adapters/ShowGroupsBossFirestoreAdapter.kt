@@ -5,8 +5,10 @@ import android.graphics.Color
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
@@ -39,12 +41,15 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
         private val name: TextView = itemView.findViewById(R.id.group_card_name)
         private val size: TextView = itemView.findViewById(R.id.group_card_size)
         private val generate: Button = itemView.findViewById(R.id.group_card_generate)
+        private val card: RelativeLayout = itemView.findViewById(R.id.group_card)
 
         private var rounds = 0
         private var calculatedRounds = 0
 
         fun init(group: Group)
         {
+            viewModel.setRank(group, adapterPosition)
+            if(group.playOff) card.visibility = GONE
             this.group = group
             val size = group.teamIds[DateUtil.actualYear]?.size ?: 0
 

@@ -202,7 +202,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
     {
         val startMillis = match.dateAndTime?.toCalendar()?.run {
             timeInMillis
-        } ?: run { toast("Nebyl nalezen čas utkání."); return }
+        } ?: run { toast("Nebyl nalezen datum a čas utkání."); return }
 
         val endMillis = match.dateAndTime?.toCalendar()?.run {
             this.add(Calendar.HOUR_OF_DAY, 3)

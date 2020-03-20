@@ -117,7 +117,7 @@
     <string name="amtel_opava">AMTEL Opava</string>
     <string name="match_dateTime_change_success">Datum a čas zápasu byly úspěšně změněny.</string>
     <string name="change_place_match">Změnit místo utkání</string>
-    <string name="change_dateTime_match">Změnit datum a čas konání</string>
+    <string name="change_dateTime_match">Změnit datum a čas utkání</string>
     <string name="match_place_change_success">Místo utkání bylo úspěšně změněno.</string>
     <string name="choose_playing_days">Zvolit hrací dny</string>
     <string name="choose_players">Zvolit hráče</string>
@@ -178,4 +178,5 @@
     <string name="round_countdown">Počet dní do konce: %1$d</string>
     <string name="sort_by">Řadit podle:</string>
     <string name="not_successfully_generated">nebyla úspěšně vygenerovaná.</string>
+    <string name="private_name_playOff">zzzzzzzzzz_baraz</string>
 </resources>

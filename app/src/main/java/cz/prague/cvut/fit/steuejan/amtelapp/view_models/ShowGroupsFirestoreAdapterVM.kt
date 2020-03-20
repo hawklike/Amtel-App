@@ -3,6 +3,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
@@ -81,10 +82,6 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
         val map = group.rounds
         map[DateUtil.actualYear] = rounds
         GroupManager.updateGroup(group.name, mapOf("rounds" to map))
-        try
-        {
-        }
-        catch(ex: Exception) {}
     }
 
     private suspend fun addMatchToTeams(match: Match, teams: List<Team>, group: Group)
@@ -105,5 +102,12 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
 
         homeTeam?.let { TeamManager.addTeam(it) }
         awayTeam?.let { TeamManager.addTeam(it) }
+    }
+
+    fun setRank(group: Group, adapterPosition: Int)
+    {
+        viewModelScope.launch {
+            GroupManager.updateGroup(group.name, mapOf("rank" to adapterPosition))
+        }
     }
 }

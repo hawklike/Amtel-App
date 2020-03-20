@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include
         layout="@layout/toolbar"
@@ -16,18 +17,46 @@
 
         <include layout="@layout/curve" />
 
+        <RelativeLayout
+            android:id="@+id/account_boss_choose_playOff"
+            style="@style/CardRelativeLayout">
+
+            <TextView
+                android:id="@+id/account_boss_groups_choose_week_text"
+                style="@style/TextViewTitle"
+                android:text="Zvolit termín baráže" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/account_boss_groups_choose_week_week"
+                style="@style/TextInputLayout"
+                android:layout_below="@id/account_boss_groups_choose_week_text"
+                android:hint="Týden v roce"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/account_boss_groups_choose_week_ediText1"
+                    style="@style/TextInputEditTextStyle"
+                    android:inputType="numberSigned" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/account_boss_groups_choose_week_add"
+                style="@style/FloatingActionButton"
+                android:layout_below="@id/account_boss_groups_choose_week_week"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="8dp"
+                app:srcCompat="@drawable/ic_save_white_24dp" />
+
+        </RelativeLayout>
+
         <TextView
             android:id="@+id/account_boss_groups_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/card_margin"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="@dimen/card_margin"
-            android:layout_marginBottom="16dp"
+            style="@style/TextViewTitleLeft"
             android:gravity="center"
-            android:text="@string/generate_matches_in_groups"
-            android:textColor="@color/white"
-            android:textSize="@dimen/common_text_size" />
+            android:textSize="@dimen/common_text_size"
+            android:layout_below="@id/account_boss_choose_playOff"
+            android:text="@string/generate_matches_in_groups" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/account_boss_groups_recyclerView"

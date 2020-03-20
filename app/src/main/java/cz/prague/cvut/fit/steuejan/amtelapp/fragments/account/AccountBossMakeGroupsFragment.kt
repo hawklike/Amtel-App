@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.RelativeLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -16,7 +17,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.activities.ShowGroupsActivity
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.ManageGroupsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -35,6 +36,7 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
     private val viewModel by viewModels<AccountBossMakeGroupsFragmentVM>()
 
     private lateinit var nameLayout: TextInputLayout
+    private lateinit var playingPlayOffCheckBox: CheckBox
     private lateinit var createGroup: FloatingActionButton
 
     private lateinit var showGroups: RelativeLayout
@@ -53,6 +55,7 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
     {
         super.onViewCreated(view, savedInstanceState)
         nameLayout = view.findViewById(R.id.account_boss_create_group_name)
+        playingPlayOffCheckBox = view.findViewById(R.id.account_boss_create_group_playOff)
         createGroup = view.findViewById(R.id.account_boss_create_group_add)
         showGroups = view.findViewById(R.id.account_boss_create_group_show_groups)
         recyclerView = view.findViewById(R.id.account_boss_create_group_recyclerView)
@@ -100,15 +103,20 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 
     private fun setListeners()
     {
+        var playingPlayOff = true
+        playingPlayOffCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            playingPlayOff = isChecked
+        }
+
         createGroup.setOnClickListener {
             val groupName = nameLayout.editText?.text.toString()
 
             nameLayout.error = null
-            viewModel.createGroup(groupName)
+            viewModel.createGroup(groupName, playingPlayOff)
         }
 
         showGroups.setOnClickListener {
-            val intent = Intent(activity!!, ShowGroupsActivity::class.java)
+            val intent = Intent(activity!!, ManageGroupsActivity::class.java)
             startActivity(intent)
         }
     }

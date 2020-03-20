@@ -20,7 +20,7 @@ class RankingFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun loadTeams(group: String, year: Int, orderBy: RankingOrderBy)
+    fun loadTeams(group: String, year: Int, orderBy: RankingOrderBy, reverse: Boolean = false)
     {
         viewModelScope.launch {
             val teams = TeamManager.retrieveTeamsInSeason(group, year)
@@ -29,6 +29,7 @@ class RankingFragmentVM : ViewModel()
                 var sortedTeams: List<Team> = listOf()
                 withContext(Default) {
                     sortedTeams = RankingSolver(teams.self, year).withOrder(orderBy).sort()
+                    if(reverse) sortedTeams = sortedTeams.reversed()
                 }
                 _teams.value = sortedTeams
             }

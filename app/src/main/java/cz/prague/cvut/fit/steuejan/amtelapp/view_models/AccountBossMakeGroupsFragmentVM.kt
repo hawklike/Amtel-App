@@ -7,9 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
 
@@ -20,7 +21,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val _group = MutableLiveData<GroupState>()
+    private val _group = SingleLiveEvent<GroupState>()
     val group: LiveData<GroupState> = _group
 
     /*---------------------------------------------------*/
@@ -37,7 +38,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun createGroup(groupName: String)
+    fun createGroup(groupName: String, playingPlayOff: Boolean)
     {
         if(confirmName(groupName))
         {
@@ -47,7 +48,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
                     _group.value = NoGroup
                     return@launch
                 }
-                _group.value = GroupManager.addGroup(Group(groupName)).let {
+                _group.value = GroupManager.addGroup(Group(groupName, playingPlayOff = playingPlayOff)).let {
                     if(it is ValidGroup) ValidGroup(it.self)
                     else NoGroup
                 }
@@ -58,8 +59,17 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
     fun getGroups()
     {
         viewModelScope.launch {
-            GroupManager.retrieveAllGroups().let {
-                if(it is ValidGroups) setAllGroups(it.self)
+            GroupManager.retrieveAllGroups().let { groups ->
+                if(groups is ValidGroups)
+                {
+                    val playOff = groups.self.find { it.playOff }
+                    playOff?.let {
+                        val playOffIndex = groups.self.indexOf(it)
+                        val tmp = groups.self.toMutableList()
+                        tmp.removeAt(playOffIndex)
+                        setAllGroups(tmp)
+                    } ?: setAllGroups(groups.self)
+                }
             }
         }
     }

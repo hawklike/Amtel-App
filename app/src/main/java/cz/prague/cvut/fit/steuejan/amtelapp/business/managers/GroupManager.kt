@@ -4,6 +4,8 @@ import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
+import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.GroupDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.states.GroupState
@@ -21,6 +23,7 @@ object GroupManager
     {
         return@withContext try
         {
+            group.privateName = if(group.playOff) context.getString(R.string.private_name_playOff) else group.name
             GroupDAO().insert(group)
             Log.i(TAG, "addGroup(): $group successfully added to database")
             ValidGroup(group)
@@ -64,11 +67,26 @@ object GroupManager
         }
     }
 
+    suspend fun <T> findGroups(field: String, value: T?): GroupState = withContext(IO)
+    {
+        return@withContext try
+        {
+            val groups = GroupDAO().find(field, value).toObjects<Group>()
+            Log.i(TAG, "findGroups(): $groups where $field is $value found successfully")
+            ValidGroups(groups)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "findGroups(): documents not found because ${ex.message}")
+            NoGroup
+        }
+    }
+
     suspend fun retrieveAllGroups(): GroupState = withContext(IO)
     {
         return@withContext try
         {
-            val groups = GroupDAO().retrieveAll().toObjects<Group>()
+            val groups = GroupDAO().retrieveAll().toObjects<Group>().sortedBy { it.privateName }
             Log.i(TAG, "retrieveAll(): $groups retrieved successfully")
             ValidGroups(groups)
         }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -59,6 +60,7 @@ class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, pri
 
         if(isRanking)
         {
+            if(group.playOff) holder.card.visibility = GONE
             holder.actualRound.text = String.format(context.getString(R.string.last_active_season),
                 group.teamIds.keys.map { it.toInt() }.max() ?: context.getString(R.string.is_not))
             holder.rounds.text = String.format(context.getString(R.string.teams_number_this_year),

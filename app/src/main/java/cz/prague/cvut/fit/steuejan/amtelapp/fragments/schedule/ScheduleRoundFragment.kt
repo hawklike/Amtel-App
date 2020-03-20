@@ -168,7 +168,7 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
             {
                 is InvalidWeek -> weekLayout.error = week.errorMessage
                 is ValidWeek -> {
-                    weekRange.visibility = View.VISIBLE
+                    weekRange.visibility = VISIBLE
                     weekRange.text = "${week.range.first().toMyString()} - ${week.range.last().toMyString()}"
                     weekLayout.editText?.setText(week.self.toString())
                 }

@@ -30,6 +30,7 @@ class RankingFragment : AbstractBaseFragment()
 
     private val teams: MutableList<Team> = mutableListOf()
     private var orderBy = RankingOrderBy.POINTS
+    private var reverseOrder = false
 
     private lateinit var actualSortOption: TextView
 
@@ -160,8 +161,9 @@ class RankingFragment : AbstractBaseFragment()
         setNormalStyle(actualSortOption)
         setBoldStyle(view)
         actualSortOption = view
+        reverseOrder = if(orderBy == this.orderBy) !reverseOrder else false
         this.orderBy = orderBy
-        viewModel.loadTeams(group.name, year, orderBy)
+        viewModel.loadTeams(group.name, year, orderBy, reverseOrder)
     }
 
     private fun setNormalStyle(view: TextView)

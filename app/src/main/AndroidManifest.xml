@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.AddUserToTeamActivity"/>
-        <activity android:name=".activities.ShowGroupsActivity"/>
+        <activity android:name=".activities.ManageGroupsActivity"/>
         <activity android:name=".activities.ScheduleRoundsActivity"/>
         <activity android:name=".activities.MatchViewPagerActivity"/>
         <activity android:name=".activities.MatchArrangementActivity"/>
