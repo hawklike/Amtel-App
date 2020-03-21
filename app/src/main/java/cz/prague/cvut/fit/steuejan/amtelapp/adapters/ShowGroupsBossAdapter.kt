@@ -17,24 +17,19 @@ import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.ItemMoveCallback
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.callbacks.ItemMoveCallback
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsFirestoreAdapterVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsBossAdapterVM
 import java.util.*
 
-
-//TODO: change to a usual adapter
-class ShowGroupsBossFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<Group>)
-    : FirestoreRecyclerAdapter<Group, ShowGroupsBossFirestoreAdapter.ViewHolder>(options), ItemMoveCallback.ItemTouchHelperContract
+class ShowGroupsBossAdapter(private val context: Context, val list: List<Group>)
+    : RecyclerView.Adapter<ShowGroupsBossAdapter.ViewHolder>(), ItemMoveCallback.ItemTouchHelperContract
 {
-    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
-        ShowGroupsFirestoreAdapterVM::class.java)
+    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(ShowGroupsBossAdapterVM::class.java)
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -143,8 +138,9 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int, group: Group)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int)
     {
+        val group = getItem(position)
         holder.init(group)
     }
 
@@ -153,18 +149,17 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
         if(fromPosition < toPosition)
         {
             for(i in fromPosition until toPosition)
-            {
-                Collections.swap(snapshots.toList(), i, i + 1)
-            }
+                Collections.swap(list, i, i + 1)
         }
         else
         {
             for(i in fromPosition downTo toPosition + 1)
-            {
-                Collections.swap(snapshots.toList(), i, i - 1)
-            }
+                Collections.swap(list, i, i - 1)
         }
         notifyItemMoved(fromPosition, toPosition)
     }
+
+    override fun getItemCount(): Int = list.size
+    private fun getItem(position: Int): Group = list[position]
 
 }

@@ -24,7 +24,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ShowGroupsFirestoreAdapterVM : ViewModel()
+class ShowGroupsBossAdapterVM : ViewModel()
 {
     private val _matchesGenerated = SingleLiveEvent<Boolean>()
     val matchesGenerated: LiveData<Boolean> = _matchesGenerated

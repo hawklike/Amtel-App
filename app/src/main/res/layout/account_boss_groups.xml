@@ -54,15 +54,52 @@
             android:id="@+id/account_boss_groups_text"
             style="@style/TextViewTitleLeft"
             android:gravity="center"
+            android:layout_marginBottom="0dp"
             android:textSize="@dimen/common_text_size"
             android:layout_below="@id/account_boss_choose_playOff"
             android:text="@string/generate_matches_in_groups" />
+
+        <TextView
+            android:id="@+id/account_boss_groups_note"
+            style="@style/TextViewTitleLeft"
+            android:gravity="center"
+            android:textSize="13dp"
+            android:textStyle="normal"
+            android:layout_marginTop="0dp"
+            android:layout_below="@id/account_boss_groups_text"
+            android:text="Podržením a tažením karty můžete změnit pořadí skupin." />
+
+        <FrameLayout
+            android:id="@+id/account_boss_groups_progressBar"
+            android:layout_width="match_parent"
+            android:visibility="visible"
+            android:layout_below="@id/account_boss_groups_note"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/blue"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:max="100"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_marginTop="50dp"
+                android:text="@string/amtel_opava"
+                android:textColor="@color/blue"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </FrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/account_boss_groups_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/account_boss_groups_text"
+            android:layout_below="@id/account_boss_groups_note"
             android:layout_marginStart="@dimen/card_margin"
             android:layout_marginEnd="@dimen/card_margin"
             android:orientation="horizontal" />

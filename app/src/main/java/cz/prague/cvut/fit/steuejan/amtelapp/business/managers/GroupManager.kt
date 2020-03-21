@@ -13,6 +13,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.NoGroup
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroup
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroups
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 object GroupManager
@@ -86,22 +87,34 @@ object GroupManager
     {
         return@withContext try
         {
-            val groups = GroupDAO().retrieveAll().toObjects<Group>().sortedBy { it.privateName }
+            val groups = GroupDAO().retrieveAll().toObjects<Group>().sortedBy { it.rank }
             Log.i(TAG, "retrieveAll(): $groups retrieved successfully")
             ValidGroups(groups)
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "retrieveAll(): documents not retrieved because $ex")
+            Log.e(TAG, "retrieveAll(): documents not retrieved because ${ex.message}")
             NoGroup
         }
     }
 
-    //TODO: implement retrieveAllGroupsExceptPlayOff function which returns List<Group>
+    suspend fun retrieveAllGroupsExceptPlayOff(orderBy: String = "rank"): GroupState = withContext(IO)
+    {
+        return@withContext try
+        {
+            val snapshots = GroupDAO().retrieveAllGroupsExceptPlayOff(orderBy).get().await()
+            val groups = snapshots.toObjects<Group>()
+            Log.i(TAG, "retrieveAllGroupsExceptPlayOff(): $groups retrieved successfully")
+            ValidGroups(groups)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveAllGroupsExceptPlayOff(): documents not retrieved because ${ex.message}")
+            NoGroup
+        }
+    }
+
 
     fun retrieveAllGroups(orderBy: String): Query
             = GroupDAO().retrieveAllGroups(orderBy)
-
-    fun retrieveAllGroupsExceptPlayOff(orderBy: String): Query
-            = GroupDAO().retrieveAllGroupsExceptPlayOff(orderBy)
 }

@@ -12,6 +12,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class AccountBossMakeGroupsFragmentVM : ViewModel()
@@ -56,22 +57,11 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
         }
     }
 
-    //TODO: user retrieveAllGroupsExceptPlayOff
     fun getGroups()
     {
         viewModelScope.launch {
-            GroupManager.retrieveAllGroups().let { groups ->
-                if(groups is ValidGroups)
-                {
-                    val playOff = groups.self.find { it.playOff }
-                    playOff?.let {
-                        val playOffIndex = groups.self.indexOf(it)
-                        val tmp = groups.self.toMutableList()
-                        tmp.removeAt(playOffIndex)
-                        setAllGroups(tmp)
-                    } ?: setAllGroups(groups.self)
-                }
-            }
+            val groups = GroupManager.retrieveAllGroupsExceptPlayOff()
+                if(groups is ValidGroups) setAllGroups(groups.self)
         }
     }
 
@@ -112,6 +102,14 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
             failureTitle,
             null
         )
+    }
+
+    fun updateRanks(groups: List<Group>)
+    {
+        GlobalScope.launch {
+            for(i in groups.indices)
+                GroupManager.updateGroup(groups[i].name, mapOf("rank" to i))
+        }
     }
 
 }

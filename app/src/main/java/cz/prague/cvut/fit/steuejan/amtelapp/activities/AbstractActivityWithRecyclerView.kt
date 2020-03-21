@@ -2,12 +2,12 @@ package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsBossFirestoreAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsBossAdapter
 
 abstract class AbstractActivityWithRecyclerView : AbstractBaseActivity()
 {
     protected var recyclerView: RecyclerView? = null
-    protected var adapter: ShowGroupsBossFirestoreAdapter? = null
+    protected var adapter: ShowGroupsBossAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -20,18 +20,6 @@ abstract class AbstractActivityWithRecyclerView : AbstractBaseActivity()
         super.onDestroy()
         recyclerView = null
         adapter = null
-    }
-
-    override fun onStart()
-    {
-        super.onStart()
-        adapter?.startListening()
-    }
-
-    override fun onStop()
-    {
-        super.onStop()
-        adapter?.stopListening()
     }
 
     protected abstract fun setupRecycler()

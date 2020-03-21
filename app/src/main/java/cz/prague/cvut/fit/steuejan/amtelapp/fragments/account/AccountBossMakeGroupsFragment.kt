@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.ManageGroupsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
@@ -30,6 +32,9 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 {
     companion object
     {
+        const val GROUPS_REQUEST = 1
+        const val GROUPS = "groups"
+
         fun newInstance(): AccountBossMakeGroupsFragment = AccountBossMakeGroupsFragment()
     }
 
@@ -117,7 +122,20 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 
         showGroups.setOnClickListener {
             val intent = Intent(activity!!, ManageGroupsActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, GROUPS_REQUEST)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == RESULT_OK && requestCode == GROUPS_REQUEST)
+        {
+            data?.let { intent ->
+                val groups = intent.getParcelableArrayListExtra<Group>(GROUPS)
+                viewModel.updateRanks(groups.toList())
+                adapter?.groups = groups.map { it.name }
+            }
         }
     }
 
@@ -131,8 +149,8 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
     private fun getAllGroups()
     {
         viewModel.getGroups()
-        viewModel.getAllGroups().observe(viewLifecycleOwner) {
-            adapter?.groups = it.map { group -> group.name }.sorted()
+        viewModel.getAllGroups().observe(viewLifecycleOwner) { groups ->
+            adapter?.groups = groups.sortedBy { it.rank } .map { it.name }
         }
     }
 

@@ -17,20 +17,22 @@ class ManageGroupsActivityVM : ViewModel()
 
     /*---------------------------------------------------*/
 
+    private val _groups = MutableLiveData<List<Group>>()
+    val groups: LiveData<List<Group>> = _groups
+
+    /*---------------------------------------------------*/
+
     fun setPlayOff(week: String)
     {
         if(confirmWeek(week))
         {
             viewModelScope.launch {
                 val roundDates = mutableMapOf("playOff" to week.toInt())
-                if(GroupManager.addGroup(Group("Baráž", roundDates = roundDates, playingPlayOff = false, playOff = true)) is ValidGroup)
-                {
-                    toast("Baráž úspěšně připravena.")
-                }
+                val group = Group("Baráž", roundDates = roundDates, playingPlayOff = false, playOff = true, rank = Int.MAX_VALUE)
+                if(GroupManager.addGroup(group) is ValidGroup) toast("Baráž úspěšně připravena.")
             }
         }
     }
-
 
     private fun confirmWeek(weekString: String): Boolean
     {
@@ -54,6 +56,15 @@ class ManageGroupsActivityVM : ViewModel()
                 week?.let { _week.value = ValidWeek(week, emptyList()) }
             }
         }
+    }
+
+    fun getGroupsExceptPlayOff()
+    {
+        viewModelScope.launch {
+            val groups = GroupManager.retrieveAllGroupsExceptPlayOff()
+            if(groups is ValidGroups) _groups.value = groups.self
+        }
+
     }
 
 }

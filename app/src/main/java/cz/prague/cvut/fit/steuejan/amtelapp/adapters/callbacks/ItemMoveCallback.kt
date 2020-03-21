@@ -1,8 +1,7 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.helpers
+package cz.prague.cvut.fit.steuejan.amtelapp.adapters.callbacks
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-
 
 class ItemMoveCallback(private val mAdapter: ItemTouchHelperContract) : ItemTouchHelper.Callback()
 {
