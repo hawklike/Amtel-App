@@ -80,7 +80,7 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
     {
         arguments?.getInt(ROUND)?.let { round = it }
         arguments?.getParcelable<Group>(GROUP)?.let { group = it }
-        return inflater.inflate(R.layout.schedule_round, container, false)
+        return inflater.inflate(R.layout.round, container, false)
     }
 
     override fun onStart()
@@ -108,13 +108,13 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = view.findViewById(R.id.schedule_round_recyclerView)
-        title = view.findViewById(R.id.schedule_round_choose_week_text)
-        weekRange = view.findViewById(R.id.schedule_round_week_text)
-        deadline = view.findViewById(R.id.schedule_round_deadline_text)
-        chooseWeekLayout = view.findViewById(R.id.schedule_round_choose_week)
-        weekLayout = view.findViewById(R.id.schedule_round_choose_week_week)
-        setWeek = view.findViewById(R.id.schedule_round_choose_week_add)
+        recyclerView = view.findViewById(R.id.round_recyclerView)
+        title = view.findViewById(R.id.round_choose_week_text)
+        weekRange = view.findViewById(R.id.round_week_text)
+        deadline = view.findViewById(R.id.round_deadline_text)
+        chooseWeekLayout = view.findViewById(R.id.round_choose_week)
+        weekLayout = view.findViewById(R.id.round_choose_week_week)
+        setWeek = view.findViewById(R.id.round_choose_week_add)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)

@@ -16,6 +16,7 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.PlayersFragment
@@ -165,7 +166,6 @@ class MainActivity : AbstractBaseActivity()
 
     private fun populateFragment(fragment: AbstractMainActivityFragment)
     {
-        progressLayout?.visibility = View.VISIBLE
         Log.i(TAG, "${fragment.getName()} populated")
         supportFragmentManager.commit {
             replace(R.id.main_container, fragment)

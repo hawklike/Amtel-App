@@ -1,14 +1,11 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.Window
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog

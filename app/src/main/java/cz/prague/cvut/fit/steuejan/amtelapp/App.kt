@@ -2,6 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp
 
 import android.app.Application
 import android.content.Context
+import android.util.TypedValue
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
@@ -35,6 +36,12 @@ class App : Application()
         fun getColor(@ColorRes color: Int): Int
         {
             return ContextCompat.getColor(context, color)
+        }
+
+        fun convertDpToPx(dp: Float): Int
+        {
+            val res = context.resources
+            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, res.displayMetrics).toInt()
         }
 
         const val POINTS_WIN = 2

@@ -5,7 +5,7 @@
     <dimen name="rounded_corners">12dp</dimen>
     <dimen name="rounded_corners_edit_text">16dp</dimen>
     <dimen name="common_text_size">16sp</dimen>
-    <dimen name="elevation">8dp</dimen>
+    <dimen name="elevation">6dp</dimen>
     <dimen name="card_padding">8dp</dimen>
     <dimen name="card_margin">24dp</dimen>
 </resources>

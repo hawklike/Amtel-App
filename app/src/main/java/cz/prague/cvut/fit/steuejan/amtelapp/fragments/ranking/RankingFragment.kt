@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.ranking
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.TeamInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsRankingAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -114,6 +116,12 @@ class RankingFragment : AbstractBaseFragment()
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(activity!!)
         adapter = ShowTeamsRankingAdapter(teams, year.toString(), orderBy)
+        adapter?.onClick = { team ->
+            val intent = Intent(activity!!, TeamInfoActivity::class.java).apply {
+                putExtra(TeamInfoActivity.TEAM, team)
+            }
+            startActivity(intent)
+        }
         recyclerView?.adapter = adapter
         populateAdapter()
     }

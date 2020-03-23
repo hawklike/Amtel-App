@@ -181,4 +181,8 @@
     <string name="private_name_playOff">zzzzzzzzzz_baraz</string>
     <string name="week_in_year">Týden v roce</string>
     <string name="start_playOff">Zvolit začátek baráže</string>
+    <string name="playOff">Baráž</string>
+    <string name="rules">Pravidla</string>
+    <string name="rules_text">Týmy z druhých míst se utkají s předposledními týmy vyšší skupiny o postup, respektive udržení. Vítěz skupiny postupuje do vyšší skupiny, naopak poslední tým v tabulce automaticky sestupuje.</string>
+    <string name="matches">Zápasy</string>
 </resources>

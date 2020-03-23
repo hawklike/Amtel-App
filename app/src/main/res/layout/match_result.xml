@@ -76,7 +76,7 @@
             android:singleLine="true"
             android:text="Doporučený termín: není uveden"
             android:textColor="@color/darkGrey"
-            android:textSize="12sp" />
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/match_result_date"
@@ -87,7 +87,7 @@
             android:singleLine="true"
             android:text="Místo: to nejlepší"
             android:textColor="@color/darkGrey"
-            android:textSize="12sp" />
+            android:textSize="13sp" />
 
     </RelativeLayout>
 
@@ -176,7 +176,6 @@
 
     </HorizontalScrollView>
 
-
     <TextView
         android:id="@+id/match_result_title_players"
         style="@style/TextViewTitleLeft"
@@ -186,7 +185,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/match_result_players_recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/card_margin"
         android:layout_marginEnd="@dimen/card_margin"
         android:layout_below="@id/match_result_title_players"/>

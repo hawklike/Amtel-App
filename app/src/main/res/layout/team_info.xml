@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar"/>
+
+    <RelativeLayout
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include layout="@layout/curve" />
+
+        <RelativeLayout
+            android:id="@+id/team_info_overview"
+            style="@style/CardRelativeLayout"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/team_info_home"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="TK Horní Bludovice"
+                android:textColor="@color/darkGrey"
+                android:textStyle="bold"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/team_info_away"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/team_info_home"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@id/team_info_rank"
+                android:text="skupina A"
+                android:textColor="@color/darkGrey"
+                android:textSize="@dimen/common_text_size" />
+
+            <TextView
+                android:id="@+id/team_info_place"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/team_info_away"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="2dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:gravity="center"
+                android:text="celkový přehled"
+                android:textColor="@color/lightGrey"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/team_info_rank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:singleLine="true"
+                android:layout_marginEnd="16dp"
+                android:text="1."
+                android:textColor="@color/blue"
+                android:textSize="36sp" />
+
+            <View
+                android:id="@+id/team_info_line"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:visibility="invisible"
+                android:layout_marginTop="2dp"
+                android:layout_below="@id/team_info_place"
+                android:background="@color/lightGrey"/>
+
+            <RelativeLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:id="@+id/team_info_statistics_matches"
+                android:layout_below="@id/team_info_line">
+
+                <TextView
+                    android:id="@+id/team_info_statistics_matches_wins"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="@dimen/common_text_size"
+                    android:layout_alignParentStart="true"
+                    android:text="V: 12" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/team_info_statistics_matches_wins"
+                    android:layout_toStartOf="@id/team_info_statistics_matches_losses">
+
+                    <TextView
+                        android:id="@+id/team_info_statistics_matches_successRate"
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/common_text_size"
+                        android:text="Úspěšnost: 12 %" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/team_info_statistics_matches_losses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="@dimen/common_text_size"
+                    android:text="P: 12" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:id="@+id/team_info_statistics_sets"
+                android:layout_below="@id/team_info_statistics_matches">
+
+                <TextView
+                    android:id="@+id/team_info_statistics_sets_wins"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="@dimen/common_text_size"
+                    android:layout_alignParentStart="true"
+                    android:text="S+: 12" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/team_info_statistics_sets_wins"
+                    android:layout_toStartOf="@id/team_info_statistics_sets_losses">
+
+                    <TextView
+                        android:id="@+id/team_info_statistics_sets_successRate"
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/common_text_size"
+                        android:text="Sety: +0" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/team_info_statistics_sets_losses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="@dimen/common_text_size"
+                    android:text="S-: 12" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:id="@+id/team_info_statistics_games"
+                android:layout_below="@id/team_info_statistics_sets">
+
+                <TextView
+                    android:id="@+id/team_info_statistics_games_wins"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="@dimen/common_text_size"
+                    android:layout_alignParentStart="true"
+                    android:text="G+: 48" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/team_info_statistics_games_wins"
+                    android:layout_toStartOf="@id/team_info_statistics_games_losses">
+
+                    <TextView
+                        android:id="@+id/team_info_statistics_games_successRate"
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/common_text_size"
+                        android:text="Gemy: -8" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/team_info_statistics_games_losses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="@dimen/common_text_size"
+                    android:text="G-: 56" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/team_info_chart_matches"
+            android:layout_marginTop="@dimen/card_margin"
+            android:layout_marginStart="@dimen/card_margin"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_below="@id/team_info_overview"/>
+
+
+        <TextView
+            android:id="@+id/team_info_title_teams"
+            style="@style/TextViewTitleLeft"
+            android:layout_below="@id/team_info_chart_matches"
+            android:text="@string/matches" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/team_info_matches_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/card_margin"
+            android:layout_marginEnd="@dimen/card_margin"
+            android:layout_below="@id/team_info_title_teams"/>
+
+        <TextView
+            android:id="@+id/team_info_title_players"
+            style="@style/TextViewTitleLeft"
+            android:layout_below="@id/team_info_matches_recyclerView"
+            android:text="@string/players" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/team_info_players_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/card_margin"
+            android:layout_marginEnd="@dimen/card_margin"
+            android:layout_below="@id/team_info_title_players"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
