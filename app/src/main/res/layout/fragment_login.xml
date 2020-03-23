@@ -14,12 +14,12 @@
 
         <ImageView
             android:id="@+id/login_logo"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/amtel_logo_simple"
+            android:background="@drawable/amtel_logo_dark"
             android:contentDescription="application logo" />
 
         <com.google.android.material.textfield.TextInputLayout

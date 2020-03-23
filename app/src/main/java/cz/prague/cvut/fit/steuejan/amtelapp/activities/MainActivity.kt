@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import androidx.activity.viewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.observe
@@ -34,13 +34,15 @@ class MainActivity : AbstractBaseActivity()
     private val viewModel by viewModels<MainActivityVM>()
 
     private lateinit var drawer: Drawer
-    var progressLayout: FrameLayout? = null
+    var progressLayout: RelativeLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         setContentView(R.layout.activity_main)
         progressLayout = findViewById(R.id.progressBar)
         super.onCreate(savedInstanceState)
+        toolbar.setTitleTextColor(App.getColor(R.color.blue))
+        window.navigationBarColor = App.getColor(R.color.blue)
         viewModel.initEmailPassword()
         viewModel.initHeadOfLeagueEmail()
         setObservers(savedInstanceState)
