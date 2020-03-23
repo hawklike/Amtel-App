@@ -119,6 +119,7 @@ class RankingFragment : AbstractBaseFragment()
         adapter?.onClick = { team ->
             val intent = Intent(activity!!, TeamInfoActivity::class.java).apply {
                 putExtra(TeamInfoActivity.TEAM, team)
+                putParcelableArrayListExtra(TeamInfoActivity.SEASON_TABLE, ArrayList(teams))
             }
             startActivity(intent)
         }

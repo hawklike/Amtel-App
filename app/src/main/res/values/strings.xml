@@ -186,4 +186,8 @@
     <string name="rules_text">Týmy z druhých míst se utkají s předposledními týmy vyšší skupiny o postup, respektive udržení. Vítěz skupiny postupuje do vyšší skupiny, naopak poslední tým v tabulce automaticky sestupuje.</string>
     <string name="matches">Zápasy</string>
     <string name="statistics">Statistiky</string>
+    <string name="contact_teamManager">Kontaktovat vedoucího týmu</string>
+    <string name="overview">Přehled</string>
+    <string name="sets">Sety</string>
+    <string name="games">Gemy</string>
 </resources>
