@@ -1,10 +1,9 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.RelativeLayout
+import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.observe
@@ -34,7 +33,7 @@ class MainActivity : AbstractBaseActivity()
     private val viewModel by viewModels<MainActivityVM>()
 
     private lateinit var drawer: Drawer
-    var progressLayout: RelativeLayout? = null
+    private var progressLayout: FrameLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -42,7 +41,6 @@ class MainActivity : AbstractBaseActivity()
         progressLayout = findViewById(R.id.progressBar)
         super.onCreate(savedInstanceState)
         toolbar.setTitleTextColor(App.getColor(R.color.blue))
-        window.navigationBarColor = App.getColor(R.color.blue)
         viewModel.initEmailPassword()
         viewModel.initHeadOfLeagueEmail()
         setObservers(savedInstanceState)
@@ -71,7 +69,6 @@ class MainActivity : AbstractBaseActivity()
             else
             {
                 progressLayout?.visibility = View.GONE
-                progressLayout?.setBackgroundColor(Color.TRANSPARENT)
             }
         }
     }
@@ -85,7 +82,6 @@ class MainActivity : AbstractBaseActivity()
 
     private fun displayAccount(savedInstanceState: Bundle?)
     {
-        progressLayout?.visibility = View.VISIBLE
         AuthManager.currentUser?.let { firebaseUser ->
             if(savedInstanceState == null)
                 viewModel.prepareUser(firebaseUser.uid)
@@ -154,7 +150,8 @@ class MainActivity : AbstractBaseActivity()
 
         if(savedInstanceState == null)
         {
-            drawer.setSelection(profile)
+            AuthManager.currentUser?.let { drawer.setSelection(profile) }
+                ?: drawer.setSelection(schedule)
             viewModel.setDrawerSelectedPosition(drawer.currentSelectedPosition)
         }
     }

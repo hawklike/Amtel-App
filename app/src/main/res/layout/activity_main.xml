@@ -20,20 +20,29 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar" >
 
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/progressBar"
-            android:background="@color/blue"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="@drawable/amtel_logo_bright"/>
+                android:indeterminateTint="@color/blue"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:max="100"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_marginTop="50dp"
+                android:text="@string/amtel_opava"
+                android:textColor="@color/blue"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-        </RelativeLayout>
+        </FrameLayout>
 
     </FrameLayout>
 

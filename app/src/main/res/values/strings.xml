@@ -190,4 +190,7 @@
     <string name="overview">Přehled</string>
     <string name="sets">Sety</string>
     <string name="games">Gemy</string>
+    <string name="this_year">Letos</string>
+    <string name="Total">Celkem</string>
+    <string name="play">Utkání</string>
 </resources>

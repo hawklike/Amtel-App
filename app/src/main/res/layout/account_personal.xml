@@ -7,6 +7,7 @@
     android:fillViewport="true">
 
     <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/account_personal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
