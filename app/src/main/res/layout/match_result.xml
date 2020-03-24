@@ -105,7 +105,7 @@
         android:layout_marginEnd="@dimen/card_margin"
         android:layout_below="@id/match_result_title_teams">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
@@ -115,8 +115,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:minWidth="100dp"
+                android:clickable="true"
                 android:layout_marginEnd="10dp"
-                android:elevation="3dp">
+                android:elevation="3dp"
+                android:focusable="false">
 
                 <TextView
                     android:id="@+id/match_result_card_home_name"
@@ -124,6 +126,7 @@
                     android:layout_height="wrap_content"
                     android:text="TK Horní Bludovice"
                     android:layout_marginBottom="8dp"
+                    android:clickable="false"
                     android:layout_above="@+id/match_result_card_home_text"
                     android:layout_alignParentTop="true"
                     android:textColor="@color/darkGrey"
@@ -134,6 +137,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
+                    android:clickable="false"
                     android:layout_alignParentBottom="true"
                     android:text="@string/home"
                     android:textColor="@color/blue"
@@ -144,10 +148,13 @@
             <RelativeLayout
                 android:id="@+id/match_result_card_away"
                 style="@style/SimpleCardView"
+                android:layout_toEndOf="@id/match_result_card_home"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:minWidth="100dp"
-                android:elevation="3dp">
+                android:clickable="true"
+                android:elevation="3dp"
+                android:focusable="false">
 
                 <TextView
                     android:id="@+id/match_result_card_away_name"
@@ -155,6 +162,7 @@
                     android:layout_height="wrap_content"
                     android:text="Velmi dlouh7 team"
                     android:layout_marginBottom="8dp"
+                    android:clickable="false"
                     android:layout_above="@+id/match_result_card_away_text"
                     android:layout_alignParentTop="true"
                     android:textColor="@color/darkGrey"
@@ -165,6 +173,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
+                    android:clickable="false"
                     android:layout_alignParentBottom="true"
                     android:text="@string/away"
                     android:textColor="@color/blue"
@@ -172,7 +181,7 @@
 
             </RelativeLayout>
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </HorizontalScrollView>
 

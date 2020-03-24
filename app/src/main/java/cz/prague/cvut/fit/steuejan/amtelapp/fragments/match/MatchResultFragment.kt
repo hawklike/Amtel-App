@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.match
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +9,8 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.TeamInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
@@ -110,17 +111,32 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         setListeners()
     }
 
-    //TODO
+    //FIXME: listener sometimes not triggered
     private fun setListeners()
     {
+//        cardHomeName.setOnFocusChangeListener { _, hasFocus ->
+//            if(hasFocus) startTeamInfoActivity(match.homeId)
+//        }
+//
+//        cardAwayName.setOnFocusChangeListener { _, hasFocus ->
+//            if(hasFocus) startTeamInfoActivity(match.awayId)
+//        }
+
         cardHomeName.setOnClickListener {
-            toast(match.homeId)
+            startTeamInfoActivity(match.homeId)
         }
 
         cardAwayName.setOnClickListener {
-            toast(match.awayId)
+            startTeamInfoActivity(match.awayId)
         }
+    }
 
+    private fun startTeamInfoActivity(teamId: String)
+    {
+        val intent = Intent(activity!!, TeamInfoActivity::class.java).apply {
+            putExtra(TeamInfoActivity.TEAM_ID, teamId)
+        }
+        startActivity(intent)
     }
 
     private fun getData()

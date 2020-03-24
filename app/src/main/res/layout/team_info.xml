@@ -22,7 +22,10 @@
                 android:id="@+id/team_info_overview_title"
                 style="@style/TextViewTitle"
                 android:layout_marginBottom="12dp"
-                android:text="@string/overview" />
+                android:textSize="18sp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="Název se načítá..." />
 
             <TextView
                 android:id="@+id/team_info_rank"
@@ -32,8 +35,7 @@
                 android:layout_marginBottom="2dp"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:textStyle="bold"
-                android:text="Pozice v tabulce: 12."
+                android:text="Pozice v tabulce:"
                 android:textColor="@color/blue"
                 android:textSize="@dimen/common_text_size" />
 
@@ -45,8 +47,7 @@
                 android:layout_marginBottom="18dp"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:textStyle="bold"
-                android:text="Aktuální skupina: A"
+                android:text="Aktuální skupina:"
                 android:textColor="@color/blue"
                 android:textSize="@dimen/common_text_size" />
 
@@ -58,7 +59,7 @@
                 android:layout_marginBottom="2dp"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="Úspěšnost: 12 %"
+                android:text="Úspěšnost:"
                 android:textColor="@color/darkGrey"
                 android:textSize="@dimen/common_text_size" />
 
@@ -70,25 +71,25 @@
                 android:layout_marginBottom="2dp"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="Průměrné umístění: 5."
+                android:text="Průměrné umístění: 0."
                 android:textColor="@color/darkGrey"
                 android:textSize="@dimen/common_text_size" />
 
             <TextView
-                android:id="@+id/team_info_championship"
+                android:id="@+id/team_info_titles"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/team_info_avgRank"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="Tituly: 1"
+                android:text="Tituly: 0"
                 android:textColor="@color/darkGrey"
                 android:textSize="@dimen/common_text_size" />
 
             <TextView
                 android:id="@+id/team_info_contact"
                 style="@style/TextViewInClickableLayout"
-                android:layout_below="@id/team_info_championship"
+                android:layout_below="@id/team_info_titles"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="12dp"
                 android:gravity="center"
@@ -117,23 +118,26 @@
                 android:layout_height="match_parent">
 
                 <com.github.mikephil.charting.charts.PieChart
-                    android:id="@+id/team_info_chart_matches"
+                    android:id="@+id/team_info_chart_matches_thisYear"
                     android:layout_width="144dp"
                     android:layout_height="144dp"
-                    android:layout_marginEnd="10dp" />
+                    android:layout_marginEnd="10dp"
+                    android:visibility="invisible" />
 
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/team_info_chart_sets"
                     android:layout_width="144dp"
                     android:layout_height="144dp"
                     android:layout_marginEnd="10dp"
-                    android:layout_toEndOf="@id/team_info_chart_matches" />
+                    android:layout_toEndOf="@id/team_info_chart_matches_thisYear"
+                    android:visibility="invisible" />
 
                 <com.github.mikephil.charting.charts.PieChart
-                    android:id="@+id/team_info_chart_games"
+                    android:id="@+id/team_info_chart_games_total"
                     android:layout_width="144dp"
                     android:layout_height="144dp"
-                    android:layout_toEndOf="@id/team_info_chart_sets" />
+                    android:layout_toEndOf="@id/team_info_chart_sets"
+                    android:visibility="invisible" />
 
             </RelativeLayout>
 

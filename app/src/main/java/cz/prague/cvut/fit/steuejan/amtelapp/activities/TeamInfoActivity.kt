@@ -1,8 +1,11 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.os.Bundle
+import android.view.View.VISIBLE
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.annotation.ColorRes
+import androidx.lifecycle.observe
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.Entry
@@ -15,24 +18,35 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.RankingFragmentVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.TeamInfoActivityVM
 
 class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
 {
     private val viewModel by viewModels<TeamInfoActivityVM>()
 
-    private lateinit var chartMatches: PieChart
+    private lateinit var chartMatchesThisYear: PieChart
+    private lateinit var chartMatchesTotal: PieChart
     private lateinit var chartSets: PieChart
-    private lateinit var chartGames: PieChart
 
-    private var team = Team()
-    private var seasonRanking = listOf<Team>()
+    private var teamId: String = ""
 
     companion object
     {
         const val TEAM = "team"
         const val SEASON_TABLE = "ranking"
+        const val TEAM_ID = "teamId"
+    }
+
+    override fun onDestroy()
+    {
+        super.onDestroy()
+        chartMatchesThisYear.setOnChartValueSelectedListener(null)
+        chartMatchesTotal.setOnChartValueSelectedListener(null)
+        chartSets.setOnChartValueSelectedListener(null)
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -40,36 +54,103 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         setContentView(R.layout.team_info)
         super.onCreate(savedInstanceState)
         intent.extras?.let { bundle ->
-            team = bundle.getParcelable(TEAM) ?: Team()
-            bundle.getParcelableArrayList<Team>(SEASON_TABLE)?.toList()?.let { seasonRanking = it }
+            viewModel.mTeam = bundle.getParcelable(TEAM)
+            teamId = bundle.getString(TEAM_ID) ?: teamId
+            bundle.getParcelableArrayList<Team>(SEASON_TABLE)?.toList()?.let { viewModel.seasonRanking = it }
         }
-        setToolbarTitle(team.name)
+        setToolbarTitle("Profil týmu")
         setArrowBack()
-        setChart()
+        initAll()
     }
 
-    override fun onDestroy()
+    private fun initAll()
     {
-        super.onDestroy()
-        chartMatches.setOnChartValueSelectedListener(null)
-        chartSets.setOnChartValueSelectedListener(null)
-        chartGames.setOnChartValueSelectedListener(null)
+       if(viewModel.mTeam != null)
+       {
+           setTeamName()
+           setCharts()
+           setSuccessRate()
+           setActualGroup()
+           setCurrentRank()
+           setAverageRank()
+           setTitles()
+       }
+       else viewModel.getTeam(teamId)
+
+       viewModel.team.observe(this) {
+           viewModel.mTeam = it
+           initAll()
+       }
     }
 
-    private fun setChart()
+    private fun setTitles()
     {
-        chartMatches = findViewById(R.id.team_info_chart_matches)
+        val titles = findViewById<TextView>(R.id.team_info_titles)
+        viewModel.titles.observe(this) {
+            titles.text = "Tituly: $it"
+        }
+    }
+
+    private fun setAverageRank()
+    {
+        val averageRank = findViewById<TextView>(R.id.team_info_avgRank)
+        viewModel.getAverageRank()
+        viewModel.avgRank.observe(this) {
+            averageRank.text = "Průměrné umístění: $it."
+        }
+    }
+
+    private fun setTeamName()
+    {
+        val teamName = findViewById<TextView>(R.id.team_info_overview_title)
+        teamName.text = viewModel.mTeam?.name
+    }
+
+    private fun setCurrentRank()
+    {
+        val teamRank = findViewById<TextView>(R.id.team_info_rank)
+        if(viewModel.seasonRanking.isNotEmpty()) viewModel.calculateTeamRank()
+        else
+        {
+            val rankingViewModel by viewModels<RankingFragmentVM>()
+            viewModel.mTeam?.group?.let { rankingViewModel.loadTeams(it, DateUtil.actualYear.toInt(), RankingOrderBy.POINTS) }
+            rankingViewModel.teams.observe(this) {
+                viewModel.seasonRanking = it
+                viewModel.calculateTeamRank()
+            }
+        }
+
+        viewModel.teamRank.observe(this) { teamRank.text = "Pozice v tabulce: $it." }
+    }
+
+    private fun setActualGroup()
+    {
+        val group = findViewById<TextView>(R.id.team_info_group)
+        group.text = "Aktuální skupina: ${viewModel.mTeam?.group ?: "bez skupiny"}"
+    }
+
+    private fun setSuccessRate()
+    {
+        val successRate = findViewById<TextView>(R.id.team_info_successRate)
+        viewModel.successRate.observe(this) { successRate.text = "Úspěšnost: $it %" }
+    }
+
+    private fun setCharts()
+    {
+        chartMatchesThisYear = findViewById(R.id.team_info_chart_matches_thisYear)
+        chartMatchesTotal = findViewById(R.id.team_info_chart_games_total)
         chartSets = findViewById(R.id.team_info_chart_sets)
-        chartGames = findViewById(R.id.team_info_chart_games)
 
-        val matchesEntries = listOf(PieEntry(144f, "Výhry"), PieEntry(18f, "Prohry"))
-        initChart(chartMatches, matchesEntries, getString(R.string.matches))
+        viewModel.getChartsData()
+        viewModel.charts.observe(this) { entries ->
+            chartMatchesThisYear.visibility = VISIBLE
+            chartMatchesTotal.visibility = VISIBLE
+            chartSets.visibility = VISIBLE
 
-        val setsEntries = listOf(PieEntry(18f, "Získané sety"), PieEntry(6f, "Ztracené sety"))
-        initChart(chartSets, setsEntries, getString(R.string.sets))
-
-        val gamesEntries = listOf(PieEntry(64f, "Získané gemy"), PieEntry(43f, "Ztracené gemy"))
-        initChart(chartGames, gamesEntries, getString(R.string.games))
+            initChart(chartMatchesThisYear, entries.first, getString(R.string.play))
+            initChart(chartMatchesTotal,entries.second, getString(R.string.Total))
+            initChart(chartSets, entries.third, getString(R.string.sets))
+        }
     }
 
     private fun initChart(chart: PieChart, entries: List<PieEntry>, title: String, @ColorRes vararg colors: Int = intArrayOf(R.color.blue, R.color.red))
@@ -104,7 +185,8 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
 
     class CustomFormatter : ValueFormatter()
     {
-        override fun getFormattedValue(value: Float): String = "${value.toInt()}"
+        override fun getFormattedValue(value: Float): String
+                = if(value.toInt() == 0) "" else "${value.toInt()}"
     }
 
     override fun onNothingSelected() {}
