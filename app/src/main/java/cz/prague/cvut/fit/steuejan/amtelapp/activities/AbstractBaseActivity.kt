@@ -24,7 +24,7 @@ import kotlin.coroutines.CoroutineContext
 abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
 {
     private val logoutIcon: ImageButton by lazy { findViewById<ImageButton>(R.id.toolbar_logout) }
-    protected val baseActivityVM by viewModels<AbstractBaseActivityVM>()
+    val baseActivityVM by viewModels<AbstractBaseActivityVM>()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job + handler

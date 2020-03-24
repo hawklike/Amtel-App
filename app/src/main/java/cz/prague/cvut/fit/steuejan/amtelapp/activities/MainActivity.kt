@@ -66,10 +66,7 @@ class MainActivity : AbstractBaseActivity()
     {
         viewModel.progressBar.observe(this) { isOn ->
             if(isOn) progressLayout?.visibility = View.VISIBLE
-            else
-            {
-                progressLayout?.visibility = View.GONE
-            }
+            else progressLayout?.visibility = View.GONE
         }
     }
 

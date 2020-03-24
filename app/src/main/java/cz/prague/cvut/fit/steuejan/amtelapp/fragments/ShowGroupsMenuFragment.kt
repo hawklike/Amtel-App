@@ -62,6 +62,7 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
+        setLogoutIconVisibility(false)
         if(isRanking) setToolbarTitle(getString(R.string.results))
         else setToolbarTitle(getString(R.string.schedule))
         viewModel.loadGroups()
