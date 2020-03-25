@@ -194,4 +194,6 @@
     <string name="Total">Celkem</string>
     <string name="play">Utkání</string>
     <string name="years">%1$d let</string>
+    <string name="winner_acronym">V</string>
+    <string name="loser_acronym">P</string>
 </resources>

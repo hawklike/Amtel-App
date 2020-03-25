@@ -1,6 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View.VISIBLE
 import android.widget.TextView
@@ -60,9 +61,12 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
     override fun onDestroy()
     {
         super.onDestroy()
-        chartMatchesThisYear.setOnChartValueSelectedListener(null)
-        chartMatchesTotal.setOnChartValueSelectedListener(null)
-        chartSets.setOnChartValueSelectedListener(null)
+        if(::chartMatchesThisYear.isInitialized)
+            chartMatchesThisYear.setOnChartValueSelectedListener(null)
+        if(::chartMatchesTotal.isInitialized)
+            chartMatchesTotal.setOnChartValueSelectedListener(null)
+        if(::chartSets.isInitialized)
+            chartSets.setOnChartValueSelectedListener(null)
 
         matchesRecyclerView?.adapter = null
         matchesAdapter = null
@@ -148,6 +152,14 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
             .build()
 
         matchesAdapter = ShowTeamMatchesPagingAdapter(viewModel.mTeam ?: Team(id = "mucus"), options)
+        matchesAdapter?.onClick = { match ->
+            val intent = Intent(this, MatchViewPagerActivity::class.java).apply {
+                putExtra(MatchViewPagerActivity.MATCH, match)
+                putExtra(MatchViewPagerActivity.TITLE, getString(R.string.match_result))
+            }
+            startActivity(intent)
+        }
+
         matchesRecyclerView?.adapter = matchesAdapter
 
         matchesAdapter?.startListening()
@@ -261,6 +273,6 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
     override fun onValueSelected(e: Entry, h: Highlight)
     {
         val pie = e as? PieEntry
-        toast(pie?.label ?: "Můj vedoucí bakalářky Tomáš Nováček je borec, má však málo hlenu.")
+        toast(pie?.label ?: "Můj vedoucí bakalářky Tomáš Nováček je borec, dokonce i abstinent.")
     }
 }

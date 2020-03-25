@@ -120,6 +120,19 @@
                 android:elevation="2dp"
                 android:focusable="false">
 
+                <Button
+                    android:id="@+id/match_result_card_home_result"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:text="-"
+                    android:textSize="13sp"
+                    android:layout_marginEnd="12dp"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/lightGrey"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:clickable="false"
+                    android:background="@drawable/circle_blue"/>
+
                 <TextView
                     android:id="@+id/match_result_card_home_name"
                     android:layout_width="wrap_content"
@@ -127,6 +140,7 @@
                     android:text="TK Horní Bludovice"
                     android:layout_marginBottom="8dp"
                     android:clickable="false"
+                    android:layout_toEndOf="@id/match_result_card_home_result"
                     android:layout_above="@+id/match_result_card_home_text"
                     android:layout_alignParentTop="true"
                     android:textColor="@color/darkGrey"
@@ -156,10 +170,24 @@
                 android:elevation="2dp"
                 android:focusable="false">
 
+                <Button
+                    android:id="@+id/match_result_card_away_result"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:text="-"
+                    android:textSize="13sp"
+                    android:layout_marginEnd="12dp"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/lightGrey"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:clickable="false"
+                    android:background="@drawable/circle_blue"/>
+
                 <TextView
                     android:id="@+id/match_result_card_away_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/match_result_card_away_result"
                     android:text="Velmi dlouh7 team"
                     android:layout_marginBottom="8dp"
                     android:clickable="false"

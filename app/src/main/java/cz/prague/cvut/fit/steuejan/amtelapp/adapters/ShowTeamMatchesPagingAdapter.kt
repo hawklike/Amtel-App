@@ -11,6 +11,7 @@ import androidx.annotation.ColorRes
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
+import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
@@ -20,6 +21,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 class ShowTeamMatchesPagingAdapter(private val team: Team, options: FirestorePagingOptions<Match>)
     : FirestorePagingAdapter<Match, ShowTeamMatchesPagingAdapter.ViewHolder>(options)
 {
+    var onClick: (match: Match) -> Unit = {}
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
         val homeName: TextView = itemView.findViewById(R.id.match_card_square_home)
@@ -28,6 +31,13 @@ class ShowTeamMatchesPagingAdapter(private val team: Team, options: FirestorePag
         val result: Button = itemView.findViewById(R.id.match_card_square_result)
         val date: TextView = itemView.findViewById(R.id.match_card_square_date)
         private val card: RelativeLayout = itemView.findViewById(R.id.match_card_square)
+
+        init
+        {
+            card.setOnClickListener {
+                getItem((adapterPosition))?.toObject<Match>()?.let { onClick.invoke(it) }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder

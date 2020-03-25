@@ -255,6 +255,7 @@ class MatchInputResultFragmentVM : ViewModel()
         {
             homeSets > awaySets -> round.homeWinner = true
             homeSets < awaySets -> round.homeWinner = false
+            else -> round.homeWinner = null
         }
     }
 

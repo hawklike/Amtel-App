@@ -1,14 +1,18 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.match
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.TeamInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowPlayersAdapter
@@ -27,6 +31,9 @@ class MatchResultFragment : AbstractMatchActivityFragment()
 
     private lateinit var homeName: TextView
     private lateinit var awayName: TextView
+
+    private lateinit var homeResult: Button
+    private lateinit var awayResult: Button
 
     private lateinit var sets: TextView
     private lateinit var games: TextView
@@ -82,6 +89,9 @@ class MatchResultFragment : AbstractMatchActivityFragment()
 
         cardHomeName = view.findViewById(R.id.match_result_card_home_name)
         cardAwayName = view.findViewById(R.id.match_result_card_away_name)
+
+        homeResult = view.findViewById(R.id.match_result_card_home_result)
+        awayResult = view.findViewById(R.id.match_result_card_away_result)
 
         recyclerView = view.findViewById(R.id.match_result_players_recyclerView)
     }
@@ -147,7 +157,6 @@ class MatchResultFragment : AbstractMatchActivityFragment()
 
     private fun populateFields()
     {
-
         homeName.text = match.home
         awayName.text = match.away
 
@@ -160,17 +169,50 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         cardHomeName.text = match.home
         cardAwayName.text = match.away
 
+        getWinner()
         setupRecycler()
+    }
+
+    private fun getWinner()
+    {
+        when(round.homeWinner)
+        {
+            null -> {
+                setResultButton(homeResult, "-", R.color.lightGrey)
+                setResultButton(awayResult, "-", R.color.lightGrey)
+            }
+            true -> {
+                setResultButton(homeResult, getString(R.string.winner_acronym), R.color.blue)
+                setResultButton(awayResult, getString(R.string.loser_acronym), R.color.red)
+            }
+            else -> {
+                setResultButton(homeResult, getString(R.string.loser_acronym), R.color.red)
+                setResultButton(awayResult, getString(R.string.winner_acronym), R.color.blue)
+            }
+        }
+    }
+
+    private fun setResultButton(button: Button, text: String, @ColorRes colorRes: Int)
+    {
+        button.text = text
+        button.backgroundTintList = ColorStateList.valueOf(App.getColor(colorRes))
     }
 
     private fun setupRecycler()
     {
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        adapter = ShowPlayersAdapter(round.homePlayers + round.awayPlayers)
+        adapter = ShowPlayersAdapter(round.homePlayers + round.awayPlayers, winners = getWinners())
         adapter?.onClick = {
             //TODO
         }
         recyclerView?.adapter = adapter
+    }
+
+    private fun getWinners(): List<Boolean?>
+    {
+        val homeList = List(round.homePlayers.size) { round.homeWinner }
+        val awayList = List(round.awayPlayers.size) { round.homeWinner?.let { !it } }
+        return homeList + awayList
     }
 }

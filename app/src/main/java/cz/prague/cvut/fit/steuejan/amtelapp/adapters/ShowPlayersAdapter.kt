@@ -1,12 +1,16 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
+import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import androidx.recyclerview.widget.RecyclerView
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
@@ -14,7 +18,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Player
 import java.util.*
 
-class ShowPlayersAdapter(private val list: List<Player>, private val teamProfile: Boolean = false)
+class ShowPlayersAdapter(private val list: List<Player>, private val teamProfile: Boolean = false, private val winners: List<Boolean?> = emptyList())
     : RecyclerView.Adapter<ShowPlayersAdapter.ViewHolder>()
 {
     var onClick: (player: Player) -> Unit = { toast(R.string.not_working_yet) }
@@ -24,6 +28,7 @@ class ShowPlayersAdapter(private val list: List<Player>, private val teamProfile
         val name: TextView = itemView.findViewById(R.id.player_card_square_name)
         val surname: TextView = itemView.findViewById(R.id.player_card_square_surname)
         val footer: TextView = itemView.findViewById(R.id.player_card_square_footer)
+        val result: Button = itemView.findViewById(R.id.player_card_square_result)
         private val card: RelativeLayout = itemView.findViewById(R.id.player_card_square)
 
         init
@@ -40,6 +45,8 @@ class ShowPlayersAdapter(private val list: List<Player>, private val teamProfile
     }
 
     private fun getItem(position: Int): Player = list[position]
+
+    private fun isWinner(position: Int): Boolean? = winners[position]
 
     override fun getItemCount(): Int = list.size
 
@@ -58,6 +65,25 @@ class ShowPlayersAdapter(private val list: List<Player>, private val teamProfile
                 if(it) context.getString(R.string.home) else context.getString(R.string.away)
             } ?: ""
             with(holder.footer) { this.setTypeface(this.typeface, Typeface.BOLD) }
+            getWinner(holder, position)
         }
+    }
+
+    private fun getWinner(holder: ViewHolder, position: Int)
+    {
+        holder.result.visibility = View.VISIBLE
+
+        when(isWinner(position))
+        {
+            null -> setResultButton(holder, "-", R.color.lightGrey)
+            true -> setResultButton(holder, context.getString(R.string.winner_acronym), R.color.blue)
+            else -> setResultButton(holder, context.getString(R.string.loser_acronym), R.color.red)
+        }
+    }
+
+    private fun setResultButton(holder: ViewHolder, text: String, @ColorRes colorRes: Int)
+    {
+        holder.result.text = text
+        holder.result.backgroundTintList = ColorStateList.valueOf(App.getColor(colorRes))
     }
 }
