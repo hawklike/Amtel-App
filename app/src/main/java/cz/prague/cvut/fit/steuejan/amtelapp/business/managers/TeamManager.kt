@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.TeamDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
@@ -103,6 +104,8 @@ object TeamManager
             false
         }
     }
+
+    fun retrieveMatches(team: Team): Query = MatchDAO().getMatches(team.id!!)
 
     fun retrieveAllUsers(teamId: String, orderBy: UserOrderBy = UserOrderBy.SURNAME): Query
     {

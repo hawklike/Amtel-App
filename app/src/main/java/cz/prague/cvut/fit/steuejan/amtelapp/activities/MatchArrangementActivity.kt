@@ -124,6 +124,8 @@ class MatchArrangementActivity : AbstractBaseActivity()
         callOpponent.setOnClickListener(null)
         defaultEndGame.setOnClickListener(null)
         addToCalendar.setOnClickListener(null)
+        homeName.setOnClickListener(null)
+        awayName.setOnLongClickListener(null)
 
         progressBarLayout?.removeAllViews()
         matchInfoLayout?.removeAllViews()
@@ -183,6 +185,26 @@ class MatchArrangementActivity : AbstractBaseActivity()
         call()
         defaultEndGame()
         addToCalendar()
+        startTeamInfoActivity()
+    }
+
+    private fun startTeamInfoActivity()
+    {
+        homeName.setOnClickListener {
+            startTeamInfoActivity(homeTeam)
+        }
+
+        awayName.setOnClickListener {
+            startTeamInfoActivity(awayTeam)
+        }
+    }
+
+    private fun startTeamInfoActivity(team: Team)
+    {
+        val intent = Intent(this, TeamInfoActivity::class.java).apply {
+            putExtra(TeamInfoActivity.TEAM, team)
+        }
+        startActivity(intent)
     }
 
     private fun addToCalendar()

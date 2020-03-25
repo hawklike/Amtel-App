@@ -34,7 +34,7 @@
     <string name="account_boss_adapter_add_TM">Vedoucí</string>
     <string name="account_boss_adapter_make_groups">Skupiny</string>
     <string name="account_adapter_personal">Osobní</string>
-    <string name="account_tm_adapter_make_team">Vytvořit soupisku</string>
+    <string name="account_tm_adapter_make_team">Soupiska</string>
     <string name="new_password">Nové heslo</string>
     <string name="change_password">Změnit heslo</string>
     <string name="add_tm">Přidat vedoucího týmu</string>
@@ -193,4 +193,5 @@
     <string name="this_year">Letos</string>
     <string name="Total">Celkem</string>
     <string name="play">Utkání</string>
+    <string name="years">%1$d let</string>
 </resources>

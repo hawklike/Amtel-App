@@ -184,6 +184,7 @@
                 android:id="@+id/match_arrangement_send_email"
                 style="@style/CardRelativeLayout"
                 android:layout_below="@id/match_arrangement"
+                android:elevation="@dimen/elevation"
                 android:visibility="gone">
 
                 <TextView
@@ -201,6 +202,7 @@
             <RelativeLayout
                 android:id="@+id/match_arrangement_call"
                 style="@style/CardRelativeLayout"
+                android:elevation="@dimen/elevation"
                 android:layout_below="@id/match_arrangement_send_email"
                 android:visibility="gone">
 

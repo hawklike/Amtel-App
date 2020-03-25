@@ -40,13 +40,21 @@ class MatchDAO : DAO
             .orderBy("home", Query.Direction.ASCENDING)
     }
 
-    suspend fun getMatches(team: String, year: Int): QuerySnapshot
+    suspend fun getMatches(teamId: String, year: Int): QuerySnapshot
     {
         return Firebase.firestore
             .collection(collection)
-            .whereArrayContains("teams", team)
+            .whereArrayContains("teams", teamId)
             .whereEqualTo("year", year)
             .get()
             .await()
+    }
+
+    fun getMatches(teamId: String, orderBy: String = "dateAndTime"): Query
+    {
+        return Firebase.firestore
+            .collection(collection)
+            .whereArrayContains("teams", teamId)
+            .orderBy(orderBy, Query.Direction.DESCENDING)
     }
 }

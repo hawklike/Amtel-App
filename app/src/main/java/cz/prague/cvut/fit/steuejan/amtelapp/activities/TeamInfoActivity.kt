@@ -1,11 +1,16 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View.VISIBLE
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.annotation.ColorRes
 import androidx.lifecycle.observe
+import androidx.paging.PagedList
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.Entry
@@ -18,8 +23,13 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowPlayersAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamMatchesPagingAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.toPlayer
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.RankingFragmentVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.TeamInfoActivityVM
@@ -34,6 +44,12 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
 
     private var teamId: String = ""
 
+    private var matchesRecyclerView: RecyclerView? = null
+    private var matchesAdapter: ShowTeamMatchesPagingAdapter? = null
+
+    private var playersRecyclerView: RecyclerView? = null
+    private var playersAdapter: ShowPlayersAdapter? = null
+
     companion object
     {
         const val TEAM = "team"
@@ -47,6 +63,20 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         chartMatchesThisYear.setOnChartValueSelectedListener(null)
         chartMatchesTotal.setOnChartValueSelectedListener(null)
         chartSets.setOnChartValueSelectedListener(null)
+
+        matchesRecyclerView?.adapter = null
+        matchesAdapter = null
+        matchesRecyclerView = null
+
+        playersRecyclerView?.adapter = null
+        playersAdapter = null
+        playersRecyclerView = null
+    }
+
+    override fun onStop()
+    {
+        super.onStop()
+        matchesAdapter?.stopListening()
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -69,12 +99,14 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
        {
            setToolbarTitle(viewModel.mTeam!!.name)
            setCharts()
-           setMatches()
+           setTotalMatches()
            setSuccessRate()
            setActualGroup()
            setCurrentRank()
            setAverageRank()
            setTitles()
+           setMatches()
+           setPlayers()
        }
        else viewModel.getTeam(teamId)
 
@@ -85,7 +117,43 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
        }
     }
 
+    private fun setPlayers()
+    {
+        playersRecyclerView = findViewById(R.id.team_info_players_recyclerView)
+        playersRecyclerView?.setHasFixedSize(true)
+        playersRecyclerView?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+        val team = viewModel.mTeam ?: Team()
+        playersAdapter = ShowPlayersAdapter(team.users.map { it.toPlayer() }, true)
+
+        playersRecyclerView?.adapter = playersAdapter
+    }
+
     private fun setMatches()
+    {
+        matchesRecyclerView = findViewById(R.id.team_info_matches_recyclerView)
+        matchesRecyclerView?.setHasFixedSize(true)
+        matchesRecyclerView?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+        val query = TeamManager.retrieveMatches(viewModel.mTeam ?: Team(id = "hlen"))
+        val config = PagedList.Config.Builder()
+            .setEnablePlaceholders(false)
+            .setPrefetchDistance(4)
+            .setPageSize(10)
+            .build()
+
+        val options = FirestorePagingOptions.Builder<Match>()
+            .setLifecycleOwner(this)
+            .setQuery(query, config, Match::class.java)
+            .build()
+
+        matchesAdapter = ShowTeamMatchesPagingAdapter(viewModel.mTeam ?: Team(id = "mucus"), options)
+        matchesRecyclerView?.adapter = matchesAdapter
+
+        matchesAdapter?.startListening()
+    }
+
+    private fun setTotalMatches()
     {
         val matches = findViewById<TextView>(R.id.team_info_matches)
         viewModel.matches.observe(this) { matches.text = it.toString() }
@@ -127,6 +195,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         group.text = viewModel.mTeam?.group ?: ""
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setSuccessRate()
     {
         val successRate = findViewById<TextView>(R.id.team_info_successRate)

@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,18 +10,21 @@ import androidx.recyclerview.widget.RecyclerView
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Player
+import java.util.*
 
-class ShowPlayersAdapter(private val list: List<Player>) : RecyclerView.Adapter<ShowPlayersAdapter.ViewHolder>()
+class ShowPlayersAdapter(private val list: List<Player>, private val teamProfile: Boolean = false)
+    : RecyclerView.Adapter<ShowPlayersAdapter.ViewHolder>()
 {
     var onClick: (player: Player) -> Unit = { toast(R.string.not_working_yet) }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
-        val name: TextView = itemView.findViewById(R.id.user_card_square_name)
-        val surname: TextView = itemView.findViewById(R.id.user_card_square_surname)
-        val membership: TextView = itemView.findViewById(R.id.user_card_square_homeAway)
-        private val card: RelativeLayout = itemView.findViewById(R.id.user_card_square)
+        val name: TextView = itemView.findViewById(R.id.player_card_square_name)
+        val surname: TextView = itemView.findViewById(R.id.player_card_square_surname)
+        val footer: TextView = itemView.findViewById(R.id.player_card_square_footer)
+        private val card: RelativeLayout = itemView.findViewById(R.id.player_card_square)
 
         init
         {
@@ -31,7 +35,7 @@ class ShowPlayersAdapter(private val list: List<Player>) : RecyclerView.Adapter<
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
     {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.user_card_square, parent, false)
+        val view = inflater.inflate(R.layout.player_card_square, parent, false)
         return ViewHolder(view)
     }
 
@@ -44,6 +48,16 @@ class ShowPlayersAdapter(private val list: List<Player>) : RecyclerView.Adapter<
         val player = getItem(position)
         holder.name.text = player.name
         holder.surname.text = player.surname
-        holder.membership.text = if(player.isHome) context.getString(R.string.home) else context.getString(R.string.away)
+        if(teamProfile)
+        {
+            holder.footer.text = String.format(context.getString(R.string.years), DateUtil.getAge(player.birthdate ?: Date()))
+        }
+        else
+        {
+            holder.footer.text = player.isHome?.let {
+                if(it) context.getString(R.string.home) else context.getString(R.string.away)
+            } ?: ""
+            with(holder.footer) { this.setTypeface(this.typeface, Typeface.BOLD) }
+        }
     }
 }

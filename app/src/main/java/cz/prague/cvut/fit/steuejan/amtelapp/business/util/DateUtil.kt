@@ -1,9 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Day
-import org.joda.time.DateTime
-import org.joda.time.DateTimeComparator
-import org.joda.time.Days
+import org.joda.time.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -84,6 +82,10 @@ object DateUtil
     {
         return DateTimeComparator.getDateOnlyInstance().compare(DateTime(first), DateTime(second))
     }
+
+    fun getAge(birthdate: Date): Int
+            = Years.yearsBetween(LocalDate(birthdate), LocalDate()).years
+
 }
 
 fun Date.toMyString(format: String = "dd.MM.yyyy"): String
