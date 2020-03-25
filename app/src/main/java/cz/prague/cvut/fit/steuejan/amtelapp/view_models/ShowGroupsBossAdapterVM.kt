@@ -89,9 +89,6 @@ class ShowGroupsBossAdapterVM : ViewModel()
         val homeTeam = teams.find { it.id == match.homeId }
         val awayTeam = teams.find { it.id == match.awayId }
 
-        homeTeam?.matchesId?.add(match.id!!)
-        awayTeam?.matchesId?.add(match.id!!)
-
         val tmpH = homeTeam?.seasons?.toMutableSet()
         tmpH?.add(mapOf(DateUtil.actualYear to group.name))
         tmpH?.let { homeTeam.seasons = it.toList() }

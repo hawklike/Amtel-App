@@ -21,6 +21,8 @@ class TeamInfoActivityVM : ViewModel()
     var seasonRanking: List<Team> = listOf()
     var mTeam: Team? = null
 
+    /*---------------------------------------------------*/
+
     private val _team = SingleLiveEvent<Team>()
     val team: LiveData<Team> = _team
 
@@ -51,6 +53,11 @@ class TeamInfoActivityVM : ViewModel()
 
     /*---------------------------------------------------*/
 
+    private val _matches = MutableLiveData<Int>()
+    val matches: LiveData<Int> = _matches
+
+    /*---------------------------------------------------*/
+
     fun getChartsData()
     {
         viewModelScope.launch {
@@ -69,6 +76,8 @@ class TeamInfoActivityVM : ViewModel()
 
 
                 _charts.value = Triple(thisYearEntries, totalEntries, setsEntries)
+                _matches.value = team.matchesPerYear.values.sum()
+
                 countSuccessRate(winsTotal, lossesTotal)
             }
         }

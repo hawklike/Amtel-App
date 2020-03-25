@@ -58,7 +58,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
             teamId = bundle.getString(TEAM_ID) ?: teamId
             bundle.getParcelableArrayList<Team>(SEASON_TABLE)?.toList()?.let { viewModel.seasonRanking = it }
         }
-        setToolbarTitle("Profil týmu")
+        setToolbarTitle("Název týmu se načítá...")
         setArrowBack()
         initAll()
     }
@@ -67,8 +67,9 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
     {
        if(viewModel.mTeam != null)
        {
-           setTeamName()
+           setToolbarTitle(viewModel.mTeam!!.name)
            setCharts()
+           setMatches()
            setSuccessRate()
            setActualGroup()
            setCurrentRank()
@@ -79,31 +80,28 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
 
        viewModel.team.observe(this) {
            viewModel.mTeam = it
+           setToolbarTitle(it.name)
            initAll()
        }
+    }
+
+    private fun setMatches()
+    {
+        val matches = findViewById<TextView>(R.id.team_info_matches)
+        viewModel.matches.observe(this) { matches.text = it.toString() }
     }
 
     private fun setTitles()
     {
         val titles = findViewById<TextView>(R.id.team_info_titles)
-        viewModel.titles.observe(this) {
-            titles.text = "Tituly: $it"
-        }
+        viewModel.titles.observe(this) { titles.text = it.toString() }
     }
 
     private fun setAverageRank()
     {
         val averageRank = findViewById<TextView>(R.id.team_info_avgRank)
         viewModel.getAverageRank()
-        viewModel.avgRank.observe(this) {
-            averageRank.text = "Průměrné umístění: $it."
-        }
-    }
-
-    private fun setTeamName()
-    {
-        val teamName = findViewById<TextView>(R.id.team_info_overview_title)
-        teamName.text = viewModel.mTeam?.name
+        viewModel.avgRank.observe(this) { averageRank.text = it.toString() }
     }
 
     private fun setCurrentRank()
@@ -120,19 +118,19 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
             }
         }
 
-        viewModel.teamRank.observe(this) { teamRank.text = "Pozice v tabulce: $it." }
+        viewModel.teamRank.observe(this) { teamRank.text = it.toString() }
     }
 
     private fun setActualGroup()
     {
         val group = findViewById<TextView>(R.id.team_info_group)
-        group.text = "Aktuální skupina: ${viewModel.mTeam?.group ?: "bez skupiny"}"
+        group.text = viewModel.mTeam?.group ?: ""
     }
 
     private fun setSuccessRate()
     {
         val successRate = findViewById<TextView>(R.id.team_info_successRate)
-        viewModel.successRate.observe(this) { successRate.text = "Úspěšnost: $it %" }
+        viewModel.successRate.observe(this) { successRate.text = "$it %" }
     }
 
     private fun setCharts()
