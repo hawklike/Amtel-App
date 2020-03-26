@@ -10,10 +10,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
-import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
-import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
@@ -121,13 +118,25 @@ object TeamManager
         if(groupId == null) return@withContext NoTeam
         return@withContext try
         {
-            val teams = TeamDAO().retrieveTeamsInSeason(groupId, year).toObjects<Team>()
-            Log.i(TAG, "retrieveTeamsInSeason(): $teams which contains pair ($groupId [groupId], $year [year]) found successfully")
-            ValidTeams(teams)
+            val group = GroupManager.findGroup(groupId)
+            if(group is ValidGroup)
+            {
+                val teams = mutableListOf<Team>()
+                group.self.teamIds[year.toString()]?.let { teamIds ->
+                    teamIds.forEach { teamId ->
+                        with(findTeam(teamId)) {
+                            if(this is ValidTeam) teams.add(this.self)
+                        }
+                    }
+                }
+                Log.i(TAG, "retrieveTeamsInSeason(): $teams in $groupId [groupId] and $year [year] found successfully")
+                ValidTeams(teams)
+            }
+            else NoTeam
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "retrieveTeamsInSeason(): documents not found because ${ex.message}")
+            Log.e(TAG, "retrieveTeamsInSeason(): teams not found because ${ex.message}")
             NoTeam
         }
     }

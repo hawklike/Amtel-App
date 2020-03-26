@@ -30,9 +30,11 @@ object DateUtil
     val actualYear: String
         get()
         {
-            val calendar = GregorianCalendar()
-            calendar.time = Date()
-            return calendar[Calendar.YEAR].toString()
+//            val calendar = GregorianCalendar()
+//            calendar.time = Date()
+//            return calendar[Calendar.YEAR].toString()
+
+            return "2021"
         }
 
     fun getWeekDate(week: Int): List<Date>

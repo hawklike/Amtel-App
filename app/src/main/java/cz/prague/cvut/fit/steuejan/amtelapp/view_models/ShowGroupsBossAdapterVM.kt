@@ -107,4 +107,16 @@ class ShowGroupsBossAdapterVM : ViewModel()
             GroupManager.updateGroup(group.id, mapOf("rank" to adapterPosition))
         }
     }
+
+    fun deleteTeam(group: Group)
+    {
+        GlobalScope.launch {
+            group.teamIds.values.forEach {
+                it.forEach { teamId ->
+                    GroupManager.updateGroup(teamId, mapOf("groupName" to null, "groupId" to null))
+                }
+            }
+            GroupManager.deleteGroup(group.id)
+        }
+    }
 }

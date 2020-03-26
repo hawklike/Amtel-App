@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
@@ -26,7 +27,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsBossAdapterVM
 import java.util.*
 
-class ShowGroupsBossAdapter(private val context: Context, val list: List<Group>)
+class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<Group>)
     : RecyclerView.Adapter<ShowGroupsBossAdapter.ViewHolder>(), ItemMoveCallback.ItemTouchHelperContract
 {
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(ShowGroupsBossAdapterVM::class.java)
@@ -39,6 +40,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: List<Group>)
         private val size: TextView = itemView.findViewById(R.id.group_card_size)
         private val playingPlayOff: TextView = itemView.findViewById(R.id.group_card_playingPlayOff)
         private val generate: Button = itemView.findViewById(R.id.group_card_generate)
+        private val deleteButton: ImageButton = itemView.findViewById(R.id.group_card_delete)
 
         private var rounds = 0
         private var calculatedRounds = 0
@@ -60,8 +62,27 @@ class ShowGroupsBossAdapter(private val context: Context, val list: List<Group>)
             if(size == 1 || size == 0) rounds = 0
             calculatedRounds = rounds
 
-            generate()
+            handleGenerateButton()
+            handleDeleteButton()
             setObserver()
+        }
+
+        private fun handleDeleteButton()
+        {
+            deleteButton.setOnClickListener {
+
+                MaterialDialog(context)
+                    .title(R.string.delete_user_confirmation_message)
+                    .show {
+                        positiveButton(R.string.yes) {
+                            viewModel.deleteTeam(getItem(adapterPosition))
+                            list.removeAt(adapterPosition)
+                            notifyItemRemoved(adapterPosition)
+                            notifyItemRangeChanged(adapterPosition, list.size)
+                        }
+                        negativeButton()
+                    }
+            }
         }
 
         private fun setObserver()
@@ -73,7 +94,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: List<Group>)
         }
 
         //TODO: implement regenerating matches
-        private fun generate()
+        private fun handleGenerateButton()
         {
             if(rounds == 0)
             {
