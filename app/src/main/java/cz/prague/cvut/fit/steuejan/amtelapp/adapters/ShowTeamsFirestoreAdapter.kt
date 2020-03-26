@@ -39,7 +39,7 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
         {
             card.setOnClickListener {
                 val team = getItem(adapterPosition)
-                val index = team.group?.let { groups.indexOf(it) } ?: -1
+                val index = team.groupName?.let { groups.indexOf(it) } ?: -1
 
                 MaterialDialog(context).show {
                     title(text = String.format(context.getString(R.string.choose_group_input), teamName.text))
@@ -67,7 +67,7 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
         if(presentation == SIMPLE)
         {
             holder.teamName.text = team.name
-            team.group?.let { holder.group.text = it }
+            team.groupName?.let { holder.group.text = it }
         }
     }
 

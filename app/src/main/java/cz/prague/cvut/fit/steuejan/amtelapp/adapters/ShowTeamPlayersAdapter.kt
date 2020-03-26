@@ -46,7 +46,7 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
                             notifyItemRangeChanged(adapterPosition, list.size)
                             onDelete.invoke(list)
                         }
-                        negativeButton(R.string.no)
+                        negativeButton()
                     }
             }
         }

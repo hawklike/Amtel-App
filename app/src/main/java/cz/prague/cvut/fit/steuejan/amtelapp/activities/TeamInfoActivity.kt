@@ -191,7 +191,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         else
         {
             val rankingViewModel by viewModels<RankingFragmentVM>()
-            viewModel.mTeam?.group?.let { rankingViewModel.loadTeams(it, DateUtil.actualYear.toInt(), RankingOrderBy.POINTS) }
+            viewModel.mTeam?.groupId?.let { rankingViewModel.loadTeams(it, DateUtil.actualYear.toInt(), RankingOrderBy.POINTS) }
             rankingViewModel.teams.observe(this) {
                 viewModel.seasonRanking = it
                 viewModel.calculateTeamRank()
@@ -204,7 +204,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
     private fun setActualGroup()
     {
         val group = findViewById<TextView>(R.id.team_info_group)
-        group.text = viewModel.mTeam?.group ?: ""
+        group.text = viewModel.mTeam?.groupName ?: ""
     }
 
     @SuppressLint("SetTextI18n")
@@ -226,9 +226,14 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
             chartMatchesTotal.visibility = VISIBLE
             chartSets.visibility = VISIBLE
 
-            initChart(chartMatchesThisYear, entries.first, getString(R.string.play))
-            initChart(chartMatchesTotal,entries.second, getString(R.string.Total))
-            initChart(chartSets, entries.third, getString(R.string.sets))
+            if(entries.first.size == 2) initChart(chartMatchesThisYear, entries.first, getString(R.string.play))
+            else initChart(chartMatchesThisYear, entries.first, getString(R.string.play), R.color.lightGrey)
+
+            if(entries.second.size == 2) initChart(chartMatchesTotal,entries.second, getString(R.string.Total))
+            else initChart(chartMatchesTotal,entries.second, getString(R.string.Total), R.color.lightGrey)
+
+            if(entries.third.size == 2) initChart(chartSets, entries.third, getString(R.string.sets))
+            else initChart(chartSets, entries.third, getString(R.string.sets), R.color.lightGrey)
         }
     }
 

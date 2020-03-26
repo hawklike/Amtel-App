@@ -44,12 +44,13 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
         if(confirmName(groupName))
         {
             viewModelScope.launch {
-                if(GroupManager.findGroup(groupName) is ValidGroup)
+                val groups = GroupManager.findGroups("name", groupName)
+                if(groups is ValidGroups && groups.self.isNotEmpty())
                 {
                     _group.value = NoGroup
                     return@launch
                 }
-                _group.value = GroupManager.addGroup(Group(groupName, playingPlayOff = playingPlayOff)).let {
+                _group.value = GroupManager.addGroup(Group(null, groupName, playingPlayOff = playingPlayOff)).let {
                     if(it is ValidGroup) ValidGroup(it.self)
                     else NoGroup
                 }
@@ -108,7 +109,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
     {
         GlobalScope.launch {
             for(i in groups.indices)
-                GroupManager.updateGroup(groups[i].name, mapOf("rank" to i))
+                GroupManager.updateGroup(groups[i].id!!, mapOf("rank" to i))
         }
     }
 

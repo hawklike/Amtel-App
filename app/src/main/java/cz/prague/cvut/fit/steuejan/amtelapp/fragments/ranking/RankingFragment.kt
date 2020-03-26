@@ -108,7 +108,7 @@ class RankingFragment : AbstractBaseFragment()
     private fun loadData()
     {
         progressBar.visibility = VISIBLE
-        viewModel.loadTeams(group.name, year, orderBy)
+        viewModel.loadTeams(group.id!!, year, orderBy)
     }
 
     private fun setupRecycler()
@@ -173,7 +173,7 @@ class RankingFragment : AbstractBaseFragment()
         actualSortOption = view
         reverseOrder = if(orderBy == this.orderBy) !reverseOrder else false
         this.orderBy = orderBy
-        viewModel.loadTeams(group.name, year, orderBy, reverseOrder)
+        viewModel.loadTeams(group.id!!, year, orderBy, reverseOrder)
     }
 
     private fun setNormalStyle(view: TextView)

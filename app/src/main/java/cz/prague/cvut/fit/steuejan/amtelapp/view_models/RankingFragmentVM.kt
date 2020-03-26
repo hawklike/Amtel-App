@@ -29,13 +29,13 @@ class RankingFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun loadTeams(group: String, year: Int, orderBy: RankingOrderBy, reverse: Boolean = false)
+    fun loadTeams(groupId: String, year: Int, orderBy: RankingOrderBy, reverse: Boolean = false)
     {
         this.orderBy = orderBy
         viewModelScope.launch {
             if(mTeams.isEmpty())
             {
-                val teams = TeamManager.retrieveTeamsInSeason(group, year)
+                val teams = TeamManager.retrieveTeamsInSeason(groupId, year)
                 if(teams is ValidTeams)
                 {
                     mTeams = teams.self

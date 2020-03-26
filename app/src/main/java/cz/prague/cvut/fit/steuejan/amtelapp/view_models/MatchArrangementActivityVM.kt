@@ -240,12 +240,12 @@ class MatchArrangementActivityVM : ViewModel()
 
         val match = _match.value ?: return
 
-        val subject = "Bylo nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.group}"
+        val subject = "Bylo nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.groupName}"
 
         val message = """
         Dobrý den,
         
-        právě bylo v aplikaci nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.group}.
+        právě bylo v aplikaci nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.groupName}.
         
         Místo: ${match.place} ${place?.let { "<---" } ?: ""}
         Datum a čas: ${match.dateAndTime?.toMyString("dd.MM.yyyy 'v' HH:mm") ?: "nespecifikováno"} ${dateAndTime?.let { "<---" } ?: ""}
@@ -269,7 +269,7 @@ class MatchArrangementActivityVM : ViewModel()
 
     private fun sendDefaultResultEmail(match: Match, homeTeam: Team, awayTeam: Team)
     {
-        val subject = "Byla zvolena kontumační prohra/výhra v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})"
+        val subject = "Byla zvolena kontumační prohra/výhra v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
 
         val message = """
                     Dobrý den,

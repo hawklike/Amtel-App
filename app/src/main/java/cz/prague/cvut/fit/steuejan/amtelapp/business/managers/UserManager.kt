@@ -85,7 +85,7 @@ object UserManager
         return@withContext try
         {
             UserDAO().delete(userId)
-            Log.i(TAG, "deleteUser(): user with id $userId successfully deleted with")
+            Log.i(TAG, "deleteUser(): user with id $userId successfully deleted")
             true
         }
         catch(ex: Exception)

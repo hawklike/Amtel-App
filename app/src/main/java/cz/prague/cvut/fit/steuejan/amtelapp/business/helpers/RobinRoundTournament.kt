@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.helpers
 
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 
@@ -30,7 +31,7 @@ class RobinRoundTournament
         rounds = n
     }
 
-    fun createMatches(group: String): List<Match>
+    fun createMatches(group: Group): List<Match>
     {
         for(round: Int in 1..rounds)
         {
@@ -43,9 +44,9 @@ class RobinRoundTournament
                     val a = max(home, away)
                     val b = min(home, away)
                     if((home.first + away.first) % 2 == 0)
-                        matches.add(Match(null, group, round, a.name, b.name, a.id!!, b.id!!, place = a.place))
+                        matches.add(Match(null, group.id!!, group.name, round, a.name, b.name, a.id!!, b.id!!, place = a.place))
                     else
-                        matches.add(Match(null, group, round, b.name, a.name, b.id!!, a.id!!, place = b.place))
+                        matches.add(Match(null, group.id!!, group.name, round, b.name, a.name, b.id!!, a.id!!, place = b.place))
                 }
             }
             if(rounds > 1) rotate()

@@ -49,6 +49,22 @@ object GroupManager
         }
     }
 
+    suspend fun deleteGroup(groupId: String?): Boolean = withContext(IO)
+    {
+        if(groupId == null) return@withContext false
+        return@withContext try
+        {
+            GroupDAO().delete(groupId)
+            Log.i(TAG, "deleteUser(): group with id $groupId successfully deleted")
+            true
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "deleteUser(): group with id $groupId not deleted because ${ex.message}")
+            false
+        }
+    }
+
     suspend fun updateGroup(documentId: String?, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
     {
         if(documentId == null) return@withContext false

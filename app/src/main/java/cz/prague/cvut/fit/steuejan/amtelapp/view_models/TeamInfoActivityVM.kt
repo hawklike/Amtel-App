@@ -64,15 +64,28 @@ class TeamInfoActivityVM : ViewModel()
             mTeam?.let { team ->
                 val winsThisYear = team.winsPerYear[DateUtil.actualYear] ?: 0
                 val lossesThisYear = team.lossesPerYear[DateUtil.actualYear] ?: 0
-                val thisYearEntries = listOf(PieEntry(winsThisYear.toFloat(), "Letošní výhraná utkání"), PieEntry(lossesThisYear.toFloat(), "Letošní prohraná utkání"))
+                val thisYearEntries =
+                    if(winsThisYear + lossesThisYear != 0)
+                        listOf(PieEntry(winsThisYear.toFloat(), "Letošní výhraná utkání"), PieEntry(lossesThisYear.toFloat(), "Letošní prohraná utkání"))
+                    else
+                        listOf(PieEntry(DateUtil.actualYear.toFloat(), "Tým v aktuální sezóně ještě neodehrál žádné utkání."))
 
                 val winsTotal = team.winsPerYear.values.sum()
                 val lossesTotal = team.lossesPerYear.values.sum()
-                val totalEntries = listOf(PieEntry(winsTotal.toFloat(), "Výhraná utkání"), PieEntry(lossesTotal.toFloat(), "Prohraná utkání"))
+                val totalEntries =
+                    if(winsTotal + lossesThisYear != 0)
+                        listOf(PieEntry(winsTotal.toFloat(), "Výhraná utkání"), PieEntry(lossesTotal.toFloat(), "Prohraná utkání"))
+                    else
+                        listOf(PieEntry(1996f, "Datum narození autora aplikace. Počet všech odehraných utkání tohoto týmu je však 0."))
+
 
                 val positiveSets = team.positiveSetsPerYear.values.sum()
                 val negativeSets = team.negativeSetsPerYear.values.sum()
-                val setsEntries = listOf(PieEntry(positiveSets.toFloat(), "Celkově získané sety"), PieEntry(negativeSets.toFloat(), "Celkově ztracené sety"))
+                val setsEntries =
+                    if(positiveSets + negativeSets != 0)
+                        listOf(PieEntry(positiveSets.toFloat(), "Celkově získané sety"), PieEntry(negativeSets.toFloat(), "Celkově ztracené sety"))
+                    else
+                        listOf(PieEntry(42f, "Čtyřicet dva je sice odpověď na základní otázku života, vesmíru a vůbec, ale to bohužel nemění fakt, že tým neodehrál žádný set."))
 
 
                 _charts.value = Triple(thisYearEntries, totalEntries, setsEntries)
@@ -86,7 +99,7 @@ class TeamInfoActivityVM : ViewModel()
     private fun countSuccessRate(winsTotal: Int, lossesTotal: Int)
     {
         val rate = winsTotal.toDouble() / (winsTotal + lossesTotal) * 100
-        _successRate.value = rate.roundToInt()
+        _successRate.value = if(!rate.isNaN()) rate.roundToInt() else 0
     }
 
     fun calculateTeamRank()
@@ -100,6 +113,8 @@ class TeamInfoActivityVM : ViewModel()
                     return@launch
                 }
             }
+
+            if(seasonRanking.isEmpty()) _teamRank.value = 0
         }
     }
 

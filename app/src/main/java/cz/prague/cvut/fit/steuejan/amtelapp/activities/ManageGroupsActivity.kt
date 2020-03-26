@@ -114,7 +114,7 @@ class ManageGroupsActivity : AbstractActivityWithRecyclerView()
         recyclerView?.layoutManager = LinearLayoutManager(this)
 
         viewModel.groups.observe(this) {
-            adapter = ShowGroupsBossAdapter(this, it)
+            adapter = ShowGroupsBossAdapter(this, it.toMutableList())
 
             val callback: ItemTouchHelper.Callback = ItemMoveCallback(adapter!!)
             val touchHelper = ItemTouchHelper(callback)

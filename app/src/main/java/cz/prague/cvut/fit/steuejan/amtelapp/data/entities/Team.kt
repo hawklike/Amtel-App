@@ -13,7 +13,7 @@ data class Team(override var id: String? = null,
                 var users: MutableList<User> = mutableListOf(),
                 var pointsPerMatch: MutableMap<String, MutableMap<String, Int>> = mutableMapOf(), //(year, (id_match, points)),
                 var pointsPerYear:  MutableMap<String, Int> = mutableMapOf(), //(year, points),
-                var group: String? = null,
+                var groupName: String? = null,
                 var winsPerYear: MutableMap<String, Int> = mutableMapOf(), //(year, #wins)
                 var lossesPerYear: MutableMap<String, Int> = mutableMapOf(),
                 var matchesPerYear: MutableMap<String, Int> = mutableMapOf(),
@@ -22,7 +22,8 @@ data class Team(override var id: String? = null,
                 var positiveSetsPerYear:  MutableMap<String, Int> = mutableMapOf(),
                 var negativeSetsPerYear:  MutableMap<String, Int> = mutableMapOf(),
                 var seasons: List<Map<String, String>> = listOf(), //{(year, group),...}
-                var results: MutableList<Int> = mutableListOf() //season final rank
+                var results: MutableList<Int> = mutableListOf(), //season final rank
+                var groupId: String? = null
                 ) : Parcelable, Comparable<Team>, Entity()
 {
     override fun compareTo(other: Team): Int =
