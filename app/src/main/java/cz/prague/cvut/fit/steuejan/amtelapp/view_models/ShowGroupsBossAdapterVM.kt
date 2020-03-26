@@ -89,13 +89,13 @@ class ShowGroupsBossAdapterVM : ViewModel()
         val homeTeam = teams.find { it.id == match.homeId }
         val awayTeam = teams.find { it.id == match.awayId }
 
-        val homeSeasons = homeTeam?.seasons?.toMutableSet()
-        homeSeasons?.add(mapOf(DateUtil.actualYear to group.id!!))
-        homeSeasons?.let { homeTeam.seasons = it.toList() }
-
-        val awaySeasons = awayTeam?.seasons?.toMutableSet()
-        awaySeasons?.add(mapOf(DateUtil.actualYear to group.id!!))
-        awaySeasons?.let { awayTeam.seasons = it.toList() }
+//        val homeSeasons = homeTeam?.seasons?.toMutableSet()
+//        homeSeasons?.add(mapOf(DateUtil.actualYear to group.id!!))
+//        homeSeasons?.let { homeTeam.seasons = it.toList() }
+//
+//        val awaySeasons = awayTeam?.seasons?.toMutableSet()
+//        awaySeasons?.add(mapOf(DateUtil.actualYear to group.id!!))
+//        awaySeasons?.let { awayTeam.seasons = it.toList() }
 
         homeTeam?.let { TeamManager.addTeam(it) }
         awayTeam?.let { TeamManager.addTeam(it) }
@@ -111,10 +111,9 @@ class ShowGroupsBossAdapterVM : ViewModel()
     fun deleteTeam(group: Group)
     {
         GlobalScope.launch {
-            group.teamIds.values.forEach {
-                it.forEach { teamId ->
-                    GroupManager.updateGroup(teamId, mapOf("groupName" to null, "groupId" to null))
-                }
+            group.teamIds[DateUtil.actualYear]?.forEach { teamId ->
+                TeamManager.updateTeam(teamId, mapOf("groupName" to null, "groupId" to null))
+
             }
             GroupManager.deleteGroup(group.id)
         }
