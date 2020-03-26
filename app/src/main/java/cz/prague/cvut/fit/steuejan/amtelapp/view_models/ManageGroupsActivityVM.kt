@@ -31,7 +31,7 @@ class ManageGroupsActivityVM : ViewModel()
     {
         viewModelScope.launch {
             val roundDates = mutableMapOf("playOff" to week)
-            val group = Group(context.getString(R.string.playOff), roundDates = roundDates, playingPlayOff = false, playOff = true, rank = Int.MAX_VALUE)
+            val group = Group(null, context.getString(R.string.playOff), roundDates = roundDates, playingPlayOff = false, playOff = true, rank = Int.MAX_VALUE)
             if(GroupManager.addGroup(group) is ValidGroup) toast("Baráž úspěšně otevřena.")
         }
     }

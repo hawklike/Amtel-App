@@ -7,7 +7,8 @@ import java.util.*
 
 @Parcelize
 data class Match(override var id: String? = null,
-                 var group: String = "",
+                 var groupId: String = "",
+                 var groupName: String = "",
                  var round: Int = 0,
                  var home: String = "",
                  var away: String = "",

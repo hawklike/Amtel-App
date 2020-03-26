@@ -116,8 +116,9 @@ object TeamManager
         return query!!
     }
 
-    suspend fun retrieveTeamsInSeason(group: String, year: Int): TeamState = withContext(IO)
+    suspend fun retrieveTeamsInSeason(group: String?, year: Int): TeamState = withContext(IO)
     {
+        if(group == null) return@withContext NoTeam
         return@withContext try
         {
             val teams = TeamDAO().retrieveTeamsInSeason(group, year).toObjects<Team>()

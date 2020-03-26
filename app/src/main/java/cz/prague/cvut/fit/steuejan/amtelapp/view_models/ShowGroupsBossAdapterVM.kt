@@ -46,7 +46,7 @@ class ShowGroupsBossAdapterVM : ViewModel()
     fun generateMatches(group: Group, rounds: Int)
     {
         GlobalScope.launch {
-            with(TeamManager.findTeams("group", group.name)) {
+            with(TeamManager.findTeams("groupId", group.id)) {
                 if(this is ValidTeams)
                 {
                     try
@@ -72,7 +72,7 @@ class ShowGroupsBossAdapterVM : ViewModel()
             val tournament = RobinRoundTournament()
             tournament.setTeams(teams)
             tournament.setRounds(rounds)
-            tournament.createMatches(group.name).forEach {
+            tournament.createMatches(group).forEach {
                 with(MatchManager.addMatch(it)) {
                     if(this is ValidMatch) addMatchToTeams(self, teams, group)
                 }
@@ -81,7 +81,7 @@ class ShowGroupsBossAdapterVM : ViewModel()
 
         val map = group.rounds
         map[DateUtil.actualYear] = rounds
-        GroupManager.updateGroup(group.name, mapOf("rounds" to map))
+        GroupManager.updateGroup(group.id, mapOf("rounds" to map))
     }
 
     private suspend fun addMatchToTeams(match: Match, teams: List<Team>, group: Group)
@@ -89,13 +89,13 @@ class ShowGroupsBossAdapterVM : ViewModel()
         val homeTeam = teams.find { it.id == match.homeId }
         val awayTeam = teams.find { it.id == match.awayId }
 
-        val tmpH = homeTeam?.seasons?.toMutableSet()
-        tmpH?.add(mapOf(DateUtil.actualYear to group.name))
-        tmpH?.let { homeTeam.seasons = it.toList() }
+        val homeSeasons = homeTeam?.seasons?.toMutableSet()
+        homeSeasons?.add(mapOf(DateUtil.actualYear to group.id!!))
+        homeSeasons?.let { homeTeam.seasons = it.toList() }
 
-        val tmpA  = awayTeam?.seasons?.toMutableSet()
-        tmpA?.add(mapOf(DateUtil.actualYear to group.name))
-        tmpA?.let { awayTeam.seasons = it.toList() }
+        val awaySeasons = awayTeam?.seasons?.toMutableSet()
+        awaySeasons?.add(mapOf(DateUtil.actualYear to group.id!!))
+        awaySeasons?.let { awayTeam.seasons = it.toList() }
 
         homeTeam?.let { TeamManager.addTeam(it) }
         awayTeam?.let { TeamManager.addTeam(it) }
@@ -104,7 +104,7 @@ class ShowGroupsBossAdapterVM : ViewModel()
     fun setRank(group: Group, adapterPosition: Int)
     {
         viewModelScope.launch {
-            GroupManager.updateGroup(group.name, mapOf("rank" to adapterPosition))
+            GroupManager.updateGroup(group.id, mapOf("rank" to adapterPosition))
         }
     }
 }

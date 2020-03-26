@@ -30,12 +30,12 @@ class MatchDAO : DAO
     override suspend fun delete(documentId: String): Unit
             = delete(collection, documentId)
 
-    fun getMatches(round: Int, groupName: String, year: Int): Query
+    fun getMatches(round: Int, groupId: String, year: Int): Query
     {
         return Firebase.firestore
             .collection(collection)
             .whereEqualTo("round", round)
-            .whereEqualTo("group", groupName)
+            .whereEqualTo("groupId", groupId)
             .whereEqualTo("year", year)
             .orderBy("home", Query.Direction.ASCENDING)
     }

@@ -86,7 +86,7 @@ class TeamInfoActivityVM : ViewModel()
     private fun countSuccessRate(winsTotal: Int, lossesTotal: Int)
     {
         val rate = winsTotal.toDouble() / (winsTotal + lossesTotal) * 100
-        _successRate.value = rate.roundToInt()
+        _successRate.value = if(!rate.isNaN()) rate.roundToInt() else 0
     }
 
     fun calculateTeamRank()
@@ -100,6 +100,8 @@ class TeamInfoActivityVM : ViewModel()
                     return@launch
                 }
             }
+
+            if(seasonRanking.isEmpty()) _teamRank.value = 0
         }
     }
 

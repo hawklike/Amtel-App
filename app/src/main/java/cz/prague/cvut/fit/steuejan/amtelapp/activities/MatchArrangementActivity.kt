@@ -280,7 +280,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
                 type = "message/rfc822"
                 data = Uri.parse("mailto:")
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(opponent?.email ?: ""))
-                putExtra(Intent.EXTRA_SUBJECT, "Zápas ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})")
+                putExtra(Intent.EXTRA_SUBJECT, "Zápas ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})")
                 putExtra(Intent.EXTRA_TEXT, "")
             }
 

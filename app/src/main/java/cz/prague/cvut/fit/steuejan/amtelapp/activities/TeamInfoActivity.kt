@@ -191,7 +191,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         else
         {
             val rankingViewModel by viewModels<RankingFragmentVM>()
-            viewModel.mTeam?.group?.let { rankingViewModel.loadTeams(it, DateUtil.actualYear.toInt(), RankingOrderBy.POINTS) }
+            viewModel.mTeam?.groupId?.let { rankingViewModel.loadTeams(it, DateUtil.actualYear.toInt(), RankingOrderBy.POINTS) }
             rankingViewModel.teams.observe(this) {
                 viewModel.seasonRanking = it
                 viewModel.calculateTeamRank()
@@ -204,7 +204,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
     private fun setActualGroup()
     {
         val group = findViewById<TextView>(R.id.team_info_group)
-        group.text = viewModel.mTeam?.group ?: ""
+        group.text = viewModel.mTeam?.groupName ?: ""
     }
 
     @SuppressLint("SetTextI18n")
