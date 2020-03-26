@@ -50,7 +50,7 @@ class TeamsAdapterVM : ViewModel()
         if(group is ValidGroup)
         {
             val season = group.self.teamIds[DateUtil.actualYear]
-            season?.remove(team.id!!)
+            season?.removeAll { it == team.id }
             if(season != null && season.isEmpty()) group.self.teamIds.remove(DateUtil.actualYear)
             GroupManager.addGroup(group.self)
         }

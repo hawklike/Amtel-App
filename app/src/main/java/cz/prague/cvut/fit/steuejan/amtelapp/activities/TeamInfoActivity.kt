@@ -226,9 +226,14 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
             chartMatchesTotal.visibility = VISIBLE
             chartSets.visibility = VISIBLE
 
-            initChart(chartMatchesThisYear, entries.first, getString(R.string.play))
-            initChart(chartMatchesTotal,entries.second, getString(R.string.Total))
-            initChart(chartSets, entries.third, getString(R.string.sets))
+            if(entries.first.size == 2) initChart(chartMatchesThisYear, entries.first, getString(R.string.play))
+            else initChart(chartMatchesThisYear, entries.first, getString(R.string.play), R.color.lightGrey)
+
+            if(entries.second.size == 2) initChart(chartMatchesTotal,entries.second, getString(R.string.Total))
+            else initChart(chartMatchesTotal,entries.second, getString(R.string.Total), R.color.lightGrey)
+
+            if(entries.third.size == 2) initChart(chartSets, entries.third, getString(R.string.sets))
+            else initChart(chartSets, entries.third, getString(R.string.sets), R.color.lightGrey)
         }
     }
 
