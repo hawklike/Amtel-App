@@ -116,13 +116,13 @@ object TeamManager
         return query!!
     }
 
-    suspend fun retrieveTeamsInSeason(group: String?, year: Int): TeamState = withContext(IO)
+    suspend fun retrieveTeamsInSeason(groupId: String?, year: Int): TeamState = withContext(IO)
     {
-        if(group == null) return@withContext NoTeam
+        if(groupId == null) return@withContext NoTeam
         return@withContext try
         {
-            val teams = TeamDAO().retrieveTeamsInSeason(group, year).toObjects<Team>()
-            Log.i(TAG, "retrieveTeamsInSeason(): $teams which contains pair $group, $year found successfully")
+            val teams = TeamDAO().retrieveTeamsInSeason(groupId, year).toObjects<Team>()
+            Log.i(TAG, "retrieveTeamsInSeason(): $teams which contains pair ($groupId [groupId], $year [year]) found successfully")
             ValidTeams(teams)
         }
         catch(ex: Exception)

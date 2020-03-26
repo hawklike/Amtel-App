@@ -52,6 +52,11 @@ class RankingSolver(private val teams: List<Team>, private val year: Int)
                 if(tmp == null) pointsAndTeams[points] = mutableListOf()
 
                 pointsAndTeams[points]!!.add(team)
+            } ?: let {
+                val tmp = pointsAndTeams[0]
+                if(tmp == null) pointsAndTeams[0] = mutableListOf()
+
+                pointsAndTeams[0]!!.add(team)
             }
         }
     }
