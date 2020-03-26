@@ -86,6 +86,14 @@ object DateUtil
     fun getAge(birthdate: Date): Int
             = Years.yearsBetween(LocalDate(birthdate), LocalDate()).years
 
+    fun getDateInFuture(days: Int): Date
+    {
+        val cal = Calendar.getInstance()
+        cal.time = Date()
+        cal.add(Calendar.DATE, days)
+        return cal.time
+    }
+
 }
 
 fun Date.toMyString(format: String = "dd.MM.yyyy"): String

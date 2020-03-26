@@ -4,10 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
+import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
-import cz.prague.cvut.fit.steuejan.amtelapp.states.*
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroup
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroups
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
+import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
 import kotlinx.coroutines.launch
 
 class ManageGroupsActivityVM : ViewModel()
@@ -22,27 +27,13 @@ class ManageGroupsActivityVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun setPlayOff(week: String)
+    fun setPlayOff(week: Int)
     {
-        if(confirmWeek(week))
-        {
-            viewModelScope.launch {
-                val roundDates = mutableMapOf("playOff" to week.toInt())
-                val group = Group("Baráž", roundDates = roundDates, playingPlayOff = false, playOff = true, rank = Int.MAX_VALUE)
-                if(GroupManager.addGroup(group) is ValidGroup) toast("Baráž úspěšně připravena.")
-            }
+        viewModelScope.launch {
+            val roundDates = mutableMapOf("playOff" to week)
+            val group = Group(context.getString(R.string.playOff), roundDates = roundDates, playingPlayOff = false, playOff = true, rank = Int.MAX_VALUE)
+            if(GroupManager.addGroup(group) is ValidGroup) toast("Baráž úspěšně otevřena.")
         }
-    }
-
-    private fun confirmWeek(weekString: String): Boolean
-    {
-        val week = WeekState.validate(weekString)
-        if(week is InvalidWeek)
-        {
-            _week.value = week
-            return false
-        }
-        return true
     }
 
     fun getPlayOffWeek()

@@ -1,32 +1,33 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.FrameLayout
+import android.widget.Switch
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.textfield.TextInputLayout
+import com.afollestad.materialdialogs.MaterialDialog
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsBossAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.callbacks.ItemMoveCallback
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountBossMakeGroupsFragment.Companion.GROUPS
-import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ManageGroupsActivityVM
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ManageGroupsActivity : AbstractActivityWithRecyclerView()
 {
     private val viewModel by viewModels<ManageGroupsActivityVM>()
-
-    private lateinit var weekLayout: TextInputLayout
-    private lateinit var setWeek: FloatingActionButton
 
     private lateinit var progressBar: FrameLayout
 
@@ -38,22 +39,44 @@ class ManageGroupsActivity : AbstractActivityWithRecyclerView()
         setArrowBack()
         initViews()
         getGroups()
+        setPlayOff()
         updateFields()
         setListeners()
         setObservers()
     }
 
+    private fun setPlayOff()
+    {
+        val switch = findViewById<Switch>(R.id.account_boss_groups_open_playOff_switch)
+        switch.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked)
+            {
+                MaterialDialog(this)
+                    .title(text = "Opravdu chcete otevřít baráž?")
+                    .show {
+                        positiveButton(R.string.ok) { viewModel.setPlayOff(DateUtil.getWeekNumber(Date())) }
+                        negativeButton()
+                    }
+            }
+        }
+    }
+
     override fun onDestroy()
     {
         super.onDestroy()
-        setWeek.setOnClickListener(null)
     }
 
     private fun initViews()
     {
-        weekLayout = findViewById(R.id.account_boss_groups_choose_week_week)
-        setWeek = findViewById(R.id.account_boss_groups_choose_week_add)
         progressBar = findViewById(R.id.account_boss_groups_progressBar)
+        setPlayOffInterval()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun setPlayOffInterval()
+    {
+        val playOffInterval = findViewById<TextView>(R.id.account_boss_groups_open_playOff_text)
+        playOffInterval.text = "${Date().toMyString()} – ${DateUtil.getDateInFuture(14).toMyString()}"
     }
 
     private fun getGroups()
@@ -69,19 +92,19 @@ class ManageGroupsActivity : AbstractActivityWithRecyclerView()
 
     private fun setListeners()
     {
-        setWeek.setOnClickListener {
-            val week = weekLayout.editText?.text.toString().trim()
-            weekLayout.error = null
-            viewModel.setPlayOff(week)
-        }
+//        setWeek.setOnClickListener {
+//            val week = weekLayout.editText?.text.toString().trim()
+//            weekLayout.error = null
+//            viewModel.setPlayOff(week)
+//        }
     }
 
     private fun setObservers()
     {
-        viewModel.week.observe(this) { week ->
-           if(week is InvalidWeek) weekLayout.error = week.errorMessage
-            else weekLayout.editText?.setText((week as ValidWeek).self.toString())
-        }
+//        viewModel.week.observe(this) { week ->
+//           if(week is InvalidWeek) weekLayout.error = week.errorMessage
+//            else weekLayout.editText?.setText((week as ValidWeek).self.toString())
+//        }
     }
 
     override fun setupRecycler()
