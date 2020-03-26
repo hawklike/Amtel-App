@@ -39,7 +39,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
         private val name: TextView = itemView.findViewById(R.id.group_card_name)
         private val size: TextView = itemView.findViewById(R.id.group_card_size)
         private val playingPlayOff: TextView = itemView.findViewById(R.id.group_card_playingPlayOff)
-        private val generate: Button = itemView.findViewById(R.id.group_card_generate)
+        private val generateButton: Button = itemView.findViewById(R.id.group_card_generate)
         private val deleteButton: ImageButton = itemView.findViewById(R.id.group_card_delete)
 
         private var rounds = 0
@@ -98,26 +98,40 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
         {
             if(rounds == 0)
             {
-                generate.isEnabled = false
-                generate.setTextColor(App.getColor(R.color.lightGrey))
+                generateButton.isEnabled = false
+                generateButton.setTextColor(App.getColor(R.color.lightGrey))
             }
             else
             {
                 val rounds = group.rounds[DateUtil.actualYear]
                 if(rounds != null && rounds != 0)
                 {
-                    generate.text = context.getString(R.string.regenerate_matches)
-                    generate.setTextColor(Color.RED)
+                    generateButton.text = context.getString(R.string.regenerate_matches)
+                    generateButton.setTextColor(Color.RED)
+                    showDialog(
+                        title = "Přegenerovat utkání ve skupině ${name.text}?",
+                        buttonText = "Přegenerovat utkání",
+                        message = "Veškerá utkání v této skupině a tento rok budou nenavrátně přepsána.\n\nZadejte počet kol:") {
+                        viewModel.regenerateMatches(getItem(adapterPosition), rounds)
+                    }
+
+                    return
                 }
             }
-            showDialog()
+            showDialog(
+                title = "Vygenerovat utkání ve skupině ${name.text}?",
+                message = "Zadejte počet kol:",
+                buttonText = context.getString(R.string.generate_plan)) {
+                generateSchedule()
+            }
         }
 
-        private fun showDialog()
+        private fun showDialog(title: String, buttonText: String, message: String, callback: () -> Unit)
         {
-            generate.setOnClickListener {
+            generateButton.setOnClickListener {
                 MaterialDialog(context).show {
-                    title(text = context.getString(R.string.generate_matches_dialog_title) + " ${name.text}")
+                    title(text = title)
+                    message(text = message)
                     input(
                         waitForPositiveButton = false,
                         hint = context.getString(R.string.rounds_number),
@@ -133,7 +147,8 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
                             dialog.setActionButtonEnabled(WhichButton.POSITIVE, isValid)
                         }
                     }
-                    positiveButton(R.string.generate_plan) { generateSchedule() }
+                    positiveButton(text = buttonText) { callback.invoke() }
+                    negativeButton()
                 }
             }
         }
@@ -148,7 +163,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
         private fun generateSchedule()
         {
             viewModel.generateMatches(getItem(adapterPosition), rounds)
-            generate.setTextColor(App.getColor(R.color.red))
+            generateButton.setTextColor(App.getColor(R.color.red))
         }
     }
 

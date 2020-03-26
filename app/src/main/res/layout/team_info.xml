@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".activities.TeamInfoActivity">
 
-    <RelativeLayout
+    <include layout="@layout/toolbar"/>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <include layout="@layout/toolbar"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:fillViewport="true"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/toolbar">
+            android:layout_height="wrap_content">
 
             <include layout="@layout/curve" />
 
@@ -31,6 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:columnCount="3"
                     android:rowCount="2">
 
@@ -201,16 +204,6 @@
                 </GridLayout>
 
 
-                <TextView
-                    android:id="@+id/team_info_contact"
-                    style="@style/TextViewInClickableLayout"
-                    android:layout_below="@id/team_info_grid"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="24dp"
-                    android:gravity="center"
-                    android:text="@string/contact_teamManager"
-                    android:textColor="@color/blue"
-                    android:textSize="13sp" />
 
             </RelativeLayout>
 
@@ -289,6 +282,6 @@
 
         </RelativeLayout>
 
-    </RelativeLayout>
+    </ScrollView>
 
-</ScrollView>
+</RelativeLayout>

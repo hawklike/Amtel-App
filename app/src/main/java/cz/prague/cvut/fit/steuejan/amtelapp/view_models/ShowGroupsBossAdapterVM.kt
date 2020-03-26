@@ -17,6 +17,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidMatch
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
@@ -89,14 +90,6 @@ class ShowGroupsBossAdapterVM : ViewModel()
         val homeTeam = teams.find { it.id == match.homeId }
         val awayTeam = teams.find { it.id == match.awayId }
 
-//        val homeSeasons = homeTeam?.seasons?.toMutableSet()
-//        homeSeasons?.add(mapOf(DateUtil.actualYear to group.id!!))
-//        homeSeasons?.let { homeTeam.seasons = it.toList() }
-//
-//        val awaySeasons = awayTeam?.seasons?.toMutableSet()
-//        awaySeasons?.add(mapOf(DateUtil.actualYear to group.id!!))
-//        awaySeasons?.let { awayTeam.seasons = it.toList() }
-
         homeTeam?.let { TeamManager.addTeam(it) }
         awayTeam?.let { TeamManager.addTeam(it) }
     }
@@ -113,9 +106,45 @@ class ShowGroupsBossAdapterVM : ViewModel()
         GlobalScope.launch {
             group.teamIds[DateUtil.actualYear]?.forEach { teamId ->
                 TeamManager.updateTeam(teamId, mapOf("groupName" to null, "groupId" to null))
-
             }
             GroupManager.deleteGroup(group.id)
         }
+    }
+
+    fun regenerateMatches(group: Group, rounds: Int)
+    {
+        GlobalScope.launch {
+            val year = DateUtil.actualYear
+            var ok = true
+
+            if(MatchManager.deleteAllMatches(group.id, year.toInt()))
+            {
+                group.teamIds[DateUtil.actualYear]?.forEach { teamId ->
+                    if(!clearTeamStatistics(teamId, year)) ok = false
+                }
+                if(ok) generateMatches(group, rounds)
+            }
+        }
+    }
+
+    private suspend fun clearTeamStatistics(teamId: String, year: String): Boolean
+    {
+        val team = TeamManager.findTeam(teamId)
+        if(team is ValidTeam)
+        {
+            team.self.apply {
+                pointsPerMatch[year] = mutableMapOf()
+                pointsPerYear[year] = 0
+                winsPerYear[year] = 0
+                lossesPerYear[year] = 0
+                matchesPerYear[year] = 0
+                setsPositivePerMatch[year] = mutableMapOf()
+                setsNegativePerMatch[year] = mutableMapOf()
+                positiveSetsPerYear[year] = 0
+                negativeSetsPerYear[year] = 0
+            }
+            return TeamManager.addTeam(team.self) != null
+        }
+        return false
     }
 }

@@ -68,7 +68,7 @@ class TeamInfoActivityVM : ViewModel()
                     if(winsThisYear + lossesThisYear != 0)
                         listOf(PieEntry(winsThisYear.toFloat(), "Letošní výhraná utkání"), PieEntry(lossesThisYear.toFloat(), "Letošní prohraná utkání"))
                     else
-                        listOf(PieEntry(DateUtil.actualYear.toFloat(), "Tým v aktuální sezóně ještě neodehrál žádné utkání."))
+                        listOf(PieEntry(1f, "Tým v aktuální sezóně ještě neodehrál žádné utkání."))
 
                 val winsTotal = team.winsPerYear.values.sum()
                 val lossesTotal = team.lossesPerYear.values.sum()
@@ -76,7 +76,7 @@ class TeamInfoActivityVM : ViewModel()
                     if(winsTotal + lossesThisYear != 0)
                         listOf(PieEntry(winsTotal.toFloat(), "Výhraná utkání"), PieEntry(lossesTotal.toFloat(), "Prohraná utkání"))
                     else
-                        listOf(PieEntry(1996f, "Datum narození autora aplikace. Počet všech odehraných utkání tohoto týmu je však 0."))
+                        listOf(PieEntry(1f, "Tým ještě neodehrál žádné utkání."))
 
 
                 val positiveSets = team.positiveSetsPerYear.values.sum()
@@ -85,7 +85,7 @@ class TeamInfoActivityVM : ViewModel()
                     if(positiveSets + negativeSets != 0)
                         listOf(PieEntry(positiveSets.toFloat(), "Celkově získané sety"), PieEntry(negativeSets.toFloat(), "Celkově ztracené sety"))
                     else
-                        listOf(PieEntry(42f, "Čtyřicet dva je sice odpověď na základní otázku života, vesmíru a vůbec, ale to bohužel nemění fakt, že tým neodehrál žádný set."))
+                        listOf(PieEntry(1f, "Tým ještě neodehrál žádné sety."))
 
 
                 _charts.value = Triple(thisYearEntries, totalEntries, setsEntries)

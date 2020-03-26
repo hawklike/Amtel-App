@@ -242,7 +242,9 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         val dataSet = PieDataSet(entries, title)
         dataSet.colors = colors.map { App.getColor(it) }
         dataSet.valueTextSize = 16f
-        dataSet.valueTextColor = App.getColor(R.color.white)
+        dataSet.valueTextColor =
+            if(colors.size == 1) App.getColor(colors.first())
+            else App.getColor(R.color.white)
 
         val data = PieData(dataSet)
 

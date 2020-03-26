@@ -57,4 +57,14 @@ class MatchDAO : DAO
             .whereArrayContains("teams", teamId)
             .orderBy(orderBy, Query.Direction.DESCENDING)
     }
+
+    suspend fun getGroupMatches(groupId: String, year: Int): QuerySnapshot
+    {
+        return Firebase.firestore
+            .collection(collection)
+            .whereEqualTo("groupId", groupId)
+            .whereEqualTo("year", year)
+            .get()
+            .await()
+    }
 }

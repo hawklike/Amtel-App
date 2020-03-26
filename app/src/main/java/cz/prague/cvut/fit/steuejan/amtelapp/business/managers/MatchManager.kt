@@ -90,4 +90,33 @@ object MatchManager
             listOf<Match>()
         }
     }
+
+    suspend fun deleteAllMatches(groupId: String?, year: Int): Boolean = withContext(IO)
+    {
+        if(groupId == null) return@withContext false
+        return@withContext try
+        {
+            var ok = true
+            val matches = MatchDAO().getGroupMatches(groupId, year).toObjects<Match>()
+            matches.forEach { if(!deleteMatch(it.id)) ok = false }
+            ok
+        }
+        catch(ex: Exception) { false }
+    }
+
+    suspend fun deleteMatch(matchId: String?): Boolean = withContext(IO)
+    {
+        if(matchId == null) return@withContext false
+        return@withContext try
+        {
+            MatchDAO().delete(matchId)
+            Log.i(TAG, "deleteMatch(): match with id $matchId successfully deleted")
+            true
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "deleteMatch(): match with id $matchId not deleted because ${ex.message}")
+            false
+        }
+    }
 }
