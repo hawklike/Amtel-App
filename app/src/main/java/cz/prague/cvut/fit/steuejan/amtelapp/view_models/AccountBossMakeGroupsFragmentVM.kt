@@ -9,6 +9,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
@@ -78,15 +79,22 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
 
     private fun confirmName(groupName: String): Boolean
     {
-        return if(groupName.isEmpty())
+        return when
         {
-            groupNameState.value = InvalidName(context.getString(R.string.group_name_error_message))
-            false
-        }
-        else
-        {
-            groupNameState.value = ValidName(groupName)
-            true
+            groupName.isEmpty() -> {
+                groupNameState.value = InvalidName(context.getString(R.string.group_name_error_message))
+                false
+            }
+
+            groupName.firstLetterUpperCase() == context.getString(R.string.playOff) -> {
+                groupNameState.value = InvalidName("Zadejte prosím jiný název skupiny.")
+                false
+            }
+
+            else -> {
+                groupNameState.value = ValidName(groupName)
+                true
+            }
         }
     }
 

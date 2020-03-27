@@ -3,6 +3,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.view.View
+import android.view.View.GONE
 import androidx.lifecycle.ViewModel
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
@@ -29,8 +30,8 @@ class ShowGroupsMenuFirestoreAdapterVM : ViewModel()
 
         val playoff = group.toPlayoff()
 
-        if(playoff?.isActive == false) disableCard(holder)
-        holder.actualRound.text = "${playoff?.startDate?.toMyString() ?: ""} – ${playoff?.endDate?.toMyString() ?: ""}"
+        if(playoff?.isActive == false) holder.card.visibility = GONE
+        else holder.actualRound.text = "${playoff?.startDate?.toMyString() ?: ""} – ${playoff?.endDate?.toMyString() ?: ""}"
     }
 
     fun disableCard(holder: ShowGroupsMenuAdapter.ViewHolder)

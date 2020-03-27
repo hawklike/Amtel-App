@@ -93,7 +93,6 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             }
         }
 
-        //TODO: implement regenerating matches
         private fun handleGenerateButton()
         {
             if(rounds == 0)

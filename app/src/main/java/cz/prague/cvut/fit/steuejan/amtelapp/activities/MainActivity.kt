@@ -116,6 +116,8 @@ class MainActivity : AbstractBaseActivity()
         drawer = DrawerBuilder()
             .withActivity(this)
             .withToolbar(toolbar)
+            .withHeader(R.layout.drawer_header)
+            .withHeaderDivider(false)
             .withTranslucentStatusBar(false)
             .addDrawerItems(
                 profile,
