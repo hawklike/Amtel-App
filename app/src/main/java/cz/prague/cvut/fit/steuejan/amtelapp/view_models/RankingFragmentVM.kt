@@ -20,18 +20,62 @@ class RankingFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun loadTeams(group: String, year: Int, orderBy: RankingOrderBy)
+    private var teamByPoints: List<Team> = emptyList()
+
+    var orderBy = RankingOrderBy.POINTS
+    private set
+
+    private var mTeams: List<Team> = emptyList()
+
+    /*---------------------------------------------------*/
+
+    fun loadTeams(groupId: String, year: Int, orderBy: RankingOrderBy, reverse: Boolean = false)
     {
+        this.orderBy = orderBy
         viewModelScope.launch {
-            val teams = TeamManager.retrieveTeamsInSeason(group, year)
-            if(teams is ValidTeams)
+            if(mTeams.isEmpty())
             {
-                var sortedTeams: List<Team> = listOf()
-                withContext(Default) {
-                    sortedTeams = RankingSolver(teams.self, year).withOrder(orderBy).sort()
+                val teams = TeamManager.retrieveTeamsInSeason(groupId, year)
+                if(teams is ValidTeams)
+                {
+                    mTeams = teams.self
+                    getSortedTeams(teams.self, year, reverse)
                 }
-                _teams.value = sortedTeams
             }
+            else getSortedTeams(mTeams, year, reverse)
         }
+    }
+
+    private suspend fun getSortedTeams(teams: List<Team>, year: Int, reverse: Boolean)
+    {
+        var sortedTeams: List<Team> = listOf()
+        withContext(Default) {
+            if(teamByPoints.isEmpty() && (orderBy == RankingOrderBy.POINTS || orderBy == RankingOrderBy.WINS))
+            {
+                sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
+                teamByPoints = sortedTeams
+            }
+            else if(teamByPoints.isNotEmpty() && (orderBy == RankingOrderBy.POINTS || orderBy == RankingOrderBy.WINS))
+            {
+                sortedTeams = teamByPoints
+            }
+            else if(teamByPoints.isEmpty() && orderBy == RankingOrderBy.LOSSES)
+            {
+                sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
+                teamByPoints = sortedTeams.reversed()
+            }
+            else if(teamByPoints.isNotEmpty() && orderBy == RankingOrderBy.LOSSES)
+            {
+                sortedTeams = teamByPoints.reversed()
+            }
+            else
+            {
+                sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
+            }
+
+
+            if(reverse) sortedTeams = sortedTeams.reversed()
+        }
+        _teams.value = sortedTeams
     }
 }

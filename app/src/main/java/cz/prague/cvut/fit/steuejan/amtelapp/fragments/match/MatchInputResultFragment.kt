@@ -120,7 +120,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         overviewLayout = view.findViewById(R.id.match_input_overview)
         resultsLayout = view.findViewById(R.id.match_input_results)
 
-        inputResult.text = "Zapsat   $round. zápas"
+        inputResult.text = "Zapsat  $round. zápas"
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -248,7 +248,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             thirdAway,
             homePlayersText,
             awayPlayersText,
-            match.group == getString(R.string.fifty_plus_group)
+            match.groupName == getString(R.string.fifty_plus_group)
         )
     }
 
@@ -387,7 +387,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             if(round == 3) listItemMultiChoice(this, players, editText)
             else
             {
-                if(round == 2 && match.group == getString(R.string.fifty_plus_group)) listItemMultiChoice(this, players, editText)
+                if(round == 2 && match.groupName == getString(R.string.fifty_plus_group)) listItemMultiChoice(this, players, editText)
                 else listItemSingleChoice(this, players, editText)
             }
             positiveButton(R.string.ok)

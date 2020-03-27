@@ -1,6 +1,5 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -16,6 +15,7 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.PlayersFragment
@@ -33,13 +33,14 @@ class MainActivity : AbstractBaseActivity()
     private val viewModel by viewModels<MainActivityVM>()
 
     private lateinit var drawer: Drawer
-    var progressLayout: FrameLayout? = null
+    private var progressLayout: FrameLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         setContentView(R.layout.activity_main)
         progressLayout = findViewById(R.id.progressBar)
         super.onCreate(savedInstanceState)
+        toolbar.setTitleTextColor(App.getColor(R.color.blue))
         viewModel.initEmailPassword()
         viewModel.initHeadOfLeagueEmail()
         setObservers(savedInstanceState)
@@ -65,11 +66,7 @@ class MainActivity : AbstractBaseActivity()
     {
         viewModel.progressBar.observe(this) { isOn ->
             if(isOn) progressLayout?.visibility = View.VISIBLE
-            else
-            {
-                progressLayout?.visibility = View.GONE
-                progressLayout?.setBackgroundColor(Color.TRANSPARENT)
-            }
+            else progressLayout?.visibility = View.GONE
         }
     }
 
@@ -82,7 +79,6 @@ class MainActivity : AbstractBaseActivity()
 
     private fun displayAccount(savedInstanceState: Bundle?)
     {
-        progressLayout?.visibility = View.VISIBLE
         AuthManager.currentUser?.let { firebaseUser ->
             if(savedInstanceState == null)
                 viewModel.prepareUser(firebaseUser.uid)
@@ -151,7 +147,8 @@ class MainActivity : AbstractBaseActivity()
 
         if(savedInstanceState == null)
         {
-            drawer.setSelection(profile)
+            AuthManager.currentUser?.let { drawer.setSelection(profile) }
+                ?: drawer.setSelection(schedule)
             viewModel.setDrawerSelectedPosition(drawer.currentSelectedPosition)
         }
     }
@@ -165,7 +162,6 @@ class MainActivity : AbstractBaseActivity()
 
     private fun populateFragment(fragment: AbstractMainActivityFragment)
     {
-        progressLayout?.visibility = View.VISIBLE
         Log.i(TAG, "${fragment.getName()} populated")
         supportFragmentManager.commit {
             replace(R.id.main_container, fragment)

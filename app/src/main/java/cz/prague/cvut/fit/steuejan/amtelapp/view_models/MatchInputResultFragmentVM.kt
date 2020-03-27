@@ -255,6 +255,7 @@ class MatchInputResultFragmentVM : ViewModel()
         {
             homeSets > awaySets -> round.homeWinner = true
             homeSets < awaySets -> round.homeWinner = false
+            else -> round.homeWinner = null
         }
     }
 
@@ -315,7 +316,7 @@ class MatchInputResultFragmentVM : ViewModel()
             when(user)
             {
                 homeTeam.tmId -> {
-                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})"
+                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
 
                     val message = String.format(
                         context.getString(R.string.match_input_email),
@@ -335,7 +336,7 @@ class MatchInputResultFragmentVM : ViewModel()
                 }
 
                 awayTeam.tmId -> {
-                    val subject = "Byla podána námitka k výsledku $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})"
+                    val subject = "Byla podána námitka k výsledku $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
 
                     val message = """
                     Dobrý den,
@@ -356,7 +357,7 @@ class MatchInputResultFragmentVM : ViewModel()
                 }
 
                 else -> {
-                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})"
+                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
 
                     val message = String.format(
                         context.getString(R.string.match_input_email_headOfLeague),

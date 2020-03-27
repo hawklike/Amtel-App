@@ -21,13 +21,6 @@ object AuthManager
 
     val auth by lazy { FirebaseAuth.getInstance() }
 
-    val profileDrawerOption: String
-        get()
-        {
-            return auth.currentUser?.let { context.getString(R.string.account) }
-                ?: context.getString(R.string.amtel_opava)
-        }
-
     val profileDrawerOptionMenu: String
         get()
         {

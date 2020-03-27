@@ -22,7 +22,7 @@ class AddUserToTeamActivity : AbstractBaseActivity()
 {
     private val viewModel by viewModels<AddUserToTeamActivityVM>()
 
-    private lateinit var team: Team
+    private var team = Team()
 
     private lateinit var nameLayout: TextInputLayout
     private lateinit var surnameLayout: TextInputLayout
@@ -43,7 +43,7 @@ class AddUserToTeamActivity : AbstractBaseActivity()
         setToolbarTitle(getString(R.string.add_player))
         setArrowBack()
 
-        intent.extras?.let { team = it.getParcelable(TEAM)!! }
+        intent.extras?.let { team = it.getParcelable(TEAM) ?: Team() }
 
         nameLayout = findViewById(R.id.account_add_user_to_team_name)
         surnameLayout = findViewById(R.id.account_add_user_to_team_surname)

@@ -19,3 +19,8 @@ data class User(override var id: String? = null,
                 var englishName: String = "",
                 var englishSurname: String = ""
                 ) : Parcelable, Entity()
+
+fun User.toPlayer(): Player
+{
+    return Player(this.id ?: "", this.name, this.surname, this.email, this.birthdate, this.sex, null)
+}

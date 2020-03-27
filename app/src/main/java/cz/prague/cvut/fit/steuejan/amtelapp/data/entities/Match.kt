@@ -7,7 +7,8 @@ import java.util.*
 
 @Parcelize
 data class Match(override var id: String? = null,
-                 var group: String = "",
+                 var groupId: String = "",
+                 var groupName: String = "",
                  var round: Int = 0,
                  var home: String = "",
                  var away: String = "",
@@ -22,7 +23,8 @@ data class Match(override var id: String? = null,
                  var edits: MutableMap<String, Int> = mutableMapOf("1" to 2, "2" to 2, "3" to 2), //(round, free edits)
                  val usersId: MutableList<String?> = arrayOfNulls<String>(10).toMutableList(),
                  var defaultEndGameEdits: Int = 2,
-                 var teams: List<String> = listOf() //list of teamIds
+                 var teams: List<String> = listOf(), //list of teamIds
+                 var playOff: Boolean = false
                  ) : Parcelable, Entity()
 {
     override fun toString(): String

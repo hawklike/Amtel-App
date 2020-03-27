@@ -12,6 +12,14 @@ object StringUtil
 
         return "123456"
     }
+
+    fun createLabel(text: String): CharSequence
+    {
+        return text.fold(StringBuilder()) { acc, c ->
+            if(acc.length > 2) return@fold acc
+            acc.append(c)
+        }
+    }
 }
 
 fun String.firstLetterUpperCase(): String

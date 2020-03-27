@@ -13,13 +13,7 @@ class GroupDAO : DAO
 
     override suspend fun <T> insert(entity: T)
     {
-        if(entity is Group)
-        {
-            Firebase.firestore
-                .collection(collection)
-                .document(entity.name)
-                .set(entity)
-        }
+        if(entity is Group) insert(collection, entity)
         else throw IllegalArgumentException("GroupDAO::insert(): entity is not type of Group and should be")
     }
 
@@ -37,6 +31,14 @@ class GroupDAO : DAO
 
     fun retrieveAllGroups(orderBy: String): Query
             = retrieveAll(collection, orderBy)
+
+    fun retrieveAllGroupsExceptPlayOff(orderBy: String): Query
+    {
+        return Firebase.firestore
+            .collection(collection)
+            .whereEqualTo("playOff", false)
+            .orderBy(orderBy, Query.Direction.ASCENDING)
+    }
 
     suspend fun retrieveAll(): QuerySnapshot
             = retrieveAll(collection)

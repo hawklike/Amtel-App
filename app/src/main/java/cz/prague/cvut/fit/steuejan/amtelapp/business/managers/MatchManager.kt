@@ -73,7 +73,7 @@ object MatchManager
     }
 
     fun getMatches(round: Int, group: Group): Query
-            = MatchDAO().getMatches(round, group.name, DateUtil.actualYear.toInt())
+            = MatchDAO().getMatches(round, group.id!!, DateUtil.actualYear.toInt())
 
     suspend fun getCommonMatches(team1: Team, team2: Team, year: Int): List<Match> = withContext(IO)
     {
@@ -88,6 +88,35 @@ object MatchManager
         {
             Log.e(TAG, "getCommonMatches(): matches for $team1 and $team2 in $year not found in database because ${ex.message}")
             listOf<Match>()
+        }
+    }
+
+    suspend fun deleteAllMatches(groupId: String?, year: Int): Boolean = withContext(IO)
+    {
+        if(groupId == null) return@withContext false
+        return@withContext try
+        {
+            var ok = true
+            val matches = MatchDAO().getGroupMatches(groupId, year).toObjects<Match>()
+            matches.forEach { if(!deleteMatch(it.id)) ok = false }
+            ok
+        }
+        catch(ex: Exception) { false }
+    }
+
+    suspend fun deleteMatch(matchId: String?): Boolean = withContext(IO)
+    {
+        if(matchId == null) return@withContext false
+        return@withContext try
+        {
+            MatchDAO().delete(matchId)
+            Log.i(TAG, "deleteMatch(): match with id $matchId successfully deleted")
+            true
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "deleteMatch(): match with id $matchId not deleted because ${ex.message}")
+            false
         }
     }
 }

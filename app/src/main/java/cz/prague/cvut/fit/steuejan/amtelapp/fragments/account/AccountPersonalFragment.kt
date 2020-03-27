@@ -38,6 +38,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
 
     private lateinit var user: User
 
+    private var accountPersonalLayout: RelativeLayout? = null
     private var changePasswordLayout: RelativeLayout? = null
     private var personalInfoLayout: RelativeLayout? = null
 
@@ -61,6 +62,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
+        accountPersonalLayout = view.findViewById(R.id.account_personal)
         changePasswordLayout = view.findViewById(R.id.account_personal_change_password)
         personalInfoLayout = view.findViewById(R.id.account_personal_personal_information)
 
@@ -91,9 +93,11 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
 
         changePasswordLayout?.removeAllViews()
         personalInfoLayout?.removeAllViews()
+        accountPersonalLayout?.removeAllViews()
 
         changePasswordLayout = null
         personalInfoLayout = null
+        accountPersonalLayout = null
     }
 
     private fun setObservers()

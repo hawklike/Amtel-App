@@ -160,12 +160,31 @@
                     android:textSize="13sp"
                     android:visibility="gone"/>
 
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/match_arrangement_away"
+                    android:layout_alignBottom="@+id/match_arrangement_change_date"
+                    android:layout_marginTop="8dp"
+                    android:layout_toEndOf="@id/match_arrangement_change_place">
+
+                    <ImageButton
+                        android:id="@+id/match_arrangement_calendar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/ic_date_range_blue_24dp" />
+
+                </FrameLayout>
+
+
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/match_arrangement_send_email"
                 style="@style/CardRelativeLayout"
                 android:layout_below="@id/match_arrangement"
+                android:elevation="@dimen/elevation"
                 android:visibility="gone">
 
                 <TextView
@@ -183,6 +202,7 @@
             <RelativeLayout
                 android:id="@+id/match_arrangement_call"
                 style="@style/CardRelativeLayout"
+                android:elevation="@dimen/elevation"
                 android:layout_below="@id/match_arrangement_send_email"
                 android:visibility="gone">
 

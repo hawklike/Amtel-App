@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.ranking
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.TeamInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsRankingAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -21,6 +23,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractBaseFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.RankingFragmentVM
 
+//TODO: resolve data when screen rotates
 class RankingFragment : AbstractBaseFragment()
 {
     private val viewModel by viewModels<RankingFragmentVM>()
@@ -30,6 +33,7 @@ class RankingFragment : AbstractBaseFragment()
 
     private val teams: MutableList<Team> = mutableListOf()
     private var orderBy = RankingOrderBy.POINTS
+    private var reverseOrder = false
 
     private lateinit var actualSortOption: TextView
 
@@ -104,7 +108,7 @@ class RankingFragment : AbstractBaseFragment()
     private fun loadData()
     {
         progressBar.visibility = VISIBLE
-        viewModel.loadTeams(group.name, year, orderBy)
+        viewModel.loadTeams(group.id!!, year, orderBy)
     }
 
     private fun setupRecycler()
@@ -112,6 +116,13 @@ class RankingFragment : AbstractBaseFragment()
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(activity!!)
         adapter = ShowTeamsRankingAdapter(teams, year.toString(), orderBy)
+        adapter?.onClick = { team ->
+            val intent = Intent(activity!!, TeamInfoActivity::class.java).apply {
+                putExtra(TeamInfoActivity.TEAM, team)
+                putParcelableArrayListExtra(TeamInfoActivity.SEASON_TABLE, ArrayList(teams))
+            }
+            startActivity(intent)
+        }
         recyclerView?.adapter = adapter
         populateAdapter()
     }
@@ -160,8 +171,9 @@ class RankingFragment : AbstractBaseFragment()
         setNormalStyle(actualSortOption)
         setBoldStyle(view)
         actualSortOption = view
+        reverseOrder = if(orderBy == this.orderBy) !reverseOrder else false
         this.orderBy = orderBy
-        viewModel.loadTeams(group.name, year, orderBy)
+        viewModel.loadTeams(group.id!!, year, orderBy, reverseOrder)
     }
 
     private fun setNormalStyle(view: TextView)

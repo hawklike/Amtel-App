@@ -34,7 +34,7 @@
     <string name="account_boss_adapter_add_TM">Vedoucí</string>
     <string name="account_boss_adapter_make_groups">Skupiny</string>
     <string name="account_adapter_personal">Osobní</string>
-    <string name="account_tm_adapter_make_team">Vytvořit soupisku</string>
+    <string name="account_tm_adapter_make_team">Soupiska</string>
     <string name="new_password">Nové heslo</string>
     <string name="change_password">Změnit heslo</string>
     <string name="add_tm">Přidat vedoucího týmu</string>
@@ -117,7 +117,7 @@
     <string name="amtel_opava">AMTEL Opava</string>
     <string name="match_dateTime_change_success">Datum a čas zápasu byly úspěšně změněny.</string>
     <string name="change_place_match">Změnit místo utkání</string>
-    <string name="change_dateTime_match">Změnit datum a čas konání</string>
+    <string name="change_dateTime_match">Změnit datum a čas utkání</string>
     <string name="match_place_change_success">Místo utkání bylo úspěšně změněno.</string>
     <string name="choose_playing_days">Zvolit hrací dny</string>
     <string name="choose_players">Zvolit hráče</string>
@@ -178,4 +178,22 @@
     <string name="round_countdown">Počet dní do konce: %1$d</string>
     <string name="sort_by">Řadit podle:</string>
     <string name="not_successfully_generated">nebyla úspěšně vygenerovaná.</string>
+    <string name="private_name_playOff">zzzzzzzzzz_baraz</string>
+    <string name="week_in_year">Týden v roce</string>
+    <string name="start_playOff">Zvolit začátek baráže</string>
+    <string name="playOff">Baráž</string>
+    <string name="rules">Pravidla</string>
+    <string name="rules_text">Týmy z druhých míst se utkají s předposledními týmy vyšší skupiny o postup, respektive udržení. Vítěz skupiny postupuje do vyšší skupiny, naopak poslední tým v tabulce automaticky sestupuje.</string>
+    <string name="matches">Zápasy</string>
+    <string name="statistics">Statistiky</string>
+    <string name="contact_teamManager">Kontaktovat vedoucího týmu</string>
+    <string name="overview">Přehled</string>
+    <string name="sets">Sety</string>
+    <string name="games">Gemy</string>
+    <string name="this_year">Letos</string>
+    <string name="Total">Celkem</string>
+    <string name="play">Utkání</string>
+    <string name="years">%1$d let</string>
+    <string name="winner_acronym">V</string>
+    <string name="loser_acronym">P</string>
 </resources>

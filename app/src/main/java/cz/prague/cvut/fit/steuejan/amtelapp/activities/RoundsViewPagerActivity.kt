@@ -14,7 +14,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ScheduleRoundsActivityVM
 
-class ScheduleRoundsActivity : AbstractViewPagerActivity()
+class RoundsViewPagerActivity : AbstractViewPagerActivity()
 {
     private val viewModel by viewModels<ScheduleRoundsActivityVM>()
 

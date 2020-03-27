@@ -3,6 +3,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
@@ -16,6 +17,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidMatch
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.Main
@@ -23,7 +25,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ShowGroupsFirestoreAdapterVM : ViewModel()
+class ShowGroupsBossAdapterVM : ViewModel()
 {
     private val _matchesGenerated = SingleLiveEvent<Boolean>()
     val matchesGenerated: LiveData<Boolean> = _matchesGenerated
@@ -45,7 +47,7 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
     fun generateMatches(group: Group, rounds: Int)
     {
         GlobalScope.launch {
-            with(TeamManager.findTeams("group", group.name)) {
+            with(TeamManager.findTeams("groupId", group.id)) {
                 if(this is ValidTeams)
                 {
                     try
@@ -71,7 +73,7 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
             val tournament = RobinRoundTournament()
             tournament.setTeams(teams)
             tournament.setRounds(rounds)
-            tournament.createMatches(group.name).forEach {
+            tournament.createMatches(group).forEach {
                 with(MatchManager.addMatch(it)) {
                     if(this is ValidMatch) addMatchToTeams(self, teams, group)
                 }
@@ -80,11 +82,7 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
 
         val map = group.rounds
         map[DateUtil.actualYear] = rounds
-        GroupManager.updateGroup(group.name, mapOf("rounds" to map))
-        try
-        {
-        }
-        catch(ex: Exception) {}
+        GroupManager.updateGroup(group.id, mapOf("rounds" to map))
     }
 
     private suspend fun addMatchToTeams(match: Match, teams: List<Team>, group: Group)
@@ -92,18 +90,61 @@ class ShowGroupsFirestoreAdapterVM : ViewModel()
         val homeTeam = teams.find { it.id == match.homeId }
         val awayTeam = teams.find { it.id == match.awayId }
 
-        homeTeam?.matchesId?.add(match.id!!)
-        awayTeam?.matchesId?.add(match.id!!)
-
-        val tmpH = homeTeam?.seasons?.toMutableSet()
-        tmpH?.add(mapOf(DateUtil.actualYear to group.name))
-        tmpH?.let { homeTeam.seasons = it.toList() }
-
-        val tmpA  = awayTeam?.seasons?.toMutableSet()
-        tmpA?.add(mapOf(DateUtil.actualYear to group.name))
-        tmpA?.let { awayTeam.seasons = it.toList() }
-
         homeTeam?.let { TeamManager.addTeam(it) }
         awayTeam?.let { TeamManager.addTeam(it) }
+    }
+
+    fun setRank(group: Group, adapterPosition: Int)
+    {
+        viewModelScope.launch {
+            GroupManager.updateGroup(group.id, mapOf("rank" to adapterPosition))
+        }
+    }
+
+    fun deleteTeam(group: Group)
+    {
+        GlobalScope.launch {
+            group.teamIds[DateUtil.actualYear]?.forEach { teamId ->
+                TeamManager.updateTeam(teamId, mapOf("groupName" to null, "groupId" to null))
+            }
+            GroupManager.deleteGroup(group.id)
+        }
+    }
+
+    fun regenerateMatches(group: Group, rounds: Int)
+    {
+        GlobalScope.launch {
+            val year = DateUtil.actualYear
+            var ok = true
+
+            if(MatchManager.deleteAllMatches(group.id, year.toInt()))
+            {
+                group.teamIds[DateUtil.actualYear]?.forEach { teamId ->
+                    if(!clearTeamStatistics(teamId, year)) ok = false
+                }
+                if(ok) generateMatches(group, rounds)
+            }
+        }
+    }
+
+    private suspend fun clearTeamStatistics(teamId: String, year: String): Boolean
+    {
+        val team = TeamManager.findTeam(teamId)
+        if(team is ValidTeam)
+        {
+            team.self.apply {
+                pointsPerMatch[year] = mutableMapOf()
+                pointsPerYear[year] = 0
+                winsPerYear[year] = 0
+                lossesPerYear[year] = 0
+                matchesPerYear[year] = 0
+                setsPositivePerMatch[year] = mutableMapOf()
+                setsNegativePerMatch[year] = mutableMapOf()
+                positiveSetsPerYear[year] = 0
+                negativeSetsPerYear[year] = 0
+            }
+            return TeamManager.addTeam(team.self) != null
+        }
+        return false
     }
 }

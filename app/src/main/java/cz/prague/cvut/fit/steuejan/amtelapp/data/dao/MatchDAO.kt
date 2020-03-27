@@ -30,21 +30,39 @@ class MatchDAO : DAO
     override suspend fun delete(documentId: String): Unit
             = delete(collection, documentId)
 
-    fun getMatches(round: Int, groupName: String, year: Int): Query
+    fun getMatches(round: Int, groupId: String, year: Int): Query
     {
         return Firebase.firestore
             .collection(collection)
             .whereEqualTo("round", round)
-            .whereEqualTo("group", groupName)
+            .whereEqualTo("groupId", groupId)
             .whereEqualTo("year", year)
             .orderBy("home", Query.Direction.ASCENDING)
     }
 
-    suspend fun getMatches(team: String, year: Int): QuerySnapshot
+    suspend fun getMatches(teamId: String, year: Int): QuerySnapshot
     {
         return Firebase.firestore
             .collection(collection)
-            .whereArrayContains("teams", team)
+            .whereArrayContains("teams", teamId)
+            .whereEqualTo("year", year)
+            .get()
+            .await()
+    }
+
+    fun getMatches(teamId: String, orderBy: String = "dateAndTime"): Query
+    {
+        return Firebase.firestore
+            .collection(collection)
+            .whereArrayContains("teams", teamId)
+            .orderBy(orderBy, Query.Direction.DESCENDING)
+    }
+
+    suspend fun getGroupMatches(groupId: String, year: Int): QuerySnapshot
+    {
+        return Firebase.firestore
+            .collection(collection)
+            .whereEqualTo("groupId", groupId)
             .whereEqualTo("year", year)
             .get()
             .await()

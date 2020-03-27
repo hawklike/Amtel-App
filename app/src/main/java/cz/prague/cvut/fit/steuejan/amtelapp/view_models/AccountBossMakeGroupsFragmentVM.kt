@@ -7,10 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class AccountBossMakeGroupsFragmentVM : ViewModel()
@@ -20,7 +22,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val _group = MutableLiveData<GroupState>()
+    private val _group = SingleLiveEvent<GroupState>()
     val group: LiveData<GroupState> = _group
 
     /*---------------------------------------------------*/
@@ -37,17 +39,18 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun createGroup(groupName: String)
+    fun createGroup(groupName: String, playingPlayOff: Boolean)
     {
         if(confirmName(groupName))
         {
             viewModelScope.launch {
-                if(GroupManager.findGroup(groupName) is ValidGroup)
+                val groups = GroupManager.findGroups("name", groupName)
+                if(groups is ValidGroups && groups.self.isNotEmpty())
                 {
                     _group.value = NoGroup
                     return@launch
                 }
-                _group.value = GroupManager.addGroup(Group(groupName)).let {
+                _group.value = GroupManager.addGroup(Group(null, groupName, playingPlayOff = playingPlayOff)).let {
                     if(it is ValidGroup) ValidGroup(it.self)
                     else NoGroup
                 }
@@ -58,9 +61,8 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
     fun getGroups()
     {
         viewModelScope.launch {
-            GroupManager.retrieveAllGroups().let {
-                if(it is ValidGroups) setAllGroups(it.self)
-            }
+            val groups = GroupManager.retrieveAllGroupsExceptPlayOff()
+                if(groups is ValidGroups) setAllGroups(groups.self)
         }
     }
 
@@ -101,6 +103,14 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
             failureTitle,
             null
         )
+    }
+
+    fun updateRanks(groups: List<Group>)
+    {
+        GlobalScope.launch {
+            for(i in groups.indices)
+                GroupManager.updateGroup(groups[i].id!!, mapOf("rank" to i))
+        }
     }
 
 }

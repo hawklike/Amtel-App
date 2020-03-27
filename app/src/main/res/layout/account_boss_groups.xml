@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include
         layout="@layout/toolbar"
@@ -16,24 +17,108 @@
 
         <include layout="@layout/curve" />
 
+        <RelativeLayout
+            android:id="@+id/account_boss_choose_playOff"
+            style="@style/CardRelativeLayout">
+
+            <TextView
+                android:id="@+id/account_boss_groups_open_playOff_title"
+                style="@style/TextViewTitle"
+                android:layout_marginBottom="0dp"
+                android:text="Otevřít baráž" />
+
+            <TextView
+                android:id="@+id/account_boss_groups_open_playOff_text"
+                style="@style/TextViewTitleLeft"
+                android:gravity="center"
+                android:textSize="13dp"
+                android:textStyle="normal"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="12dp"
+                android:layout_below="@id/account_boss_groups_open_playOff_title"
+                android:text="12.4.2020 -- 18.4.2020" />
+
+            <Switch
+                android:id="@+id/account_boss_groups_open_playOff_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:switchMinWidth="64dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="8dp"
+                android:layout_below="@id/account_boss_groups_open_playOff_text"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Zavřeno"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/lightGrey"
+                android:layout_toStartOf="@id/account_boss_groups_open_playOff_switch"
+                android:textSize="@dimen/common_text_size"
+                android:layout_alignBottom="@id/account_boss_groups_open_playOff_switch"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Otevřeno"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/lightGrey"
+                android:layout_toEndOf="@id/account_boss_groups_open_playOff_switch"
+                android:textSize="@dimen/common_text_size"
+                android:layout_alignBottom="@id/account_boss_groups_open_playOff_switch"/>
+
+        </RelativeLayout>
+
         <TextView
             android:id="@+id/account_boss_groups_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/card_margin"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="@dimen/card_margin"
-            android:layout_marginBottom="16dp"
+            style="@style/TextViewTitleLeft"
             android:gravity="center"
-            android:text="@string/generate_matches_in_groups"
-            android:textColor="@color/white"
-            android:textSize="@dimen/common_text_size" />
+            android:layout_marginBottom="0dp"
+            android:textSize="@dimen/common_text_size"
+            android:layout_below="@id/account_boss_choose_playOff"
+            android:text="@string/generate_matches_in_groups" />
+
+        <TextView
+            android:id="@+id/account_boss_groups_note"
+            style="@style/TextViewTitleLeft"
+            android:gravity="center"
+            android:textSize="13dp"
+            android:textStyle="normal"
+            android:layout_marginTop="0dp"
+            android:layout_below="@id/account_boss_groups_text"
+            android:text="Podržením a tažením karty můžete změnit pořadí skupin." />
+
+        <FrameLayout
+            android:id="@+id/account_boss_groups_progressBar"
+            android:layout_width="match_parent"
+            android:visibility="visible"
+            android:layout_below="@id/account_boss_groups_note"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/blue"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:max="100"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_marginTop="50dp"
+                android:text="@string/amtel_opava"
+                android:textColor="@color/blue"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </FrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/account_boss_groups_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/account_boss_groups_text"
+            android:layout_below="@id/account_boss_groups_note"
             android:layout_marginStart="@dimen/card_margin"
             android:layout_marginEnd="@dimen/card_margin"
             android:orientation="horizontal" />

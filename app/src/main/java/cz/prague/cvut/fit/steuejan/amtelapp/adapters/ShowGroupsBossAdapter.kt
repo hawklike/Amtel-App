@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
@@ -17,20 +18,19 @@ import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.callbacks.ItemMoveCallback
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsFirestoreAdapterVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsBossAdapterVM
+import java.util.*
 
-class ShowGroupsBossFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<Group>)
-    : FirestoreRecyclerAdapter<Group, ShowGroupsBossFirestoreAdapter.ViewHolder>(options)
+class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<Group>)
+    : RecyclerView.Adapter<ShowGroupsBossAdapter.ViewHolder>(), ItemMoveCallback.ItemTouchHelperContract
 {
-    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
-        ShowGroupsFirestoreAdapterVM::class.java)
+    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(ShowGroupsBossAdapterVM::class.java)
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -38,7 +38,9 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
 
         private val name: TextView = itemView.findViewById(R.id.group_card_name)
         private val size: TextView = itemView.findViewById(R.id.group_card_size)
-        private val generate: Button = itemView.findViewById(R.id.group_card_generate)
+        private val playingPlayOff: TextView = itemView.findViewById(R.id.group_card_playingPlayOff)
+        private val generateButton: Button = itemView.findViewById(R.id.group_card_generate)
+        private val deleteButton: ImageButton = itemView.findViewById(R.id.group_card_delete)
 
         private var rounds = 0
         private var calculatedRounds = 0
@@ -46,7 +48,12 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
         fun init(group: Group)
         {
             this.group = group
+            viewModel.setRank(group, adapterPosition)
+
             val size = group.teamIds[DateUtil.actualYear]?.size ?: 0
+
+            if(group.playingPlayOff) playingPlayOff.text = "Hraje baráž: ano"
+            else playingPlayOff.text = "Hraje baráž: ne"
 
             name.text = group.name
             this.size.text = String.format(context.getString(R.string.number_teams), size)
@@ -55,8 +62,27 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
             if(size == 1 || size == 0) rounds = 0
             calculatedRounds = rounds
 
-            generate()
+            handleGenerateButton()
+            handleDeleteButton()
             setObserver()
+        }
+
+        private fun handleDeleteButton()
+        {
+            deleteButton.setOnClickListener {
+
+                MaterialDialog(context)
+                    .title(R.string.delete_user_confirmation_message)
+                    .show {
+                        positiveButton(R.string.yes) {
+                            viewModel.deleteTeam(getItem(adapterPosition))
+                            list.removeAt(adapterPosition)
+                            notifyItemRemoved(adapterPosition)
+                            notifyItemRangeChanged(adapterPosition, list.size)
+                        }
+                        negativeButton()
+                    }
+            }
         }
 
         private fun setObserver()
@@ -68,30 +94,44 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
         }
 
         //TODO: implement regenerating matches
-        private fun generate()
+        private fun handleGenerateButton()
         {
             if(rounds == 0)
             {
-                generate.isEnabled = false
-                generate.setTextColor(App.getColor(R.color.lightGrey))
+                generateButton.isEnabled = false
+                generateButton.setTextColor(App.getColor(R.color.lightGrey))
             }
             else
             {
                 val rounds = group.rounds[DateUtil.actualYear]
                 if(rounds != null && rounds != 0)
                 {
-                    generate.text = context.getString(R.string.regenerate_matches)
-                    generate.setTextColor(Color.RED)
+                    generateButton.text = context.getString(R.string.regenerate_matches)
+                    generateButton.setTextColor(Color.RED)
+                    showDialog(
+                        title = "Přegenerovat utkání ve skupině ${name.text}?",
+                        buttonText = "Přegenerovat utkání",
+                        message = "Veškerá utkání v této skupině a tento rok budou nenavrátně přepsána.\n\nZadejte počet kol:") {
+                        viewModel.regenerateMatches(getItem(adapterPosition), rounds)
+                    }
+
+                    return
                 }
             }
-            showDialog()
+            showDialog(
+                title = "Vygenerovat utkání ve skupině ${name.text}?",
+                message = "Zadejte počet kol:",
+                buttonText = context.getString(R.string.generate_plan)) {
+                generateSchedule()
+            }
         }
 
-        private fun showDialog()
+        private fun showDialog(title: String, buttonText: String, message: String, callback: () -> Unit)
         {
-            generate.setOnClickListener {
+            generateButton.setOnClickListener {
                 MaterialDialog(context).show {
-                    title(text = context.getString(R.string.generate_matches_dialog_title) + " ${name.text}")
+                    title(text = title)
+                    message(text = message)
                     input(
                         waitForPositiveButton = false,
                         hint = context.getString(R.string.rounds_number),
@@ -107,7 +147,8 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
                             dialog.setActionButtonEnabled(WhichButton.POSITIVE, isValid)
                         }
                     }
-                    positiveButton(R.string.generate_plan) { generateSchedule() }
+                    positiveButton(text = buttonText) { callback.invoke() }
+                    negativeButton()
                 }
             }
         }
@@ -122,7 +163,7 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
         private fun generateSchedule()
         {
             viewModel.generateMatches(getItem(adapterPosition), rounds)
-            generate.setTextColor(App.getColor(R.color.red))
+            generateButton.setTextColor(App.getColor(R.color.red))
         }
     }
 
@@ -133,9 +174,28 @@ class ShowGroupsBossFirestoreAdapter(private val context: Context, options: Fire
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int, group: Group)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int)
     {
+        val group = getItem(position)
         holder.init(group)
     }
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int)
+    {
+        if(fromPosition < toPosition)
+        {
+            for(i in fromPosition until toPosition)
+                Collections.swap(list, i, i + 1)
+        }
+        else
+        {
+            for(i in fromPosition downTo toPosition + 1)
+                Collections.swap(list, i, i - 1)
+        }
+        notifyItemMoved(fromPosition, toPosition)
+    }
+
+    override fun getItemCount(): Int = list.size
+    private fun getItem(position: Int): Group = list[position]
 
 }

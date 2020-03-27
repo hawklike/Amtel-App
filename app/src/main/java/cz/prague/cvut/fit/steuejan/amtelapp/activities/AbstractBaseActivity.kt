@@ -1,14 +1,11 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.Window
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -27,7 +24,7 @@ import kotlin.coroutines.CoroutineContext
 abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
 {
     private val logoutIcon: ImageButton by lazy { findViewById<ImageButton>(R.id.toolbar_logout) }
-    protected val baseActivityVM by viewModels<AbstractBaseActivityVM>()
+    val baseActivityVM by viewModels<AbstractBaseActivityVM>()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job + handler

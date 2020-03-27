@@ -9,7 +9,7 @@ enum class TeamOrderBy
         return when(this)
         {
             NAME -> "name"
-            GROUP -> "group"
+            GROUP -> "groupName"
         }
     }
 }

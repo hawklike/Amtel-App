@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <include layout="@layout/curve" />
@@ -12,14 +17,19 @@
         style="@style/CardRelativeLayout"
         android:paddingBottom="4dp">
 
-        <TextView
-            android:id="@+id/account_boss_add_tm_text"
-            style="@style/TextViewTitle"
-            android:text="@string/credentials" />
+        <ImageView
+            android:id="@+id/login_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="48dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/amtel_logo_dark"
+            android:contentDescription="application logo" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/login_email"
-            android:layout_below="@+id/account_boss_add_tm_text"
+            android:layout_below="@+id/login_logo"
             android:hint="@string/email"
             style="@style/TextInputLayout"
             app:errorEnabled="true">
@@ -57,13 +67,6 @@
 
     </RelativeLayout>
 
-    <ImageView
-        android:layout_width="300dp"
-        android:layout_height="210dp"
-        android:layout_marginStart="12dp"
-        android:background="@drawable/tennis_players"
-        android:layout_above="@id/login_checkButton"/>
-
     <Button
         android:id="@+id/login_checkButton"
         android:layout_width="match_parent"
@@ -83,3 +86,5 @@
         android:textSize="16sp" />
 
 </RelativeLayout>
+
+</ScrollView>

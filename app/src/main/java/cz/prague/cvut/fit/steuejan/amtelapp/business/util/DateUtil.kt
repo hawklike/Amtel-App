@@ -1,8 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Day
-import org.joda.time.DateTime
-import org.joda.time.Days
+import org.joda.time.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,7 +24,7 @@ object DateUtil
     fun validateBirthdate(date: String, dateFormat: String = "dd.MM.yyyy"): Boolean
     {
         if(!validateDate(date, dateFormat)) throw Exception("Invalid date")
-        return Date().toMyString(dateFormat).toDate(dateFormat) >= date.toDate(dateFormat)
+        return DateTime(Date()) >= DateTime(date.toDate(dateFormat))
     }
 
     val actualYear: String
@@ -78,6 +77,23 @@ object DateUtil
         val remainingDays = Days.daysBetween(today, lastDay).days
         return if(remainingDays < 0) 0 else remainingDays
     }
+
+    fun compareDates(first: Date, second: Date): Int
+    {
+        return DateTimeComparator.getDateOnlyInstance().compare(DateTime(first), DateTime(second))
+    }
+
+    fun getAge(birthdate: Date): Int
+            = Years.yearsBetween(LocalDate(birthdate), LocalDate()).years
+
+    fun getDateInFuture(days: Int): Date
+    {
+        val cal = Calendar.getInstance()
+        cal.time = Date()
+        cal.add(Calendar.DATE, days)
+        return cal.time
+    }
+
 }
 
 fun Date.toMyString(format: String = "dd.MM.yyyy"): String
@@ -93,6 +109,13 @@ fun Date.setTime(hours: Int, minutes: Int): Date
     cal.set(Calendar.HOUR_OF_DAY, hours)
     cal.set(Calendar.MINUTE, minutes)
     return cal.time
+}
+
+fun Date.toCalendar(): Calendar
+{
+    val cal = Calendar.getInstance()
+    cal.time = this
+    return cal
 }
 
 fun Calendar.toMyString(format: String = "dd.MM.yyyy"): String

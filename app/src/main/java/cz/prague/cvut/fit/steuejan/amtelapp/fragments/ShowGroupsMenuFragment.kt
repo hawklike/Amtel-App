@@ -11,8 +11,9 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayOffActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.RankingViewPagerActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.activities.ScheduleRoundsActivity
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.RoundsViewPagerActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsMenuAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
@@ -61,6 +62,7 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
+        setLogoutIconVisibility(false)
         if(isRanking) setToolbarTitle(getString(R.string.results))
         else setToolbarTitle(getString(R.string.schedule))
         viewModel.loadGroups()
@@ -100,12 +102,20 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
         else
         {
             adapter?.onNextClick = { group, actualRound ->
-                val intent = Intent(activity!!, ScheduleRoundsActivity::class.java).apply {
-                    putExtra(ScheduleRoundsActivity.GROUP, group)
-                    putExtra(ScheduleRoundsActivity.USER, mainActivityModel.getUser().value)
-                    putExtra(ScheduleRoundsActivity.ACTUAL_ROUND, actualRound)
+                if(group.playOff)
+                {
+                    val intent = Intent(activity!!, PlayOffActivity::class.java)
+                    startActivity(intent)
                 }
-                if(group.rounds[DateUtil.actualYear] != 0) startActivity(intent)
+                else
+                {
+                    val intent = Intent(activity!!, RoundsViewPagerActivity::class.java).apply {
+                        putExtra(RoundsViewPagerActivity.GROUP, group)
+                        putExtra(RoundsViewPagerActivity.USER, mainActivityModel.getUser().value)
+                        putExtra(RoundsViewPagerActivity.ACTUAL_ROUND, actualRound)
+                    }
+                    if(group.rounds[DateUtil.actualYear] != 0) startActivity(intent)
+                }
             }
         }
     }
