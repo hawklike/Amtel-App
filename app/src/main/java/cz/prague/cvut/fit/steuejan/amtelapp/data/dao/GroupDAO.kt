@@ -6,6 +6,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
+import kotlinx.coroutines.tasks.await
 
 class GroupDAO : DAO
 {
@@ -15,6 +16,19 @@ class GroupDAO : DAO
     {
         if(entity is Group) insert(collection, entity)
         else throw IllegalArgumentException("GroupDAO::insert(): entity is not type of Group and should be")
+    }
+
+    suspend fun <T> insertPlayOff(entity: T)
+    {
+        if(entity is Group)
+        {
+            Firebase.firestore
+                .collection(collection)
+                .document(entity.name)
+                .set(entity)
+                .await()
+        }
+        else throw IllegalArgumentException("GroupDAO::insertPlayOff(): entity is not type of Group and should be")
     }
 
     override suspend fun findById(id: String): DocumentSnapshot

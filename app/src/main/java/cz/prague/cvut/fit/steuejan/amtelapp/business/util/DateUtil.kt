@@ -78,20 +78,24 @@ object DateUtil
         return if(remainingDays < 0) 0 else remainingDays
     }
 
-    fun compareDates(first: Date, second: Date): Int
-    {
-        return DateTimeComparator.getDateOnlyInstance().compare(DateTime(first), DateTime(second))
-    }
+    fun compareDates(first: Date?, second: Date?): Int
+            = DateTimeComparator.getDateOnlyInstance().compare(DateTime(first), DateTime(second))
 
     fun getAge(birthdate: Date): Int
             = Years.yearsBetween(LocalDate(birthdate), LocalDate()).years
 
-    fun getDateInFuture(days: Int): Date
+    fun getDateInFuture(days: Int, startDate: Date? = null): Date
     {
         val cal = Calendar.getInstance()
-        cal.time = Date()
+        cal.time = startDate?.let { it } ?: Date()
         cal.add(Calendar.DATE, days)
         return cal.time
+    }
+
+    fun isDateBetween(date: Date?, startDate: Date?, endDate: Date?): Boolean
+    {
+        return if(compareDates(startDate, date) <= 0) compareDates(date, endDate) <= 0
+        else false
     }
 
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsMenuAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.toPlayoff
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
@@ -26,13 +27,10 @@ class ShowGroupsMenuFirestoreAdapterVM : ViewModel()
     {
         holder.rounds.visibility = View.INVISIBLE
 
-        group.roundDates["playOff"]?.let { weekNumber ->
-            val firstWeek = DateUtil.getWeekDate(weekNumber)
-            val secondWeek = DateUtil.getWeekDate(weekNumber + 1)
-            val week = firstWeek + secondWeek
-            week.find { DateUtil.compareDates(it, Date()) == 0 } ?: disableCard(holder)
-            holder.actualRound.text = "${week.first().toMyString()} – ${week.last().toMyString()}"
-        }
+        val playoff = group.toPlayoff()
+
+        if(playoff?.isActive == false) disableCard(holder)
+        holder.actualRound.text = "${playoff?.startDate?.toMyString() ?: ""} – ${playoff?.endDate?.toMyString() ?: ""}"
     }
 
     fun disableCard(holder: ShowGroupsMenuAdapter.ViewHolder)

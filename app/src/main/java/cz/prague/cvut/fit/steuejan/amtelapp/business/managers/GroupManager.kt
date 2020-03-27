@@ -33,6 +33,21 @@ object GroupManager
         }
     }
 
+    suspend fun addPlayOff(playOff: Group): GroupState = withContext(IO)
+    {
+        return@withContext try
+        {
+            GroupDAO().insertPlayOff(playOff)
+            Log.i(TAG, "addPlayOff(): $playOff successfully added to database")
+            ValidGroup(playOff)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "addPlayOff(): $playOff not added to database because ${ex.message}")
+            NoGroup
+        }
+    }
+
     suspend fun findGroup(id: String?): GroupState = withContext(IO)
     {
         if(id == null) return@withContext NoGroup

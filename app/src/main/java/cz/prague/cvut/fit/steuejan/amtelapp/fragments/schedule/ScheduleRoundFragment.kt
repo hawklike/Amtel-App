@@ -83,18 +83,6 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
         return inflater.inflate(R.layout.round, container, false)
     }
 
-    override fun onStart()
-    {
-        super.onStart()
-        adapter?.startListening()
-    }
-
-    override fun onStop()
-    {
-        super.onStop()
-        adapter?.stopListening()
-    }
-
     override fun onDestroyView()
     {
         super.onDestroyView()
@@ -181,6 +169,7 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
         val query = MatchManager.getMatches(round, group)
         val options = FirestoreRecyclerOptions.Builder<Match>()
             .setQuery(query, Match::class.java)
+            .setLifecycleOwner(viewLifecycleOwner)
             .build()
 
         recyclerView?.setHasFixedSize(true)

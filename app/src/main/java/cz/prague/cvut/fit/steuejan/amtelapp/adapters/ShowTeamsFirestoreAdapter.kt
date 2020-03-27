@@ -16,7 +16,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsFirestoreAdapter.Presentation.SIMPLE
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.TeamsAdapterVM
 
@@ -26,7 +25,6 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(TeamsAdapterVM::class.java)
 
     @Suppress("MemberVisibilityCanBePrivate")
-    var presentation: Presentation = SIMPLE
     var groups: List<String> = listOf()
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -64,16 +62,8 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, team: Team)
     {
-        if(presentation == SIMPLE)
-        {
-            holder.teamName.text = team.name
-            team.groupName?.let { holder.group.text = it }
-        }
-    }
-
-    enum class Presentation
-    {
-        SIMPLE, SPECIFIC
+        holder.teamName.text = team.name
+        team.groupName?.let { holder.group.text = it }
     }
 
 }
