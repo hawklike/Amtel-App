@@ -13,6 +13,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsMenuFirestoreAdapterVM
 
@@ -53,7 +54,7 @@ class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, pri
     {
         val group = getItem(position)
         holder.name.text = group.name
-        holder.logo.text = viewModel.createLabel(group)
+        holder.logo.text = StringUtil.createLabel(group.name)
 
         if(isRanking)
         {

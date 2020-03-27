@@ -14,14 +14,6 @@ import java.util.*
 
 class ShowGroupsMenuFirestoreAdapterVM : ViewModel()
 {
-    fun createLabel(group: Group): CharSequence
-    {
-        return group.name.fold(StringBuilder()) { acc, c ->
-            if(acc.length > 2) return@fold acc
-            acc.append(c)
-        }
-    }
-
     fun getActualRound(group: Group): Int?
     {
         val week = DateUtil.getWeekNumber(Date())

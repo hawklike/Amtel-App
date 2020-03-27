@@ -128,7 +128,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         playersRecyclerView?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         val team = viewModel.mTeam ?: Team()
-        playersAdapter = ShowPlayersAdapter(team.users.map { it.toPlayer() }, true)
+        playersAdapter = ShowPlayersAdapter(team.users.map { it.toPlayer() }, true, team = team)
 
         playersRecyclerView?.adapter = playersAdapter
     }

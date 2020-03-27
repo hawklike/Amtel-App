@@ -17,6 +17,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.TeamInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
@@ -31,6 +32,8 @@ class MatchResultFragment : AbstractMatchActivityFragment()
 
     private lateinit var homeName: TextView
     private lateinit var awayName: TextView
+
+    private lateinit var group: TextView
 
     private lateinit var homeResult: Button
     private lateinit var awayResult: Button
@@ -77,6 +80,8 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         super.onViewCreated(view, savedInstanceState)
         homeName = view.findViewById(R.id.match_result_home)
         awayName = view.findViewById(R.id.match_result_away)
+
+        group = view.findViewById(R.id.match_result_group)
 
         sets = view.findViewById(R.id.match_result_sets)
         games = view.findViewById(R.id.match_result_gems)
@@ -160,6 +165,8 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         homeName.text = match.home
         awayName.text = match.away
 
+        group.text = StringUtil.createLabel(match.groupName)
+
         sets.text = MatchManager.getResults(round).sets
         games.text = MatchManager.getResults(round).games
 
@@ -204,7 +211,7 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         recyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         adapter = ShowPlayersAdapter(round.homePlayers + round.awayPlayers, winners = getWinners())
         adapter?.onClick = {
-            //TODO
+            //TODO show player profile
         }
         recyclerView?.adapter = adapter
     }

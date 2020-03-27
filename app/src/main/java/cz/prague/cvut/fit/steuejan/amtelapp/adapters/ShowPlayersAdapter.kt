@@ -16,10 +16,15 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Player
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import java.util.*
 
-class ShowPlayersAdapter(private val list: List<Player>, private val teamProfile: Boolean = false, private val winners: List<Boolean?> = emptyList())
-    : RecyclerView.Adapter<ShowPlayersAdapter.ViewHolder>()
+class ShowPlayersAdapter(
+    private val list: List<Player>,
+    private val teamProfile: Boolean = false,
+    private val winners: List<Boolean?> = emptyList(),
+    private val team: Team? = null
+) : RecyclerView.Adapter<ShowPlayersAdapter.ViewHolder>()
 {
     var onClick: (player: Player) -> Unit = { toast(R.string.not_working_yet) }
 
@@ -58,6 +63,11 @@ class ShowPlayersAdapter(private val list: List<Player>, private val teamProfile
         if(teamProfile)
         {
             holder.footer.text = String.format(context.getString(R.string.years), DateUtil.getAge(player.birthdate ?: Date()))
+            if(player.playerId == team?.tmId)
+            {
+                holder.name.setTextColor(App.getColor(R.color.blue))
+                holder.surname.setTextColor(App.getColor(R.color.blue))
+            }
         }
         else
         {
