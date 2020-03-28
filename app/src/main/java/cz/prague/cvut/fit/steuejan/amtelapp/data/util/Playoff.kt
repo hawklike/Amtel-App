@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.helpers
+package cz.prague.cvut.fit.steuejan.amtelapp.data.util
 
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
@@ -19,7 +19,10 @@ class Playoff(val name: String, val startDate: Date)
 
 fun Group.toPlayoff(): Playoff?
 {
-    return if(this.playOff) Playoff(this.name, this.playOffStart)
+    return if(this.playOff) Playoff(
+        this.name,
+        this.playOffStart
+    )
     else null
 }
 

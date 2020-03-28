@@ -14,4 +14,4 @@ data class Group(override var id: String? = null,
                  var playingPlayOff: Boolean = true,
                  var playOff: Boolean = false,
                  var playOffStart: Date = Date()
-                 ) : Parcelable, Entity()
+                 ) : Parcelable, Entity<Group>()

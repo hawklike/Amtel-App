@@ -25,7 +25,7 @@ data class Match(override var id: String? = null,
                  var defaultEndGameEdits: Int = 2,
                  var teams: List<String> = listOf(), //list of teamIds
                  var playOff: Boolean = false
-                 ) : Parcelable, Entity()
+                 ) : Parcelable, Entity<Match>()
 {
     override fun toString(): String
     {

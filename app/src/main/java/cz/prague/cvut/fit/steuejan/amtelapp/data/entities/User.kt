@@ -18,7 +18,7 @@ data class User(override var id: String? = null,
                 var firstSign: Boolean = true,
                 var englishName: String = "",
                 var englishSurname: String = ""
-                ) : Parcelable, Entity()
+                ) : Parcelable, Entity<User>()
 
 fun User.toPlayer(): Player
 {

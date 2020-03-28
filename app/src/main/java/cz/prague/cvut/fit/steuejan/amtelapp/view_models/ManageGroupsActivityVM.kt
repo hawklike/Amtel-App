@@ -7,10 +7,10 @@ import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Playoff
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.toPlayoff
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Playoff
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toPlayoff
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroup
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroups
 import kotlinx.coroutines.launch

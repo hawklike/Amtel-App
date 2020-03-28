@@ -77,4 +77,13 @@ class GroupDAO : DAO
 
     suspend fun retrieveAll(): QuerySnapshot
             = retrieveAll(collection)
+
+    suspend fun retrieveTeamsInGroup(groupId: String): QuerySnapshot
+    {
+        return Firebase.firestore
+            .collection(TeamDAO().collection)
+            .whereEqualTo("groupId", groupId)
+            .get()
+            .await()
+    }
 }
