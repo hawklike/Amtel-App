@@ -82,8 +82,8 @@
     <string name="create_group">Vytvořit skupinu</string>
     <string name="show_groups">Zobrazit skupiny</string>
     <string name="group_name_error_message">Vyplňte prosím název skupiny</string>
-    <string name="create_group_success_title">Skupina byla úspěšně vytvořena</string>
-    <string name="create_group_failure_title">Skupinu se nepodařilo vytvořit</string>
+    <string name="create_group_success_title">Skupina byla úspěšně vytvořena.</string>
+    <string name="create_group_failure_title">Skupina již existuje.</string>
     <string name="choose_group">Vyberte skupinu</string>
     <string name="choose_group_input">Vybrat skupinu pro tým %1$s</string>
     <string name="groups">Skupiny</string>

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsMenuAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.toPlayoff
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toPlayoff
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group

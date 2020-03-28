@@ -36,7 +36,7 @@ class ManageGroupsActivityVM : ViewModel()
     {
         viewModelScope.launch {
             val playOff = Group(null, context.getString(R.string.playOff), playingPlayOff = false, playOff = true, rank = Int.MAX_VALUE)
-            if(GroupManager.addPlayOff(playOff) is ValidGroup) toast("Baráž úspěšně otevřena.")
+            if(GroupManager.addPlayoff(playOff) is ValidGroup) toast("Baráž úspěšně otevřena.")
         }
     }
 

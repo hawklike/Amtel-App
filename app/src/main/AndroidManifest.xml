@@ -48,6 +48,9 @@
         <service
             android:name=".services.GroupDeletionService"
             android:exported="false"/>
+        <service
+            android:name=".services.SeasonFinisherService"
+            android:exported="false"/>
     </application>
 
 </manifest>

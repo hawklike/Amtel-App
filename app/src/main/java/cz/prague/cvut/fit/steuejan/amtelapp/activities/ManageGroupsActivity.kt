@@ -19,10 +19,11 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsBossAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.callbacks.ItemMoveCallback
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Playoff.Companion.PLAYOFF_DAYS
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Playoff.Companion.PLAYOFF_DAYS
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountBossMakeGroupsFragment.Companion.GROUPS
+import cz.prague.cvut.fit.steuejan.amtelapp.services.SeasonFinisherService
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ManageGroupsActivityVM
 import java.util.*
 import kotlin.collections.ArrayList
@@ -80,12 +81,21 @@ class ManageGroupsActivity : AbstractBaseActivity()
                 .message(text = "Budou vygenerována utkání o postup/sestup a přesunuty nejlepší/nejhorší týmy do patřičných skupin.\n\nBaráž bude otevřena na dva týdny, poté se automaticky uzavře a aktuální sezóna bude ukončena. Po uplynutí dvou týdnů budete moct otevřít novou baráž.\n\nMějte prosím strpení, bude to chvíli trvat.")
                 .show {
                     positiveButton(R.string.yes) {
-                        viewModel.setPlayOff()
+                        setPlayOff()
                         disablePlayoffButton()
                     }
                     negativeButton()
             }
         }
+    }
+
+    private fun setPlayOff()
+    {
+        val groups = viewModel.groups.value ?: emptyList()
+        val serviceIntent = Intent(this, SeasonFinisherService::class.java).apply {
+            putParcelableArrayListExtra(SeasonFinisherService.GROUPS_EXCEPT_PLAYOFF, ArrayList(groups))
+        }
+        startService(serviceIntent)
     }
 
     override fun onDestroy()

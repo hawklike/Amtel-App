@@ -73,7 +73,7 @@
             android:textStyle="normal"
             android:layout_marginTop="0dp"
             android:layout_below="@id/account_boss_groups_text"
-            android:text="Podržením a tažením karty můžete změnit pořadí skupin." />
+            android:text="Podržením a tažením karty můžete změnit pořadí skupin (vrchní skupina je nejlepší)." />
 
         <FrameLayout
             android:id="@+id/account_boss_groups_progressBar"
