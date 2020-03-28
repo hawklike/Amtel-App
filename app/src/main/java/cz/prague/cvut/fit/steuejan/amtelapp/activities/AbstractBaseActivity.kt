@@ -11,6 +11,7 @@ import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager.auth
+import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AbstractBaseActivityVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
@@ -77,6 +78,7 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
             isUserLoggedIn(NoUser)
             setUser(null)
             setDrawerSelectedPosition(0)
+            setTeam(NoTeam)
         }
 
         baseActivityVM.setLogoutIcon(false)

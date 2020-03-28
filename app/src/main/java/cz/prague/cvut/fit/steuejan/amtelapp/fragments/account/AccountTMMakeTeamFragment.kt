@@ -40,7 +40,6 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
 
     private val viewModel by viewModels<AccountTMMakeTeamFragmentVM>()
 
-    //TODO: [REFACTORING] get team from database in the fragment's view model
     private lateinit var team: TeamState
     private lateinit var user: User
 
