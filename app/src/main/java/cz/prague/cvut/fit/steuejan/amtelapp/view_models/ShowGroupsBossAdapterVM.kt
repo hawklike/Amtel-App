@@ -1,14 +1,12 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.RobinRoundTournament
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
@@ -25,13 +23,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@Deprecated("Long tasks replaced with services.", ReplaceWith("GenerateScheduleService and GroupDeletionService", "cz.prague.cvut.fit.steuejan.amtelapp.services.GenerateScheduleService", "cz.prague.cvut.fit.steuejan.amtelapp.services.GroupDeletionService"))
 class ShowGroupsBossAdapterVM : ViewModel()
 {
-    private val _matchesGenerated = SingleLiveEvent<Boolean>()
-    val matchesGenerated: LiveData<Boolean> = _matchesGenerated
-
-    /*---------------------------------------------------*/
-
     fun confirmInput(text: String, rounds: Int): Boolean
     {
         val n: Int
@@ -75,7 +69,7 @@ class ShowGroupsBossAdapterVM : ViewModel()
             tournament.setRounds(rounds)
             tournament.createMatches(group).forEach {
                 with(MatchManager.addMatch(it)) {
-                    if(this is ValidMatch) addMatchToTeams(self, teams, group)
+                    if(this is ValidMatch) addMatchToTeams(self, teams)
                 }
             }
         }
@@ -85,7 +79,7 @@ class ShowGroupsBossAdapterVM : ViewModel()
         GroupManager.updateGroup(group.id, mapOf("rounds" to map))
     }
 
-    private suspend fun addMatchToTeams(match: Match, teams: List<Team>, group: Group)
+    private suspend fun addMatchToTeams(match: Match, teams: List<Team>)
     {
         val homeTeam = teams.find { it.id == match.homeId }
         val awayTeam = teams.find { it.id == match.awayId }
@@ -101,7 +95,7 @@ class ShowGroupsBossAdapterVM : ViewModel()
         }
     }
 
-    fun deleteTeam(group: Group)
+    fun deleteGroup(group: Group)
     {
         GlobalScope.launch {
             group.teamIds[DateUtil.actualYear]?.forEach { teamId ->

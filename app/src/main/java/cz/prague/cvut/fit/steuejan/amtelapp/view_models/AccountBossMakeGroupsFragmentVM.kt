@@ -62,7 +62,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
     fun getGroups()
     {
         viewModelScope.launch {
-            val groups = GroupManager.retrieveAllGroupsExceptPlayOff()
+            val groups = GroupManager.retrieveAllGroupsExceptPlayoff()
                 if(groups is ValidGroups) setAllGroups(groups.self)
         }
     }

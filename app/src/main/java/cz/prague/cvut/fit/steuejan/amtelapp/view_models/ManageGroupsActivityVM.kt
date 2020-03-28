@@ -43,7 +43,7 @@ class ManageGroupsActivityVM : ViewModel()
     fun getGroupsExceptPlayOff()
     {
         viewModelScope.launch {
-            val groups = GroupManager.retrieveAllGroupsExceptPlayOff()
+            val groups = GroupManager.retrieveAllGroupsExceptPlayoff()
             if(groups is ValidGroups) _groups.value = groups.self
         }
     }

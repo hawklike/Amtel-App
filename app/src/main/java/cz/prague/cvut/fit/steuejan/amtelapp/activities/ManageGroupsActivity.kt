@@ -77,7 +77,7 @@ class ManageGroupsActivity : AbstractBaseActivity()
         generatePlayOffButton.setOnClickListener {
             MaterialDialog(this)
                 .title(text = "Opravdu chcete otevřít baráž?")
-                .message(text = "Budou vygenerována utkání o postup/sestup a přesunuty nejlepší/nejhorší týmy do patřičných skupin.\n\nBaráž bude otevřena na dva týdny, poté se automaticky uzavře. Po uplynutí dvou týdnů budete moct otevřít novou baráž.")
+                .message(text = "Budou vygenerována utkání o postup/sestup a přesunuty nejlepší/nejhorší týmy do patřičných skupin.\n\nBaráž bude otevřena na dva týdny, poté se automaticky uzavře a aktuální sezóna bude ukončena. Po uplynutí dvou týdnů budete moct otevřít novou baráž.\n\nMějte prosím strpení, bude to chvíli trvat.")
                 .show {
                     positiveButton(R.string.yes) {
                         viewModel.setPlayOff()

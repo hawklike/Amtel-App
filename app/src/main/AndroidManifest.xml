@@ -18,6 +18,7 @@
         android:theme="@style/AppTheme"
         android:name=".App"
         tools:ignore="GoogleAppIndexingWarning">
+
         <activity
             android:name=".activities.SplashActivity"
             android:theme="@style/SplashTheme"
@@ -27,9 +28,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activities.MainActivity"
             android:windowSoftInputMode="adjustResize"/>
+
         <activity android:name=".activities.AddUserToTeamActivity"/>
         <activity android:name=".activities.ManageGroupsActivity"/>
         <activity android:name=".activities.RoundsViewPagerActivity"/>
@@ -38,6 +41,13 @@
         <activity android:name=".activities.RankingViewPagerActivity"/>
         <activity android:name=".activities.PlayOffActivity"/>
         <activity android:name=".activities.TeamInfoActivity"/>
+
+        <service
+            android:name=".services.GenerateScheduleService"
+            android:exported="false"/>
+        <service
+            android:name=".services.GroupDeletionService"
+            android:exported="false"/>
     </application>
 
 </manifest>

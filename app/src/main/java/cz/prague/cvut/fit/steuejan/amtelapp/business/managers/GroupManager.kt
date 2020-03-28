@@ -126,18 +126,48 @@ object GroupManager
         }
     }
 
-    suspend fun retrieveAllGroupsExceptPlayOff(orderBy: String = "rank"): GroupState = withContext(IO)
+    suspend fun retrieveAllGroupsExceptPlayoff(orderBy: String = "rank"): GroupState = withContext(IO)
     {
         return@withContext try
         {
-            val snapshots = GroupDAO().retrieveAllGroupsExceptPlayOff(orderBy).get().await()
+            val snapshots = GroupDAO().retrieveAllGroupsExceptPlayoff(orderBy).get().await()
             val groups = snapshots.toObjects<Group>()
-            Log.i(TAG, "retrieveAllGroupsExceptPlayOff(): $groups retrieved successfully")
+            Log.i(TAG, "retrieveAllGroupsExceptPlayOff(): $groups except playoff retrieved successfully")
             ValidGroups(groups)
         }
         catch(ex: Exception)
         {
             Log.e(TAG, "retrieveAllGroupsExceptPlayOff(): documents not retrieved because ${ex.message}")
+            NoGroup
+        }
+    }
+
+    suspend fun retrieveAllGroupsPlayingPlayoff(orderBy: String = "rank"): GroupState = withContext(IO)
+    {
+        return@withContext try
+        {
+            val groups = GroupDAO().retrieveAllGroupsPlayingPlayoff(orderBy).toObjects<Group>()
+            Log.i(TAG, "retrieveAllGroupsPlayingPlayoff(): $groups playing playoff retrieved successfully")
+            ValidGroups(groups)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveAllGroupsPlayingPlayoff(): documents not retrieved because ${ex.message}")
+            NoGroup
+        }
+    }
+
+    suspend fun retrieveAllGroupsNotPlayingPlayoff(orderBy: String = "rank"): GroupState = withContext(IO)
+    {
+        return@withContext try
+        {
+            val groups = GroupDAO().retrieveAllGroupsNotPlayingPlayoff(orderBy).toObjects<Group>()
+            Log.i(TAG, "retrieveAllGroupsNotPlayingPlayoff(): $groups not playing playoff retrieved successfully")
+            ValidGroups(groups)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveAllGroupsNotPlayingPlayoff(): documents not retrieved because ${ex.message}")
             NoGroup
         }
     }

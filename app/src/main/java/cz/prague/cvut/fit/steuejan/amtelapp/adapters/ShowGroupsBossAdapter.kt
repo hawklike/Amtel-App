@@ -1,6 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.text.InputType
 import android.view.LayoutInflater
@@ -9,9 +10,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
@@ -19,18 +17,19 @@ import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import cz.prague.cvut.fit.steuejan.amtelapp.App
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.callbacks.ItemMoveCallback
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsBossAdapterVM
+import cz.prague.cvut.fit.steuejan.amtelapp.services.GenerateScheduleService
+import cz.prague.cvut.fit.steuejan.amtelapp.services.GroupDeletionService
 import java.util.*
 
 class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<Group>)
     : RecyclerView.Adapter<ShowGroupsBossAdapter.ViewHolder>(), ItemMoveCallback.ItemTouchHelperContract
 {
-    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(ShowGroupsBossAdapterVM::class.java)
+//    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
+//        ShowGroupsBossAdapterVM::class.java)
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -48,7 +47,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
         fun init(group: Group)
         {
             this.group = group
-            viewModel.setRank(group, adapterPosition)
+//            viewModel.setRank(group, adapterPosition)
 
             val size = group.teamIds[DateUtil.actualYear]?.size ?: 0
 
@@ -64,7 +63,6 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
 
             handleGenerateButton()
             handleDeleteButton()
-            setObserver()
         }
 
         private fun handleDeleteButton()
@@ -72,10 +70,11 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             deleteButton.setOnClickListener {
 
                 MaterialDialog(context)
-                    .title(R.string.delete_user_confirmation_message)
+                    .title(text = "Opravdu chcete smazat skupinu ${name.text}?")
                     .show {
                         positiveButton(R.string.yes) {
-                            viewModel.deleteTeam(getItem(adapterPosition))
+                            deleteGroup(getItem(adapterPosition))
+//                            viewModel.deleteGroup(getItem(adapterPosition))
                             list.removeAt(adapterPosition)
                             notifyItemRemoved(adapterPosition)
                             notifyItemRangeChanged(adapterPosition, list.size)
@@ -85,12 +84,12 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             }
         }
 
-        private fun setObserver()
+        private fun deleteGroup(group: Group)
         {
-            viewModel.matchesGenerated.observe(context as FragmentActivity) { isSuccess ->
-                if(isSuccess) toast(context.getString(R.string.group) + " ${group.name} " + App.context.getString(R.string.successfully_generated))
-                else toast(context.getString(R.string.group) + " ${group.name} " + App.context.getString(R.string.not_successfully_generated))
+            val serviceIntent = Intent(context, GroupDeletionService::class.java).apply {
+                putExtra(GroupDeletionService.GROUP, group)
             }
+            context.startService(serviceIntent)
         }
 
         private fun handleGenerateButton()
@@ -111,7 +110,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
                         title = "Přegenerovat utkání ve skupině ${name.text}?",
                         buttonText = "Přegenerovat utkání",
                         message = "Veškerá utkání v této skupině a tento rok budou nenavrátně přepsána.\n\nZadejte počet kol:") {
-                        viewModel.regenerateMatches(getItem(adapterPosition), rounds)
+                        generateSchedule(true)
                     }
 
                     return
@@ -121,7 +120,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
                 title = "Vygenerovat utkání ve skupině ${name.text}?",
                 message = "Zadejte počet kol:",
                 buttonText = context.getString(R.string.generate_plan)) {
-                generateSchedule()
+                generateSchedule(false)
             }
         }
 
@@ -154,14 +153,34 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
 
         private fun confirmInput(text: CharSequence): Boolean
         {
-            val isValid = viewModel.confirmInput(text.toString(), calculatedRounds)
+            val isValid = confirmInput(text.toString(), calculatedRounds)
             if(isValid) rounds = text.toString().toInt()
             return isValid
         }
 
-        private fun generateSchedule()
+        private fun confirmInput(text: String, rounds: Int): Boolean
         {
-            viewModel.generateMatches(getItem(adapterPosition), rounds)
+            val n: Int
+
+            try { n = text.toInt() }
+            catch(ex: NumberFormatException) { return false }
+
+            if(n % 2 == 0 || n < rounds) return false
+
+            return true
+        }
+
+        private fun generateSchedule(regenerate: Boolean)
+        {
+            val serviceIntent = Intent(context, GenerateScheduleService::class.java).apply {
+                putExtra(GenerateScheduleService.GROUP, getItem(adapterPosition))
+                putExtra(GenerateScheduleService.ROUNDS, rounds)
+                putExtra(GenerateScheduleService.REGENERATE, regenerate)
+
+            }
+            context.startService(serviceIntent)
+
+//            viewModel.generateMatches(getItem(adapterPosition), rounds)
             generateButton.setTextColor(App.getColor(R.color.red))
         }
     }
