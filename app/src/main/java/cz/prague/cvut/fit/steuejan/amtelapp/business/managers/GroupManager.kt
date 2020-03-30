@@ -189,4 +189,6 @@ object GroupManager
 
     fun retrieveAllGroups(orderBy: String): Query
             = GroupDAO().retrieveAllGroups(orderBy)
+
+    const val name = "name"
 }

@@ -142,4 +142,6 @@ object TeamManager
     }
 
     private const val TAG = "TeamManager"
+    const val groupName = "groupName"
+    const val groupId = "groupId"
 }

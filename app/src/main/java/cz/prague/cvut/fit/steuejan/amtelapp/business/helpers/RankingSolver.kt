@@ -74,8 +74,8 @@ class RankingSolver(private val teams: List<Team>, private val year: Int)
             when
             {
                 value.size == 1 -> overallRanking.add(value.first())
-                key == 0 -> overallRanking.addAll(value.toSet())
-                else -> overallRanking.addAll(diffTeamsWithSamePoints(value.toSet().toMutableList()))
+                key == 0 -> overallRanking.addAll(value)
+                else -> overallRanking.addAll(diffTeamsWithSamePoints(value))
             }
         }
     }

@@ -43,8 +43,6 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
                     title(text = String.format(context.getString(R.string.choose_group_input), teamName.text))
                     listItemsSingleChoice(items = groups, initialSelection = index) { _, _, item ->
                         viewModel.addToGroup(team, item.toString())
-                        toast(context.getString(R.string.team) + " ${teamName.text} " + context.getString(
-                                                    R.string.was_moved_to_group) + " $item" + ".", length = Toast.LENGTH_LONG)
                     }
                     positiveButton(R.string.ok)
                     negativeButton()

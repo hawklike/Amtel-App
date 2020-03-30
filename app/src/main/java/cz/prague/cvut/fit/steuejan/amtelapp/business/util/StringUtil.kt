@@ -1,5 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
+import java.util.*
+
 object StringUtil
 {
     //TODO: uncomment this
@@ -19,6 +21,26 @@ object StringUtil
             if(acc.length > 2) return@fold acc
             acc.append(c)
         }
+    }
+
+    fun prepareCzechOrdering(name: String, surname: String): Pair<String, String>
+    {
+        val convertedName = changeToEnglishForm(name)
+        val convertedSurname = changeToEnglishForm(surname)
+
+        return Pair(convertedName, convertedSurname)
+    }
+
+    private fun changeToEnglishForm(text: String): String
+    {
+        return text.toLowerCase(Locale.getDefault())
+            .replace("č", "czz")
+            .replace("ch", "hzz")
+            .replace("ď", "dzz")
+            .replace("ř", "rzz")
+            .replace("š", "szz")
+            .replace("ť", "tzz")
+            .replace("ž", "zzz")
     }
 }
 
