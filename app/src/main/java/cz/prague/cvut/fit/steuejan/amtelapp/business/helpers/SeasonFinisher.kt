@@ -17,6 +17,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
 
 class SeasonFinisher(private val groups: MutableList<Group>)
 {
+    //teams are sorted by their final position in a season
     private val groupsWithSortedTeams = mutableMapOf<Group, List<Team>>()
 
     private val groupsPlayingPlayoff by lazy { groups.filter { it.playingPlayOff } }
@@ -24,18 +25,21 @@ class SeasonFinisher(private val groups: MutableList<Group>)
     private val playoff = Group("playoff", context.getString(R.string.playOff), playingPlayOff = false, playOff = true, rank = Int.MAX_VALUE)
 
     private val resolvedTeamIds = mutableSetOf<String>()
-    private val sortedGroups = mutableListOf<Group>()
+    private val finalGroups = mutableListOf<Group>()
 
     private var actualSeason = 0
 
     suspend fun createPlayoff(): Boolean
             = GroupManager.addPlayoff(playoff) is ValidGroup
 
+    /*
+    Updates team's final position in a group in a season.
+     */
     suspend fun updateTeamRanks()
     {
         getActualSeasonIf { actualSeason == 0 }
         getGroupsIf { groups.isEmpty() }
-        prepareGroupsIf { sortedGroups.isEmpty() }
+        prepareFinalGroupsIf { finalGroups.isEmpty() }
 
         groups.forEach { group ->
             group.teamIds[(actualSeason + 1).toString()] = mutableListOf()
@@ -54,11 +58,11 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         }
     }
 
-    private fun prepareGroupsIf(predicate: () -> Boolean)
+    private fun prepareFinalGroupsIf(predicate: () -> Boolean)
     {
         if(predicate.invoke())
         {
-            sortedGroups.addAll(groups.map {
+            finalGroups.addAll(groups.map {
                 val copy = it.deepCopy()
                 copy.teamIds[(actualSeason + 1).toString()] = mutableListOf()
                 copy
@@ -66,11 +70,17 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         }
     }
 
+    /*
+    Transfers best teams to better groups and vice versa (updates team fields
+    groupId and groupName in the database, updates map of team IDs in the groups),
+    creates playoff matches between second and last but one teams, updates
+    groups with other teams for the next season, changes actual season to a next one.
+     */
     suspend fun transferTeams()
     {
         getActualSeasonIf { actualSeason == 0 }
         getGroupsIf { groups.isEmpty() }
-        prepareGroupsIf { sortedGroups.isEmpty() }
+        prepareFinalGroupsIf { finalGroups.isEmpty() }
         getGroupsWithSortedTeamsIf { groupsWithSortedTeams.isEmpty() }
 
         transferBottomTeams()
@@ -89,6 +99,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
 
         groups.forEach { group ->
             group.teamIds[actualSeason.toString()]?.forEach { teamId ->
+                //team not resolved yet
                 if(!sortedResolvedTeams.contains(teamId))
                     updateSortedGroups(group, teamId, actualSeason + 1)
             }
@@ -97,7 +108,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
 
     private suspend fun updateGroups()
     {
-        sortedGroups.forEach {
+        finalGroups.forEach {
             GroupManager.setGroup(it)
         }
     }
@@ -108,6 +119,10 @@ class SeasonFinisher(private val groups: MutableList<Group>)
             actualSeason = LeagueManager.getActualSeason() ?: DateUtil.actualYear.toInt()
     }
 
+    /*
+    Creates match between second and last but one team in two sequent
+    groups (according to a group's rank - the lower the better group is).
+     */
     private suspend fun createMatches()
     {
         for(i in 0 until groupsPlayingPlayoff.lastIndex)
@@ -156,6 +171,9 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         awayTeam?.let { TeamManager.setTeam(it) }
     }
 
+    /*
+    Transfers the worst teams to worse groups right after the teams current groups.
+     */
     private suspend fun transferBottomTeams()
     {
         for(i in groupsPlayingPlayoff.indices)
@@ -172,6 +190,9 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         }
     }
 
+    /*
+    Transfers the best teams to better groups right before the teams current groups.
+     */
     private suspend fun transferTopTeams()
     {
         for(i in groupsPlayingPlayoff.indices)
@@ -190,7 +211,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
 
     private fun updateSortedGroups(group: Group, teamId: String, nextYear: Int)
     {
-        with(sortedGroups) {
+        with(finalGroups) {
             val found = this[binarySearch(group)]
             found.teamIds[nextYear.toString()]?.add(teamId)
         }
@@ -217,6 +238,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
     {
         if(predicate.invoke())
         {
+            //already sorted by rank (the lower, the better the group is)
             with(GroupManager.retrieveAllGroupsExceptPlayoff()) {
                 if(this is ValidGroups) groups.addAll(self)
             }
