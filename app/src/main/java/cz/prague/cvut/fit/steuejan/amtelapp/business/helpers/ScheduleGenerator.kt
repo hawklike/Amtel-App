@@ -13,29 +13,36 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
 
 class ScheduleGenerator
 {
-    suspend fun generateMatches(group: Group, rounds: Int)
+    suspend fun generateMatches(group: Group, rounds: Int): Boolean
     {
         with(TeamManager.findTeams("groupId", group.id)) {
-            if(this is ValidTeams)
+            return if(this is ValidTeams)
             {
-                try { createMatches(self, rounds, group) }
-                catch(ex: Exception) { } //TODO: send error to crashlytics
+                try
+                {
+                    createMatches(self, rounds, group)
+                    true
+                }
+                catch(ex: Exception) { false } //TODO: send error to crashlytics
             }
+            else false
         }
     }
 
-    suspend fun regenerateMatches(group: Group, rounds: Int)
+    suspend fun regenerateMatches(group: Group, rounds: Int): Boolean
     {
         val year = DateUtil.actualYear
         var ok = true
 
-        if(MatchManager.deleteAllMatches(group.id, year.toInt()))
+        return if(MatchManager.deleteAllMatches(group.id, year.toInt()))
         {
             group.teamIds[DateUtil.actualYear]?.forEach { teamId ->
                 if(!clearTeamStatistics(teamId, year)) ok = false
             }
             if(ok) generateMatches(group, rounds)
+            else false
         }
+        else false
     }
 
     private suspend fun createMatches(teams: List<Team>, rounds: Int, group: Group)
