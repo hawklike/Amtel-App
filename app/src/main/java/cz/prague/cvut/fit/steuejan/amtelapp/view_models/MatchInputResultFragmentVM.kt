@@ -154,7 +154,7 @@ class MatchInputResultFragmentVM : ViewModel()
                 if(!isHeadOfLeague) match.edits[round.toString()] = match.edits[round.toString()]!! - 1
                 if(!isReport)
                 {
-                    MatchManager.addMatch(match)
+                    MatchManager.setMatch(match)
                     _matchAdded.value = match
                 }
                 else _isReported.value = match

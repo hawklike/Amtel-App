@@ -6,12 +6,13 @@ import android.view.View
 import android.view.View.GONE
 import androidx.lifecycle.ViewModel
 import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsMenuAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toPlayoff
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toPlayoff
 import java.util.*
 
 class ShowGroupsMenuFirestoreAdapterVM : ViewModel()
@@ -45,11 +46,17 @@ class ShowGroupsMenuFirestoreAdapterVM : ViewModel()
         holder.actualRound.setTextColor(App.getColor(R.color.lightGrey))
     }
 
+    @SuppressLint("SetTextI18n")
     fun isRanking(holder: ShowGroupsMenuAdapter.ViewHolder, group: Group)
     {
-        if(group.playOff) holder.card.visibility = View.GONE
-        holder.actualRound.text = String.format(App.context.getString(R.string.last_active_season),
-            group.teamIds.keys.map { it.toInt() }.max() ?: App.context.getString(R.string.is_not))
+        if(group.playOff) holder.card.visibility = GONE
+
+        val actualSeason = group.teamIds.keys.map { it.toInt() }.max() ?: 0
+        val text =
+            if(actualSeason > DateUtil.actualYear.toInt()) "Příští sezóna:"
+            else "Poslední sezóna:"
+
+        holder.actualRound.text = "$text ${if(actualSeason != 0) actualSeason.toString() else context.getString(R.string.is_not)}"
         holder.rounds.text = String.format(
             App.context.getString(R.string.teams_number_this_year),
             group.teamIds[DateUtil.actualYear]?.size ?: 0)

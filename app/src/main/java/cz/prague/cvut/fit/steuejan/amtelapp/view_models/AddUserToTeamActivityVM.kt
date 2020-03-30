@@ -67,7 +67,7 @@ class AddUserToTeamActivityVM : ViewModel()
                     team.name
                 )
 
-                user = UserManager.addUser(user!!)
+                user = UserManager.setUser(user!!)
 
                 if(user != null)
                 {

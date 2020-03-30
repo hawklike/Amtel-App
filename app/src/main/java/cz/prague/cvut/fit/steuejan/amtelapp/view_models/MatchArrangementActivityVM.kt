@@ -140,7 +140,7 @@ class MatchArrangementActivityVM : ViewModel()
                 match.homeScore = null
                 match.awayScore = null
                 viewModelScope.launch {
-                     MatchManager.addMatch(match)
+                     MatchManager.setMatch(match)
                 }
             }
         }
@@ -151,7 +151,7 @@ class MatchArrangementActivityVM : ViewModel()
                 match.homeScore = homeScore
                 match.awayScore = awayScore
                 viewModelScope.launch {
-                    MatchManager.addMatch(match)
+                    MatchManager.setMatch(match)
                     updatePoints(match, isDefaultLoss)
                 }
             }
@@ -199,7 +199,7 @@ class MatchArrangementActivityVM : ViewModel()
 
         initSetsStatistics(team, match)
 
-        TeamManager.addTeam(team)
+        TeamManager.setTeam(team)
     }
 
     private fun initSetsStatistics(team: Team, match: Match)

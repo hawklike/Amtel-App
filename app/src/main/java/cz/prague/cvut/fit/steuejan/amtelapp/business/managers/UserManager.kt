@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 
 object UserManager
 {
-    suspend fun addUser(user: User): User? = withContext(IO)
+    suspend fun setUser(user: User): User? = withContext(IO)
     {
         val (englishName, englishSurname) = DatabaseHelper.prepareCzechOrdering(user.name, user.surname)
         user.englishName = englishName

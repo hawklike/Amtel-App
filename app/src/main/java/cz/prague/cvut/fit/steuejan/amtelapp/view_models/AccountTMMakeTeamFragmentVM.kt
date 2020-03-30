@@ -77,7 +77,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
                     users
                 )
 
-                team = TeamManager.addTeam(team!!)
+                team = TeamManager.setTeam(team!!)
 
                 if(team != null) teamState.value = ValidTeam(team)
                 else teamState.value = NoTeam

@@ -51,7 +51,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
                     _group.value = NoGroup
                     return@launch
                 }
-                _group.value = GroupManager.addGroup(Group(null, groupName, playingPlayOff = playingPlayOff)).let {
+                _group.value = GroupManager.setGroup(Group(null, groupName, playingPlayOff = playingPlayOff)).let {
                     if(it is ValidGroup) ValidGroup(it.self)
                     else NoGroup
                 }

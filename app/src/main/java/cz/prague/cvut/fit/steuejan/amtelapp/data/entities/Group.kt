@@ -15,3 +15,15 @@ data class Group(override var id: String? = null,
                  var playOff: Boolean = false,
                  var playOffStart: Date = Date()
                  ) : Parcelable, Entity<Group>()
+{
+    fun deepCopy(id: String? = this.id,
+                 name: String = this.name,
+                 teamIds: MutableMap<String, MutableList<String>> = this.teamIds.toMutableMap(),
+                 rounds: MutableMap<String, Int> = this.rounds.toMutableMap(),
+                 roundDates: MutableMap<String, Int> = this.rounds.toMutableMap(),
+                 rank: Int = this.rank,
+                 playingPlayOff: Boolean = this.playingPlayOff,
+                 playOff: Boolean = this.playOff,
+                 playOffStart: Date = this.playOffStart)
+            = Group(id, name, teamIds, rounds, roundDates, rank, playingPlayOff, playOff, playOffStart)
+}

@@ -44,9 +44,9 @@ class RobinRoundTournament
                     val a = max(home, away)
                     val b = min(home, away)
                     if((home.first + away.first) % 2 == 0)
-                        matches.add(Match(null, group.id!!, group.name, round, a.name, b.name, a.id!!, b.id!!, place = a.place))
+                        matches.add(Match(null, group.id!!, group.name, round, a.name, b.name, a.id!!, b.id!!, place = a.place, playOff = group.playOff))
                     else
-                        matches.add(Match(null, group.id!!, group.name, round, b.name, a.name, b.id!!, a.id!!, place = b.place))
+                        matches.add(Match(null, group.id!!, group.name, round, b.name, a.name, b.id!!, a.id!!, place = b.place, playOff = group.playOff))
                 }
             }
             if(rounds > 1) rotate()

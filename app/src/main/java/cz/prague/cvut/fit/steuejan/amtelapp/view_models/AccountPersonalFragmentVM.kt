@@ -102,7 +102,7 @@ class AccountPersonalFragmentVM : ViewModel()
                     this.sex = sex.toBoolean()
                 }
 
-                val success = UserManager.addUser(user)
+                val success = UserManager.setUser(user)
 
                 TeamManager.updateUserInTeam(user)
 

@@ -16,7 +16,7 @@ import kotlinx.coroutines.withContext
 
 object TeamManager
 {
-    suspend fun addTeam(team: Team): Team? = withContext(IO)
+    suspend fun setTeam(team: Team): Team? = withContext(IO)
     {
         return@withContext try
         {

@@ -22,6 +22,7 @@ class SeasonFinisherService : IntentService(SeasonFinisherService::class.simpleN
         runBlocking {
             if(!helper.createPlayoff()) return@runBlocking
             helper.updateTeamRanks()
+            helper.transferTeams()
         }
     }
 

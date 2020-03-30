@@ -48,6 +48,7 @@ class ManageGroupsActivityVM : ViewModel()
         }
     }
 
+    //TODO: uncomment what is commented
     fun getPlayoff()
     {
         viewModelScope.launch {
@@ -56,7 +57,8 @@ class ManageGroupsActivityVM : ViewModel()
             {
                 val playOff = results.self.first().toPlayoff()
                 this@ManageGroupsActivityVM.playoff = playOff
-                _isPlayOffOpen.value = playOff?.isActive ?: false
+//                _isPlayOffOpen.value = playOff?.isActive ?: false
+                _isPlayOffOpen.value = false //delete this
             }
             else
             {

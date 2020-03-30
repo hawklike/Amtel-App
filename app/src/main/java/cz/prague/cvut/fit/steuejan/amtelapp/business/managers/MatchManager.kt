@@ -20,7 +20,7 @@ object MatchManager
 {
     private const val TAG = "MatchManager"
 
-    suspend fun addMatch(match: Match): MatchState = withContext(IO)
+    suspend fun setMatch(match: Match): MatchState = withContext(IO)
     {
         match.teams = listOf(match.homeId, match.awayId)
         return@withContext try

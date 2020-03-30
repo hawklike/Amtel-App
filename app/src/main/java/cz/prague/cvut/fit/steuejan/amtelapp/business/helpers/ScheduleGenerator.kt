@@ -44,7 +44,7 @@ class ScheduleGenerator
         tournament.setTeams(teams)
         tournament.setRounds(rounds)
         tournament.createMatches(group).forEach {
-            with(MatchManager.addMatch(it)) {
+            with(MatchManager.setMatch(it)) {
                 if(this is ValidMatch) addMatchToTeams(self, teams)
             }
         }
@@ -59,8 +59,8 @@ class ScheduleGenerator
         val homeTeam = teams.find { it.id == match.homeId }
         val awayTeam = teams.find { it.id == match.awayId }
 
-        homeTeam?.let { TeamManager.addTeam(it) }
-        awayTeam?.let { TeamManager.addTeam(it) }
+        homeTeam?.let { TeamManager.setTeam(it) }
+        awayTeam?.let { TeamManager.setTeam(it) }
     }
 
     private suspend fun clearTeamStatistics(teamId: String, year: String): Boolean
@@ -79,7 +79,7 @@ class ScheduleGenerator
                 positiveSetsPerYear[year] = 0
                 negativeSetsPerYear[year] = 0
             }
-            return TeamManager.addTeam(team.self) != null
+            return TeamManager.setTeam(team.self) != null
         }
         return false
     }

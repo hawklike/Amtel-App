@@ -40,7 +40,7 @@ class TeamsAdapterVM : ViewModel()
             if(teamIds == null) group.teamIds[year] = mutableListOf()
 
             group.teamIds[year]?.add(teamId)
-            GroupManager.addGroup(group)
+            GroupManager.setGroup(group)
         }
     }
 
@@ -52,7 +52,7 @@ class TeamsAdapterVM : ViewModel()
             val season = group.self.teamIds[DateUtil.actualYear]
             season?.removeAll { it == team.id }
             if(season != null && season.isEmpty()) group.self.teamIds.remove(DateUtil.actualYear)
-            GroupManager.addGroup(group.self)
+            GroupManager.setGroup(group.self)
         }
     }
 

@@ -16,7 +16,7 @@ object GroupManager
 {
     private const val TAG = "GroupManager"
 
-    suspend fun addGroup(group: Group): GroupState = withContext(IO)
+    suspend fun setGroup(group: Group): GroupState = withContext(IO)
     {
         return@withContext try
         {
