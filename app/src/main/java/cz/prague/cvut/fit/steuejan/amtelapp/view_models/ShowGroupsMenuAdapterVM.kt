@@ -15,7 +15,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toPlayoff
 import java.util.*
 
-class ShowGroupsMenuFirestoreAdapterVM : ViewModel()
+class ShowGroupsMenuAdapterVM : ViewModel()
 {
     fun getActualRound(group: Group): Int?
     {

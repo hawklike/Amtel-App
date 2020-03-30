@@ -15,13 +15,13 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsMenuFirestoreAdapterVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsMenuAdapterVM
 
 class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, private val isRanking: Boolean)
     : RecyclerView.Adapter<ShowGroupsMenuAdapter.ViewHolder>()
 {
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
-        ShowGroupsMenuFirestoreAdapterVM::class.java)
+        ShowGroupsMenuAdapterVM::class.java)
 
     var onNextClick: (group: Group, actualRound: Int) -> Unit = { _, _ -> toast(R.string.not_working_yet) }
 

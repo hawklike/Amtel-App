@@ -191,4 +191,5 @@ object GroupManager
             = GroupDAO().retrieveAllGroups(orderBy)
 
     const val name = "name"
+    const val visibility = "visibility"
 }

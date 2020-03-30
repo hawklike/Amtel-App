@@ -2,6 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.text.InputType
 import android.view.LayoutInflater
@@ -10,6 +11,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
@@ -23,13 +26,14 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.services.GenerateScheduleService
 import cz.prague.cvut.fit.steuejan.amtelapp.services.GroupDeletionService
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsBossAdapterVM
 import java.util.*
 
 class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<Group>)
     : RecyclerView.Adapter<ShowGroupsBossAdapter.ViewHolder>(), ItemMoveCallback.ItemTouchHelperContract
 {
-//    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
-//        ShowGroupsBossAdapterVM::class.java)
+    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
+        ShowGroupsBossAdapterVM::class.java)
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -40,6 +44,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
         private val playingPlayOff: TextView = itemView.findViewById(R.id.group_card_playingPlayOff)
         private val generateButton: Button = itemView.findViewById(R.id.group_card_generate)
         private val deleteButton: ImageButton = itemView.findViewById(R.id.group_card_delete)
+        val visibility: ImageButton = itemView.findViewById(R.id.group_card_visibility)
 
         private var rounds = 0
         private var calculatedRounds = 0
@@ -63,6 +68,23 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
 
             handleGenerateButton()
             handleDeleteButton()
+            handleVisibility()
+        }
+
+        private fun handleVisibility()
+        {
+            if(!group.visibility) visibility.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.lightGrey))
+            visibility.setOnClickListener {
+                val option = if(group.visibility) "vypnout" else "zapnout"
+                MaterialDialog(context)
+                    .title(text = "Chcete $option viditelnost skupiny ${group.name}?")
+                    .show {
+                        positiveButton(R.string.yes) {
+                            viewModel.handleVisibility(!group.visibility, getItem(adapterPosition), this@ViewHolder)
+                        }
+                        negativeButton()
+                    }
+            }
         }
 
         private fun handleDeleteButton()
@@ -153,21 +175,9 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
 
         private fun confirmInput(text: CharSequence): Boolean
         {
-            val isValid = confirmInput(text.toString(), calculatedRounds)
+            val isValid = viewModel.confirmInput(text.toString(), calculatedRounds)
             if(isValid) rounds = text.toString().toInt()
             return isValid
-        }
-
-        private fun confirmInput(text: String, rounds: Int): Boolean
-        {
-            val n: Int
-
-            try { n = text.toInt() }
-            catch(ex: NumberFormatException) { return false }
-
-            if(n % 2 == 0 || n < rounds) return false
-
-            return true
         }
 
         private fun generateSchedule(regenerate: Boolean)

@@ -1,11 +1,14 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
+import android.content.res.ColorStateList
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsBossAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.RobinRoundTournament
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
@@ -23,7 +26,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@Deprecated("Long tasks replaced with services.", ReplaceWith("GenerateScheduleService and GroupDeletionService", "cz.prague.cvut.fit.steuejan.amtelapp.services.GenerateScheduleService", "cz.prague.cvut.fit.steuejan.amtelapp.services.GroupDeletionService"))
 class ShowGroupsBossAdapterVM : ViewModel()
 {
     fun confirmInput(text: String, rounds: Int): Boolean
@@ -36,6 +38,25 @@ class ShowGroupsBossAdapterVM : ViewModel()
         if(n % 2 == 0 || n < rounds) return false
 
         return true
+    }
+
+    fun handleVisibility(visible: Boolean, group: Group, holder: ShowGroupsBossAdapter.ViewHolder)
+    {
+        viewModelScope.launch {
+            if(GroupManager.updateGroup(group.id, mapOf(GroupManager.visibility to visible)))
+            {
+                if(visible)
+                {
+                    holder.visibility.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.blue))
+                    toast("Skupina ${group.name} je nyní viditelná.")
+                }
+                else
+                {
+                    holder.visibility.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.lightGrey))
+                    toast("Skupina ${group.name} je nyní skrytá.")
+                }
+            }
+        }
     }
 
     fun generateMatches(group: Group, rounds: Int)

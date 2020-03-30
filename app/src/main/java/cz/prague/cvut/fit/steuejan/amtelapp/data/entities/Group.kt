@@ -13,7 +13,8 @@ data class Group(override var id: String? = null,
                  var rank: Int = Int.MAX_VALUE - 1,
                  var playingPlayOff: Boolean = true,
                  var playOff: Boolean = false,
-                 var playOffStart: Date = Date()
+                 var playOffStart: Date = Date(),
+                 var visibility: Boolean = true
                  ) : Parcelable, Entity<Group>()
 {
     fun deepCopy(id: String? = this.id,
@@ -24,6 +25,7 @@ data class Group(override var id: String? = null,
                  rank: Int = this.rank,
                  playingPlayOff: Boolean = this.playingPlayOff,
                  playOff: Boolean = this.playOff,
-                 playOffStart: Date = this.playOffStart)
-            = Group(id, name, teamIds, rounds, roundDates, rank, playingPlayOff, playOff, playOffStart)
+                 playOffStart: Date = this.playOffStart,
+                 visibility: Boolean = this.visibility)
+            = Group(id, name, teamIds, rounds, roundDates, rank, playingPlayOff, playOff, playOffStart, visibility)
 }
