@@ -21,12 +21,12 @@ object TeamManager
         return@withContext try
         {
             TeamDAO().insert(team)
-            Log.i(TAG, "addUser(): $team successfully added to database")
+            Log.i(TAG, "setTeam(): $team successfully set/updated in database")
             team
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addUser(): $team not added to database because ${ex.message}")
+            Log.e(TAG, "setTeam(): $team not set/updated in database because ${ex.message}")
             null
         }
     }
