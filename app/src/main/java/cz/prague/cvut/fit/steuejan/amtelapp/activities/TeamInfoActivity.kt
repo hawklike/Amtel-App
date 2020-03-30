@@ -27,7 +27,6 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamMatchesPagingAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.toPlayer
@@ -183,11 +182,14 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         if(viewModel.seasonRanking.isNotEmpty()) viewModel.calculateTeamRank()
         else
         {
-            val rankingViewModel by viewModels<RankingFragmentVM>()
-            viewModel.mTeam?.groupId?.let { rankingViewModel.loadTeams(it, DateUtil.actualYear.toInt(), RankingOrderBy.POINTS) }
-            rankingViewModel.teams.observe(this) {
-                viewModel.seasonRanking = it
-                viewModel.calculateTeamRank()
+            viewModel.getActualSeason()
+            viewModel.season.observe(this) { season ->
+                val rankingViewModel by viewModels<RankingFragmentVM>()
+                viewModel.mTeam?.groupId?.let { rankingViewModel.loadTeams(it, season, RankingOrderBy.POINTS) }
+                rankingViewModel.teams.observe(this) {
+                    viewModel.seasonRanking = it
+                    viewModel.calculateTeamRank()
+                }
             }
         }
 

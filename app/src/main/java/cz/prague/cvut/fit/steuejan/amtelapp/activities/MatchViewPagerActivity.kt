@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import androidx.viewpager.widget.ViewPager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.tabs.TabLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
@@ -57,6 +58,16 @@ class MatchViewPagerActivity : AbstractViewPagerActivity()
 
         viewModel.isReport.observe(this) {
             isReport =  it
+        }
+
+        viewModel.page.observe(this) { page ->
+            MaterialDialog(this)
+                .title(text = "Zápas byl úspěšně přidán.")
+                .positiveButton(text = "Dále") {
+                    if(page == 3) onBackPressed()
+                    else animatePagerTransition()
+                }
+                .show()
         }
     }
 

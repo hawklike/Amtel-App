@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.PieEntry
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.LeagueManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -55,6 +56,11 @@ class TeamInfoActivityVM : ViewModel()
 
     private val _matches = MutableLiveData<Int>()
     val matches: LiveData<Int> = _matches
+
+    /*---------------------------------------------------*/
+
+    private val _season = SingleLiveEvent<Int>()
+    val season: LiveData<Int> = _season
 
     /*---------------------------------------------------*/
 
@@ -144,4 +150,12 @@ class TeamInfoActivityVM : ViewModel()
         }
     }
 
+    fun getActualSeason()
+    {
+        viewModelScope.launch {
+            LeagueManager.getActualSeason()?.let {
+                _season.value = it
+            }
+        }
+    }
 }

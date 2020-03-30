@@ -24,6 +24,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -125,32 +126,31 @@ class MatchArrangementActivityVM : ViewModel()
 
     fun countTotalScore(match: Match, isDefaultLoss: Boolean = false)
     {
-        var homeScore = 0
-        var awayScore = 0
+        //TODO: consider rewrite this into service
+        GlobalScope.launch {
+            var homeScore = 0
+            var awayScore = 0
 
-        match.rounds.forEach {
-            if(it.homeWinner == true) homeScore++
-            else if(it.homeWinner == false) awayScore++
-        }
+            match.rounds.forEach {
+                if(it.homeWinner == true) homeScore++
+                else if(it.homeWinner == false) awayScore++
+            }
 
-        if(homeScore + awayScore == 0)
-        {
-            if(match.homeScore != null || match.awayScore != null)
+            if(homeScore + awayScore == 0)
             {
-                match.homeScore = null
-                match.awayScore = null
-                viewModelScope.launch {
-                     MatchManager.setMatch(match)
+                if(match.homeScore != null || match.awayScore != null)
+                {
+                    match.homeScore = null
+                    match.awayScore = null
+                    MatchManager.setMatch(match)
                 }
             }
-        }
-        else
-        {
-            if(match.homeScore != homeScore || match.awayScore != awayScore)
+            else
             {
-                match.homeScore = homeScore
-                match.awayScore = awayScore
-                viewModelScope.launch {
+                if(match.homeScore != homeScore || match.awayScore != awayScore)
+                {
+                    match.homeScore = homeScore
+                    match.awayScore = awayScore
                     MatchManager.setMatch(match)
                     updatePoints(match, isDefaultLoss)
                 }

@@ -120,7 +120,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         overviewLayout = view.findViewById(R.id.match_input_overview)
         resultsLayout = view.findViewById(R.id.match_input_results)
 
-        inputResult.text = "Zapsat  $round. zápas"
+        inputResult.text = "Zapsat $round. zápas"
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -277,7 +277,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             games.text = result.games
             disableInputButtonIf { !isHeadOfLeague && match.edits[round.toString()] == 0 }
             viewModel.sendEmail(homeTeam, awayTeam, sets.text, games.text, userId)
-            toast(getString(R.string.match_added_success))
+            matchViewModel.setPage(round)
         }
     }
 
