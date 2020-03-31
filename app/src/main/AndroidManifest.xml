@@ -39,7 +39,7 @@
         <activity android:name=".activities.MatchViewPagerActivity"/>
         <activity android:name=".activities.MatchArrangementActivity"/>
         <activity android:name=".activities.RankingViewPagerActivity"/>
-        <activity android:name=".activities.PlayOffActivity"/>
+        <activity android:name=".activities.PlayoffActivity"/>
         <activity android:name=".activities.TeamInfoActivity"/>
 
         <service

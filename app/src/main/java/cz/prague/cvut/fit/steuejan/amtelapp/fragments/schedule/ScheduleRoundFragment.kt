@@ -10,6 +10,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +27,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Playoff
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractScheduleActivityFragment
@@ -33,15 +35,19 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.PlayoffActivityVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ScheduleRoundFragmentVM
 
 class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 {
     private val viewModel by viewModels<ScheduleRoundFragmentVM>()
+    private val playoffViewModel by activityViewModels<PlayoffActivityVM>()
 
     private var round = 0
     private lateinit var group: Group
     private lateinit var user: UserState
+    private lateinit var playoff: Playoff
+    private var isPlayoff = false
 
     private val week: ValidWeek? by lazy { viewModel.week.value?.let { week ->
         if(week is ValidWeek) week else null  }
@@ -62,13 +68,15 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
     {
         private const val ROUND = "round"
         private const val GROUP = "group"
+        private const val PLAYOFF = "isPlayoff"
 
-        fun newInstance(round: Int, group: Group): ScheduleRoundFragment
+        fun newInstance(round: Int, group: Group, playoff: Boolean = false): ScheduleRoundFragment
         {
             val fragment = ScheduleRoundFragment()
             fragment.arguments = Bundle().apply {
                 putInt(ROUND, round)
                 putParcelable(GROUP, group)
+                putBoolean(PLAYOFF, playoff)
             }
             return fragment
         }
@@ -78,8 +86,11 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
-        arguments?.getInt(ROUND)?.let { round = it }
-        arguments?.getParcelable<Group>(GROUP)?.let { group = it }
+        arguments?.run {
+            round = getInt(ROUND)
+            getParcelable<Group>(GROUP)?.let { group = it }
+            isPlayoff = getBoolean(PLAYOFF)
+        }
         return inflater.inflate(R.layout.round, container, false)
     }
 
@@ -108,7 +119,10 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
-        user = scheduleViewModel.user.value!!
+        user = if(isPlayoff) playoffViewModel.user.value!!
+               else scheduleViewModel.user.value!!
+
+        if(isPlayoff) playoffViewModel.playoff.value?.let { playoff = it }
 
         populateFields()
         setupRecycler()
@@ -119,7 +133,14 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 
     private fun populateFields()
     {
-        if(user is SignedUser && (user as SignedUser).self.role.toRole() == UserRole.HEAD_OF_LEAGUE)
+        if(::playoff.isInitialized)
+        {
+            weekRange.visibility = VISIBLE
+            weekRange.text = "${playoff.startDate.toMyString()} – ${playoff.endDate.toMyString()}"
+            title.text = "Stav baráže"
+            deadline.text = "Počet dní do konce baráže: ${DateUtil.getRemainingDaysUntil(playoff.endDate)}"
+        }
+        else if(user is SignedUser && (user as SignedUser).self.role.toRole() == UserRole.HEAD_OF_LEAGUE)
         {
             deadline.visibility = GONE
             weekLayout.visibility = VISIBLE

@@ -274,13 +274,13 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private fun isMatchAdded()
     {
         viewModel.matchAdded.observe(viewLifecycleOwner) {
+            countMatchScore()
             val result = MatchManager.getResults(match.rounds[round - 1])
             sets.text = result.sets
             games.text = result.games
             disableInputButtonIf { !isHeadOfLeague && match.edits[round.toString()] == 0 }
             viewModel.sendEmail(homeTeam, awayTeam, sets.text, games.text, userId)
             matchViewModel.setPage(round)
-            countMatchScore()
         }
     }
 

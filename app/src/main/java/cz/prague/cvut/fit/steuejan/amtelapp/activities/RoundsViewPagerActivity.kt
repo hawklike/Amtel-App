@@ -39,7 +39,7 @@ class RoundsViewPagerActivity : AbstractViewPagerActivity()
     override fun getData()
     {
         intent.extras?.let { bundle ->
-            group = bundle.getParcelable(GROUP)!!
+            group = bundle.getParcelable(GROUP) ?: Group()
             user = bundle.getParcelable<User?>(USER)?.let { SignedUser(it) } ?: NoUser
             actualRound = bundle.getInt(ACTUAL_ROUND)
         }
