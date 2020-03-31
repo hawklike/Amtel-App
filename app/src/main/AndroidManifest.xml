@@ -51,6 +51,10 @@
         <service
             android:name=".services.SeasonFinisherService"
             android:exported="false"/>
+
+        <service
+            android:name=".services.CountMatchScoreService"
+            android:exported="false"/>
     </application>
 
 </manifest>

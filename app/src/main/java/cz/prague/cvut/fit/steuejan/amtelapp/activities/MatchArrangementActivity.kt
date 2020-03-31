@@ -27,12 +27,12 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
+import cz.prague.cvut.fit.steuejan.amtelapp.services.CountMatchScoreService
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchArrangementActivityVM
 import java.util.*
-
 
 class MatchArrangementActivity : AbstractBaseActivity()
 {
@@ -248,11 +248,18 @@ class MatchArrangementActivity : AbstractBaseActivity()
         defaultEndGame.setOnClickListener {
             MaterialDialog(this).show {
                 title(text = "Kontumace")
-                message(text = "Zvolte prosím vítěze. Výsledek budete moct jednou opravit.")
+
+                val msg =
+                    if(match.defaultEndGameEdits == 2) "Zvolte prosím vítěze. Výsledek budete moct jednou opravit."
+                    else "Zvolte prosím vítěze. Máte poslední možnost opravy!"
+
+                message(text = msg)
                 listItemsSingleChoice(items = listOf(homeTeam.name, awayTeam.name)) { _, _, text ->
                     val isHomeWinner = text == homeTeam.name
                     if(--match.defaultEndGameEdits <= 0) disableDefaultEndGame()
-                    viewModel.defaultEndGame(match, isHomeWinner, homeTeam, awayTeam)
+
+                    createCountServiceIntent(viewModel.defaultEndGame(match, isHomeWinner, homeTeam, awayTeam), true)
+
                     score.text = if(isHomeWinner) "3 : 0" else "0 : 3"
                     toast("Tým ${if(isHomeWinner) homeTeam.name else awayTeam.name} kontumačně vyhrál.")
                 }
@@ -355,10 +362,21 @@ class MatchArrangementActivity : AbstractBaseActivity()
         {
             data?.let {
                 match = it.getParcelableExtra(MATCH)
-                viewModel.countTotalScore(match)
                 score.text = match.homeScore?.let { "${match.homeScore} : ${match.awayScore}" } ?: "N/A"
+                createCountServiceIntent(match)
             }
         }
+    }
+
+    private fun createCountServiceIntent(match: Match, isDefaultLoss: Boolean = false)
+    {
+        val serviceIntent = Intent(this, CountMatchScoreService::class.java).apply {
+            putExtra(CountMatchScoreService.HOME_TEAM, homeTeam)
+            putExtra(CountMatchScoreService.AWAY_TEAM, awayTeam)
+            putExtra(CountMatchScoreService.MATCH, match)
+            putExtra(CountMatchScoreService.DEFAULT_LOSS, isDefaultLoss)
+        }
+        startService(serviceIntent)
     }
 
     private fun disableDefaultEndGame()
