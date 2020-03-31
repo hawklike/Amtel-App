@@ -42,6 +42,7 @@ class MainActivity : AbstractBaseActivity()
         progressLayout = findViewById(R.id.progressBar)
         super.onCreate(savedInstanceState)
         toolbar.setTitleTextColor(App.getColor(R.color.blue))
+        viewModel.checkInternetConnection()
         viewModel.getActualSeason()
         viewModel.initEmailPassword()
         viewModel.initHeadOfLeagueEmail()
@@ -62,17 +63,17 @@ class MainActivity : AbstractBaseActivity()
         displayAccount(savedInstanceState)
         updateDrawer()
         showProgressBar()
-        noInternet()
+        checkInternetConnection()
     }
 
-    private fun noInternet()
+    private fun checkInternetConnection()
     {
-        viewModel.connection.observe(this) { ok ->
-            if(!ok)
+        viewModel.connection.observe(this) { hasInternet ->
+            if(!hasInternet)
             {
                 MaterialDialog(this)
                     .title(text = "Špatné připojení k internetu")
-                    .message(text = "Připojte se prosím k internetu a spusťte aplikaci znovu.")
+                    .message(text = "Aplikace nemusí fungovat správně. Vraťte se prosím zpět do aplikace jakmile budete mít obnovené připojení k internetu.")
                     .positiveButton()
                     .show()
             }

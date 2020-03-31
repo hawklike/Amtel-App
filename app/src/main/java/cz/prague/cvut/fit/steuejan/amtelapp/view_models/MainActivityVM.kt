@@ -20,8 +20,14 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.net.InetSocketAddress
+import java.net.Socket
 
 class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 {
@@ -133,12 +139,36 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
             viewModelScope.launch {
                 LeagueManager.getActualSeason()?.let {
                     DateUtil.actualSeason = it.toString()
-                    _connection.value = true
                 }
-                ?: let { _connection.value = false }
             }
         }
-        else _connection.value = true
+    }
+
+    //https://stackoverflow.com/a/27312494/9723204
+    fun checkInternetConnection()
+    {
+        viewModelScope.launch {
+            withContext(IO) {
+                try
+                {
+                    val timeoutMs = 3000
+                    val socket = Socket()
+                    val socketAddress = InetSocketAddress("8.8.8.8", 53)
+
+                    socket.connect(socketAddress, timeoutMs)
+                    socket.close()
+
+                    withContext(Main) {
+                        _connection.value = true
+                    }
+                }
+                catch(ex: IOException) {
+                    withContext(Main) {
+                        _connection.value = false
+                    }
+                }
+            }
+        }
     }
 
     fun initHeadOfLeagueEmail(tries: Int = 10)
