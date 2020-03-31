@@ -39,7 +39,7 @@ class TeamsAdapterVM : ViewModel()
         {
             val group = groups.self.first()
             TeamManager.updateTeam(team.id, mapOf(TeamManager.groupName to name, TeamManager.groupId to group.id))
-            val season = LeagueManager.getActualSeason()?.toString() ?: DateUtil.actualYear
+            val season = LeagueManager.getActualSeason()?.toString() ?: DateUtil.actualSeason
 
             val teamIds = group.teamIds[season]
             if(teamIds == null) group.teamIds[season] = mutableListOf()
@@ -58,7 +58,7 @@ class TeamsAdapterVM : ViewModel()
         val group = GroupManager.findGroup(team.groupId)
         if(group is ValidGroup)
         {
-            val seasonNumber = LeagueManager.getActualSeason()?.toString() ?: DateUtil.actualYear
+            val seasonNumber = LeagueManager.getActualSeason()?.toString() ?: DateUtil.actualSeason
             val season = group.self.teamIds[seasonNumber]
             season?.removeAll { it == team.id }
             if(season != null && season.isEmpty()) group.self.teamIds.remove(seasonNumber)

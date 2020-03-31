@@ -27,12 +27,14 @@ object DateUtil
         return DateTime(Date()) >= DateTime(date.toDate(dateFormat))
     }
 
-    val actualYear: String
+    var actualSeason: String = "0"
+
+    private val actualYear: Int
         get()
         {
             val calendar = GregorianCalendar()
             calendar.time = Date()
-            return calendar[Calendar.YEAR].toString()
+            return calendar[Calendar.YEAR]
         }
 
     fun getWeekDate(week: Int): List<Date>

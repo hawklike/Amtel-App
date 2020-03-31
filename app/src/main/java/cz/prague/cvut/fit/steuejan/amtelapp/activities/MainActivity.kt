@@ -7,6 +7,7 @@ import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.observe
+import com.afollestad.materialdialogs.MaterialDialog
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
@@ -41,6 +42,7 @@ class MainActivity : AbstractBaseActivity()
         progressLayout = findViewById(R.id.progressBar)
         super.onCreate(savedInstanceState)
         toolbar.setTitleTextColor(App.getColor(R.color.blue))
+        viewModel.getActualSeason()
         viewModel.initEmailPassword()
         viewModel.initHeadOfLeagueEmail()
         setObservers(savedInstanceState)
@@ -60,6 +62,21 @@ class MainActivity : AbstractBaseActivity()
         displayAccount(savedInstanceState)
         updateDrawer()
         showProgressBar()
+        noInternet()
+    }
+
+    private fun noInternet()
+    {
+        viewModel.connection.observe(this) { ok ->
+            if(!ok)
+            {
+                MaterialDialog(this)
+                    .title(text = "Špatné připojení k internetu")
+                    .message(text = "Připojte se prosím k internetu a spusťte aplikaci znovu.")
+                    .positiveButton()
+                    .show()
+            }
+        }
     }
 
     private fun showProgressBar()

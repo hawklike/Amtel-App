@@ -9,7 +9,7 @@ class GroupDeleter(private val group: Group)
 {
     suspend fun deleteGroup()
     {
-        group.teamIds[DateUtil.actualYear]?.forEach { teamId ->
+        group.teamIds[DateUtil.actualSeason]?.forEach { teamId ->
             TeamManager.updateTeam(teamId, mapOf("groupName" to null, "groupId" to null))
         }
         GroupManager.deleteGroup(group.id)

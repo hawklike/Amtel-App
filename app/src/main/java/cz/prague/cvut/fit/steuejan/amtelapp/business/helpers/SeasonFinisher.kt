@@ -27,7 +27,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
     private val resolvedTeamIds = mutableSetOf<String>()
     private val finalGroups = mutableListOf<Group>()
 
-    private var actualSeason = 0
+    private var actualSeason = DateUtil.actualSeason.toInt()
 
     suspend fun createPlayoff(): Boolean
             = GroupManager.addPlayoff(playoff) is ValidGroup
@@ -37,7 +37,6 @@ class SeasonFinisher(private val groups: MutableList<Group>)
      */
     suspend fun updateTeamRanks()
     {
-        getActualSeasonIf { actualSeason == 0 }
         getGroupsIf { groups.isEmpty() }
         prepareFinalGroupsIf { finalGroups.isEmpty() }
 
@@ -78,7 +77,6 @@ class SeasonFinisher(private val groups: MutableList<Group>)
      */
     suspend fun transferTeams()
     {
-        getActualSeasonIf { actualSeason == 0 }
         getGroupsIf { groups.isEmpty() }
         prepareFinalGroupsIf { finalGroups.isEmpty() }
         getGroupsWithSortedTeamsIf { groupsWithSortedTeams.isEmpty() }
@@ -111,12 +109,6 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         finalGroups.forEach {
             GroupManager.setGroup(it)
         }
-    }
-
-    private suspend fun getActualSeasonIf(predicate: () -> Boolean)
-    {
-        if(predicate.invoke())
-            actualSeason = LeagueManager.getActualSeason() ?: DateUtil.actualYear.toInt()
     }
 
     /*

@@ -53,13 +53,13 @@ class ShowGroupsMenuAdapterVM : ViewModel()
 
         val actualSeason = group.teamIds.keys.map { it.toInt() }.max() ?: 0
         val text =
-            if(actualSeason > DateUtil.actualYear.toInt()) "Příští sezóna:"
+            if(actualSeason > DateUtil.actualSeason.toInt()) "Příští sezóna:"
             else "Poslední sezóna:"
 
         holder.actualRound.text = "$text ${if(actualSeason != 0) actualSeason.toString() else context.getString(R.string.is_not)}"
         holder.rounds.text = String.format(
             App.context.getString(R.string.teams_number_this_year),
-            group.teamIds[DateUtil.actualYear]?.size ?: 0)
+            group.teamIds[DateUtil.actualSeason]?.size ?: 0)
         if(group.teamIds.isEmpty()) disableCard(holder)
     }
 

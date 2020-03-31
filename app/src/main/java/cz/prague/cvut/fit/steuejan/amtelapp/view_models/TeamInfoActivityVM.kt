@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.PieEntry
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.LeagueManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -68,8 +67,8 @@ class TeamInfoActivityVM : ViewModel()
     {
         viewModelScope.launch {
             mTeam?.let { team ->
-                val winsThisYear = team.winsPerYear[DateUtil.actualYear] ?: 0
-                val lossesThisYear = team.lossesPerYear[DateUtil.actualYear] ?: 0
+                val winsThisYear = team.winsPerYear[DateUtil.actualSeason] ?: 0
+                val lossesThisYear = team.lossesPerYear[DateUtil.actualSeason] ?: 0
                 val thisYearEntries =
                     if(winsThisYear + lossesThisYear != 0)
                         listOf(PieEntry(winsThisYear.toFloat(), "Letošní výhraná utkání"), PieEntry(lossesThisYear.toFloat(), "Letošní prohraná utkání"))
@@ -147,15 +146,6 @@ class TeamInfoActivityVM : ViewModel()
 
             _avgRank.value = avg
             _titles.value = titles
-        }
-    }
-
-    fun getActualSeason()
-    {
-        viewModelScope.launch {
-            LeagueManager.getActualSeason()?.let {
-                _season.value = it
-            }
         }
     }
 }

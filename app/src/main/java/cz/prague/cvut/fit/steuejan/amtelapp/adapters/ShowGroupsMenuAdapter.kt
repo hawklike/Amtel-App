@@ -68,7 +68,7 @@ class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, pri
             return
         }
 
-        val rounds = group.rounds[DateUtil.actualYear]
+        val rounds = group.rounds[DateUtil.actualSeason]
         if(rounds == 0 || rounds == null)
         {
             viewModel.disableCard(holder)

@@ -196,4 +196,5 @@
     <string name="years">%1$d let</string>
     <string name="winner_acronym">V</string>
     <string name="loser_acronym">P</string>
+    <string name="actual_season">ACTUAL_SEASON</string>
 </resources>

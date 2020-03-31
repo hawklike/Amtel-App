@@ -54,7 +54,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             this.group = group
 //            viewModel.setRank(group, adapterPosition)
 
-            val size = group.teamIds[DateUtil.actualYear]?.size ?: 0
+            val size = group.teamIds[DateUtil.actualSeason]?.size ?: 0
 
             if(group.playingPlayOff) playingPlayOff.text = "Hraje baráž: ano"
             else playingPlayOff.text = "Hraje baráž: ne"
@@ -123,7 +123,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             }
             else
             {
-                val rounds = group.rounds[DateUtil.actualYear]
+                val rounds = group.rounds[DateUtil.actualSeason]
                 if(rounds != null && rounds != 0)
                 {
                     generateButton.text = context.getString(R.string.regenerate_matches)

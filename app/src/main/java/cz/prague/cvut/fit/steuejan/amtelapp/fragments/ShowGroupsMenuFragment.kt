@@ -114,7 +114,7 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
                         putExtra(RoundsViewPagerActivity.USER, mainActivityModel.getUser().value)
                         putExtra(RoundsViewPagerActivity.ACTUAL_ROUND, actualRound)
                     }
-                    if(group.rounds[DateUtil.actualYear] != 0) startActivity(intent)
+                    if(group.rounds[DateUtil.actualSeason] != 0) startActivity(intent)
                 }
             }
         }

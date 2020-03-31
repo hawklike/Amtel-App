@@ -73,7 +73,7 @@ object MatchManager
     }
 
     fun getMatches(round: Int, group: Group): Query
-            = MatchDAO().getMatches(round, group.id!!, DateUtil.actualYear.toInt())
+            = MatchDAO().getMatches(round, group.id!!, DateUtil.actualSeason.toInt())
 
     suspend fun getCommonMatches(team1: Team, team2: Team, year: Int): List<Match> = withContext(IO)
     {

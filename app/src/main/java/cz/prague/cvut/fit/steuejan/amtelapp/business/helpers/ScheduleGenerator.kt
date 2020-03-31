@@ -31,12 +31,12 @@ class ScheduleGenerator
 
     suspend fun regenerateMatches(group: Group, rounds: Int): Boolean
     {
-        val year = DateUtil.actualYear
+        val year = DateUtil.actualSeason
         var ok = true
 
         return if(MatchManager.deleteAllMatches(group.id, year.toInt()))
         {
-            group.teamIds[DateUtil.actualYear]?.forEach { teamId ->
+            group.teamIds[DateUtil.actualSeason]?.forEach { teamId ->
                 if(!clearTeamStatistics(teamId, year)) ok = false
             }
             if(ok) generateMatches(group, rounds)
@@ -57,7 +57,7 @@ class ScheduleGenerator
         }
 
         val map = group.rounds
-        map[DateUtil.actualYear] = rounds
+        map[DateUtil.actualSeason] = rounds
         GroupManager.updateGroup(group.id, mapOf("rounds" to map))
     }
 

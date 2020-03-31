@@ -126,7 +126,7 @@ class MatchArrangementActivityVM : ViewModel()
 
     fun countTotalScore(match: Match, isDefaultLoss: Boolean = false)
     {
-        //TODO: consider rewrite this into service
+        //TODO: consider rewriting this into service
         GlobalScope.launch {
             var homeScore = 0
             var awayScore = 0
@@ -174,7 +174,7 @@ class MatchArrangementActivityVM : ViewModel()
 
     private suspend fun updatePoints(team: Team, match: Match, isDefaultLoss: Boolean, isWinner: () -> Boolean)
     {
-        val year = DateUtil.actualYear
+        val year = DateUtil.actualSeason
 
         val pointsPerYear = team.pointsPerMatch[year]
         if(pointsPerYear == null) team.pointsPerMatch[year] = mutableMapOf()
@@ -204,7 +204,7 @@ class MatchArrangementActivityVM : ViewModel()
 
     private fun initSetsStatistics(team: Team, match: Match)
     {
-        val year = DateUtil.actualYear
+        val year = DateUtil.actualSeason
 
         val positiveSetsPerYear = team.setsPositivePerMatch[year]
         if(positiveSetsPerYear == null) team.setsPositivePerMatch[year] = mutableMapOf()
