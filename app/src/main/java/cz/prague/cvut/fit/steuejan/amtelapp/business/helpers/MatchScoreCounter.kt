@@ -1,6 +1,8 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.helpers
 
-import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_DEFAULT_LOSS
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_LOOSE
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_WIN
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
@@ -21,23 +23,17 @@ class MatchScoreCounter(private val homeTeam: Team, private val awayTeam: Team)
 
         if(homeScore + awayScore == 0)
         {
-            if(match.homeScore != null || match.awayScore != null)
-            {
-                match.homeScore = null
-                match.awayScore = null
-                MatchManager.setMatch(match)
-            }
+            match.homeScore = null
+            match.awayScore = null
         }
         else
         {
-            if(match.homeScore != homeScore || match.awayScore != awayScore)
-            {
-                match.homeScore = homeScore
-                match.awayScore = awayScore
-                MatchManager.setMatch(match)
-                updatePoints(match, isDefaultLoss)
-            }
+            match.homeScore = homeScore
+            match.awayScore = awayScore
         }
+
+        MatchManager.setMatch(match)
+        updatePoints(match, isDefaultLoss)
     }
 
     private suspend fun updatePoints(match: Match, isDefaultLoss: Boolean)
@@ -58,12 +54,12 @@ class MatchScoreCounter(private val homeTeam: Team, private val awayTeam: Team)
         team.pointsPerMatch[year]!!.let { points ->
             points[match.id!!] = when
             {
-                isWinner.invoke() -> App.POINTS_WIN
-                isDefaultLoss -> App.POINTS_DEFAULT_LOSS
-                else -> App.POINTS_LOOSE
+                isWinner.invoke() -> POINTS_WIN
+                isDefaultLoss -> POINTS_DEFAULT_LOSS
+                else -> POINTS_LOOSE
             }
             sum = points.values.sum()
-            points.values.forEach { if(it == App.POINTS_WIN) wins++ }
+            points.values.forEach { if(it == POINTS_WIN) wins++ }
         }
 
         team.pointsPerYear[year] = sum

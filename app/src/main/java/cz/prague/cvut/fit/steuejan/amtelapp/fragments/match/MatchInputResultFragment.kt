@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.match
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMatchActivityFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.services.CountMatchScoreService
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
@@ -278,7 +280,18 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             disableInputButtonIf { !isHeadOfLeague && match.edits[round.toString()] == 0 }
             viewModel.sendEmail(homeTeam, awayTeam, sets.text, games.text, userId)
             matchViewModel.setPage(round)
+            countMatchScore()
         }
+    }
+
+    private fun countMatchScore()
+    {
+        val serviceIntent = Intent(activity!!, CountMatchScoreService::class.java).apply {
+            putExtra(CountMatchScoreService.HOME_TEAM, homeTeam)
+            putExtra(CountMatchScoreService.AWAY_TEAM, awayTeam)
+            putExtra(CountMatchScoreService.MATCH, match)
+        }
+        activity!!.startService(serviceIntent)
     }
 
     private fun handleDialogs()

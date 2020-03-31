@@ -15,6 +15,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.*
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.MatchResult
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toDayInWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
@@ -151,7 +152,11 @@ class MatchArrangementActivityVM : ViewModel()
         if(isHomeWinner) setDefaultResult(match, 6, 0)
         else setDefaultResult(match, 0, 6)
 
-        match.usersId.clear()
+        match.usersId = arrayOfNulls<String>(10).toMutableList()
+        match.rounds.forEach {
+            it.homePlayers = mutableListOf()
+            it.awayPlayers = mutableListOf()
+        }
 
         viewModelScope.launch {
             sendDefaultResultEmail(match, homeTeam, awayTeam)
@@ -206,6 +211,19 @@ class MatchArrangementActivityVM : ViewModel()
                 it.awaySets = 2
             }
         }
+    }
+
+    fun countTotalScore(match: Match): MatchResult
+    {
+        var homeScore = 0
+        var awayScore = 0
+
+        match.rounds.forEach {
+            if(it.homeWinner == true) homeScore++
+            else if(it.homeWinner == false) awayScore++
+        }
+
+        return MatchResult(homeScore, awayScore)
     }
 
 }

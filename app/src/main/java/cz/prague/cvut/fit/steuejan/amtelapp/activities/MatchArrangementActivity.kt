@@ -258,7 +258,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
                     val isHomeWinner = text == homeTeam.name
                     if(--match.defaultEndGameEdits <= 0) disableDefaultEndGame()
 
-                    createCountServiceIntent(viewModel.defaultEndGame(match, isHomeWinner, homeTeam, awayTeam), true)
+                    countMatchScore(viewModel.defaultEndGame(match, isHomeWinner, homeTeam, awayTeam), true)
 
                     score.text = if(isHomeWinner) "3 : 0" else "0 : 3"
                     toast("Tým ${if(isHomeWinner) homeTeam.name else awayTeam.name} kontumačně vyhrál.")
@@ -362,13 +362,13 @@ class MatchArrangementActivity : AbstractBaseActivity()
         {
             data?.let {
                 match = it.getParcelableExtra(MATCH)
-                score.text = match.homeScore?.let { "${match.homeScore} : ${match.awayScore}" } ?: "N/A"
-                createCountServiceIntent(match)
+                val result = viewModel.countTotalScore(match)
+                score.text = if(result.home + result.away != 0) "${result.home} : ${result.away}" else "N/A"
             }
         }
     }
 
-    private fun createCountServiceIntent(match: Match, isDefaultLoss: Boolean = false)
+    private fun countMatchScore(match: Match, isDefaultLoss: Boolean)
     {
         val serviceIntent = Intent(this, CountMatchScoreService::class.java).apply {
             putExtra(CountMatchScoreService.HOME_TEAM, homeTeam)
