@@ -97,7 +97,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
 
         groups.forEach { group ->
             group.teamIds[actualSeason.toString()]?.forEach { teamId ->
-                //team not resolved yet
+                //teams not resolved yet
                 if(!sortedResolvedTeams.contains(teamId))
                     updateSortedGroups(group, teamId, actualSeason + 1)
             }
@@ -136,6 +136,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
                         val betterTeam = betterTeams[betterTeams.lastIndex - 1]
                         val worseTeam = worseTeams[1]
                         resolvedTeamIds.addAll(listOf(betterTeam.id!!, worseTeam.id!!))
+                        //a home team is always the team in a better group
                         setMatches(listOf(betterTeam, worseTeam))
                     }
                 }
@@ -147,7 +148,10 @@ class SeasonFinisher(private val groups: MutableList<Group>)
     {
         val tournament = RobinRoundTournament()
         tournament.setTeams(teams)
+        //should always retrieve one match
         tournament.createMatches(playoff).forEach {
+            it.betterGroup = teams.first().groupName
+            it.worseGroup = teams.last().groupName
             with(MatchManager.setMatch(it)) {
                 if(this is ValidMatch) addMatchToTeams(self, teams)
             }

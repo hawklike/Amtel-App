@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +13,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.TeamsAdapterVM
@@ -61,7 +59,8 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
     override fun onBindViewHolder(holder: ViewHolder, position: Int, team: Team)
     {
         holder.teamName.text = team.name
-        team.groupName?.let { holder.group.text = it }
+        holder.group.text =
+            if(team.groupName == null) "Bez skupiny"
+            else team.groupName
     }
-
 }

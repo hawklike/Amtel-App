@@ -187,7 +187,10 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 
     private fun setupRecycler()
     {
-        val query = MatchManager.getMatches(round, group)
+        val query =
+            if(isPlayoff) MatchManager.getMatches(round, group, DateUtil.actualSeason.toInt() - 1)
+            else MatchManager.getMatches(round, group, DateUtil.actualSeason.toInt())
+
         val options = FirestoreRecyclerOptions.Builder<Match>()
             .setQuery(query, Match::class.java)
             .setLifecycleOwner(viewLifecycleOwner)
@@ -195,7 +198,7 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(context)
-        adapter = ShowMatchesFirestoreAdapter(user, options)
+        adapter = ShowMatchesFirestoreAdapter(user, options, isPlayoff)
 
         adapter?.onNextClickOwner = { match ->
             startMatchArrangementActivity(match)

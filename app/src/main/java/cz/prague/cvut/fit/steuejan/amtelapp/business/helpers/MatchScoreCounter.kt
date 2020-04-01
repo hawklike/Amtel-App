@@ -5,13 +5,21 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_LOOSE
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_WIN
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 
-class MatchScoreCounter(private val homeTeam: Team, private val awayTeam: Team)
+class MatchScoreCounter(private val match: Match, private val homeTeam: Team, private val awayTeam: Team)
 {
-    suspend fun countTotalScore(match: Match, isDefaultLoss: Boolean = false)
+    private val playoff = match.playOff
+    private var isDefaultLoss = false
+
+    fun withDefaultLoss(isDefaultLoss: Boolean): MatchScoreCounter
+    {
+        this.isDefaultLoss = isDefaultLoss
+        return this
+    }
+
+    suspend fun countTotalScore()
     {
         var homeScore = 0
         var awayScore = 0
@@ -33,18 +41,21 @@ class MatchScoreCounter(private val homeTeam: Team, private val awayTeam: Team)
         }
 
         MatchManager.setMatch(match)
-        updatePoints(match, isDefaultLoss)
+        if(playoff) resolvePlayoff(homeScore, awayScore)
+        updatePoints()
     }
 
-    private suspend fun updatePoints(match: Match, isDefaultLoss: Boolean)
+    private suspend fun updatePoints()
     {
-        updatePoints(homeTeam, match, isDefaultLoss) { match.homeScore!! > match.awayScore!! }
-        updatePoints(awayTeam, match, isDefaultLoss) { match.awayScore!! > match.homeScore!! }
+        updatePoints(homeTeam) { match.homeScore!! > match.awayScore!! }
+        updatePoints(awayTeam) { match.awayScore!! > match.homeScore!! }
     }
 
-    private suspend fun updatePoints(team: Team, match: Match, isDefaultLoss: Boolean, isWinner: () -> Boolean)
+    private suspend fun updatePoints(team: Team, isWinner: () -> Boolean)
     {
-        val year = DateUtil.actualSeason
+        val year =
+            if(playoff) 0.toString()
+            else match.year.toString()
 
         val pointsPerYear = team.pointsPerMatch[year]
         if(pointsPerYear == null) team.pointsPerMatch[year] = mutableMapOf()
@@ -67,14 +78,32 @@ class MatchScoreCounter(private val homeTeam: Team, private val awayTeam: Team)
         team.lossesPerYear[year] = team.pointsPerMatch[year]!!.size - wins
         team.matchesPerYear[year] = team.pointsPerMatch[year]!!.size
 
-        initSetsStatistics(team, match)
-
+        initSetsStatistics(team)
         TeamManager.setTeam(team)
     }
 
-    private fun initSetsStatistics(team: Team, match: Match)
+    private suspend fun resolvePlayoff(homeScore: Int, awayScore: Int)
     {
-        val year = DateUtil.actualSeason
+        val inputter = TeamToGroupInputter()
+        if(homeScore < awayScore)
+        {
+            //home team loses and therefore goes to a lower group in the next season
+            inputter.addToGroup(homeTeam, match.worseGroup)
+            inputter.addToGroup(awayTeam, match.betterGroup)
+        }
+        else
+        {
+            //home team wins and therefore stays in the same group in the next season
+            inputter.addToGroup(homeTeam, match.betterGroup)
+            inputter.addToGroup(awayTeam, match.worseGroup)
+        }
+    }
+
+    private fun initSetsStatistics(team: Team)
+    {
+        val year =
+            if(playoff) 0.toString()
+            else match.year.toString()
 
         val positiveSetsPerYear = team.setsPositivePerMatch[year]
         if(positiveSetsPerYear == null) team.setsPositivePerMatch[year] = mutableMapOf()

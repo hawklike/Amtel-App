@@ -25,7 +25,9 @@ class CountMatchScoreService : IntentService(CountMatchScoreService::class.simpl
         val defaultLoss = intent.getBooleanExtra(DEFAULT_LOSS, false)
 
         runBlocking {
-            MatchScoreCounter(homeTeam, awayTeam).countTotalScore(match, defaultLoss)
+            MatchScoreCounter(match, homeTeam, awayTeam)
+                .withDefaultLoss(defaultLoss)
+                .countTotalScore()
         }
     }
 }
