@@ -42,13 +42,13 @@ class MatchScoreCounter(private val match: Match, private val homeTeam: Team, pr
 
         MatchManager.setMatch(match)
         if(playoff) resolvePlayoff(homeScore, awayScore)
-        updatePoints()
+        updatePoints(homeScore, awayScore)
     }
 
-    private suspend fun updatePoints()
+    private suspend fun updatePoints(homeScore: Int, awayScore: Int)
     {
-        updatePoints(homeTeam) { match.homeScore!! > match.awayScore!! }
-        updatePoints(awayTeam) { match.awayScore!! > match.homeScore!! }
+        updatePoints(homeTeam) { homeScore > awayScore }
+        updatePoints(awayTeam) { awayScore > homeScore }
     }
 
     private suspend fun updatePoints(team: Team, isWinner: () -> Boolean)

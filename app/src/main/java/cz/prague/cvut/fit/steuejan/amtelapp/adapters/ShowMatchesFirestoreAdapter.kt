@@ -59,22 +59,7 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, match: Match)
     {
-        if(playoff)
-        {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            {
-                //red color #e84118
-                holder.home.text = Html.fromHtml("${match.home} <font color=#e84118>↓</font>", Html.FROM_HTML_MODE_LEGACY)
-                holder.away.text = Html.fromHtml("${match.away} <font color=#2FB7F4>↑</font>", Html.FROM_HTML_MODE_LEGACY)
-            }
-            else
-            {
-                //blue color #2FB7F4
-                holder.home.text = Html.fromHtml("${match.home} <font color=#e84118>↓</font>")
-                holder.away.text = Html.fromHtml("${match.away} <font color=#2FB7F4>↑</font>")
-
-            }
-        }
+        if(playoff) displayChanges(holder, match)
         else
         {
             holder.home.text = match.home
@@ -101,5 +86,35 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
         holder.home.setTextColor(App.getColor(R.color.darkGrey))
         holder.away.setTextColor(App.getColor(R.color.darkGrey))
         holder.sets.setTextColor(App.getColor(R.color.darkGrey))
+    }
+
+    private fun displayChanges(holder: ViewHolder, match: Match)
+    {
+        //red color: #e84118
+        //blue color: #2FB7F4
+        val arrowDown = "<font color=#e84118>↓</font>"
+        val arrowUp = "<font color=#2FB7F4>↑</font>"
+        val arrowRightRed = "<font color=#e84118>→</font>"
+        val arrowRightBlue = "<font color=#2FB7F4>→</font>"
+
+        val homeScore = match.homeScore ?: 0
+        val awayScore = match.awayScore ?: 0
+
+        if(homeScore < awayScore) showArrows(holder, match, arrowDown, arrowUp)
+        else showArrows(holder, match, arrowRightRed, arrowRightBlue)
+    }
+
+    private fun showArrows(holder: ViewHolder, match: Match, homeTeamArrow: String, awayTeamArrow: String)
+    {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+        {
+            holder.home.text = Html.fromHtml("${match.home} $homeTeamArrow", Html.FROM_HTML_MODE_LEGACY)
+            holder.away.text = Html.fromHtml("${match.away} $awayTeamArrow", Html.FROM_HTML_MODE_LEGACY)
+        }
+        else
+        {
+            holder.home.text = Html.fromHtml("${match.home} $homeTeamArrow")
+            holder.away.text = Html.fromHtml("${match.away} $awayTeamArrow")
+        }
     }
 }
