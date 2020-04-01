@@ -13,13 +13,21 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroups
 
 class TeamToGroupInputter
 {
+    private var playoff = false
+
+    fun isPlayoff(playoff: Boolean): TeamToGroupInputter
+    {
+        this.playoff = playoff
+        return this
+    }
+
     suspend fun addToGroup(team: Team, groupName: String?)
     {
         if(groupName == null) return
         
         if(team.groupName != null)
         {
-            if(team.groupName != groupName)
+            if(team.groupName != groupName || playoff)
             {
                 removeFromGroup(team)
                 add2Group(team, groupName)
@@ -35,12 +43,17 @@ class TeamToGroupInputter
         {
             val group = groups.self.first()
             TeamManager.updateTeam(team.id, mapOf(TeamManager.groupName to name, TeamManager.groupId to group.id))
+
             team.groupName = name
+            team.groupId = group.id
 
             val teamIds = group.teamIds[DateUtil.actualSeason]
             if(teamIds == null) group.teamIds[DateUtil.actualSeason] = mutableListOf()
 
-            group.teamIds[DateUtil.actualSeason]?.add(team.id!!)
+            val teamIdsSet = group.teamIds[DateUtil.actualSeason]!!.toMutableSet()
+            teamIdsSet.add(team.id!!)
+
+            group.teamIds[DateUtil.actualSeason] = teamIdsSet.toMutableList()
             GroupManager.setGroup(group)
             toast(context.getString(R.string.team) + " ${team.name} " + context.getString(R.string.was_moved_to_group) + " $name" + ".", length = Toast.LENGTH_LONG)
         }

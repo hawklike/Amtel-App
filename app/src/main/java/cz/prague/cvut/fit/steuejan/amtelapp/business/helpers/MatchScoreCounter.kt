@@ -84,7 +84,7 @@ class MatchScoreCounter(private val match: Match, private val homeTeam: Team, pr
 
     private suspend fun resolvePlayoff(homeScore: Int, awayScore: Int)
     {
-        val inputter = TeamToGroupInputter()
+        val inputter = TeamToGroupInputter().isPlayoff(true)
         if(homeScore < awayScore)
         {
             //home team loses and therefore goes to a lower group in the next season
