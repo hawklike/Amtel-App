@@ -3,7 +3,6 @@ package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObjects
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -20,7 +19,7 @@ object MatchManager
 {
     private const val TAG = "MatchManager"
 
-    suspend fun addMatch(match: Match): MatchState = withContext(IO)
+    suspend fun setMatch(match: Match): MatchState = withContext(IO)
     {
         match.teams = listOf(match.homeId, match.awayId)
         return@withContext try
@@ -72,8 +71,8 @@ object MatchManager
         return Results(sets, games)
     }
 
-    fun getMatches(round: Int, group: Group): Query
-            = MatchDAO().getMatches(round, group.id!!, DateUtil.actualYear.toInt())
+    fun getMatches(round: Int, group: Group, year: Int): Query
+            = MatchDAO().getMatches(round, group.id!!, year)
 
     suspend fun getCommonMatches(team1: Team, team2: Team, year: Int): List<Match> = withContext(IO)
     {

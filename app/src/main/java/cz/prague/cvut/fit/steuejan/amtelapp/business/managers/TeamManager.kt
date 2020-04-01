@@ -16,17 +16,17 @@ import kotlinx.coroutines.withContext
 
 object TeamManager
 {
-    suspend fun addTeam(team: Team): Team? = withContext(IO)
+    suspend fun setTeam(team: Team): Team? = withContext(IO)
     {
         return@withContext try
         {
             TeamDAO().insert(team)
-            Log.i(TAG, "addUser(): $team successfully added to database")
+            Log.i(TAG, "setTeam(): $team successfully set/updated in database")
             team
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addUser(): $team not added to database because ${ex.message}")
+            Log.e(TAG, "setTeam(): $team not set/updated in database because ${ex.message}")
             null
         }
     }
@@ -142,4 +142,6 @@ object TeamManager
     }
 
     private const val TAG = "TeamManager"
+    const val groupName = "groupName"
+    const val groupId = "groupId"
 }

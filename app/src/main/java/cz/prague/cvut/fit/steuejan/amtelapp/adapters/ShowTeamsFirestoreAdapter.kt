@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
@@ -14,9 +13,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsFirestoreAdapter.Presentation.SIMPLE
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.TeamsAdapterVM
 
@@ -26,7 +23,6 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(TeamsAdapterVM::class.java)
 
     @Suppress("MemberVisibilityCanBePrivate")
-    var presentation: Presentation = SIMPLE
     var groups: List<String> = listOf()
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -45,8 +41,6 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
                     title(text = String.format(context.getString(R.string.choose_group_input), teamName.text))
                     listItemsSingleChoice(items = groups, initialSelection = index) { _, _, item ->
                         viewModel.addToGroup(team, item.toString())
-                        toast(context.getString(R.string.team) + " ${teamName.text} " + context.getString(
-                                                    R.string.was_moved_to_group) + " $item" + ".", length = Toast.LENGTH_LONG)
                     }
                     positiveButton(R.string.ok)
                     negativeButton()
@@ -64,16 +58,9 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, team: Team)
     {
-        if(presentation == SIMPLE)
-        {
-            holder.teamName.text = team.name
-            team.groupName?.let { holder.group.text = it }
-        }
+        holder.teamName.text = team.name
+        holder.group.text =
+            if(team.groupName == null) "Bez skupiny"
+            else team.groupName
     }
-
-    enum class Presentation
-    {
-        SIMPLE, SPECIFIC
-    }
-
 }

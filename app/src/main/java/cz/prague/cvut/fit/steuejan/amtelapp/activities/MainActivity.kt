@@ -7,6 +7,7 @@ import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.observe
+import com.afollestad.materialdialogs.MaterialDialog
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
@@ -41,6 +42,8 @@ class MainActivity : AbstractBaseActivity()
         progressLayout = findViewById(R.id.progressBar)
         super.onCreate(savedInstanceState)
         toolbar.setTitleTextColor(App.getColor(R.color.blue))
+        viewModel.checkInternetConnection()
+        viewModel.getActualSeason()
         viewModel.initEmailPassword()
         viewModel.initHeadOfLeagueEmail()
         setObservers(savedInstanceState)
@@ -60,6 +63,21 @@ class MainActivity : AbstractBaseActivity()
         displayAccount(savedInstanceState)
         updateDrawer()
         showProgressBar()
+        checkInternetConnection()
+    }
+
+    private fun checkInternetConnection()
+    {
+        viewModel.connection.observe(this) { hasInternet ->
+            if(!hasInternet)
+            {
+                MaterialDialog(this)
+                    .title(text = "Špatné připojení k internetu")
+                    .message(text = "Aplikace nemusí fungovat správně. Vraťte se prosím zpět do aplikace jakmile budete mít obnovené připojení k internetu.")
+                    .positiveButton()
+                    .show()
+            }
+        }
     }
 
     private fun showProgressBar()
@@ -116,6 +134,8 @@ class MainActivity : AbstractBaseActivity()
         drawer = DrawerBuilder()
             .withActivity(this)
             .withToolbar(toolbar)
+            .withHeader(R.layout.drawer_header)
+            .withHeaderDivider(false)
             .withTranslucentStatusBar(false)
             .addDrawerItems(
                 profile,

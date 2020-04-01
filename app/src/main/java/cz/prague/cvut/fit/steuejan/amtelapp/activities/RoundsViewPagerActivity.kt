@@ -39,7 +39,7 @@ class RoundsViewPagerActivity : AbstractViewPagerActivity()
     override fun getData()
     {
         intent.extras?.let { bundle ->
-            group = bundle.getParcelable(GROUP)!!
+            group = bundle.getParcelable(GROUP) ?: Group()
             user = bundle.getParcelable<User?>(USER)?.let { SignedUser(it) } ?: NoUser
             actualRound = bundle.getInt(ACTUAL_ROUND)
         }
@@ -48,7 +48,7 @@ class RoundsViewPagerActivity : AbstractViewPagerActivity()
     override fun setupViewPager(viewPager: ViewPager)
     {
         val adapter = ViewPagerAdapter(supportFragmentManager)
-        val rounds = group.rounds[DateUtil.actualYear] ?: 0
+        val rounds = group.rounds[DateUtil.actualSeason] ?: 0
         println("rounds: $rounds")
 
         (1..rounds).map { round ->

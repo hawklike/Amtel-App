@@ -3,16 +3,19 @@ package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.view.View
+import android.view.View.GONE
 import androidx.lifecycle.ViewModel
 import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsMenuAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toPlayoff
 import java.util.*
 
-class ShowGroupsMenuFirestoreAdapterVM : ViewModel()
+class ShowGroupsMenuAdapterVM : ViewModel()
 {
     fun getActualRound(group: Group): Int?
     {
@@ -26,13 +29,10 @@ class ShowGroupsMenuFirestoreAdapterVM : ViewModel()
     {
         holder.rounds.visibility = View.INVISIBLE
 
-        group.roundDates["playOff"]?.let { weekNumber ->
-            val firstWeek = DateUtil.getWeekDate(weekNumber)
-            val secondWeek = DateUtil.getWeekDate(weekNumber + 1)
-            val week = firstWeek + secondWeek
-            week.find { DateUtil.compareDates(it, Date()) == 0 } ?: disableCard(holder)
-            holder.actualRound.text = "${week.first().toMyString()} – ${week.last().toMyString()}"
-        }
+        val playoff = group.toPlayoff()
+
+        if(playoff?.isActive == false) holder.card.visibility = GONE
+        else holder.actualRound.text = "${playoff?.startDate?.toMyString() ?: ""} – ${playoff?.endDate?.toMyString() ?: ""}"
     }
 
     fun disableCard(holder: ShowGroupsMenuAdapter.ViewHolder)
@@ -46,14 +46,20 @@ class ShowGroupsMenuFirestoreAdapterVM : ViewModel()
         holder.actualRound.setTextColor(App.getColor(R.color.lightGrey))
     }
 
+    @SuppressLint("SetTextI18n")
     fun isRanking(holder: ShowGroupsMenuAdapter.ViewHolder, group: Group)
     {
-        if(group.playOff) holder.card.visibility = View.GONE
-        holder.actualRound.text = String.format(App.context.getString(R.string.last_active_season),
-            group.teamIds.keys.map { it.toInt() }.max() ?: App.context.getString(R.string.is_not))
+        if(group.playOff) holder.card.visibility = GONE
+
+        val actualSeason = group.teamIds.keys.map { it.toInt() }.max() ?: 0
+        val text =
+            if(actualSeason > DateUtil.actualSeason.toInt()) "Příští sezóna:"
+            else "Poslední sezóna:"
+
+        holder.actualRound.text = "$text ${if(actualSeason != 0) actualSeason.toString() else context.getString(R.string.is_not)}"
         holder.rounds.text = String.format(
             App.context.getString(R.string.teams_number_this_year),
-            group.teamIds[DateUtil.actualYear]?.size ?: 0)
+            group.teamIds[DateUtil.actualSeason]?.size ?: 0)
         if(group.teamIds.isEmpty()) disableCard(holder)
     }
 

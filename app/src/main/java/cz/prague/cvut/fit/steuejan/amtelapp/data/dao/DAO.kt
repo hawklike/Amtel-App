@@ -18,7 +18,7 @@ interface DAO
     suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>)
     suspend fun delete(documentId: String)
 
-    suspend fun insert(collectionName: String, entity: Entity)
+    suspend fun <T> insert(collectionName: String, entity: Entity<T>)
     {
         val collection = Firebase.firestore.collection(collectionName)
         val document = entity.id?.let { collection.document(it) } ?: collection.document()

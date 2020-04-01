@@ -23,10 +23,7 @@ data class Team(override var id: String? = null,
                 var negativeSetsPerYear:  MutableMap<String, Int> = mutableMapOf(),
                 var results: MutableList<Int> = mutableListOf(), //season final rank
                 var groupId: String? = null
-                ) : Parcelable, Comparable<Team>, Entity()
+                ) : Parcelable, Entity<Team>()
 {
-    override fun compareTo(other: Team): Int =
-        compareBy<Team>{ it.id }.compare(this, other)
-
     override fun toString(): String = this.name
 }

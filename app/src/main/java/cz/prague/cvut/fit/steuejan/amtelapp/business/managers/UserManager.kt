@@ -4,8 +4,8 @@ import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
-import cz.prague.cvut.fit.steuejan.amtelapp.data.database.DatabaseHelper
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import kotlinx.coroutines.Dispatchers.IO
@@ -13,9 +13,9 @@ import kotlinx.coroutines.withContext
 
 object UserManager
 {
-    suspend fun addUser(user: User): User? = withContext(IO)
+    suspend fun setUser(user: User): User? = withContext(IO)
     {
-        val (englishName, englishSurname) = DatabaseHelper.prepareCzechOrdering(user.name, user.surname)
+        val (englishName, englishSurname) = StringUtil.prepareCzechOrdering(user.name, user.surname)
         user.englishName = englishName
         user.englishSurname = englishSurname
 

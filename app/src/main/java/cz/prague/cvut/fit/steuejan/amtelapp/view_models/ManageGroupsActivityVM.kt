@@ -9,16 +9,16 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Playoff
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toPlayoff
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroup
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroups
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
-import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
 import kotlinx.coroutines.launch
 
 class ManageGroupsActivityVM : ViewModel()
 {
-    private val _week = MutableLiveData<WeekState>()
-    val week: LiveData<WeekState> = _week
+    var playoff: Playoff? = null
+        private set
 
     /*---------------------------------------------------*/
 
@@ -27,35 +27,43 @@ class ManageGroupsActivityVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun setPlayOff(week: Int)
-    {
-        viewModelScope.launch {
-            val roundDates = mutableMapOf("playOff" to week)
-            val group = Group(null, context.getString(R.string.playOff), roundDates = roundDates, playingPlayOff = false, playOff = true, rank = Int.MAX_VALUE)
-            if(GroupManager.addGroup(group) is ValidGroup) toast("Baráž úspěšně otevřena.")
-        }
-    }
+    private val _isPlayOffOpen = MutableLiveData<Boolean>()
+    val isPlayOffOpen: LiveData<Boolean> = _isPlayOffOpen
 
-    fun getPlayOffWeek()
+    /*---------------------------------------------------*/
+
+    fun setPlayOff()
     {
         viewModelScope.launch {
-            val groups = GroupManager.findGroups("playOff", true)
-            if(groups is ValidGroups && groups.self.isNotEmpty())
-            {
-                val playOff = groups.self.first()
-                val week = playOff.roundDates["playOff"]
-                week?.let { _week.value = ValidWeek(week, emptyList()) }
-            }
+            val playOff = Group(null, context.getString(R.string.playOff), playingPlayOff = false, playOff = true, rank = Int.MAX_VALUE)
+            if(GroupManager.addPlayoff(playOff) is ValidGroup) toast("Baráž úspěšně otevřena.")
         }
     }
 
     fun getGroupsExceptPlayOff()
     {
         viewModelScope.launch {
-            val groups = GroupManager.retrieveAllGroupsExceptPlayOff()
+            val groups = GroupManager.retrieveAllGroupsExceptPlayoff()
             if(groups is ValidGroups) _groups.value = groups.self
         }
+    }
 
+    fun getPlayoff()
+    {
+        viewModelScope.launch {
+            val results = GroupManager.findGroups("playOff", true)
+            if(results is ValidGroups && results.self.isNotEmpty())
+            {
+                val playOff = results.self.first().toPlayoff()
+                this@ManageGroupsActivityVM.playoff = playOff
+                _isPlayOffOpen.value = playOff?.isActive ?: false
+            }
+            else
+            {
+                playoff = null
+                _isPlayOffOpen.value = false
+            }
+        }
     }
 
 }

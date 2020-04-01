@@ -20,7 +20,7 @@ class ShowGroupsMenuFragmentVM : ViewModel()
     {
         viewModelScope.launch {
             val groups = GroupManager.retrieveAllGroups()
-            if(groups is ValidGroups) _groups.value = groups.self
+            if(groups is ValidGroups) _groups.value = groups.self.filter { it.visibility }
         }
     }
 }

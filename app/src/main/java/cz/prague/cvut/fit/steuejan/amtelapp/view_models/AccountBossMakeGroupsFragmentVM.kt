@@ -9,6 +9,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
@@ -50,7 +51,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
                     _group.value = NoGroup
                     return@launch
                 }
-                _group.value = GroupManager.addGroup(Group(null, groupName, playingPlayOff = playingPlayOff)).let {
+                _group.value = GroupManager.setGroup(Group(null, groupName, playingPlayOff = playingPlayOff)).let {
                     if(it is ValidGroup) ValidGroup(it.self)
                     else NoGroup
                 }
@@ -61,7 +62,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
     fun getGroups()
     {
         viewModelScope.launch {
-            val groups = GroupManager.retrieveAllGroupsExceptPlayOff()
+            val groups = GroupManager.retrieveAllGroupsExceptPlayoff()
                 if(groups is ValidGroups) setAllGroups(groups.self)
         }
     }
@@ -78,15 +79,22 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
 
     private fun confirmName(groupName: String): Boolean
     {
-        return if(groupName.isEmpty())
+        return when
         {
-            groupNameState.value = InvalidName(context.getString(R.string.group_name_error_message))
-            false
-        }
-        else
-        {
-            groupNameState.value = ValidName(groupName)
-            true
+            groupName.isEmpty() -> {
+                groupNameState.value = InvalidName(context.getString(R.string.group_name_error_message))
+                false
+            }
+
+            groupName.firstLetterUpperCase() == context.getString(R.string.playOff) -> {
+                groupNameState.value = InvalidName("Zadejte prosím jiný název skupiny.")
+                false
+            }
+
+            else -> {
+                groupNameState.value = ValidName(groupName)
+                true
+            }
         }
     }
 

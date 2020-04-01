@@ -58,12 +58,17 @@ class TeamInfoActivityVM : ViewModel()
 
     /*---------------------------------------------------*/
 
+    private val _season = SingleLiveEvent<Int>()
+    val season: LiveData<Int> = _season
+
+    /*---------------------------------------------------*/
+
     fun getChartsData()
     {
         viewModelScope.launch {
             mTeam?.let { team ->
-                val winsThisYear = team.winsPerYear[DateUtil.actualYear] ?: 0
-                val lossesThisYear = team.lossesPerYear[DateUtil.actualYear] ?: 0
+                val winsThisYear = team.winsPerYear[DateUtil.actualSeason] ?: 0
+                val lossesThisYear = team.lossesPerYear[DateUtil.actualSeason] ?: 0
                 val thisYearEntries =
                     if(winsThisYear + lossesThisYear != 0)
                         listOf(PieEntry(winsThisYear.toFloat(), "Letošní výhraná utkání"), PieEntry(lossesThisYear.toFloat(), "Letošní prohraná utkání"))
@@ -143,5 +148,4 @@ class TeamInfoActivityVM : ViewModel()
             _titles.value = titles
         }
     }
-
 }

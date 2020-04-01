@@ -6,9 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_DEFAULT_LOSS
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_LOOSE
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_WIN
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
@@ -18,6 +15,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.*
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.MatchResult
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toDayInWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
@@ -123,116 +121,6 @@ class MatchArrangementActivityVM : ViewModel()
         }
     }
 
-    fun countTotalScore(match: Match, isDefaultLoss: Boolean = false)
-    {
-        var homeScore = 0
-        var awayScore = 0
-
-        match.rounds.forEach {
-            if(it.homeWinner == true) homeScore++
-            else if(it.homeWinner == false) awayScore++
-        }
-
-        if(homeScore + awayScore == 0)
-        {
-            if(match.homeScore != null || match.awayScore != null)
-            {
-                match.homeScore = null
-                match.awayScore = null
-                viewModelScope.launch {
-                     MatchManager.addMatch(match)
-                }
-            }
-        }
-        else
-        {
-            if(match.homeScore != homeScore || match.awayScore != awayScore)
-            {
-                match.homeScore = homeScore
-                match.awayScore = awayScore
-                viewModelScope.launch {
-                    MatchManager.addMatch(match)
-                    updatePoints(match, isDefaultLoss)
-                }
-            }
-        }
-    }
-
-    private suspend fun updatePoints(match: Match, isDefaultLoss: Boolean)
-    {
-        val homeTeam = teams.value?.first
-        val awayTeam = teams.value?.second
-
-        homeTeam?.let {
-            updatePoints(it, match, isDefaultLoss) { match.homeScore!! > match.awayScore!! }
-        }
-
-        awayTeam?.let {
-            updatePoints(it, match, isDefaultLoss) { match.awayScore!! > match.homeScore!! }
-        }
-    }
-
-    private suspend fun updatePoints(team: Team, match: Match, isDefaultLoss: Boolean, isWinner: () -> Boolean)
-    {
-        val year = DateUtil.actualYear
-
-        val pointsPerYear = team.pointsPerMatch[year]
-        if(pointsPerYear == null) team.pointsPerMatch[year] = mutableMapOf()
-
-        var sum = 0
-        var wins = 0
-        team.pointsPerMatch[year]!!.let { points ->
-            points[match.id!!] = when
-            {
-                isWinner.invoke() -> POINTS_WIN
-                isDefaultLoss -> POINTS_DEFAULT_LOSS
-                else -> POINTS_LOOSE
-            }
-            sum = points.values.sum()
-            points.values.forEach { if(it == POINTS_WIN) wins++ }
-        }
-
-        team.pointsPerYear[year] = sum
-        team.winsPerYear[year] = wins
-        team.lossesPerYear[year] = team.pointsPerMatch[year]!!.size - wins
-        team.matchesPerYear[year] = team.pointsPerMatch[year]!!.size
-
-        initSetsStatistics(team, match)
-
-        TeamManager.addTeam(team)
-    }
-
-    private fun initSetsStatistics(team: Team, match: Match)
-    {
-        val year = DateUtil.actualYear
-
-        val positiveSetsPerYear = team.setsPositivePerMatch[year]
-        if(positiveSetsPerYear == null) team.setsPositivePerMatch[year] = mutableMapOf()
-
-        val negativeSetsPerYear = team.setsNegativePerMatch[year]
-        if(negativeSetsPerYear == null) team.setsNegativePerMatch[year] = mutableMapOf()
-
-        team.setsPositivePerMatch[year]!!.let { sets ->
-            sets[match.id!!] = when(team.id)
-            {
-                match.homeId -> match.rounds.fold(0) { acc, round -> round.homeSets?.let { acc + it } ?: acc }
-                else -> match.rounds.fold(0) { acc, round -> round.awaySets?.let { acc + it } ?: acc }
-            }
-            team.positiveSetsPerYear[year] = sets.values.sum()
-        }
-
-        team.setsNegativePerMatch[year]!!.let { sets ->
-            sets[match.id!!] = when(team.id)
-            {
-                match.homeId -> match.rounds.fold(0) { acc, round -> round.awaySets?.let { acc + it } ?: acc }
-                else -> match.rounds.fold(0) { acc, round -> round.homeSets?.let { acc + it } ?: acc }
-            }
-            team.negativeSetsPerYear[year] = sets.values.sum()
-        }
-    }
-
-
-    //TODO: add to string resources
     private fun sendEmail(dateAndTime: Date? = null, place: String? = null)
     {
         val homeManagerEmail = teams.value?.first?.users?.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
@@ -259,12 +147,22 @@ class MatchArrangementActivityVM : ViewModel()
         awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
     }
 
-    fun defaultEndGame(match: Match, isHomeWinner: Boolean, homeTeam: Team, awayTeam: Team)
+    fun defaultEndGame(match: Match, isHomeWinner: Boolean, homeTeam: Team, awayTeam: Team): Match
     {
         if(isHomeWinner) setDefaultResult(match, 6, 0)
         else setDefaultResult(match, 0, 6)
-        countTotalScore(match, true)
-        sendDefaultResultEmail(match, homeTeam, awayTeam)
+
+        match.usersId = arrayOfNulls<String>(10).toMutableList()
+        match.rounds.forEach {
+            it.homePlayers = mutableListOf()
+            it.awayPlayers = mutableListOf()
+        }
+
+        viewModelScope.launch {
+            sendDefaultResultEmail(match, homeTeam, awayTeam)
+        }
+
+        return match
     }
 
     private fun sendDefaultResultEmail(match: Match, homeTeam: Team, awayTeam: Team)
@@ -313,6 +211,19 @@ class MatchArrangementActivityVM : ViewModel()
                 it.awaySets = 2
             }
         }
+    }
+
+    fun countTotalScore(match: Match): MatchResult
+    {
+        var homeScore = 0
+        var awayScore = 0
+
+        match.rounds.forEach {
+            if(it.homeWinner == true) homeScore++
+            else if(it.homeWinner == false) awayScore++
+        }
+
+        return MatchResult(homeScore, awayScore)
     }
 
 }

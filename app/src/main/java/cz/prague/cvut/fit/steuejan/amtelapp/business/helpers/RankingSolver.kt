@@ -69,9 +69,14 @@ class RankingSolver(private val teams: List<Team>, private val year: Int)
     */
     private suspend fun setOverallRanking()
     {
-        pointsAndTeams.toSortedMap(reverseOrder()).values.forEach { teams ->
-            if(teams.size == 1) overallRanking.add(teams.first())
-            else overallRanking.addAll(diffTeamsWithSamePoints(teams))
+        for((key, value) in pointsAndTeams.toSortedMap(reverseOrder()))
+        {
+            when
+            {
+                value.size == 1 -> overallRanking.add(value.first())
+                key == 0 -> overallRanking.addAll(value)
+                else -> overallRanking.addAll(diffTeamsWithSamePoints(value))
+            }
         }
     }
 

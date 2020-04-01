@@ -17,15 +17,17 @@ data class Match(override var id: String? = null,
                  var homeScore: Int? = null,
                  var awayScore: Int? = null,
                  var rounds: MutableList<Round> = mutableListOf(Round(), Round(), Round()),
-                 var year: Int = DateUtil.actualYear.toInt(),
+                 var year: Int = DateUtil.actualSeason.toInt(),
                  var place: String? = null,
                  var dateAndTime: Date? = null,
                  var edits: MutableMap<String, Int> = mutableMapOf("1" to 2, "2" to 2, "3" to 2), //(round, free edits)
-                 val usersId: MutableList<String?> = arrayOfNulls<String>(10).toMutableList(),
+                 var usersId: MutableList<String?> = arrayOfNulls<String>(10).toMutableList(),
                  var defaultEndGameEdits: Int = 2,
                  var teams: List<String> = listOf(), //list of teamIds
-                 var playOff: Boolean = false
-                 ) : Parcelable, Entity()
+                 var playOff: Boolean = false,
+                 var betterGroup: String? = null, //for playoff purpose
+                 var worseGroup: String? = null //for playoff purpose
+                 ) : Parcelable, Entity<Match>()
 {
     override fun toString(): String
     {

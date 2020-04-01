@@ -77,12 +77,6 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         playersRecyclerView = null
     }
 
-    override fun onStop()
-    {
-        super.onStop()
-        matchesAdapter?.stopListening()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?)
     {
         setContentView(R.layout.team_info)
@@ -149,6 +143,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         val options = FirestorePagingOptions.Builder<Match>()
             .setLifecycleOwner(this)
             .setQuery(query, config, Match::class.java)
+            .setLifecycleOwner(this)
             .build()
 
         matchesAdapter = ShowTeamMatchesPagingAdapter(viewModel.mTeam ?: Team(id = "mucus"), options)
@@ -161,8 +156,6 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         }
 
         matchesRecyclerView?.adapter = matchesAdapter
-
-        matchesAdapter?.startListening()
     }
 
     private fun setTotalMatches()
@@ -191,7 +184,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         else
         {
             val rankingViewModel by viewModels<RankingFragmentVM>()
-            viewModel.mTeam?.groupId?.let { rankingViewModel.loadTeams(it, DateUtil.actualYear.toInt(), RankingOrderBy.POINTS) }
+            viewModel.mTeam?.groupId?.let { rankingViewModel.loadTeams(it, DateUtil.actualSeason.toInt(), RankingOrderBy.POINTS) }
             rankingViewModel.teams.observe(this) {
                 viewModel.seasonRanking = it
                 viewModel.calculateTeamRank()

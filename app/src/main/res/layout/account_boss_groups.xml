@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <include
         layout="@layout/toolbar"
@@ -25,7 +24,7 @@
                 android:id="@+id/account_boss_groups_open_playOff_title"
                 style="@style/TextViewTitle"
                 android:layout_marginBottom="0dp"
-                android:text="Otevřít baráž" />
+                android:text="Baráž" />
 
             <TextView
                 android:id="@+id/account_boss_groups_open_playOff_text"
@@ -36,36 +35,24 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="12dp"
                 android:layout_below="@id/account_boss_groups_open_playOff_title"
-                android:text="12.4.2020 -- 18.4.2020" />
+                android:text="Datum se načítá..." />
 
-            <Switch
-                android:id="@+id/account_boss_groups_open_playOff_switch"
+            <Button
+                android:id="@+id/account_boss_groups_playOff_generate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:switchMinWidth="64dp"
                 android:layout_centerHorizontal="true"
+                android:layout_below="@id/account_boss_groups_open_playOff_text"
+                android:background="?android:attr/selectableItemBackground"
+                android:elevation="0dp"
+                android:minHeight="0dp"
+                android:paddingTop="4dp"
+                android:visibility="invisible"
+                android:paddingBottom="4dp"
                 android:layout_marginBottom="8dp"
-                android:layout_below="@id/account_boss_groups_open_playOff_text"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Zavřeno"
-                android:layout_marginEnd="8dp"
-                android:textColor="@color/lightGrey"
-                android:layout_toStartOf="@id/account_boss_groups_open_playOff_switch"
-                android:textSize="@dimen/common_text_size"
-                android:layout_alignBottom="@id/account_boss_groups_open_playOff_switch"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Otevřeno"
-                android:layout_marginStart="8dp"
-                android:textColor="@color/lightGrey"
-                android:layout_toEndOf="@id/account_boss_groups_open_playOff_switch"
-                android:textSize="@dimen/common_text_size"
-                android:layout_alignBottom="@id/account_boss_groups_open_playOff_switch"/>
+                android:text="Otevřít baráž"
+                android:textColor="@color/blue"
+                android:textSize="13sp" />
 
         </RelativeLayout>
 
@@ -86,7 +73,7 @@
             android:textStyle="normal"
             android:layout_marginTop="0dp"
             android:layout_below="@id/account_boss_groups_text"
-            android:text="Podržením a tažením karty můžete změnit pořadí skupin." />
+            android:text="Podržením a tažením karty můžete změnit pořadí skupin (vrchní skupina je nejlepší)." />
 
         <FrameLayout
             android:id="@+id/account_boss_groups_progressBar"

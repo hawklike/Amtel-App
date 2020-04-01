@@ -8,7 +8,7 @@ import java.util.*
 
 object DateUtil
 {
-    fun validateDate(date: String, dateFormat: String = "dd.MM.yyyy"): Boolean
+    fun validateDate(date: String, dateFormat: String = DATE_FORMAT): Boolean
     {
         return try
         {
@@ -21,19 +21,11 @@ object DateUtil
     }
 
     @Throws(Exception::class)
-    fun validateBirthdate(date: String, dateFormat: String = "dd.MM.yyyy"): Boolean
+    fun validateBirthdate(date: String, dateFormat: String = DATE_FORMAT): Boolean
     {
         if(!validateDate(date, dateFormat)) throw Exception("Invalid date")
         return DateTime(Date()) >= DateTime(date.toDate(dateFormat))
     }
-
-    val actualYear: String
-        get()
-        {
-            val calendar = GregorianCalendar()
-            calendar.time = Date()
-            return calendar[Calendar.YEAR].toString()
-        }
 
     fun getWeekDate(week: Int): List<Date>
     {
@@ -78,25 +70,48 @@ object DateUtil
         return if(remainingDays < 0) 0 else remainingDays
     }
 
-    fun compareDates(first: Date, second: Date): Int
+    fun getRemainingDaysUntil(date: Date): Int
     {
-        return DateTimeComparator.getDateOnlyInstance().compare(DateTime(first), DateTime(second))
+        val converted = DateTime(date).withHourOfDay(23).withMinuteOfHour(59)
+        val today = DateTime()
+        val remainingDays = Days.daysBetween(today, converted).days
+        return if(remainingDays < 0) 0 else remainingDays
     }
+
+    fun compareDates(first: Date?, second: Date?): Int
+            = DateTimeComparator.getDateOnlyInstance().compare(DateTime(first), DateTime(second))
 
     fun getAge(birthdate: Date): Int
             = Years.yearsBetween(LocalDate(birthdate), LocalDate()).years
 
-    fun getDateInFuture(days: Int): Date
+    fun getDateInFuture(days: Int, startDate: Date? = null): Date
     {
         val cal = Calendar.getInstance()
-        cal.time = Date()
+        cal.time = startDate?.let { it } ?: Date()
         cal.add(Calendar.DATE, days)
         return cal.time
     }
 
+    fun isDateBetween(date: Date?, startDate: Date?, endDate: Date?): Boolean
+    {
+        return if(compareDates(startDate, date) <= 0) compareDates(date, endDate) <= 0
+        else false
+    }
+
+    const val DATE_FORMAT = "dd.MM.yyyy"
+
+    var actualSeason: String = "0"
+
+    private val actualYear: Int
+        get()
+        {
+            val calendar = GregorianCalendar()
+            calendar.time = Date()
+            return calendar[Calendar.YEAR]
+        }
 }
 
-fun Date.toMyString(format: String = "dd.MM.yyyy"): String
+fun Date.toMyString(format: String = DateUtil.DATE_FORMAT): String
 {
     val formatter = SimpleDateFormat(format, Locale.getDefault())
     return formatter.format(this)
@@ -118,18 +133,18 @@ fun Date.toCalendar(): Calendar
     return cal
 }
 
-fun Calendar.toMyString(format: String = "dd.MM.yyyy"): String
+fun Calendar.toMyString(format: String = DateUtil.DATE_FORMAT): String
 {
     val formatter = SimpleDateFormat(format, Locale.getDefault())
     return formatter.format(this.time)
 }
 
-fun String.toDate(dateFormat: String = "dd.MM.yyyy"): Date
+fun String.toDate(dateFormat: String = DateUtil.DATE_FORMAT): Date
 {
     return SimpleDateFormat(dateFormat, Locale.getDefault()).parse(this)
 }
 
-fun String.toCalendar(dateFormat: String = "dd.MM.yyyy"): Calendar
+fun String.toCalendar(dateFormat: String = DateUtil.DATE_FORMAT): Calendar
 {
     return Calendar.getInstance().apply {
         time = this@toCalendar.toDate(dateFormat)

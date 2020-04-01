@@ -62,4 +62,15 @@ class MatchViewPagerActivityVM : ViewModel()
     }
 
     val isReport: LiveData<Boolean> = _isReport
+
+    /*---------------------------------------------------*/
+
+    private val _page = SingleLiveEvent<Int>()
+
+    fun setPage(page: Int)
+    {
+        _page.value = page
+    }
+
+    val page: LiveData<Int> = _page
 }

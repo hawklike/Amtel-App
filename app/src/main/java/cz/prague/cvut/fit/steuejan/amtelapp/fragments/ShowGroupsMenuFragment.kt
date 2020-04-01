@@ -11,7 +11,7 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayOffActivity
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayoffActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.RankingViewPagerActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.RoundsViewPagerActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsMenuAdapter
@@ -104,7 +104,10 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
             adapter?.onNextClick = { group, actualRound ->
                 if(group.playOff)
                 {
-                    val intent = Intent(activity!!, PlayOffActivity::class.java)
+                    val intent = Intent(activity!!, PlayoffActivity::class.java).apply {
+                        putExtra(PlayoffActivity.GROUP, group)
+                        putExtra(PlayoffActivity.USER, mainActivityModel.getUser().value)
+                    }
                     startActivity(intent)
                 }
                 else
@@ -114,7 +117,7 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
                         putExtra(RoundsViewPagerActivity.USER, mainActivityModel.getUser().value)
                         putExtra(RoundsViewPagerActivity.ACTUAL_ROUND, actualRound)
                     }
-                    if(group.rounds[DateUtil.actualYear] != 0) startActivity(intent)
+                    if(group.rounds[DateUtil.actualSeason] != 0) startActivity(intent)
                 }
             }
         }

@@ -81,23 +81,12 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
         recyclerView = null
     }
 
-    override fun onStart()
-    {
-        super.onStart()
-        adapter?.startListening()
-    }
-
-    override fun onStop()
-    {
-        super.onStop()
-        adapter?.stopListening()
-    }
-
     private fun setupRecycler()
     {
         val query = TeamManager.retrieveAllTeams(TeamOrderBy.GROUP)
         val options = FirestoreRecyclerOptions.Builder<Team>()
             .setQuery(query, Team::class.java)
+            .setLifecycleOwner(viewLifecycleOwner)
             .build()
 
         recyclerView?.setHasFixedSize(true)

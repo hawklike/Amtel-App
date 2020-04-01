@@ -6,77 +6,117 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.Switch
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsBossAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.callbacks.ItemMoveCallback
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Playoff.Companion.PLAYOFF_DAYS
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountBossMakeGroupsFragment.Companion.GROUPS
+import cz.prague.cvut.fit.steuejan.amtelapp.services.SeasonFinisherService
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ManageGroupsActivityVM
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ManageGroupsActivity : AbstractActivityWithRecyclerView()
+class ManageGroupsActivity : AbstractBaseActivity()
 {
     private val viewModel by viewModels<ManageGroupsActivityVM>()
 
+    private var recyclerView: RecyclerView? = null
+    private var adapter: ShowGroupsBossAdapter? = null
+
+    private lateinit var generatePlayOffButton: Button
     private lateinit var progressBar: FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         setContentView(R.layout.account_boss_groups)
         super.onCreate(savedInstanceState)
+        setupRecycler()
         setToolbarTitle(getString(R.string.groups))
         setArrowBack()
         initViews()
         getGroups()
-        setPlayOff()
-        updateFields()
-        setListeners()
-        setObservers()
+        getPlayoff()
+        generatePlayoff()
+    }
+
+    private fun getPlayoff()
+    {
+        viewModel.playoff ?: viewModel.getPlayoff()
+        viewModel.isPlayOffOpen.observe(this) { open ->
+            generatePlayOffButton.visibility = VISIBLE
+            if(open)
+            {
+                disablePlayoffButton()
+                viewModel.playoff?.let { setPlayoffInterval(it.startDate, it.endDate) }
+            }
+            else setPlayoffInterval(Date(), DateUtil.getDateInFuture(PLAYOFF_DAYS - 1))
+        }
+    }
+
+    private fun disablePlayoffButton()
+    {
+        generatePlayOffButton.setTextColor(App.getColor(R.color.red))
+        generatePlayOffButton.isEnabled = false
+        generatePlayOffButton.text = "Otevřeno"
+    }
+
+    private fun generatePlayoff()
+    {
+        generatePlayOffButton.setOnClickListener {
+            MaterialDialog(this)
+                .title(text = "Opravdu chcete otevřít baráž?")
+                .message(text = "Budou vygenerována utkání o postup/sestup a přesunuty nejlepší/nejhorší týmy do patřičných skupin.\n\nBaráž bude otevřena na dva týdny, poté se automaticky uzavře a aktuální sezóna bude ukončena. Po uplynutí dvou týdnů budete moct otevřít novou baráž.\n\nMějte prosím strpení, bude to chvíli trvat.")
+                .show {
+                    positiveButton(R.string.yes) {
+                        setPlayOff()
+                        disablePlayoffButton()
+                    }
+                    negativeButton()
+            }
+        }
     }
 
     private fun setPlayOff()
     {
-        val switch = findViewById<Switch>(R.id.account_boss_groups_open_playOff_switch)
-        switch.setOnCheckedChangeListener { _, isChecked ->
-            if(isChecked)
-            {
-                MaterialDialog(this)
-                    .title(text = "Opravdu chcete otevřít baráž?")
-                    .show {
-                        positiveButton(R.string.ok) { viewModel.setPlayOff(DateUtil.getWeekNumber(Date())) }
-                        negativeButton()
-                    }
-            }
+        val groups = viewModel.groups.value ?: emptyList()
+        val serviceIntent = Intent(this, SeasonFinisherService::class.java).apply {
+            putParcelableArrayListExtra(SeasonFinisherService.GROUPS_EXCEPT_PLAYOFF, ArrayList(groups))
         }
+        startService(serviceIntent)
     }
 
     override fun onDestroy()
     {
         super.onDestroy()
+        generatePlayOffButton.setOnClickListener(null)
+        recyclerView = null
+        adapter = null
     }
 
     private fun initViews()
     {
         progressBar = findViewById(R.id.account_boss_groups_progressBar)
-        setPlayOffInterval()
+        generatePlayOffButton = findViewById(R.id.account_boss_groups_playOff_generate)
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setPlayOffInterval()
+    private fun setPlayoffInterval(startDate: Date, endDate: Date)
     {
         val playOffInterval = findViewById<TextView>(R.id.account_boss_groups_open_playOff_text)
-        playOffInterval.text = "${Date().toMyString()} – ${DateUtil.getDateInFuture(14).toMyString()}"
+        playOffInterval.text = "${startDate.toMyString()} – ${endDate.toMyString()}"
     }
 
     private fun getGroups()
@@ -85,29 +125,7 @@ class ManageGroupsActivity : AbstractActivityWithRecyclerView()
         viewModel.getGroupsExceptPlayOff()
     }
 
-    private fun updateFields()
-    {
-        viewModel.getPlayOffWeek()
-    }
-
-    private fun setListeners()
-    {
-//        setWeek.setOnClickListener {
-//            val week = weekLayout.editText?.text.toString().trim()
-//            weekLayout.error = null
-//            viewModel.setPlayOff(week)
-//        }
-    }
-
-    private fun setObservers()
-    {
-//        viewModel.week.observe(this) { week ->
-//           if(week is InvalidWeek) weekLayout.error = week.errorMessage
-//            else weekLayout.editText?.setText((week as ValidWeek).self.toString())
-//        }
-    }
-
-    override fun setupRecycler()
+    private fun setupRecycler()
     {
         recyclerView = findViewById(R.id.account_boss_groups_recyclerView)
         recyclerView?.setHasFixedSize(true)
