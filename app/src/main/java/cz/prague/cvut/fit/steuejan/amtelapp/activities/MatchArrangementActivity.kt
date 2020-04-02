@@ -5,7 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
-import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
@@ -76,7 +77,9 @@ class MatchArrangementActivity : AbstractBaseActivity()
     private lateinit var editButton: FloatingActionButton
 
     private var matchInfoLayout: RelativeLayout? = null
+    private var sendMessagesLayout: RelativeLayout? = null
     private var progressBarLayout: FrameLayout? = null
+    private var messagesBarLayout: FrameLayout? = null
 
     private lateinit var callOpponent: ImageButton
     private lateinit var sendMessage: ImageButton
@@ -112,8 +115,12 @@ class MatchArrangementActivity : AbstractBaseActivity()
 
         addToCalendar = findViewById(R.id.match_arrangement_calendar)
         editButton = findViewById(R.id.match_arrangement_edit_button)
+
         progressBarLayout = findViewById(R.id.match_arrangement_progressBar)
+        messagesBarLayout = findViewById(R.id.match_arrangement_messages_progressBar)
+
         matchInfoLayout = findViewById(R.id.match_arrangement)
+        sendMessagesLayout = findViewById(R.id.match_arrangement_messages)
 
         callOpponent = findViewById(R.id.match_arrangement_call)
         sendMessage = findViewById(R.id.match_arrangement_messages_send)
@@ -143,15 +150,20 @@ class MatchArrangementActivity : AbstractBaseActivity()
         messagesRecyclerView = null
 
         progressBarLayout?.removeAllViews()
+        messagesBarLayout?.removeAllViews()
         matchInfoLayout?.removeAllViews()
+        sendMessagesLayout?.removeAllViews()
 
         progressBarLayout = null
+        messagesBarLayout = null
+        sendMessagesLayout = null
         matchInfoLayout = null
     }
 
     fun messageNotifier(position: Int)
     {
         messagesRecyclerView?.layoutManager?.scrollToPosition(position)
+        messagesBarLayout?.visibility = GONE
     }
 
     private fun getData()
@@ -168,8 +180,10 @@ class MatchArrangementActivity : AbstractBaseActivity()
             homeTeam = it.first
             awayTeam = it.second
 
-            progressBarLayout?.visibility = View.GONE
-            matchInfoLayout?.visibility = View.VISIBLE
+            progressBarLayout?.visibility = GONE
+            matchInfoLayout?.visibility = VISIBLE
+            sendMessagesLayout?.visibility = VISIBLE
+            messagesBarLayout?.visibility = VISIBLE
 
             viewModel.initPlace()
             populateFields()
@@ -190,7 +204,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
 
         if(currentRole == AuthManager.SignedIn.HOME_MANAGER)
         {
-            defaultEndGame.visibility = View.VISIBLE
+            defaultEndGame.visibility = VISIBLE
             if(match.defaultEndGameEdits <= 0) disableDefaultEndGame()
         }
 

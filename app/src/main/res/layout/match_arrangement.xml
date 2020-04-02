@@ -26,11 +26,10 @@
 
             <include layout="@layout/curve" />
 
-<!--            change visibility to visible-->
             <FrameLayout
                 android:id="@+id/match_arrangement_progressBar"
                 android:layout_width="match_parent"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_height="match_parent">
 
                 <ProgressBar
@@ -52,7 +51,6 @@
 
             </FrameLayout>
 
-            <!--            change visibility to gone-->
             <RelativeLayout
                 android:id="@+id/match_arrangement"
                 android:layout_width="match_parent"
@@ -66,7 +64,7 @@
                 android:paddingTop="8dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="16dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/match_arrangement_edit_button"
@@ -209,6 +207,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="@dimen/card_margin"
                 android:layout_marginEnd="@dimen/card_margin"
+                android:visibility="gone"
                 android:paddingTop="2dp"
                 android:paddingBottom="6dp"
                 android:layout_marginBottom="4dp">
@@ -232,6 +231,33 @@
                     android:background="@drawable/ic_send_blue_24dp" />
 
             </RelativeLayout>
+
+            <FrameLayout
+                android:id="@+id/match_arrangement_messages_progressBar"
+                android:layout_width="match_parent"
+                android:layout_below="@id/match_arrangement"
+                android:visibility="gone"
+                android:layout_above="@id/match_arrangement_messages"
+                android:layout_height="match_parent">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminateTint="@color/blue"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:max="100"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_marginTop="50dp"
+                    android:text="@string/amtel_opava"
+                    android:textColor="@color/blue"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </FrameLayout>
 
         </RelativeLayout>
 
