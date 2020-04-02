@@ -197,4 +197,5 @@
     <string name="winner_acronym">V</string>
     <string name="loser_acronym">P</string>
     <string name="actual_season">ACTUAL_SEASON</string>
+    <string name="messages">Zprávy</string>
 </resources>

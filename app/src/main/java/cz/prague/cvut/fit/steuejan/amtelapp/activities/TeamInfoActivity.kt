@@ -143,7 +143,6 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         val options = FirestorePagingOptions.Builder<Match>()
             .setLifecycleOwner(this)
             .setQuery(query, config, Match::class.java)
-            .setLifecycleOwner(this)
             .build()
 
         matchesAdapter = ShowTeamMatchesPagingAdapter(viewModel.mTeam ?: Team(id = "mucus"), options)
