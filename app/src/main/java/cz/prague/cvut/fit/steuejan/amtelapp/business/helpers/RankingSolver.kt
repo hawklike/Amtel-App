@@ -27,8 +27,8 @@ class RankingSolver(private val teams: List<Team>, private val year: Int)
         {
             RankingOrderBy.POINTS -> sortByPoints()
             RankingOrderBy.MATCHES -> teams.sortedByDescending { it.matchesPerYear[mYear] }
-            RankingOrderBy.WINS -> sortByPoints()
-            RankingOrderBy.LOSSES -> sortByPoints().reversed()
+            RankingOrderBy.WINS -> teams.sortedByDescending { it.winsPerYear[mYear] }
+            RankingOrderBy.LOSSES -> teams.sortedByDescending { it.lossesPerYear[mYear] }
             RankingOrderBy.POSITIVE_SETS -> teams.sortedByDescending { it.positiveSetsPerYear[mYear] }
             RankingOrderBy.NEGATIVE_SETS -> teams.sortedByDescending { it.negativeSetsPerYear[mYear] }
         }
