@@ -57,7 +57,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         }
     }
 
-    private fun prepareFinalGroupsIf(predicate: () -> Boolean)
+    private inline fun prepareFinalGroupsIf(predicate: () -> Boolean)
     {
         if(predicate.invoke())
         {
@@ -213,7 +213,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         }
     }
 
-    private suspend fun getGroupsWithSortedTeamsIf(predicate: () -> Boolean)
+    private suspend inline fun getGroupsWithSortedTeamsIf(predicate: () -> Boolean)
     {
         if(predicate.invoke())
         {
@@ -230,7 +230,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         }
     }
 
-    private suspend fun getGroupsIf(predicate: () -> Boolean)
+    private suspend inline fun getGroupsIf(predicate: () -> Boolean)
     {
         if(predicate.invoke())
         {

@@ -8,6 +8,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy.POINTS
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ class RankingFragmentVM : ViewModel()
 
     private var teamByPoints: List<Team> = emptyList()
 
-    var orderBy = RankingOrderBy.POINTS
+    var orderBy = POINTS
     private set
 
     private var mTeams: List<Team> = emptyList()
@@ -50,29 +51,13 @@ class RankingFragmentVM : ViewModel()
     {
         var sortedTeams: List<Team> = listOf()
         withContext(Default) {
-            if(teamByPoints.isEmpty() && (orderBy == RankingOrderBy.POINTS || orderBy == RankingOrderBy.WINS))
+            if(teamByPoints.isEmpty() && orderBy == POINTS)
             {
                 sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
                 teamByPoints = sortedTeams
             }
-            else if(teamByPoints.isNotEmpty() && (orderBy == RankingOrderBy.POINTS || orderBy == RankingOrderBy.WINS))
-            {
-                sortedTeams = teamByPoints
-            }
-            else if(teamByPoints.isEmpty() && orderBy == RankingOrderBy.LOSSES)
-            {
-                sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
-                teamByPoints = sortedTeams.reversed()
-            }
-            else if(teamByPoints.isNotEmpty() && orderBy == RankingOrderBy.LOSSES)
-            {
-                sortedTeams = teamByPoints.reversed()
-            }
-            else
-            {
-                sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
-            }
-
+            else if(teamByPoints.isNotEmpty() && orderBy == POINTS) sortedTeams = teamByPoints
+            else sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
 
             if(reverse) sortedTeams = sortedTeams.reversed()
         }

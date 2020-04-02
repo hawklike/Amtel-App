@@ -10,10 +10,13 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MessageManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.*
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.MatchResult
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
@@ -80,6 +83,13 @@ class MatchArrangementActivityVM : ViewModel()
         }
     }
 
+    fun sendMessage(fullname: String, messageText: String, matchId: String?, private: Boolean)
+    {
+        viewModelScope.launch {
+            MessageManager.addMessage(Message(fullname, messageText, AuthManager.currentUser?.uid ?: ""), matchId, private)
+        }
+    }
+
     fun setDialogDate(date: Editable): Calendar?
     {
         return if(date.isEmpty()) null
@@ -119,6 +129,19 @@ class MatchArrangementActivityVM : ViewModel()
         match.value?.place ?: viewModelScope.launch {
             MatchManager.updateMatch(match.value?.id, mapOf("place" to teams.value?.first?.place))
         }
+    }
+
+    fun countTotalScore(match: Match): MatchResult
+    {
+        var homeScore = 0
+        var awayScore = 0
+
+        match.rounds.forEach {
+            if(it.homeWinner == true) homeScore++
+            else if(it.homeWinner == false) awayScore++
+        }
+
+        return MatchResult(homeScore, awayScore)
     }
 
     private fun sendEmail(dateAndTime: Date? = null, place: String? = null)
@@ -211,19 +234,6 @@ class MatchArrangementActivityVM : ViewModel()
                 it.awaySets = 2
             }
         }
-    }
-
-    fun countTotalScore(match: Match): MatchResult
-    {
-        var homeScore = 0
-        var awayScore = 0
-
-        match.rounds.forEach {
-            if(it.homeWinner == true) homeScore++
-            else if(it.homeWinner == false) awayScore++
-        }
-
-        return MatchResult(homeScore, awayScore)
     }
 
 }

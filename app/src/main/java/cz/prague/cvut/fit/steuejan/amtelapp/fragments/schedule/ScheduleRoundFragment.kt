@@ -226,6 +226,10 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
         val intent = Intent(activity!!, MatchArrangementActivity::class.java).apply {
             putExtra(MatchArrangementActivity.MATCH, match)
             putExtra(MatchArrangementActivity.WEEK, week)
+            with(user) {
+                if(this is SignedUser)
+                    putExtra(MatchArrangementActivity.USER_NAME, "${self.name} ${self.surname}")
+            }
         }
         startActivity(intent)
     }

@@ -1,28 +1,34 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
-import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.datetime.dateTimePicker
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowMessagesFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MessageManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
@@ -56,6 +62,8 @@ class MatchArrangementActivity : AbstractBaseActivity()
             else homeManager
         }
 
+    private lateinit var userName: String
+
     private lateinit var homeName: TextView
     private lateinit var awayName: TextView
     private lateinit var score: TextView
@@ -69,10 +77,15 @@ class MatchArrangementActivity : AbstractBaseActivity()
     private lateinit var editButton: FloatingActionButton
 
     private var matchInfoLayout: RelativeLayout? = null
+    private var sendMessagesLayout: RelativeLayout? = null
     private var progressBarLayout: FrameLayout? = null
+    private var messagesBarLayout: FrameLayout? = null
 
-    private lateinit var sendEmailOpponent: RelativeLayout
-    private lateinit var callOpponent: RelativeLayout
+    private lateinit var callOpponent: ImageButton
+    private lateinit var sendMessage: ImageButton
+
+    private var messagesRecyclerView: RecyclerView? = null
+    private var messagesAdapter: ShowMessagesFirestoreAdapter? = null
 
     private var activityStarted: Boolean = false
 
@@ -80,6 +93,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
     {
         const val MATCH = "match"
         const val WEEK = "week"
+        const val USER_NAME = "username"
         const val MATCH_RESULT_CODE = 1
     }
 
@@ -101,11 +115,15 @@ class MatchArrangementActivity : AbstractBaseActivity()
 
         addToCalendar = findViewById(R.id.match_arrangement_calendar)
         editButton = findViewById(R.id.match_arrangement_edit_button)
-        progressBarLayout = findViewById(R.id.match_arrangement_progressBar)
-        matchInfoLayout = findViewById(R.id.match_arrangement)
 
-        sendEmailOpponent = findViewById(R.id.match_arrangement_send_email)
+        progressBarLayout = findViewById(R.id.match_arrangement_progressBar)
+        messagesBarLayout = findViewById(R.id.match_arrangement_messages_progressBar)
+
+        matchInfoLayout = findViewById(R.id.match_arrangement)
+        sendMessagesLayout = findViewById(R.id.match_arrangement_messages)
+
         callOpponent = findViewById(R.id.match_arrangement_call)
+        sendMessage = findViewById(R.id.match_arrangement_messages_send)
 
         getData()
         setListeners()
@@ -120,18 +138,32 @@ class MatchArrangementActivity : AbstractBaseActivity()
     override fun onDestroy()
     {
         super.onDestroy()
-        sendEmailOpponent.setOnClickListener(null)
         callOpponent.setOnClickListener(null)
+        sendMessage.setOnClickListener(null)
         defaultEndGame.setOnClickListener(null)
         addToCalendar.setOnClickListener(null)
         homeName.setOnClickListener(null)
         awayName.setOnLongClickListener(null)
 
+        messagesRecyclerView?.adapter = null
+        messagesAdapter = null
+        messagesRecyclerView = null
+
         progressBarLayout?.removeAllViews()
+        messagesBarLayout?.removeAllViews()
         matchInfoLayout?.removeAllViews()
+        sendMessagesLayout?.removeAllViews()
 
         progressBarLayout = null
+        messagesBarLayout = null
+        sendMessagesLayout = null
         matchInfoLayout = null
+    }
+
+    fun messageNotifier(position: Int)
+    {
+        messagesRecyclerView?.layoutManager?.scrollToPosition(position)
+        messagesBarLayout?.visibility = GONE
     }
 
     private fun getData()
@@ -139,6 +171,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
         intent.extras?.let { bundle ->
             match = bundle.getParcelable(MATCH)!!
             week = bundle.getParcelable<ValidWeek?>(WEEK)?.let { it } ?: InvalidWeek()
+            userName = bundle.getString(USER_NAME, "anonym")
         }
 
         viewModel.setMatch(match)
@@ -147,10 +180,10 @@ class MatchArrangementActivity : AbstractBaseActivity()
             homeTeam = it.first
             awayTeam = it.second
 
-            progressBarLayout?.visibility = View.GONE
-            matchInfoLayout?.visibility = View.VISIBLE
-            sendEmailOpponent.visibility = View.VISIBLE
-            callOpponent.visibility = View.VISIBLE
+            progressBarLayout?.visibility = GONE
+            matchInfoLayout?.visibility = VISIBLE
+            sendMessagesLayout?.visibility = VISIBLE
+            messagesBarLayout?.visibility = VISIBLE
 
             viewModel.initPlace()
             populateFields()
@@ -171,9 +204,11 @@ class MatchArrangementActivity : AbstractBaseActivity()
 
         if(currentRole == AuthManager.SignedIn.HOME_MANAGER)
         {
-            defaultEndGame.visibility = View.VISIBLE
+            defaultEndGame.visibility = VISIBLE
             if(match.defaultEndGameEdits <= 0) disableDefaultEndGame()
         }
+
+        showMessages()
     }
 
     private fun setListeners()
@@ -181,7 +216,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
         editButtonListener()
         changePlaceListener()
         changeDateListener()
-        sendEmail()
+        sendMessage()
         call()
         defaultEndGame()
         addToCalendar()
@@ -224,7 +259,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
     {
         val startMillis = match.dateAndTime?.toCalendar()?.run {
             timeInMillis
-        } ?: run { toast("Nebyl nalezen datum a čas utkání."); return }
+        } ?: run { toast("Nebylo nalezeno datum a čas utkání."); return }
 
         val endMillis = match.dateAndTime?.toCalendar()?.run {
             this.add(Calendar.HOUR_OF_DAY, 3)
@@ -280,19 +315,32 @@ class MatchArrangementActivity : AbstractBaseActivity()
         }
     }
 
-    private fun sendEmail()
+    private fun sendMessage()
     {
-        sendEmailOpponent.setOnClickListener {
-            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                type = "message/rfc822"
-                data = Uri.parse("mailto:")
-                putExtra(Intent.EXTRA_EMAIL, arrayOf(opponent?.email ?: ""))
-                putExtra(Intent.EXTRA_SUBJECT, "Zápas ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})")
-                putExtra(Intent.EXTRA_TEXT, "")
-            }
+        val messageField = findViewById<EditText>(R.id.match_arrangement_messages_text)
+        sendMessage.setOnClickListener {
+            val messageText = messageField.text.toString().trim()
+            messageField.text.clear()
+            viewModel.sendMessage(userName, messageText, match.id, true)
+        }
+    }
 
-            try { startActivity(Intent.createChooser(intent, "Poslat email" + "...")) }
-            catch(ex: ActivityNotFoundException) { toast("Nemáte naistalovaný emailový klient.") }
+    private fun showMessages()
+    {
+        messagesRecyclerView = findViewById(R.id.match_arrangement_messages_recyclerView)
+        messagesRecyclerView?.setHasFixedSize(true)
+        messagesRecyclerView?.layoutManager = LinearLayoutManager(this)
+
+        match.id?.let {
+            val query = MessageManager.getMessages(it, true)
+
+            val options = FirestoreRecyclerOptions.Builder<Message>()
+                .setQuery(query, Message::class.java)
+                .setLifecycleOwner(this)
+                .build()
+
+            messagesAdapter = ShowMessagesFirestoreAdapter(this, options)
+            messagesRecyclerView?.adapter = messagesAdapter
         }
     }
 
