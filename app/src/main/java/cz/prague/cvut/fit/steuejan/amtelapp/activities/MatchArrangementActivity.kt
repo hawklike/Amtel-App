@@ -40,7 +40,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchArrangementActivityVM
 import java.util.*
 
-class MatchArrangementActivity : AbstractBaseActivity()
+class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAdapter.DataLoadedListener
 {
     private val viewModel by viewModels<MatchArrangementActivityVM>()
 
@@ -145,6 +145,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
         homeName.setOnClickListener(null)
         awayName.setOnLongClickListener(null)
 
+        messagesAdapter?.dataLoadedListener = null
         messagesRecyclerView?.adapter = null
         messagesAdapter = null
         messagesRecyclerView = null
@@ -160,7 +161,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
         matchInfoLayout = null
     }
 
-    fun messageNotifier(position: Int)
+    override fun onLoaded(position: Int)
     {
         messagesRecyclerView?.layoutManager?.scrollToPosition(position)
         messagesBarLayout?.visibility = GONE
@@ -339,7 +340,8 @@ class MatchArrangementActivity : AbstractBaseActivity()
                 .setLifecycleOwner(this)
                 .build()
 
-            messagesAdapter = ShowMessagesFirestoreAdapter(this, options)
+            messagesAdapter = ShowMessagesFirestoreAdapter(options)
+            messagesAdapter?.dataLoadedListener = this
             messagesRecyclerView?.adapter = messagesAdapter
         }
     }

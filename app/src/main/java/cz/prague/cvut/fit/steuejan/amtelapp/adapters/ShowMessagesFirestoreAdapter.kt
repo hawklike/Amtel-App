@@ -1,6 +1,5 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -13,17 +12,19 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchArrangementActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Message
 
 
-class ShowMessagesFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<Message>)
+class ShowMessagesFirestoreAdapter(options: FirestoreRecyclerOptions<Message>)
     : FirestoreRecyclerAdapter<Message, ShowMessagesFirestoreAdapter.ViewHolder>(options)
 {
+    var dataLoadedListener: DataLoadedListener? = null
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
         val message: TextView = itemView.findViewById(R.id.message_text)
@@ -65,10 +66,7 @@ class ShowMessagesFirestoreAdapter(private val context: Context, options: Firest
 
     override fun onDataChanged()
     {
-        (context as? Activity)?.let {
-            if(it is MatchArrangementActivity)
-                it.messageNotifier(itemCount - 1)
-        }
+        dataLoadedListener?.onLoaded(itemCount - 1)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, message: Message)
@@ -83,5 +81,10 @@ class ShowMessagesFirestoreAdapter(private val context: Context, options: Firest
                     Html.fromHtml("<b>${message.fullname}:</b> ${message.messageText}")
             }
         }
+    }
+
+    interface DataLoadedListener
+    {
+        fun onLoaded(position: Int)
     }
 }
