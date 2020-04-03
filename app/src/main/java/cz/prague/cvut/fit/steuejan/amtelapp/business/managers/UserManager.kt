@@ -4,21 +4,18 @@ import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
-import cz.prague.cvut.fit.steuejan.amtelapp.data.database.DatabaseHelper
-import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
-import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 object UserManager
 {
-    //TODO: add merged name and surname in english transcription [TEST IT!!!]
-    suspend fun addUser(user: User): User? = withContext(IO)
+    suspend fun setUser(user: User): User? = withContext(IO)
     {
-        val (englishName, englishSurname) = DatabaseHelper.prepareCzechOrdering(user.name, user.surname)
+        val (englishName, englishSurname) = StringUtil.prepareCzechOrdering(user.name, user.surname)
         user.englishName = englishName
         user.englishSurname = englishSurname
 
@@ -55,10 +52,9 @@ object UserManager
     {
         return@withContext try
         {
-            val querySnapshot = UserDAO().find(field, value)
-            val documents = querySnapshot.toObjects<User>()
-            Log.i(TAG, "findUsers(): $documents where $field is $value found successfully")
-            documents
+            val users = UserDAO().find(field, value).toObjects<User>()
+            Log.i(TAG, "findUsers(): $users where $field is $value found successfully")
+            users
         }
         catch(ex: Exception)
         {
@@ -89,7 +85,7 @@ object UserManager
         return@withContext try
         {
             UserDAO().delete(userId)
-            Log.i(TAG, "deleteUser(): user with id $userId successfully deleted with")
+            Log.i(TAG, "deleteUser(): user with id $userId successfully deleted")
             true
         }
         catch(ex: Exception)
@@ -101,28 +97,11 @@ object UserManager
 
     fun retrieveAllUsers(orderBy: UserOrderBy = UserOrderBy.SURNAME): Query
     {
-        val dao = UserDAO()
-        return when(orderBy)
-        {
-            UserOrderBy.NAME -> dao.retrieveAllUsers("englishName")
-            UserOrderBy.SURNAME -> dao.retrieveAllUsers("englishSurname")
-            UserOrderBy.TEAM -> dao.retrieveAllUsers("teamName")
-            UserOrderBy.EMAIL -> dao.retrieveAllUsers("email")
-            UserOrderBy.SEX -> dao.retrieveAllUsers("sex")
+        var query: Query? = null
+        UserOrderBy.values().forEach {
+            if(orderBy == it) query = UserDAO().retrieveAllUsers(it.toString())
         }
-    }
-
-    suspend fun addMatch(match: Match, user: User): User? = withContext(Default)
-    {
-        val matchesId = user.matchesId.toMutableSet()
-        matchesId.add(match.id!!)
-        user.matchesId = matchesId.toList()
-
-        val matches = user.matches.toMutableSet()
-        matches.add(match)
-        user.matches = matches.toList()
-
-        addUser(user)
+        return query!!
     }
 
     private const val TAG = "UserManager"

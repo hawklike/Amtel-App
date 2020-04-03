@@ -21,6 +21,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.UsersAdapterVM
 
+//TODO: change to pagination adapter
 class ShowUsersFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<User>)
     : FirestoreRecyclerAdapter<User, ShowUsersFirestoreAdapter.ViewHolder>(options)
 {

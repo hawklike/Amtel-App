@@ -1,13 +1,14 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Day
+import org.joda.time.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
 object DateUtil
 {
-    fun validateDate(date: String, dateFormat: String = "dd.MM.yyyy"): Boolean
+    fun validateDate(date: String, dateFormat: String = DATE_FORMAT): Boolean
     {
         return try
         {
@@ -20,19 +21,11 @@ object DateUtil
     }
 
     @Throws(Exception::class)
-    fun validateBirthdate(date: String, dateFormat: String = "dd.MM.yyyy"): Boolean
+    fun validateBirthdate(date: String, dateFormat: String = DATE_FORMAT): Boolean
     {
         if(!validateDate(date, dateFormat)) throw Exception("Invalid date")
-        return Date().toMyString(dateFormat).toDate(dateFormat) >= date.toDate(dateFormat)
+        return DateTime(Date()) >= DateTime(date.toDate(dateFormat))
     }
-
-    val actualYear: Int
-        get()
-        {
-            val calendar = GregorianCalendar()
-            calendar.time = Date()
-            return calendar[Calendar.YEAR]
-        }
 
     fun getWeekDate(week: Int): List<Date>
     {
@@ -48,6 +41,14 @@ object DateUtil
         }
     }
 
+    fun getWeekNumber(date: Date): Int
+    {
+        val cal = Calendar.getInstance()
+        cal[Calendar.DAY_OF_WEEK] = Calendar.MONDAY
+        cal.time = date
+        return cal[Calendar.WEEK_OF_YEAR]
+    }
+
     fun findDate(homeDays: List<Day>, awayDays: List<Day>, range: List<Date>): Date?
     {
         val days = homeDays.intersect(awayDays)
@@ -60,9 +61,57 @@ object DateUtil
 
         return range[days.first().ordinal]
     }
+
+    fun getRemainingDaysUntil(week: Int): Int
+    {
+        val lastDay = DateTime(getWeekDate(week).last().time).withHourOfDay(23).withMinuteOfHour(59)
+        val today = DateTime()
+        val remainingDays = Days.daysBetween(today, lastDay).days
+        return if(remainingDays < 0) 0 else remainingDays
+    }
+
+    fun getRemainingDaysUntil(date: Date): Int
+    {
+        val converted = DateTime(date).withHourOfDay(23).withMinuteOfHour(59)
+        val today = DateTime()
+        val remainingDays = Days.daysBetween(today, converted).days
+        return if(remainingDays < 0) 0 else remainingDays
+    }
+
+    fun compareDates(first: Date?, second: Date?): Int
+            = DateTimeComparator.getDateOnlyInstance().compare(DateTime(first), DateTime(second))
+
+    fun getAge(birthdate: Date): Int
+            = Years.yearsBetween(LocalDate(birthdate), LocalDate()).years
+
+    fun getDateInFuture(days: Int, startDate: Date? = null): Date
+    {
+        val cal = Calendar.getInstance()
+        cal.time = startDate?.let { it } ?: Date()
+        cal.add(Calendar.DATE, days)
+        return cal.time
+    }
+
+    fun isDateBetween(date: Date?, startDate: Date?, endDate: Date?): Boolean
+    {
+        return if(compareDates(startDate, date) <= 0) compareDates(date, endDate) <= 0
+        else false
+    }
+
+    const val DATE_FORMAT = "dd.MM.yyyy"
+
+    var actualSeason: String = "0"
+
+    private val actualYear: Int
+        get()
+        {
+            val calendar = GregorianCalendar()
+            calendar.time = Date()
+            return calendar[Calendar.YEAR]
+        }
 }
 
-fun Date.toMyString(format: String = "dd.MM.yyyy"): String
+fun Date.toMyString(format: String = DateUtil.DATE_FORMAT): String
 {
     val formatter = SimpleDateFormat(format, Locale.getDefault())
     return formatter.format(this)
@@ -77,18 +126,25 @@ fun Date.setTime(hours: Int, minutes: Int): Date
     return cal.time
 }
 
-fun Calendar.toMyString(format: String = "dd.MM.yyyy"): String
+fun Date.toCalendar(): Calendar
+{
+    val cal = Calendar.getInstance()
+    cal.time = this
+    return cal
+}
+
+fun Calendar.toMyString(format: String = DateUtil.DATE_FORMAT): String
 {
     val formatter = SimpleDateFormat(format, Locale.getDefault())
     return formatter.format(this.time)
 }
 
-fun String.toDate(dateFormat: String = "dd.MM.yyyy"): Date
+fun String.toDate(dateFormat: String = DateUtil.DATE_FORMAT): Date
 {
     return SimpleDateFormat(dateFormat, Locale.getDefault()).parse(this)
 }
 
-fun String.toCalendar(dateFormat: String = "dd.MM.yyyy"): Calendar
+fun String.toCalendar(dateFormat: String = DateUtil.DATE_FORMAT): Calendar
 {
     return Calendar.getInstance().apply {
         time = this@toCalendar.toDate(dateFormat)

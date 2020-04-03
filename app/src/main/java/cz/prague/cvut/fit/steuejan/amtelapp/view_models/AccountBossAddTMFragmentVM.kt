@@ -39,7 +39,7 @@ class AccountBossAddTMFragmentVM : ViewModel()
                 val (name, surname, email) = credentials
                 val user = User(uid, name, surname, email, role = UserRole.TEAM_MANAGER.toString())
 
-                UserManager.addUser(user)?.let {
+                UserManager.setUser(user)?.let {
                     EmailSender.sendEmail(
                         email,
                         App.context.getString(R.string.verificationEmail_subject),

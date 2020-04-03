@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.match
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMatchActivityFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.services.CountMatchScoreService
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
@@ -119,6 +121,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
         overviewLayout = view.findViewById(R.id.match_input_overview)
         resultsLayout = view.findViewById(R.id.match_input_results)
+
+        inputResult.text = "Zapsat $round. zápas"
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -246,7 +250,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             thirdAway,
             homePlayersText,
             awayPlayersText,
-            match.group == getString(R.string.fifty_plus_group)
+            match.groupName == getString(R.string.fifty_plus_group)
         )
     }
 
@@ -270,13 +274,24 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private fun isMatchAdded()
     {
         viewModel.matchAdded.observe(viewLifecycleOwner) {
+            countMatchScore()
             val result = MatchManager.getResults(match.rounds[round - 1])
             sets.text = result.sets
             games.text = result.games
             disableInputButtonIf { !isHeadOfLeague && match.edits[round.toString()] == 0 }
             viewModel.sendEmail(homeTeam, awayTeam, sets.text, games.text, userId)
-            toast(getString(R.string.match_added_success))
+            matchViewModel.setPage(round)
         }
+    }
+
+    private fun countMatchScore()
+    {
+        val serviceIntent = Intent(activity!!, CountMatchScoreService::class.java).apply {
+            putExtra(CountMatchScoreService.HOME_TEAM, homeTeam)
+            putExtra(CountMatchScoreService.AWAY_TEAM, awayTeam)
+            putExtra(CountMatchScoreService.MATCH, match)
+        }
+        activity!!.startService(serviceIntent)
     }
 
     private fun handleDialogs()
@@ -385,7 +400,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             if(round == 3) listItemMultiChoice(this, players, editText)
             else
             {
-                if(round == 2 && match.group == getString(R.string.fifty_plus_group)) listItemMultiChoice(this, players, editText)
+                if(round == 2 && match.groupName == getString(R.string.fifty_plus_group)) listItemMultiChoice(this, players, editText)
                 else listItemSingleChoice(this, players, editText)
             }
             positiveButton(R.string.ok)
@@ -428,8 +443,9 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     {
         if(predicate())
         {
-            inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.veryVeryLightGrey))
+            inputResult.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.middleLightGrey))
             inputResult.isEnabled = false
+            inputResult.elevation = 0.0F
             homePlayers.isEnabled = false
             awayPlayers.isEnabled = false
             firstSetHome.isEnabled = false

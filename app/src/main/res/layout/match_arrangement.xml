@@ -11,8 +11,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/toolbar_gradient">
+        android:layout_height="wrap_content">
 
         <include
             layout="@layout/toolbar"
@@ -25,9 +24,12 @@
             android:background="@color/veryVeryLightGrey"
             android:layout_below="@id/toolbar">
 
+            <include layout="@layout/curve" />
+
             <FrameLayout
                 android:id="@+id/match_arrangement_progressBar"
                 android:layout_width="match_parent"
+                android:visibility="visible"
                 android:layout_height="match_parent">
 
                 <ProgressBar
@@ -145,43 +147,107 @@
                     app:errorEnabled="true"
                     android:importantForAutofill="no" />
 
+                <TextView
+                    android:id="@+id/match_arrangement_default"
+                    style="@style/TextViewInClickableLayout"
+                    android:layout_below="@id/match_arrangement_change_date"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="0dp"
+                    android:gravity="center"
+                    android:text="@string/choose_default_win_lose"
+                    android:textColor="@color/red"
+                    android:textSize="13sp"
+                    android:visibility="gone"/>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/match_arrangement_away"
+                    android:layout_alignBottom="@+id/match_arrangement_change_date"
+                    android:layout_marginTop="8dp"
+                    android:layout_toEndOf="@id/match_arrangement_change_place">
+
+                    <ImageButton
+                        android:id="@+id/match_arrangement_calendar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_gravity="top|center"
+                        android:background="@drawable/ic_date_range_blue_24dp" />
+
+                    <ImageButton
+                        android:id="@+id/match_arrangement_call"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:layout_gravity="bottom|center"
+                        android:background="@drawable/ic_phone_blue_24dp" />
+
+                </FrameLayout>
+
             </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/match_arrangement_send_email"
-                style="@style/CardRelativeLayout"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/match_arrangement_messages_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginStart="@dimen/card_margin"
+                android:layout_marginEnd="@dimen/card_margin"
+                android:layout_above="@id/match_arrangement_messages"
                 android:layout_below="@id/match_arrangement"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/match_arrangement_send_email_text"
-                    style="@style/TextViewInClickableLayout"
-                    android:text="@string/write_email" />
-
-                <ImageView
-                    android:id="@+id/match_arrangement_send_email_button"
-                    style="@style/ImageViewInClickableLayout"
-                    android:background="@drawable/ic_email_blue_24dp" />
-
-            </RelativeLayout>
+                />
 
             <RelativeLayout
-                android:id="@+id/match_arrangement_call"
-                style="@style/CardRelativeLayout"
-                android:layout_below="@id/match_arrangement_send_email"
-                android:visibility="gone">
+                android:id="@+id/match_arrangement_messages"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="@dimen/card_margin"
+                android:layout_marginEnd="@dimen/card_margin"
+                android:visibility="gone"
+                android:paddingTop="2dp"
+                android:paddingBottom="6dp"
+                android:layout_marginBottom="4dp">
 
-                <TextView
-                    android:id="@+id/match_arrangement_call_text"
-                    style="@style/TextViewInClickableLayout"
-                    android:text="@string/call" />
+                <EditText
+                    android:id="@+id/match_arrangement_messages_text"
+                    style="@style/TextInputEditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_toStartOf="@id/match_arrangement_messages_send"
+                    android:hint="Zde napište zprávu..."
+                    android:maxLines="4" />
 
-                <ImageView
-                    android:id="@+id/match_arrangement_call_button"
-                    style="@style/ImageViewInClickableLayout"
-                    android:background="@drawable/ic_phone_blue_24dp" />
+                <ImageButton
+                    android:id="@+id/match_arrangement_messages_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/ic_send_blue_24dp" />
 
             </RelativeLayout>
+
+            <FrameLayout
+                android:id="@+id/match_arrangement_messages_progressBar"
+                android:layout_width="match_parent"
+                android:layout_below="@id/match_arrangement"
+                android:visibility="gone"
+                android:layout_above="@id/match_arrangement_messages"
+                android:layout_height="match_parent">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminateTint="@color/blue"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:max="100"/>
+
+            </FrameLayout>
 
         </RelativeLayout>
 

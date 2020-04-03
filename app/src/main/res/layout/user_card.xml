@@ -8,18 +8,18 @@
         android:layout_marginTop="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_delete_blue_24dp"
+        android:background="@drawable/ic_delete_red_24dp"
         android:layout_alignParentEnd="true" />
 
     <ImageView
         android:id="@+id/user_card_edit"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:layout_marginEnd="36dp"
         android:background="@drawable/ic_edit_blue_24dp"
-        android:layout_below="@id/user_card_delete"
         android:layout_alignParentEnd="true" />
 
     <TextView
@@ -29,7 +29,7 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:layout_marginEnd="16dp"
-        android:layout_toStartOf="@id/user_card_delete"
+        android:layout_toStartOf="@id/user_card_edit"
         android:text="Marek Navratil"
         android:textColor="@color/darkGrey"
         android:textSize="16sp" />
@@ -67,7 +67,7 @@
         android:layout_below="@id/user_card_email"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="1.2.1996"
+        android:text="@string/birthdate_unknown"
         android:textColor="@color/darkGrey"
         android:textSize="12sp" />
 

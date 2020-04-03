@@ -8,8 +8,8 @@ enum class UserOrderBy
     {
         return when(this)
         {
-            NAME -> "name"
-            SURNAME -> "surname"
+            NAME -> "englishName"
+            SURNAME -> "englishSurname"
             TEAM -> "teamName"
             EMAIL -> "email"
             SEX -> "sex"

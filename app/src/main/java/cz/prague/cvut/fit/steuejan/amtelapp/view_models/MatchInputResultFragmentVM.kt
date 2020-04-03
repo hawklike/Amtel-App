@@ -9,7 +9,6 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.removeWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
@@ -102,10 +101,6 @@ class MatchInputResultFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-
-    //TODO: add match to players
-    //TODO: add match to teams
-
     /**
      * Call this method before inputResult() method
      */
@@ -155,12 +150,12 @@ class MatchInputResultFragmentVM : ViewModel()
             if(calculateScore(match, home1, away1, home2, away2, home3, away3, ignoreTie))
             {
                 val (homeUsers, awayUsers) = parsePlayers(homePlayers, awayPlayers)
+                addPlayersToMatch(homeUsers, awayUsers)
                 if(!isHeadOfLeague) match.edits[round.toString()] = match.edits[round.toString()]!! - 1
                 if(!isReport)
                 {
-                    MatchManager.addMatch(match)
+                    MatchManager.setMatch(match)
                     _matchAdded.value = match
-                    updatePlayers(homeUsers, awayUsers)
                 }
                 else _isReported.value = match
             }
@@ -180,8 +175,7 @@ class MatchInputResultFragmentVM : ViewModel()
         homePlayersList.forEach { user ->
             val email = user.removeWhitespaces().split(EM_DASH).last()
             homePlayers.find { it.email == email }?.let {
-                round.homePlayers.add(Player(it.name, it.surname, it.email, it.birthdate, it.sex))
-                round.homePlayersId.add(it.id!!)
+                round.homePlayers.add(Player(it.id!!, it.name, it.surname, it.email, it.birthdate, it.sex, true))
                 homeUsers.add(it)
             }
         }
@@ -189,8 +183,7 @@ class MatchInputResultFragmentVM : ViewModel()
         awayPlayersList.forEach { user ->
             val email = user.removeWhitespaces().split(EM_DASH).last()
             awayPlayers.find { it.email == email }?.let {
-                round.awayPlayers.add(Player(it.name, it.surname, it.email, it.birthdate, it.sex))
-                round.awayPlayersId.add(it.id!!)
+                round.awayPlayers.add(Player(it.id!!, it.name, it.surname, it.email, it.birthdate, it.sex, false))
                 awayUsers.add(it)
             }
         }
@@ -198,16 +191,31 @@ class MatchInputResultFragmentVM : ViewModel()
         return Pair(homeUsers, awayUsers)
     }
 
-    private suspend fun updatePlayers(homePlayers: List<User>, awayPlayers: List<User>)
+    private fun addPlayersToMatch(homePlayers: List<User>, awayPlayers: List<User>)
     {
-        homePlayers.forEach {user ->
-            UserManager.addMatch(match, user)
-        }
+        when(round)
+        {
+            1 -> {
+                match.usersId[0] = homePlayers.first().id
+                match.usersId[1] = awayPlayers.first().id
+            }
 
-        awayPlayers.forEach {user ->
-            UserManager.addMatch(match, user)
+            2 -> {
+                match.usersId[2] = homePlayers.first().id
+                match.usersId[3] = homePlayers.last().id
+                match.usersId[4] = awayPlayers.first().id
+                match.usersId[5] = awayPlayers.last().id
+            }
+
+            3 -> {
+                match.usersId[6] = homePlayers.first().id
+                match.usersId[7] = homePlayers.last().id
+                match.usersId[8] = awayPlayers.first().id
+                match.usersId[9] = awayPlayers.last().id
+            }
         }
     }
+
 
     private fun calculateScore(match: Match, home1: Int, away1: Int, home2: Int, away2: Int, home3: Int?, away3: Int?, ignoreTie: Boolean): Boolean
     {
@@ -247,6 +255,7 @@ class MatchInputResultFragmentVM : ViewModel()
         {
             homeSets > awaySets -> round.homeWinner = true
             homeSets < awaySets -> round.homeWinner = false
+            else -> round.homeWinner = null
         }
     }
 
@@ -307,7 +316,7 @@ class MatchInputResultFragmentVM : ViewModel()
             when(user)
             {
                 homeTeam.tmId -> {
-                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})"
+                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
 
                     val message = String.format(
                         context.getString(R.string.match_input_email),
@@ -327,7 +336,7 @@ class MatchInputResultFragmentVM : ViewModel()
                 }
 
                 awayTeam.tmId -> {
-                    val subject = "Byla podána námitka k výsledku $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})"
+                    val subject = "Byla podána námitka k výsledku $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
 
                     val message = """
                     Dobrý den,
@@ -348,7 +357,7 @@ class MatchInputResultFragmentVM : ViewModel()
                 }
 
                 else -> {
-                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.group})"
+                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
 
                     val message = String.format(
                         context.getString(R.string.match_input_email_headOfLeague),

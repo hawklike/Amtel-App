@@ -1,21 +1,17 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager.auth
+import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AbstractBaseActivityVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
@@ -29,7 +25,7 @@ import kotlin.coroutines.CoroutineContext
 abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
 {
     private val logoutIcon: ImageButton by lazy { findViewById<ImageButton>(R.id.toolbar_logout) }
-    protected val baseActivityVM by viewModels<AbstractBaseActivityVM>()
+    val baseActivityVM by viewModels<AbstractBaseActivityVM>()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job + handler
@@ -46,18 +42,6 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
         setSupportActionBar(toolbar)
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleFont)
         handleLogout()
-    }
-
-    /**
-     * The idea is to make transparent status bar and setting a background to the whole window,
-     * which will also cover the status bar in the same background.
-     */
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    fun backgroundColor(window: Window)
-    {
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = Color.TRANSPARENT
-        window.setBackgroundDrawableResource(R.drawable.toolbar_gradient)
     }
 
     private fun handleLogout()
@@ -94,6 +78,7 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
             isUserLoggedIn(NoUser)
             setUser(null)
             setDrawerSelectedPosition(0)
+            setTeam(NoTeam)
         }
 
         baseActivityVM.setLogoutIcon(false)

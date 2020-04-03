@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -28,7 +29,7 @@ class LoginFragment : AbstractMainActivityFragment()
     private lateinit var passwordLayout: TextInputLayout
     private lateinit var checkButton: Button
 
-    private lateinit var lostPassword: RelativeLayout
+    private lateinit var lostPassword: TextView
 
     private var loginLayout: RelativeLayout? = null
 
@@ -58,7 +59,7 @@ class LoginFragment : AbstractMainActivityFragment()
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
-        setToolbarTitle(AuthManager.profileDrawerOption)
+        setToolbarTitle(AuthManager.profileDrawerOptionMenu)
         setListeners()
         setObservers()
     }
@@ -66,6 +67,8 @@ class LoginFragment : AbstractMainActivityFragment()
     override fun onDestroyView()
     {
         super.onDestroyView()
+        checkButton.setOnClickListener(null)
+        lostPassword.setOnClickListener(null)
         loginLayout?.removeAllViews()
         loginLayout = null
     }
@@ -80,6 +83,24 @@ class LoginFragment : AbstractMainActivityFragment()
             loading(true)
             //TODO: change back to password
             viewModel.loginUser(email, "123456")
+        }
+
+        lostPassword.setOnClickListener {
+            val email = emailLayout.editText!!.text.toString().trim()
+            MaterialDialog(activity!!)
+                .title(R.string.lost_password_title)
+                .show {
+                    if(email.isNotEmpty())
+                    {
+                        message(text = String.format(getString(R.string.reset_email_message), email))
+                        positiveButton(R.string.ok) { AuthManager.sendResetPassword(email) }
+                    }
+                    else
+                    {
+                        message(R.string.empty_email_message)
+                        positiveButton(R.string.ok)
+                    }
+                }
         }
     }
 

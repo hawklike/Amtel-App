@@ -11,6 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <include layout="@layout/curve" />
+
         <RelativeLayout
             android:id="@+id/match_input_overview"
             style="@style/CardRelativeLayout"
@@ -358,10 +360,11 @@
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="4dp"
             android:background="@drawable/button"
-            android:elevation="@dimen/elevation"
+            android:elevation="2dp"
             android:minHeight="10dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:textAllCaps="false"
             android:stateListAnimator="@null"
             android:text="Zapsat výsledek"
             android:textColor="@color/white"

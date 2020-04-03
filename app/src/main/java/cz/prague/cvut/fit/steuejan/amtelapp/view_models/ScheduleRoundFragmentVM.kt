@@ -28,7 +28,7 @@ class ScheduleRoundFragmentVM : ViewModel()
             viewModelScope.launch {
                 val roundDates = group.roundDates
                 roundDates[round.toString()] = week.toInt()
-                if(GroupManager.updateGroup(group.name, mapOf("roundDates" to roundDates)))
+                if(GroupManager.updateGroup(group.id, mapOf("roundDates" to roundDates)))
                 {
                     _week.value = validWeek
                 }

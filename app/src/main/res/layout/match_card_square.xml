@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/match_card_square"
+    style="@style/SimpleCardView"
+    android:layout_width="wrap_content"
+    android:layout_height="100dp"
+    android:layout_marginEnd="10dp"
+    android:elevation="2dp"
+    android:minWidth="100dp">
+
+    <TextView
+        android:id="@+id/match_card_square_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="RADKA team"
+        android:textColor="@color/darkGrey"
+        android:textSize="@dimen/common_text_size" />
+
+    <Button
+        android:id="@+id/match_card_square_result"
+        android:layout_toEndOf="@id/match_card_square_date"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_alignParentBottom="true"
+        android:text="-"
+        android:layout_marginStart="24dp"
+        android:textSize="13sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/lightGrey"
+        style="?android:attr/borderlessButtonStyle"
+        android:clickable="false"
+        android:background="@drawable/circle_blue"/>
+
+    <TextView
+        android:id="@+id/match_card_square_sets"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/match_card_square_home"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:text="1 : 2"
+        android:textColor="@color/darkGrey"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/match_card_square_away"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/match_card_square_sets"
+        android:text="Datyne"
+        android:layout_above="@id/match_card_square_date"
+        android:textColor="@color/darkGrey"
+        android:textSize="@dimen/common_text_size" />
+
+    <TextView
+        android:id="@+id/match_card_square_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="12.3.2020"
+        android:textColor="@color/darkGrey"
+        android:textSize="12sp" />
+
+</RelativeLayout>

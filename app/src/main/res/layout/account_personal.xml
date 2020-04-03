@@ -7,50 +7,15 @@
     android:fillViewport="true">
 
     <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/account_personal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:id="@+id/account_personal_change_password"
-            style="@style/CardRelativeLayout">
-
-            <TextView
-                android:id="@+id/account_personal_text"
-                style="@style/TextViewTitle"
-                android:text="@string/change_password" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/account_personal_password"
-                style="@style/TextInputLayout"
-                android:layout_below="@id/account_personal_text"
-                android:hint="@string/new_password"
-                app:counterEnabled="true"
-                app:counterMaxLength="30"
-                app:counterOverflowTextAppearance="@style/TextLimitError"
-                app:errorEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/account_personal_password_editText1"
-                    style="@style/TextInputEditTextStyle"
-                    android:inputType="textPassword" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/account_personal_add_password_button"
-                style="@style/FloatingActionButton"
-                android:layout_below="@id/account_personal_password"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                app:srcCompat="@drawable/ic_check_white_24dp" />
-
-        </RelativeLayout>
+        <include layout="@layout/curve" />
 
         <RelativeLayout
             android:id="@+id/account_personal_personal_information"
-            style="@style/CardRelativeLayout"
-            android:layout_below="@id/account_personal_change_password">
+            style="@style/CardRelativeLayout">
 
             <TextView
                 android:id="@+id/account_personal_personal_information_text"
@@ -142,6 +107,57 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginBottom="8dp"
                 app:srcCompat="@drawable/ic_save_white_24dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/account_personal_change_password"
+            style="@style/CardRelativeLayout"
+            android:layout_below="@id/account_personal_personal_information">
+
+            <TextView
+                android:id="@+id/account_personal_text"
+                style="@style/TextViewTitle"
+                android:text="@string/change_password" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/account_personal_password"
+                style="@style/TextInputLayout"
+                android:layout_below="@id/account_personal_text"
+                android:hint="@string/new_password"
+                app:counterEnabled="true"
+                app:counterMaxLength="30"
+                app:counterOverflowTextAppearance="@style/TextLimitError"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/account_personal_password_editText1"
+                    style="@style/TextInputEditTextStyle"
+                    android:inputType="textPassword" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/account_personal_password_confirmation"
+                style="@style/TextInputLayout"
+                android:layout_below="@id/account_personal_password"
+                android:hint="@string/confirm_password"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/account_personal_password_editText2"
+                    style="@style/TextInputEditTextStyle"
+                    android:inputType="textPassword" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/account_personal_add_password_button"
+                style="@style/FloatingActionButton"
+                android:layout_below="@id/account_personal_password_confirmation"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="8dp"
+                app:srcCompat="@drawable/ic_check_white_24dp" />
 
         </RelativeLayout>
 

@@ -5,9 +5,11 @@ import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 @Parcelize
-data class Player(var name: String = "",
+data class Player(var playerId: String = "",
+                  var name: String = "",
                   var surname: String = "",
                   var email: String = "",
                   var birthdate: Date? = null,
-                  var sex: Boolean = true
+                  var sex: Boolean = true,
+                  var isHome: Boolean? = null
                   ) : Parcelable

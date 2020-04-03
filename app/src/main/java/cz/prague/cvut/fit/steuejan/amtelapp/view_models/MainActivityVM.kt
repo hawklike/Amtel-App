@@ -2,20 +2,32 @@ package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
 import android.preference.PreferenceManager
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.EmailManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.LeagueManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.net.InetSocketAddress
+import java.net.Socket
 
 class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 {
@@ -72,12 +84,17 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val _progressBar = MutableLiveData<Boolean>()
+    private val _progressBar = SingleLiveEvent<Boolean>()
     val progressBar: LiveData<Boolean> = _progressBar
     fun setProgressBar(on: Boolean)
     {
         _progressBar.value = on
     }
+
+    /*---------------------------------------------------*/
+
+    private val _connection = SingleLiveEvent<Boolean>()
+    val connection: LiveData<Boolean> = _connection
 
     /*---------------------------------------------------*/
 
@@ -95,7 +112,11 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     fun initEmailPassword()
     {
-        if(!EmailSender.hasPassword)
+        val email = PreferenceManager
+            .getDefaultSharedPreferences(context)
+            .getString(context.getString(R.string.email_password_key), null)
+
+        if(email == null)
         {
             viewModelScope.launch {
                 EmailManager.getPassword()?.let {
@@ -108,16 +129,64 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
                 }
             }
         }
+        else EmailSender.hasPassword = true
     }
 
-    fun initHeadOfLeagueEmail()
+    fun getActualSeason()
     {
-        if(EmailSender.headOfLeagueEmail == null)
+        if(DateUtil.actualSeason.toInt() == 0)
         {
             viewModelScope.launch {
-                val headOfLeague = UserManager.findUsers("role", UserRole.HEAD_OF_LEAGUE.toString())?.first()
-                headOfLeague?.let {
-                    EmailSender.headOfLeagueEmail = it.email
+                LeagueManager.getActualSeason()?.let {
+                    DateUtil.actualSeason = it.toString()
+                }
+            }
+        }
+    }
+
+    //https://stackoverflow.com/a/27312494/9723204
+    fun checkInternetConnection()
+    {
+        viewModelScope.launch {
+            withContext(IO) {
+                try
+                {
+                    val timeoutMs = 3000
+                    val socket = Socket()
+                    val socketAddress = InetSocketAddress("8.8.8.8", 53)
+
+                    socket.connect(socketAddress, timeoutMs)
+                    socket.close()
+
+                    withContext(Main) {
+                        _connection.value = true
+                    }
+                }
+                catch(ex: IOException) {
+                    withContext(Main) {
+                        _connection.value = false
+                    }
+                }
+            }
+        }
+    }
+
+    fun initHeadOfLeagueEmail(tries: Int = 10)
+    {
+        viewModelScope.launch {
+            if(EmailSender.headOfLeagueEmail == null)
+            {
+                UserManager.findUsers("role", UserRole.HEAD_OF_LEAGUE.toString())?.let {
+                    if(it.isNotEmpty())
+                    {
+                        val headOfLeague = it.first()
+                        EmailSender.headOfLeagueEmail = headOfLeague.email
+                    }
+                    else if(tries != 0)
+                    {
+                        delay(5000)
+                        initHeadOfLeagueEmail(tries - 1)
+                    }
                 }
             }
         }

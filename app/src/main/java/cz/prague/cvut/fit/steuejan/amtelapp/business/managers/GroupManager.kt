@@ -6,18 +6,17 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.GroupDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
-import cz.prague.cvut.fit.steuejan.amtelapp.states.GroupState
-import cz.prague.cvut.fit.steuejan.amtelapp.states.NoGroup
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroup
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroups
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 object GroupManager
 {
     private const val TAG = "GroupManager"
 
-    suspend fun addGroup(group: Group): GroupState = withContext(IO)
+    suspend fun setGroup(group: Group): GroupState = withContext(IO)
     {
         return@withContext try
         {
@@ -27,7 +26,22 @@ object GroupManager
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addGroup(): $group not added to database because $ex")
+            Log.e(TAG, "addGroup(): $group not added to database because ${ex.message}")
+            NoGroup
+        }
+    }
+
+    suspend fun addPlayoff(playOff: Group): GroupState = withContext(IO)
+    {
+        return@withContext try
+        {
+            GroupDAO().insertPlayOff(playOff)
+            Log.i(TAG, "addPlayOff(): $playOff successfully added to database")
+            ValidGroup(playOff)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "addPlayOff(): $playOff not added to database because ${ex.message}")
             NoGroup
         }
     }
@@ -37,14 +51,30 @@ object GroupManager
         if(id == null) return@withContext NoGroup
         return@withContext try
         {
-            val team = GroupDAO().findById(id).toObject<Group>()
-            Log.i(TAG, "findGroup(): $team found in database")
-            team?.let { ValidGroup(team) } ?: NoGroup
+            val group = GroupDAO().findById(id).toObject<Group>()
+            Log.i(TAG, "findGroup(): $group found in database")
+            group?.let { ValidGroup(group) } ?: NoGroup
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "findGroup(): team with $id not found in database because ${ex.message}")
+            Log.e(TAG, "findGroup(): group with $id not found in database because ${ex.message}")
             NoGroup
+        }
+    }
+
+    suspend fun deleteGroup(groupId: String?): Boolean = withContext(IO)
+    {
+        if(groupId == null) return@withContext false
+        return@withContext try
+        {
+            GroupDAO().delete(groupId)
+            Log.i(TAG, "deleteUser(): group with id $groupId successfully deleted")
+            true
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "deleteUser(): group with id $groupId not deleted because ${ex.message}")
+            false
         }
     }
 
@@ -54,13 +84,28 @@ object GroupManager
         return@withContext try
         {
             GroupDAO().update(documentId, mapOfFieldsAndValues)
-            Log.i(TAG, "updateGroup(): team with id $documentId successfully updated with $mapOfFieldsAndValues")
+            Log.i(TAG, "updateGroup(): group with id $documentId successfully updated with $mapOfFieldsAndValues")
             true
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateGroup(): team with id $documentId not updated because $ex")
+            Log.e(TAG, "updateGroup(): group with id $documentId not updated because $ex")
             false
+        }
+    }
+
+    suspend fun <T> findGroups(field: String, value: T?): GroupState = withContext(IO)
+    {
+        return@withContext try
+        {
+            val groups = GroupDAO().find(field, value).toObjects<Group>()
+            Log.i(TAG, "findGroups(): $groups where $field is $value found successfully")
+            ValidGroups(groups)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "findGroups(): groups not found because ${ex.message}")
+            NoGroup
         }
     }
 
@@ -68,18 +113,83 @@ object GroupManager
     {
         return@withContext try
         {
-            val documentSnapshot = GroupDAO().retrieveAll()
-            val documents = documentSnapshot.toObjects<Group>()
-            Log.i(TAG, "retrieveAll(): $documents retrieved successfully")
-            ValidGroups(documents)
+            val groups = GroupDAO().retrieveAll().toObjects<Group>().sortedBy { it.rank }
+            Log.i(TAG, "retrieveAll(): $groups retrieved successfully")
+            ValidGroups(groups)
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "retrieveAll(): documents not retrieved because $ex")
+            Log.e(TAG, "retrieveAll(): groups not retrieved because ${ex.message}")
             NoGroup
         }
     }
 
+    suspend fun retrieveAllGroupsExceptPlayoff(orderBy: String = "rank"): GroupState = withContext(IO)
+    {
+        return@withContext try
+        {
+            val snapshots = GroupDAO().retrieveAllGroupsExceptPlayoff(orderBy).get().await()
+            val groups = snapshots.toObjects<Group>()
+            Log.i(TAG, "retrieveAllGroupsExceptPlayOff(): $groups except playoff retrieved successfully")
+            ValidGroups(groups)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveAllGroupsExceptPlayOff(): groups not retrieved because ${ex.message}")
+            NoGroup
+        }
+    }
+
+    suspend fun retrieveAllGroupsPlayingPlayoff(orderBy: String = "rank"): GroupState = withContext(IO)
+    {
+        return@withContext try
+        {
+            val groups = GroupDAO().retrieveAllGroupsPlayingPlayoff(orderBy).toObjects<Group>()
+            Log.i(TAG, "retrieveAllGroupsPlayingPlayoff(): $groups playing playoff retrieved successfully")
+            ValidGroups(groups)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveAllGroupsPlayingPlayoff(): groups not retrieved because ${ex.message}")
+            NoGroup
+        }
+    }
+
+    suspend fun retrieveAllGroupsNotPlayingPlayoff(orderBy: String = "rank"): GroupState = withContext(IO)
+    {
+        return@withContext try
+        {
+            val groups = GroupDAO().retrieveAllGroupsNotPlayingPlayoff(orderBy).toObjects<Group>()
+            Log.i(TAG, "retrieveAllGroupsNotPlayingPlayoff(): $groups not playing playoff retrieved successfully")
+            ValidGroups(groups)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveAllGroupsNotPlayingPlayoff(): groups not retrieved because ${ex.message}")
+            NoGroup
+        }
+    }
+
+    suspend fun retrieveTeamsInGroup(groupId: String?): TeamState = withContext(IO)
+    {
+        if(groupId == null) return@withContext NoTeam
+        return@withContext try
+        {
+            val teams = GroupDAO().retrieveTeamsInGroup(groupId).toObjects<Team>()
+            Log.i(TAG, "retrieveTeamsInGroup(): $teams in $groupId retrieved successfully")
+            ValidTeams(teams)
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveTeamsInGroup(): teams not retrieved because ${ex.message}")
+            NoTeam
+        }
+    }
+
+
     fun retrieveAllGroups(orderBy: String): Query
             = GroupDAO().retrieveAllGroups(orderBy)
+
+    const val name = "name"
+    const val visibility = "visibility"
 }

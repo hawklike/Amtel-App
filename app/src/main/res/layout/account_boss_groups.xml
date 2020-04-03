@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/toolbar_gradient">
+    android:layout_height="match_parent">
 
     <include
         layout="@layout/toolbar"
@@ -15,13 +14,102 @@
         android:layout_below="@+id/toolbar"
         android:background="@color/veryVeryLightGrey">
 
+        <include layout="@layout/curve" />
+
+        <RelativeLayout
+            android:id="@+id/account_boss_choose_playOff"
+            style="@style/CardRelativeLayout">
+
+            <TextView
+                android:id="@+id/account_boss_groups_open_playOff_title"
+                style="@style/TextViewTitle"
+                android:layout_marginBottom="0dp"
+                android:text="Baráž" />
+
+            <TextView
+                android:id="@+id/account_boss_groups_open_playOff_text"
+                style="@style/TextViewTitleLeft"
+                android:gravity="center"
+                android:textSize="13dp"
+                android:textStyle="normal"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="12dp"
+                android:layout_below="@id/account_boss_groups_open_playOff_title"
+                android:text="Datum se načítá..." />
+
+            <Button
+                android:id="@+id/account_boss_groups_playOff_generate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/account_boss_groups_open_playOff_text"
+                android:background="?android:attr/selectableItemBackground"
+                android:elevation="0dp"
+                android:minHeight="0dp"
+                android:paddingTop="4dp"
+                android:visibility="invisible"
+                android:paddingBottom="4dp"
+                android:layout_marginBottom="8dp"
+                android:text="Otevřít baráž"
+                android:textColor="@color/blue"
+                android:textSize="13sp" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/account_boss_groups_text"
+            style="@style/TextViewTitleLeft"
+            android:gravity="center"
+            android:layout_marginBottom="0dp"
+            android:textSize="@dimen/common_text_size"
+            android:layout_below="@id/account_boss_choose_playOff"
+            android:text="@string/generate_matches_in_groups" />
+
+        <TextView
+            android:id="@+id/account_boss_groups_note"
+            style="@style/TextViewTitleLeft"
+            android:gravity="center"
+            android:textSize="13dp"
+            android:textStyle="normal"
+            android:layout_marginTop="0dp"
+            android:layout_below="@id/account_boss_groups_text"
+            android:text="Podržením a tažením karty můžete změnit pořadí skupin (vrchní skupina je nejlepší)." />
+
+        <FrameLayout
+            android:id="@+id/account_boss_groups_progressBar"
+            android:layout_width="match_parent"
+            android:visibility="visible"
+            android:layout_below="@id/account_boss_groups_note"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/blue"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:max="100"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_marginTop="50dp"
+                android:text="@string/amtel_opava"
+                android:textColor="@color/blue"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </FrameLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/account_boss_groups_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="24dp" />
+            android:layout_below="@id/account_boss_groups_note"
+            android:layout_marginStart="@dimen/card_margin"
+            android:layout_marginEnd="@dimen/card_margin"
+            android:orientation="horizontal" />
 
     </RelativeLayout>
-
 
 </RelativeLayout>

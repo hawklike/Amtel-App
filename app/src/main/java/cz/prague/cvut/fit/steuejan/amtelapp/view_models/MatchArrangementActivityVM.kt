@@ -10,11 +10,15 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MessageManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.*
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.MatchResult
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toDayInWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
@@ -79,6 +83,13 @@ class MatchArrangementActivityVM : ViewModel()
         }
     }
 
+    fun sendMessage(fullname: String, messageText: String, matchId: String?)
+    {
+        viewModelScope.launch {
+            MessageManager.addMessage(Message(fullname, messageText, AuthManager.currentUser?.uid ?: ""), matchId, true)
+        }
+    }
+
     fun setDialogDate(date: Editable): Calendar?
     {
         return if(date.isEmpty()) null
@@ -120,7 +131,7 @@ class MatchArrangementActivityVM : ViewModel()
         }
     }
 
-    fun countTotalScore(match: Match): Pair<Int?, Int?>
+    fun countTotalScore(match: Match): MatchResult
     {
         var homeScore = 0
         var awayScore = 0
@@ -130,33 +141,9 @@ class MatchArrangementActivityVM : ViewModel()
             else if(it.homeWinner == false) awayScore++
         }
 
-        if(homeScore + awayScore == 0)
-        {
-            if(match.homeScore != null || match.awayScore != null)
-            {
-                 viewModelScope.launch {
-                     match.homeScore = null
-                     match.awayScore = null
-                     MatchManager.addMatch(match)
-                 }
-            }
-            return Pair(null, null)
-        }
-        else
-        {
-            if(match.homeScore != homeScore || match.awayScore != awayScore)
-            {
-                viewModelScope.launch {
-                    match.homeScore = homeScore
-                    match.awayScore = awayScore
-                    MatchManager.addMatch(match)
-                }
-            }
-            return Pair(homeScore, awayScore)
-        }
+        return MatchResult(homeScore, awayScore)
     }
 
-    //TODO: add to string resources
     private fun sendEmail(dateAndTime: Date? = null, place: String? = null)
     {
         val homeManagerEmail = teams.value?.first?.users?.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
@@ -164,12 +151,12 @@ class MatchArrangementActivityVM : ViewModel()
 
         val match = _match.value ?: return
 
-        val subject = "Bylo nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.group}"
+        val subject = "Bylo nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.groupName}"
 
         val message = """
         Dobrý den,
         
-        právě bylo v aplikaci nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.group}.
+        právě bylo v aplikaci nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.groupName}.
         
         Místo: ${match.place} ${place?.let { "<---" } ?: ""}
         Datum a čas: ${match.dateAndTime?.toMyString("dd.MM.yyyy 'v' HH:mm") ?: "nespecifikováno"} ${dateAndTime?.let { "<---" } ?: ""}
@@ -179,8 +166,74 @@ class MatchArrangementActivityVM : ViewModel()
         Administrátor aplikace AMTEL Opava
         """.trimIndent()
 
-        homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message)}
-        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message)}
+        homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+    }
+
+    fun defaultEndGame(match: Match, isHomeWinner: Boolean, homeTeam: Team, awayTeam: Team): Match
+    {
+        if(isHomeWinner) setDefaultResult(match, 6, 0)
+        else setDefaultResult(match, 0, 6)
+
+        match.usersId = arrayOfNulls<String>(10).toMutableList()
+        match.rounds.forEach {
+            it.homePlayers = mutableListOf()
+            it.awayPlayers = mutableListOf()
+        }
+
+        viewModelScope.launch {
+            sendDefaultResultEmail(match, homeTeam, awayTeam)
+        }
+
+        return match
+    }
+
+    private fun sendDefaultResultEmail(match: Match, homeTeam: Team, awayTeam: Team)
+    {
+        val subject = "Byla zvolena kontumační prohra/výhra v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
+
+        val message = """
+                    Dobrý den,
+                    
+                    vedoucí týmu ${homeTeam.name} právě zvolil kontumační prohru/výhru v utkání ${homeTeam.name}–${awayTeam.name} ze dne ${match.dateAndTime?.toMyString() ?: "nespecifikováno"}.
+                    
+                    Kontumačně vyhrál tým: ${if(match.homeScore!! > match.awayScore!!) homeTeam.name else awayTeam.name}
+                    Tým ${if(match.homeScore!! < match.awayScore!!) homeTeam.name else awayTeam.name} se rozhodl do utkání nenastoupit a kontumačně prohrál.
+                    
+                    Na tento email prosím neodpovídejte.
+                    
+                    Administrátor aplikace AMTEL Opava
+                    """.trimIndent()
+
+        val awayManagerEmail = teams.value?.second?.users?.find {it.role.toRole() == UserRole.TEAM_MANAGER}?.email
+        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+        EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
+    }
+
+    private fun setDefaultResult(match: Match, homePoints: Int, awayPoints: Int)
+    {
+        match.rounds.forEach {
+            it.homeGemsSet1 = homePoints
+            it.homeGemsSet2 = homePoints
+            it.awayGemsSet1 = awayPoints
+            it.awayGemsSet2 = awayPoints
+
+            it.homeGems = 2 * homePoints
+            it.awayGems = 2* awayPoints
+
+            if(homePoints > awayPoints)
+            {
+                it.homeWinner = true
+                it.homeSets = 2
+                it.awaySets = 0
+            }
+            else
+            {
+                it.homeWinner = false
+                it.homeSets = 0
+                it.awaySets = 2
+            }
+        }
     }
 
 }

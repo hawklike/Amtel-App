@@ -4,31 +4,29 @@ import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.TeamDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
-import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
-import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 object TeamManager
 {
-    suspend fun addTeam(team: Team): Team? = withContext(IO)
+    suspend fun setTeam(team: Team): Team? = withContext(IO)
     {
         return@withContext try
         {
             TeamDAO().insert(team)
-            Log.i(TAG, "addUser(): $team successfully added to database")
+            Log.i(TAG, "setTeam(): $team successfully set/updated in database")
             team
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addUser(): $team not added to database because ${ex.message}")
+            Log.e(TAG, "setTeam(): $team not set/updated in database because ${ex.message}")
             null
         }
     }
@@ -69,10 +67,9 @@ object TeamManager
     {
         return@withContext try
         {
-            val querySnapshot = TeamDAO().find(field, value)
-            val documents = querySnapshot.toObjects<Team>()
-            Log.i(TAG, "findTeams(): $documents where $field is $value found successfully")
-            ValidTeams(documents)
+            val teams = TeamDAO().find(field, value).toObjects<Team>()
+            Log.i(TAG, "findTeams(): $teams where $field is $value found successfully")
+            ValidTeams(teams)
         }
         catch(ex: Exception)
         {
@@ -95,14 +92,17 @@ object TeamManager
         return@withContext try
         {
             TeamDAO().updateUser(newUser)
+            Log.i(TAG, "updateUserInTeam() $newUser succesfully updated")
             true
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateUser(): user $newUser not updated because ${ex.message}")
+            Log.e(TAG, "updateUserInTeam(): user $newUser not updated because ${ex.message}")
             false
         }
     }
+
+    fun retrieveMatches(team: Team): Query = MatchDAO().getMatches(team.id!!)
 
     fun retrieveAllUsers(teamId: String, orderBy: UserOrderBy = UserOrderBy.SURNAME): Query
     {
@@ -113,5 +113,35 @@ object TeamManager
         return query!!
     }
 
+    suspend fun retrieveTeamsInSeason(groupId: String?, year: Int): TeamState = withContext(IO)
+    {
+        if(groupId == null) return@withContext NoTeam
+        return@withContext try
+        {
+            val group = GroupManager.findGroup(groupId)
+            if(group is ValidGroup)
+            {
+                val teams = mutableListOf<Team>()
+                group.self.teamIds[year.toString()]?.let { teamIds ->
+                    teamIds.forEach { teamId ->
+                        with(findTeam(teamId)) {
+                            if(this is ValidTeam) teams.add(this.self)
+                        }
+                    }
+                }
+                Log.i(TAG, "retrieveTeamsInSeason(): $teams in $groupId [groupId] and $year [year] found successfully")
+                ValidTeams(teams)
+            }
+            else NoTeam
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveTeamsInSeason(): teams not found because ${ex.message}")
+            NoTeam
+        }
+    }
+
     private const val TAG = "TeamManager"
+    const val groupName = "groupName"
+    const val groupId = "groupId"
 }

@@ -57,6 +57,7 @@ class AccountFragment : AbstractMainActivityFragment()
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
+        setLogoutIconVisibility(true)
         setToolbarTitle(getString(R.string.account))
         getUser()
         setupViewPager(viewPager, user)

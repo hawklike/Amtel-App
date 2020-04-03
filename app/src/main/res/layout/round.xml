@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/curve" />
+
+        <TextView
+            android:id="@+id/round_week_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/card_margin"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="@dimen/card_margin"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/common_text_size"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/round_choose_week"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/round_week_text"
+            android:layout_marginStart="@dimen/card_margin"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="@dimen/card_margin"
+            android:background="@drawable/rounded_object"
+            android:elevation="@dimen/elevation"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
+            <TextView
+                android:id="@+id/round_choose_week_text"
+                style="@style/TextViewTitle"
+                android:text="@string/choose_week" />
+
+            <TextView
+                android:id="@+id/round_deadline_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/round_choose_week_week"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Dny do konce kola: 42"
+                android:textColor="@color/darkGrey"
+                android:textSize="@dimen/common_text_size" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/round_choose_week_week"
+                style="@style/TextInputLayout"
+                android:layout_below="@id/round_choose_week_text"
+                android:hint="Týden v roce"
+                android:visibility="gone"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/round_choose_week_ediText1"
+                    style="@style/TextInputEditTextStyle"
+                    android:inputType="numberSigned" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/round_choose_week_add"
+                style="@style/FloatingActionButton"
+                android:layout_below="@id/round_choose_week_week"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_save_white_24dp" />
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/round_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/round_choose_week"
+            android:layout_marginStart="@dimen/card_margin"
+            android:layout_marginTop="@dimen/card_margin"
+            android:layout_marginEnd="@dimen/card_margin"
+            android:minHeight="200dp" />
+
+    </RelativeLayout>
+
+</ScrollView>

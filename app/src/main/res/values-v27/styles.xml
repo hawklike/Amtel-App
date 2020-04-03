@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/purple</item>
-        <item name="colorPrimaryDark">@color/purple</item>
-        <item name="colorAccent">@color/lightGrey</item>
-        <item name="fontFamily">@font/san_francisco_regular</item>
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryDark">@color/blue</item>
+        <item name="colorAccent">@color/blue</item>
+
+        <item name="fontFamily">@font/proxima_nova_regular</item>
+        <item name="android:fontFamily">@font/proxima_nova_regular</item>
+
         <item name="android:textColorPrimary">@color/darkGrey</item>
         <item name="android:windowBackground">@color/veryVeryLightGrey</item>
+        <item name="android:statusBarColor">@color/blue</item>
         <!-- Material dialog -->
-        <item name="md_color_button_text">@color/purple</item>
+        <item name="md_color_button_text">@color/blue</item>
         <item name="md_corner_radius">@dimen/rounded_corners</item>
         <!-- Grey navigation bar-->
         <item name="android:windowLightNavigationBar">true</item>
@@ -16,4 +20,13 @@
         <!-- Custom animation between activities -->
         <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
     </style>
+
+    <style name="ToolbarTitleFont">
+        <item name="android:fontFamily">@font/proxima_nova_regular</item>
+        <item name="fontFamily">@font/proxima_nova_regular</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
 </resources>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ranking_team_card"
+    style="@style/SimpleCardView"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/ranking_team_card_rank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="1."
+        android:paddingEnd="4dp"
+        android:textColor="@color/darkGrey"
+        android:textSize="@dimen/common_text_size" />
+
+    <TextView
+        android:id="@+id/ranking_team_card_team"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/ranking_team_card_matches"
+        android:layout_toEndOf="@id/ranking_team_card_rank"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="TK Horní Bludovice"
+        android:textColor="@color/blue"
+        android:textSize="@dimen/common_text_size" />
+
+    <TextView
+        android:id="@+id/ranking_team_card_matches"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/ranking_team_card_wins"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="12"
+        android:textColor="@color/darkGrey"
+        android:textSize="@dimen/common_text_size" />
+
+    <TextView
+        android:id="@+id/ranking_team_card_wins"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/ranking_team_card_losses"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="8"
+        android:textColor="@color/darkGrey"
+        android:textSize="@dimen/common_text_size" />
+
+    <TextView
+        android:id="@+id/ranking_team_card_losses"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/ranking_team_card_sets_positive"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="4"
+        android:textColor="@color/darkGrey"
+        android:textSize="@dimen/common_text_size" />
+
+    <TextView
+        android:id="@+id/ranking_team_card_sets_positive"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/ranking_team_card_sets_negative"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="180"
+        android:textColor="@color/darkGrey"
+        android:textSize="@dimen/common_text_size" />
+
+    <TextView
+        android:id="@+id/ranking_team_card_sets_negative"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/ranking_team_card_points"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="64"
+        android:textColor="@color/darkGrey"
+        android:textSize="@dimen/common_text_size" />
+
+    <TextView
+        android:id="@+id/ranking_team_card_points"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="32"
+        android:textColor="@color/blue"
+        android:textSize="@dimen/common_text_size" />
+
+</RelativeLayout>

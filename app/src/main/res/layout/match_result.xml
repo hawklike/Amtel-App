@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/curve" />
+
+    <RelativeLayout
+        android:id="@+id/match_result_overview"
+        style="@style/CardRelativeLayout"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/match_result_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/match_result_group"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="TK Horní Bludovice"
+            android:textColor="@color/darkGrey"
+            android:textSize="@dimen/common_text_size" />
+
+        <TextView
+            android:id="@+id/match_result_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="A"
+            android:textColor="@color/blue"
+            android:textSize="36sp" />
+
+        <RelativeLayout
+            android:id="@+id/match_result_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/match_result_home"
+            android:layout_toStartOf="@id/match_result_group">
+
+            <TextView
+                android:id="@+id/match_result_sets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="1:2"
+                android:textColor="@color/darkGrey"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/match_result_gems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@id/match_result_sets"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="4:6, 7:5, 0:6"
+                android:textColor="@color/darkGrey"
+                android:textSize="13sp" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/match_result_away"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/match_result_score"
+            android:layout_toStartOf="@id/match_result_group"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="TK Dolní Datyně"
+            android:textColor="@color/darkGrey"
+            android:textSize="@dimen/common_text_size" />
+
+        <TextView
+            android:id="@+id/match_result_place"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/match_result_away"
+            android:layout_marginTop="16dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="Doporučený termín: není uveden"
+            android:textColor="@color/darkGrey"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/match_result_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/match_result_place"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="Místo: to nejlepší"
+            android:textColor="@color/darkGrey"
+            android:textSize="13sp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/match_result_title_teams"
+        style="@style/TextViewTitleLeft"
+        android:layout_below="@id/match_result_overview"
+        android:text="@string/teams" />
+
+    <HorizontalScrollView
+        android:id="@+id/match_result_teams_scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/match_result_title_teams"
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_marginEnd="@dimen/card_margin">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/match_result_card_home"
+                style="@style/SimpleCardView"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_marginEnd="10dp"
+                android:clickable="true"
+                android:elevation="2dp"
+                android:focusable="false"
+                android:minWidth="100dp">
+
+                <Button
+                    android:id="@+id/match_result_card_home_result"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/circle_blue"
+                    android:backgroundTint="@color/lightGrey"
+                    android:clickable="false"
+                    android:text="-"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/match_result_card_home_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/match_result_card_home_text"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="8dp"
+                    android:layout_toEndOf="@id/match_result_card_home_result"
+                    android:clickable="false"
+                    android:text="TK Horní Bludovice"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="@dimen/common_text_size" />
+
+                <TextView
+                    android:id="@+id/match_result_card_home_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:clickable="false"
+                    android:text="@string/home"
+                    android:textColor="@color/blue"
+                    android:textSize="@dimen/common_text_size"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/match_result_card_away"
+                style="@style/SimpleCardView"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_toEndOf="@id/match_result_card_home"
+                android:clickable="true"
+                android:elevation="2dp"
+                android:focusable="false"
+                android:minWidth="100dp">
+
+                <Button
+                    android:id="@+id/match_result_card_away_result"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/circle_blue"
+                    android:backgroundTint="@color/lightGrey"
+                    android:clickable="false"
+                    android:text="-"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/match_result_card_away_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/match_result_card_away_text"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="8dp"
+                    android:layout_toEndOf="@id/match_result_card_away_result"
+                    android:clickable="false"
+                    android:text="Velmi dlouh7 team"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="@dimen/common_text_size" />
+
+                <TextView
+                    android:id="@+id/match_result_card_away_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:clickable="false"
+                    android:text="@string/away"
+                    android:textColor="@color/blue"
+                    android:textSize="@dimen/common_text_size"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/match_result_title_players"
+        style="@style/TextViewTitleLeft"
+        android:layout_below="@id/match_result_teams_scrollView"
+        android:text="@string/players" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/match_result_players_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/match_result_title_players"
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_marginEnd="@dimen/card_margin" />
+
+    <Button
+        android:id="@+id/match_result_discussion_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/match_result_players_recyclerView"
+        android:layout_marginTop="48dp"
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_marginEnd="@dimen/card_margin"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/button"
+        android:elevation="2dp"
+        android:minHeight="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textAllCaps="false"
+        android:stateListAnimator="@null"
+        android:text="Diskuze"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+</RelativeLayout>

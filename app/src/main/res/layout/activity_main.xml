@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    android:background="@drawable/toolbar_gradient"
     tools:context=".activities.MainActivity">
 
     <include
@@ -15,36 +14,36 @@
         android:layout_height="wrap_content"/>
 
     <FrameLayout
-        android:id="@+id/progressBar"
-        android:background="@drawable/toolbar_gradient"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminateTint="@color/darkBlue"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:max="100"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:text="@string/amtel_opava"
-            android:layout_marginTop="50dp"
-            android:textColor="@color/darkBlue"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-    </FrameLayout>
-
-
-    <FrameLayout
         android:id="@+id/main_container"
         android:background="@color/veryVeryLightGrey"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar" />
+        android:layout_below="@id/toolbar" >
+
+        <FrameLayout
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/blue"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:max="100"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_marginTop="50dp"
+                android:text="@string/amtel_opava"
+                android:textColor="@color/blue"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </FrameLayout>
+
+    </FrameLayout>
 
 </RelativeLayout>

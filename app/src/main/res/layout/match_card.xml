@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/match_card"
-    style="@style/CustomCardView">
+    style="@style/SimpleCardView">
 
-    <ImageButton
+    <ImageView
         android:id="@+id/match_card_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,23 +41,12 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:text="1:2"
             android:textColor="@color/darkGrey"
             android:textSize="20sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/match_card_gems"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginStart="8dp"
-            android:layout_toEndOf="@id/match_card_sets"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="4:6, 7:5, 0:6"
-            android:textColor="@color/darkGrey"
-            android:textSize="13sp" />
 
     </RelativeLayout>
 
@@ -73,28 +62,5 @@
         android:text="TK Dolní Datyně"
         android:textColor="@color/darkGrey"
         android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/match_card_upper_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/match_card_away"
-        android:layout_marginTop="12dp"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:text="Doporučený termín: není uveden"
-        android:textColor="@color/darkGrey"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/match_card_lower_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/match_card_upper_text"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:text="Místo: to nejlepší"
-        android:textColor="@color/darkGrey"
-        android:textSize="12sp" />
 
 </RelativeLayout>

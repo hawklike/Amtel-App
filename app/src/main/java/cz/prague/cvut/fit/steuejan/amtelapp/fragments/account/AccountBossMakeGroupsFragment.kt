@@ -1,10 +1,12 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.RelativeLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -16,9 +18,10 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.activities.ShowGroupsActivity
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.ManageGroupsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
@@ -29,12 +32,16 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 {
     companion object
     {
+        const val GROUPS_REQUEST = 1
+        const val GROUPS = "groups"
+
         fun newInstance(): AccountBossMakeGroupsFragment = AccountBossMakeGroupsFragment()
     }
 
     private val viewModel by viewModels<AccountBossMakeGroupsFragmentVM>()
 
     private lateinit var nameLayout: TextInputLayout
+    private lateinit var playingPlayOffCheckBox: CheckBox
     private lateinit var createGroup: FloatingActionButton
 
     private lateinit var showGroups: RelativeLayout
@@ -53,6 +60,7 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
     {
         super.onViewCreated(view, savedInstanceState)
         nameLayout = view.findViewById(R.id.account_boss_create_group_name)
+        playingPlayOffCheckBox = view.findViewById(R.id.account_boss_create_group_playOff)
         createGroup = view.findViewById(R.id.account_boss_create_group_add)
         showGroups = view.findViewById(R.id.account_boss_create_group_show_groups)
         recyclerView = view.findViewById(R.id.account_boss_create_group_recyclerView)
@@ -73,23 +81,12 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
         recyclerView = null
     }
 
-    override fun onStart()
-    {
-        super.onStart()
-        adapter?.startListening()
-    }
-
-    override fun onStop()
-    {
-        super.onStop()
-        adapter?.stopListening()
-    }
-
     private fun setupRecycler()
     {
         val query = TeamManager.retrieveAllTeams(TeamOrderBy.GROUP)
         val options = FirestoreRecyclerOptions.Builder<Team>()
             .setQuery(query, Team::class.java)
+            .setLifecycleOwner(viewLifecycleOwner)
             .build()
 
         recyclerView?.setHasFixedSize(true)
@@ -100,16 +97,34 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 
     private fun setListeners()
     {
+        var playingPlayOff = true
+        playingPlayOffCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            playingPlayOff = isChecked
+        }
+
         createGroup.setOnClickListener {
             val groupName = nameLayout.editText?.text.toString()
 
             nameLayout.error = null
-            viewModel.createGroup(groupName)
+            viewModel.createGroup(groupName, playingPlayOff)
         }
 
         showGroups.setOnClickListener {
-            val intent = Intent(activity!!, ShowGroupsActivity::class.java)
-            startActivity(intent)
+            val intent = Intent(activity!!, ManageGroupsActivity::class.java)
+            startActivityForResult(intent, GROUPS_REQUEST)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == RESULT_OK && requestCode == GROUPS_REQUEST)
+        {
+            data?.let { intent ->
+                val groups = intent.getParcelableArrayListExtra<Group>(GROUPS)
+                viewModel.updateRanks(groups.toList())
+                adapter?.groups = groups.map { it.name }
+            }
         }
     }
 
@@ -123,8 +138,8 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
     private fun getAllGroups()
     {
         viewModel.getGroups()
-        viewModel.getAllGroups().observe(viewLifecycleOwner) {
-            adapter?.groups = it.map { group -> group.name }.sorted()
+        viewModel.getAllGroups().observe(viewLifecycleOwner) { groups ->
+            adapter?.groups = groups.sortedBy { it.rank } .map { it.name }
         }
     }
 

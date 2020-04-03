@@ -12,25 +12,50 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/amtel_opava"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".App"
         tools:ignore="GoogleAppIndexingWarning">
+
         <activity
-            android:name=".activities.MainActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:name=".activities.SplashActivity"
+            android:theme="@style/SplashTheme"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activities.MainActivity"
+            android:windowSoftInputMode="adjustResize"/>
+
         <activity android:name=".activities.AddUserToTeamActivity"/>
-        <activity android:name=".activities.ShowGroupsActivity"/>
-        <activity android:name=".activities.ScheduleRoundsActivity"/>
-        <activity android:name=".activities.MatchMenuActivity"/>
+        <activity android:name=".activities.ManageGroupsActivity"/>
+        <activity android:name=".activities.RoundsViewPagerActivity"/>
+        <activity android:name=".activities.MatchViewPagerActivity"/>
         <activity android:name=".activities.MatchArrangementActivity"/>
+        <activity android:name=".activities.RankingViewPagerActivity"/>
+        <activity android:name=".activities.PlayoffActivity"/>
+        <activity android:name=".activities.TeamInfoActivity"/>
+        <activity android:name=".activities.MatchDiscussionActivity"/>
+
+        <service
+            android:name=".services.GenerateScheduleService"
+            android:exported="false"/>
+        <service
+            android:name=".services.GroupDeletionService"
+            android:exported="false"/>
+        <service
+            android:name=".services.SeasonFinisherService"
+            android:exported="false"/>
+
+        <service
+            android:name=".services.CountMatchScoreService"
+            android:exported="false"/>
     </application>
 
 </manifest>
