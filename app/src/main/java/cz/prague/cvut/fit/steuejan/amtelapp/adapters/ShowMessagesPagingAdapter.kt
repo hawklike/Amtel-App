@@ -46,7 +46,7 @@ class ShowMessagesPagingAdapter(options: FirestorePagingOptions<Message>)
             LoadingState.LOADING_MORE -> dataLoadedListener?.onLoading()
             LoadingState.LOADED -> dataLoadedListener?.onLoaded()
             LoadingState.FINISHED -> {
-                toast("Více už toho není.")
+                if(itemCount > 12) toast("Více už toho není.")
                 dataLoadedListener?.onLoaded()
             }
             LoadingState.ERROR -> {}

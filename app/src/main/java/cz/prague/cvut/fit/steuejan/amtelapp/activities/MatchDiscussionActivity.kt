@@ -86,9 +86,12 @@ class MatchDiscussionActivity : AbstractBaseActivity(), ShowMessagesPagingAdapte
                     var input: CharSequence = ""
                     input(hint = "Zde napište příspěvek...", maxLength = 1024, waitForPositiveButton = false) { dialog, text ->
                         val inputField = dialog.getInputField()
+                        //multiple lines
                         inputField.setSingleLine(false)
                         inputField.imeOptions = EditorInfo.IME_FLAG_NO_ENTER_ACTION
                         inputField.maxLines = 4
+                        //fixed jumping of a cursor to the beginning of the text
+                        if(text.length == 1) inputField.setSelection(text.length)
 
                         inputField.error =
                             if(text.trim().isNotEmpty()) null
