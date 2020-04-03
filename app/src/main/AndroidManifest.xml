@@ -41,6 +41,7 @@
         <activity android:name=".activities.RankingViewPagerActivity"/>
         <activity android:name=".activities.PlayoffActivity"/>
         <activity android:name=".activities.TeamInfoActivity"/>
+        <activity android:name=".activities.MatchDiscussionActivity"/>
 
         <service
             android:name=".services.GenerateScheduleService"

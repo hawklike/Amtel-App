@@ -243,4 +243,24 @@
         android:layout_marginStart="@dimen/card_margin"
         android:layout_marginEnd="@dimen/card_margin" />
 
+    <Button
+        android:id="@+id/match_result_discussion_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/match_result_players_recyclerView"
+        android:layout_marginTop="48dp"
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_marginEnd="@dimen/card_margin"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/button"
+        android:elevation="2dp"
+        android:minHeight="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textAllCaps="false"
+        android:stateListAnimator="@null"
+        android:text="Diskuze"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
 </RelativeLayout>

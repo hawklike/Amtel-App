@@ -2,6 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 
 import android.util.Log
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.Query.Direction.ASCENDING
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MessageDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Message
 import kotlinx.coroutines.Dispatchers.IO
@@ -26,8 +27,8 @@ object MessageManager
         }
     }
 
-    fun getMessages(matchId: String, private: Boolean): Query
-            = MessageDAO().getMessages(updateId(matchId, private))
+    fun getMessages(matchId: String, private: Boolean, direction: Query.Direction = ASCENDING): Query
+            = MessageDAO().getMessages(updateId(matchId, private), direction)
 
     private fun updateId(matchId: String, private: Boolean): String
     {

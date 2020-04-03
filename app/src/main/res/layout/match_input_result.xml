@@ -364,6 +364,7 @@
             android:minHeight="10dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:textAllCaps="false"
             android:stateListAnimator="@null"
             android:text="Zapsat výsledek"
             android:textColor="@color/white"
