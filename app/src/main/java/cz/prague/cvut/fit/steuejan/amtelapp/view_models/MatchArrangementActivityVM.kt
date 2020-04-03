@@ -83,10 +83,10 @@ class MatchArrangementActivityVM : ViewModel()
         }
     }
 
-    fun sendMessage(fullname: String, messageText: String, matchId: String?, private: Boolean)
+    fun sendMessage(fullname: String, messageText: String, matchId: String?)
     {
         viewModelScope.launch {
-            MessageManager.addMessage(Message(fullname, messageText, AuthManager.currentUser?.uid ?: ""), matchId, private)
+            MessageManager.addMessage(Message(fullname, messageText, AuthManager.currentUser?.uid ?: ""), matchId, true)
         }
     }
 

@@ -52,7 +52,6 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
         fun init(group: Group)
         {
             this.group = group
-//            viewModel.setRank(group, adapterPosition)
 
             val size = group.teamIds[DateUtil.actualSeason]?.size ?: 0
 
@@ -96,7 +95,6 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
                     .show {
                         positiveButton(R.string.yes) {
                             deleteGroup(getItem(adapterPosition))
-//                            viewModel.deleteGroup(getItem(adapterPosition))
                             list.removeAt(adapterPosition)
                             notifyItemRemoved(adapterPosition)
                             notifyItemRangeChanged(adapterPosition, list.size)
@@ -190,7 +188,6 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             }
             context.startService(serviceIntent)
 
-//            viewModel.generateMatches(getItem(adapterPosition), rounds)
             generateButton.setTextColor(App.getColor(R.color.red))
         }
     }

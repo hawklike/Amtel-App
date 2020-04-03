@@ -321,7 +321,7 @@ class MatchArrangementActivity : AbstractBaseActivity()
         sendMessage.setOnClickListener {
             val messageText = messageField.text.toString().trim()
             messageField.text.clear()
-            viewModel.sendMessage(userName, messageText, match.id, true)
+            viewModel.sendMessage(userName, messageText, match.id)
         }
     }
 

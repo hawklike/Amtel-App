@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchDiscussionActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.TeamInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
@@ -43,6 +44,8 @@ class MatchResultFragment : AbstractMatchActivityFragment()
 
     private lateinit var place: TextView
     private lateinit var date: TextView
+
+    private lateinit var discussion: Button
 
     private var homeCard: RelativeLayout? = null
     private var awayCard: RelativeLayout? = null
@@ -92,6 +95,8 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         homeCard = view.findViewById(R.id.match_result_card_home)
         awayCard = view.findViewById(R.id.match_result_card_away)
 
+        discussion = view.findViewById(R.id.match_result_discussion_button)
+
         cardHomeName = view.findViewById(R.id.match_result_card_home_name)
         cardAwayName = view.findViewById(R.id.match_result_card_away_name)
 
@@ -106,6 +111,7 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         super.onDestroyView()
         cardHomeName.setOnClickListener(null)
         cardAwayName.setOnClickListener(null)
+        discussion.setOnClickListener(null)
 
         homeCard?.removeAllViews()
         awayCard?.removeAllViews()
@@ -143,6 +149,13 @@ class MatchResultFragment : AbstractMatchActivityFragment()
 
         cardAwayName.setOnClickListener {
             startTeamInfoActivity(match.awayId)
+        }
+
+        discussion.setOnClickListener {
+            val intent = Intent(activity!!, MatchDiscussionActivity::class.java).apply {
+                putExtra(MatchDiscussionActivity.MATCH_ID, match.id!!)
+            }
+            startActivity(intent)
         }
     }
 
