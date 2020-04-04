@@ -98,6 +98,9 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
     {
         super.onDestroyView()
         if(::setWeek.isInitialized) setWeek.setOnClickListener(null)
+        adapter?.onNextClickGuest = null
+        adapter?.onNextClickOwner = null
+        recyclerView?.adapter = null
         recyclerView = null
         adapter = null
         chooseWeekLayout?.removeAllViews()

@@ -101,7 +101,10 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     override fun onDestroyView()
     {
         super.onDestroyView()
+        adapter?.onDelete = null
+        recyclerView?.adapter = null
         recyclerView = null
+        adapter = null
 
         createTeam.setOnClickListener(null)
         addPlayer.setOnClickListener(null)

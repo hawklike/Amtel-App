@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
@@ -23,7 +22,7 @@ class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, pri
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
         ShowGroupsMenuAdapterVM::class.java)
 
-    var onNextClick: (group: Group, actualRound: Int) -> Unit = { _, _ -> toast(R.string.not_working_yet) }
+    var onNextClick: ((group: Group, actualRound: Int) -> Unit)? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -38,7 +37,7 @@ class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, pri
         init
         {
             card.setOnClickListener {
-                onNextClick.invoke(getItem(adapterPosition), actualRoundInt?.minus(1) ?: 0)
+                onNextClick?.invoke(getItem(adapterPosition), actualRoundInt?.minus(1) ?: 0)
             }
         }
     }

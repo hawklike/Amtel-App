@@ -21,7 +21,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 class ShowTeamMatchesPagingAdapter(private val team: Team, options: FirestorePagingOptions<Match>)
     : FirestorePagingAdapter<Match, ShowTeamMatchesPagingAdapter.ViewHolder>(options)
 {
-    var onClick: (match: Match) -> Unit = {}
+    var onClick: ((match: Match) -> Unit)? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -35,7 +35,7 @@ class ShowTeamMatchesPagingAdapter(private val team: Team, options: FirestorePag
         init
         {
             card.setOnClickListener {
-                getItem((adapterPosition))?.toObject<Match>()?.let { onClick.invoke(it) }
+                getItem((adapterPosition))?.toObject<Match>()?.let { onClick?.invoke(it) }
             }
         }
     }

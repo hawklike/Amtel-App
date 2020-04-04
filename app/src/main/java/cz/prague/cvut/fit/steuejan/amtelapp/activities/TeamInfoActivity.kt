@@ -68,6 +68,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         if(::chartSets.isInitialized)
             chartSets.setOnChartValueSelectedListener(null)
 
+        matchesAdapter?.onClick = null
         matchesRecyclerView?.adapter = null
         matchesAdapter = null
         matchesRecyclerView = null

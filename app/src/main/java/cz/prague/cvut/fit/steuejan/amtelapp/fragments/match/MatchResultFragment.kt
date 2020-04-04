@@ -116,6 +116,7 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         homeCard?.removeAllViews()
         awayCard?.removeAllViews()
 
+        adapter?.onClick = null
         recyclerView?.adapter = null
         adapter = null
         recyclerView = null
@@ -223,9 +224,8 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         adapter = ShowPlayersAdapter(round.homePlayers + round.awayPlayers, winners = getWinners())
-        adapter?.onClick = {
             //TODO show player profile
-        }
+        adapter?.onClick
         recyclerView?.adapter = adapter
     }
 

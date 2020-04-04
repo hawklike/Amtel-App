@@ -21,8 +21,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
 class ShowMatchesFirestoreAdapter(private val user: UserState, options: FirestoreRecyclerOptions<Match>, private val playoff: Boolean)
     : FirestoreRecyclerAdapter<Match, ShowMatchesFirestoreAdapter.ViewHolder>(options)
 {
-    var onNextClickOwner: (match: Match) -> Unit = {}
-    var onNextClickGuest: (match: Match) -> Unit = {}
+    var onNextClickOwner: ((match: Match) -> Unit)? = null
+    var onNextClickGuest: ((match: Match) -> Unit)? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -42,10 +42,10 @@ class ShowMatchesFirestoreAdapter(private val user: UserState, options: Firestor
                     val condition = user.self.role.toRole() == HEAD_OF_LEAGUE ||
                             (teamId != null && (teamId == match.homeId || teamId == match.awayId))
 
-                    if(condition) onNextClickOwner.invoke(match)
-                    else onNextClickGuest.invoke(match)
+                    if(condition) onNextClickOwner?.invoke(match)
+                    else onNextClickGuest?.invoke(match)
                 }
-                else onNextClickGuest.invoke(match)
+                else onNextClickGuest?.invoke(match)
             }
         }
     }

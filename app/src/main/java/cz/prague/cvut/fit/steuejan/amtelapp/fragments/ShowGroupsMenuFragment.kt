@@ -72,6 +72,7 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
     override fun onDestroyView()
     {
         super.onDestroyView()
+        adapter?.onNextClick = null
         recyclerView = null
         adapter = null
     }

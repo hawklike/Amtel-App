@@ -22,7 +22,7 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
 {
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(UsersAdapterVM::class.java)
 
-    var onDelete: (users: MutableList<User>) -> Unit = {}
+    var onDelete: ((users: MutableList<User>) -> Unit)? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -44,7 +44,7 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
                             list.removeAt(adapterPosition)
                             notifyItemRemoved(adapterPosition)
                             notifyItemRangeChanged(adapterPosition, list.size)
-                            onDelete.invoke(list)
+                            onDelete?.invoke(list)
                         }
                         negativeButton()
                     }

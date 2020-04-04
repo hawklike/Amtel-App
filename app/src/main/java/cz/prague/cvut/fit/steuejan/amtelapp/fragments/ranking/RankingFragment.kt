@@ -77,6 +77,7 @@ class RankingFragment : AbstractBaseFragment()
     override fun onDestroyView()
     {
         super.onDestroyView()
+        adapter?.onClick = null
         recyclerView?.adapter = null
         recyclerView = null
         adapter = null
