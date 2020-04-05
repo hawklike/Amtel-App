@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.adapters
+package cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime
 
 import android.content.ClipData
 import android.content.ClipboardManager

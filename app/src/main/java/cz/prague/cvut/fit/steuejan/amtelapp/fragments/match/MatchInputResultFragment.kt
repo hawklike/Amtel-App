@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -70,6 +71,10 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private var overviewLayout: RelativeLayout? = null
     private var resultsLayout: RelativeLayout? = null
+
+    private val dialog by lazy {
+        MaterialDialog(activity!!).customView(R.layout.progress_layout)
+    }
 
     companion object
     {
@@ -139,6 +144,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     override fun onDestroyView()
     {
         super.onDestroyView()
+        dialog.dismiss()
+
         homePlayers.setOnClickListener(null)
         awayPlayers.setOnClickListener(null)
         inputResult.setOnClickListener(null)
@@ -275,6 +282,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     {
         viewModel.matchAdded.observe(viewLifecycleOwner) {
             countMatchScore()
+            dialog.dismiss()
             val result = MatchManager.getResults(match.rounds[round - 1])
             sets.text = result.sets
             games.text = result.games
@@ -304,7 +312,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                     true-> {
                         displayConfirmationDialog(
                             "Chcete podat námitku?",
-                            "Vámi zapsané údaje budou poslány vedoucímu soutěže k posouzení.") {
+                            "Vámi zapsané údaje budou poslány vedoucímu soutěže k posouzení.",
+                            "Podat") {
                             viewModel.inputResult(homeTeam.users, awayTeam.users, isHeadOfLeague, isReport = true) }
                     }
 
@@ -314,9 +323,11 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                         else getString(R.string.match_input_confirmation_text)
 
                         displayConfirmationDialog(
-                            getString(R.string.create_team_dialog_title),
+                            "Zapsat výsledek?",
                             title) {
-                            viewModel.inputResult(homeTeam.users, awayTeam.users, isHeadOfLeague) }
+                            viewModel.inputResult(homeTeam.users, awayTeam.users, isHeadOfLeague)
+                            dialog.show()
+                        }
                     }
                 }
             }
@@ -325,8 +336,10 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         viewModel.isTie.observe(viewLifecycleOwner) { isTie ->
             if(isTie)
             {
+                //not working and don't know why
+                dialog.dismiss()
                 displayConfirmationDialog(
-                    getString(R.string.create_team_dialog_title),
+                    "Zapsat výsledek?",
                     getString(R.string.match_tie_warning)) {
                     viewModel.inputResult(
                         homeTeam.users,
@@ -334,7 +347,9 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                         isHeadOfLeague,
                         ignoreTie = true,
                         isReport = isReport
-                    ) }
+                    )
+                    dialog.show()
+                }
             }
         }
     }
@@ -343,50 +358,58 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     {
         viewModel.firstHome.observe(viewLifecycleOwner) {
             if(it is InvalidSet) firstSetHome.error = it.errorMessage
+            dialog.dismiss()
         }
 
         viewModel.secondHome.observe(viewLifecycleOwner) {
             if(it is InvalidSet) secondSetHome.error = it.errorMessage
+            dialog.dismiss()
         }
 
         viewModel.thirdHome.observe(viewLifecycleOwner) {
             if(it is InvalidSet) thirdSetHome.error = it.errorMessage
+            dialog.dismiss()
         }
 
         viewModel.firstAway.observe(viewLifecycleOwner) {
             if(it is InvalidSet) firstSetAway.error = it.errorMessage
+            dialog.dismiss()
         }
 
         viewModel.secondAway.observe(viewLifecycleOwner) {
             if(it is InvalidSet) secondSetAway.error = it.errorMessage
+            dialog.dismiss()
         }
 
         viewModel.thirdAway.observe(viewLifecycleOwner) {
             if(it is InvalidSet) thirdSetAway.error = it.errorMessage
+            dialog.dismiss()
         }
 
         viewModel.homePlayers.observe(viewLifecycleOwner) { isOk ->
             if(!isOk) homePlayers.error = getString(R.string.empty_players_error)
+            dialog.dismiss()
         }
 
         viewModel.awayPlayers.observe(viewLifecycleOwner) { isOk ->
             if(!isOk) awayPlayers.error = getString(R.string.empty_players_error)
+            dialog.dismiss()
         }
 
     }
 
-    private fun displayConfirmationDialog(title: String, message: String, func: () -> Unit)
+    private fun displayConfirmationDialog(title: String, message: String, button: String = "Zapsat", callback: () -> Unit)
     {
         MaterialDialog(activity!!)
             .title(text = title)
             .message(text = message)
             .show {
-                positiveButton(R.string.yes) { func() }
-                negativeButton(R.string.no)
+                positiveButton(text = button) { callback.invoke() }
+                negativeButton()
             }
     }
 
-    /**
+    /*
      *  If there is a group named '50+', two matches are doubles and one is single. Otherwise
      *  two matches are singles and one is double. According to a round number and a group name,
      *  a user may input only one or more players who played in the particular match.
@@ -407,9 +430,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         }
     }
 
-    /**
-     * Output may look like this: John Newman - john.newman@google.com, i.e. <<name>> - <<email>>
-     */
+
+    //output looks like this: <<name>> - <<email>>
     private fun listItemSingleChoice(dialog: MaterialDialog, players: List<String>, editText: EditText): MaterialDialog
     {
         return dialog.listItemsSingleChoice(items = players) { _, _, item ->
@@ -417,9 +439,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         }
     }
 
-    /**
-     * Output looks like this: <<name>> - <<email>>, <<name>> - <<email>>
-     */
+
+     //output looks like this: <<name>> - <<email>>, <<name>> - <<email>>
     private fun listItemMultiChoice(dialog: MaterialDialog, players: List<String>, editText: EditText): MaterialDialog
     {
         return dialog.listItemsMultiChoice(items = players) { _, _, items ->

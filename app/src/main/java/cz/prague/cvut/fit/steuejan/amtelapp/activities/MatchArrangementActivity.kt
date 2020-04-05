@@ -22,7 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowMessagesFirestoreAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowMessagesFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MessageManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
@@ -340,7 +340,9 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
                 .setLifecycleOwner(this)
                 .build()
 
-            messagesAdapter = ShowMessagesFirestoreAdapter(options)
+            messagesAdapter = ShowMessagesFirestoreAdapter(
+                options
+            )
             messagesAdapter?.dataLoadedListener = this
             messagesRecyclerView?.adapter = messagesAdapter
         }

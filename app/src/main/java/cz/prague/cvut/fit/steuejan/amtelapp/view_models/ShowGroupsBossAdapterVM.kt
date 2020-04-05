@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsBossAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowGroupsBossAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import kotlinx.coroutines.launch

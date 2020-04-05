@@ -31,6 +31,9 @@ object StringUtil
         return Pair(convertedName, convertedSurname)
     }
 
+    fun prepareCzechOrdering(text: String): String
+            = changeToEnglishForm(text)
+
     private fun changeToEnglishForm(text: String): String
     {
         return text.toLowerCase(Locale.getDefault())

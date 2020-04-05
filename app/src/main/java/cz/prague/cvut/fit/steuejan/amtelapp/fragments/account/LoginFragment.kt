@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.google.android.material.textfield.TextInputLayout
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
@@ -28,10 +28,7 @@ class LoginFragment : AbstractMainActivityFragment()
     private lateinit var emailLayout: TextInputLayout
     private lateinit var passwordLayout: TextInputLayout
     private lateinit var checkButton: Button
-
     private lateinit var lostPassword: TextView
-
-    private var loginLayout: RelativeLayout? = null
 
     companion object
     {
@@ -51,15 +48,14 @@ class LoginFragment : AbstractMainActivityFragment()
         checkButton = view.findViewById(R.id.login_checkButton)
         emailLayout = view.findViewById(R.id.login_email)
         passwordLayout = view.findViewById(R.id.login_password)
-
         lostPassword = view.findViewById(R.id.login_lost_password)
-        loginLayout = view.findViewById(R.id.login)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
-        setToolbarTitle(AuthManager.profileDrawerOptionMenu)
+        activity?.window?.navigationBarColor = App.getColor(R.color.blue)
+        setToolbarTitle("")
         setListeners()
         setObservers()
     }
@@ -69,8 +65,6 @@ class LoginFragment : AbstractMainActivityFragment()
         super.onDestroyView()
         checkButton.setOnClickListener(null)
         lostPassword.setOnClickListener(null)
-        loginLayout?.removeAllViews()
-        loginLayout = null
     }
 
     private fun setListeners()
@@ -98,7 +92,7 @@ class LoginFragment : AbstractMainActivityFragment()
                     else
                     {
                         message(R.string.empty_email_message)
-                        positiveButton(R.string.ok)
+                        positiveButton(text = "Zaslat")
                     }
                 }
         }
@@ -167,15 +161,8 @@ class LoginFragment : AbstractMainActivityFragment()
         setProgressBar(on)
         when(on)
         {
-            true -> {
-                loginLayout?.visibility = View.GONE
-                lostPassword.visibility = View.GONE
-
-            }
-            false -> {
-                loginLayout?.visibility = View.VISIBLE
-                lostPassword.visibility = View.VISIBLE
-            }
+            true -> lostPassword.visibility = View.GONE
+            false -> lostPassword.visibility = View.VISIBLE
         }
     }
 }

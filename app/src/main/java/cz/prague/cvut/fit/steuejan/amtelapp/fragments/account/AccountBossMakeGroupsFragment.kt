@@ -19,7 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.ManageGroupsActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsFirestoreAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowTeamsFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -91,7 +91,10 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(context)
-        adapter = ShowTeamsFirestoreAdapter(activity!!, options)
+        adapter = ShowTeamsFirestoreAdapter(
+            activity!!,
+            options
+        )
         recyclerView?.adapter = adapter
     }
 

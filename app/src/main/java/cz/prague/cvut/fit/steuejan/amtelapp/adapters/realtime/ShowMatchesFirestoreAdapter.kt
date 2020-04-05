@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.adapters
+package cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime
 
 import android.os.Build
 import android.text.Html

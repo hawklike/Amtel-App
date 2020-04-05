@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.adapters
+package cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater

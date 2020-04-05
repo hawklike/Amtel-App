@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowUsersFirestoreAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowUsersFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
@@ -71,7 +71,10 @@ class AccountBossPlayersFragment : AbstractMainActivityFragment()
 
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(context)
-        adapter = ShowUsersFirestoreAdapter(activity!!, options)
+        adapter = ShowUsersFirestoreAdapter(
+            activity!!,
+            options
+        )
         recyclerView?.adapter = adapter
     }
 

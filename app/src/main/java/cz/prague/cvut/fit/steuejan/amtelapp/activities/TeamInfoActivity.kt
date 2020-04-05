@@ -24,8 +24,8 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowPlayersAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamMatchesPagingAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowPlayersAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowTeamMatchesPagingAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -123,7 +123,11 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         playersRecyclerView?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         val team = viewModel.mTeam ?: Team()
-        playersAdapter = ShowPlayersAdapter(team.users.map { it.toPlayer() }, true, team = team)
+        playersAdapter = ShowPlayersAdapter(
+            team.users.map { it.toPlayer() },
+            true,
+            team = team
+        )
 
         playersRecyclerView?.adapter = playersAdapter
     }
@@ -146,7 +150,10 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
             .setQuery(query, config, Match::class.java)
             .build()
 
-        matchesAdapter = ShowTeamMatchesPagingAdapter(viewModel.mTeam ?: Team(id = "mucus"), options)
+        matchesAdapter = ShowTeamMatchesPagingAdapter(
+            viewModel.mTeam ?: Team(id = "mucus"),
+            options
+        )
         matchesAdapter?.onClick = { match ->
             val intent = Intent(this, MatchViewPagerActivity::class.java).apply {
                 putExtra(MatchViewPagerActivity.MATCH, match)

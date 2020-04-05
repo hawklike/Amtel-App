@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.TeamInfoActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamsRankingAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowTeamsRankingAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
@@ -116,7 +116,11 @@ class RankingFragment : AbstractBaseFragment()
     {
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(activity!!)
-        adapter = ShowTeamsRankingAdapter(teams, year.toString(), orderBy)
+        adapter = ShowTeamsRankingAdapter(
+            teams,
+            year.toString(),
+            orderBy
+        )
         adapter?.onClick = { team ->
             val intent = Intent(activity!!, TeamInfoActivity::class.java).apply {
                 putExtra(TeamInfoActivity.TEAM, team)

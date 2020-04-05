@@ -4,6 +4,8 @@ import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SearchPreparation
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.TeamDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -20,6 +22,12 @@ object TeamManager
     {
         return@withContext try
         {
+            val search = SearchPreparation(team.name)
+            team.searchNameComplete = search.preparedText
+            team.searchName = search.removeSportClubAcronym()
+
+            team.englishName = StringUtil.prepareCzechOrdering(team.name)
+
             TeamDAO().insert(team)
             Log.i(TAG, "setTeam(): $team successfully set/updated in database")
             team

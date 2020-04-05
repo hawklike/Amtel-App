@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.adapters
+package cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal
 
 import android.content.res.ColorStateList
 import android.graphics.Typeface

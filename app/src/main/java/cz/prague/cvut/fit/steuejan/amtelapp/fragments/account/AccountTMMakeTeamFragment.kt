@@ -23,7 +23,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Companion.TEAM
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowTeamPlayersAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowTeamPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
@@ -124,7 +124,10 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(context)
-        adapter = ShowTeamPlayersAdapter(activity!!, users)
+        adapter = ShowTeamPlayersAdapter(
+            activity!!,
+            users
+        )
         adapter?.onDelete = {
             if(team is ValidTeam)
             {
@@ -167,7 +170,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
                 .message(R.string.create_team_dialog_message)
                 .show {
                     positiveButton(R.string.yes) {
-                        viewModel.createTeam(user, name, place, playingDays)
+                        viewModel.createTeam(user, "Tři", place, playingDays)
                     }
                     negativeButton(R.string.no)
                 }

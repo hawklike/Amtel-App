@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.adapters
+package cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
