@@ -61,4 +61,7 @@ class TeamDAO : DAO
             update(team.id!!, mapOf("users" to team.users))
         }
     }
+
+    fun retrieveTeamsByPrefix(textToSearch: String, doCompleteSearch: Boolean): Query
+            = retrieveByPrefix(collection, textToSearch, doCompleteSearch)
 }

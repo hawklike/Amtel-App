@@ -77,4 +77,16 @@ interface DAO
             .get()
             .await()
     }
+
+    fun retrieveByPrefix(collectionName: String, textToSearch: String, isTeamAndDoCompleteSearch: Boolean = false): Query
+    {
+        val searchField =
+            if(isTeamAndDoCompleteSearch) "searchNameComplete"
+            else "searchName"
+
+        return Firebase.firestore
+            .collection(collection)
+            .whereGreaterThanOrEqualTo(searchField, textToSearch)
+            .whereLessThanOrEqualTo(searchField, textToSearch + '\uf8ff')
+    }
 }

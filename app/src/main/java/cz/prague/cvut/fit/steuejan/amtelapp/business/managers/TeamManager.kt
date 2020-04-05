@@ -133,7 +133,7 @@ object TeamManager
                 group.self.teamIds[year.toString()]?.let { teamIds ->
                     teamIds.forEach { teamId ->
                         with(findTeam(teamId)) {
-                            if(this is ValidTeam) teams.add(this.self)
+                            if(this is ValidTeam) teams.add(self)
                         }
                     }
                 }
@@ -147,6 +147,13 @@ object TeamManager
             Log.e(TAG, "retrieveTeamsInSeason(): teams not found because ${ex.message}")
             NoTeam
         }
+    }
+
+    fun retrieveTeamsByPrefix(textToSearch: String): Query
+    {
+        val preparation = SearchPreparation(textToSearch)
+        val doCompleteSearch = preparation.doCompleteSearch(textToSearch)
+        return TeamDAO().retrieveTeamsByPrefix(preparation.preparedText, doCompleteSearch)
     }
 
     private const val TAG = "TeamManager"

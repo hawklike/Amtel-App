@@ -170,7 +170,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
                 .message(R.string.create_team_dialog_message)
                 .show {
                     positiveButton(R.string.yes) {
-                        viewModel.createTeam(user, "Tři", place, playingDays)
+                        viewModel.createTeam(user, name, place, playingDays)
                     }
                     negativeButton(R.string.no)
                 }
