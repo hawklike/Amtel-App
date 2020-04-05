@@ -22,7 +22,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.databinding.FragmentTeamsBinding
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.TeamsFragmentVM
 
-class TeamsFragment : AbstractMainActivityFragment()
+class TeamsFragment : AbstractMainActivityFragment(), ShowTeamsPagingAdapter.DataLoadedListener
 {
     private var _binding: FragmentTeamsBinding? = null
     private val binding get() = _binding!!
@@ -49,6 +49,7 @@ class TeamsFragment : AbstractMainActivityFragment()
         super.onDestroyView()
 
         adapter?.onClick = null
+        adapter?.dataLoadedListener = null
         binding.teams.adapter = null
         adapter = null
 
@@ -60,9 +61,18 @@ class TeamsFragment : AbstractMainActivityFragment()
         super.onActivityCreated(savedInstanceState)
         setToolbarTitle(getString(R.string.teams))
         setLogoutIconVisibility(false)
+        refreshTeams()
         showTeams()
         sortTeams()
         searchTeam()
+    }
+
+    private fun refreshTeams()
+    {
+        binding.refreshLayout.setColorSchemeResources(R.color.blue)
+        binding.refreshLayout.setOnRefreshListener {
+            adapter?.refresh()
+        }
     }
 
     private fun showTeams()
@@ -75,6 +85,7 @@ class TeamsFragment : AbstractMainActivityFragment()
         val options =  setQueryOptions(viewModel.orderBy)
 
         adapter = ShowTeamsPagingAdapter(options)
+        adapter?.dataLoadedListener = this
         adapter?.onClick = { team ->
             team?.let {
                 val intent = Intent(activity, TeamInfoActivity::class.java).apply {
@@ -150,5 +161,15 @@ class TeamsFragment : AbstractMainActivityFragment()
             .setQuery(query, config, Team::class.java)
             .setLifecycleOwner(this)
             .build()
+    }
+
+    override fun onLoaded()
+    {
+        binding.refreshLayout.isRefreshing = false
+    }
+
+    override fun onLoading()
+    {
+        binding.refreshLayout.isRefreshing = true
     }
 }

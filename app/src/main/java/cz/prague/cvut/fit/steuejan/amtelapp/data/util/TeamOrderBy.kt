@@ -8,7 +8,7 @@ enum class TeamOrderBy
     {
         return when(this)
         {
-            NAME -> "name"
+            NAME -> "englishName"
             GROUP -> "groupName"
         }
     }

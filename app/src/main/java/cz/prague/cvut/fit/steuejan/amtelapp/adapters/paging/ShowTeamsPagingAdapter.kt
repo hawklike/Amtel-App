@@ -10,7 +10,7 @@ import com.firebase.ui.firestore.paging.FirestorePagingAdapter
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.firebase.ui.firestore.paging.LoadingState
 import com.google.firebase.firestore.ktx.toObject
-import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 
@@ -18,7 +18,7 @@ class ShowTeamsPagingAdapter(options: FirestorePagingOptions<Team>)
     : FirestorePagingAdapter<Team, ShowTeamsPagingAdapter.ViewHolder>(options)
 {
     var onClick: ((Team?) -> Unit)? = null
-    var dataLoadedListener: ShowMessagesPagingAdapter.DataLoadedListener? = null
+    var dataLoadedListener: DataLoadedListener? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -60,7 +60,7 @@ class ShowTeamsPagingAdapter(options: FirestorePagingOptions<Team>)
             LoadingState.LOADING_MORE -> dataLoadedListener?.onLoading()
             LoadingState.LOADED -> dataLoadedListener?.onLoaded()
             LoadingState.FINISHED -> {
-                if(itemCount > 12) App.toast("Více už toho není.")
+                if(itemCount > 7) toast("Více už toho není.")
                 dataLoadedListener?.onLoaded()
             }
             LoadingState.ERROR -> {}

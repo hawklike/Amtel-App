@@ -1,83 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:fillViewport="true"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/veryVeryLightGrey">
 
-        <RelativeLayout
+    <include layout="@layout/curve" />
+
+    <RelativeLayout
+        android:id="@+id/zzSortLayout"
+        android:layout_marginBottom="@dimen/card_margin"
+        style="@style/CardRelativeLayout">
+
+        <EditText
+            android:id="@+id/search"
+            style="@style/TextInputEditTextStyle"
+            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/veryVeryLightGrey">
+            android:importantForAutofill="no"
+            android:layout_marginBottom="@dimen/card_margin"
+            android:hint="Hledat tým"
+            android:layout_marginEnd="56dp"
+            android:inputType="text" />
 
-            <include layout="@layout/curve" />
+        <TextView
+            android:id="@+id/zzSortTitle"
+            android:layout_below="@id/search"
+            android:layout_width="wrap_content"
+            android:text="Řadit podle:"
+            android:textStyle="bold"
+            android:textSize="@dimen/common_text_size"
+            android:textColor="@color/darkGrey"
+            android:layout_height="wrap_content"/>
 
-            <RelativeLayout
-                android:id="@+id/zzSortLayout"
-                android:layout_marginBottom="@dimen/card_margin"
-                style="@style/CardRelativeLayout">
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/sortBy"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/zzSortTitle"
+            app:singleSelection="true"
+            app:checkedChip="@id/sortByName"
+            android:layout_marginBottom="4dp"
+            android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/search"
-                    style="@style/TextInputEditTextStyle"
-                    android:layout_marginTop="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:importantForAutofill="no"
-                    android:layout_marginBottom="@dimen/card_margin"
-                    android:hint="Hledat tým"
-                    android:layout_marginEnd="56dp"
-                    android:inputType="text" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/sortByName"
+                style="@style/CustomChoiceChip"
+                android:layout_width="wrap_content"
+                app:chipBackgroundColor="@color/chips_background"
+                android:layout_height="wrap_content"
+                android:text="Názvu"/>
 
-                <TextView
-                    android:id="@+id/zzSortTitle"
-                    android:layout_below="@id/search"
-                    android:layout_width="wrap_content"
-                    android:text="Řadit podle:"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/common_text_size"
-                    android:textColor="@color/darkGrey"
-                    android:layout_height="wrap_content"/>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/sortByGroup"
+                style="@style/CustomChoiceChip"
+                android:layout_width="wrap_content"
+                app:chipBackgroundColor="@color/chips_background"
+                android:layout_height="wrap_content"
+                android:text="Skupiny"/>
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/sortBy"
-                    android:layout_width="wrap_content"
-                    android:layout_below="@id/zzSortTitle"
-                    app:singleSelection="true"
-                    app:checkedChip="@id/sortByName"
-                    android:layout_marginBottom="4dp"
-                    android:layout_height="wrap_content">
+        </com.google.android.material.chip.ChipGroup>
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/sortByName"
-                    style="@style/CustomChoiceChip"
-                    android:layout_width="wrap_content"
-                    app:chipBackgroundColor="@color/chips_background"
-                    android:layout_height="wrap_content"
-                    android:text="Názvu"/>
+    </RelativeLayout>
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/sortByGroup"
-                        style="@style/CustomChoiceChip"
-                        android:layout_width="wrap_content"
-                        app:chipBackgroundColor="@color/chips_background"
-                        android:layout_height="wrap_content"
-                        android:text="Skupiny"/>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_below="@id/zzSortLayout"
+        android:layout_marginEnd="@dimen/card_margin">
 
-                </com.google.android.material.chip.ChipGroup>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/teams"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-            </RelativeLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/teams"
-                android:layout_width="match_parent"
-                android:layout_marginStart="@dimen/card_margin"
-                android:layout_marginEnd="@dimen/card_margin"
-                android:layout_below="@id/zzSortLayout"
-                android:layout_height="match_parent"/>
-
-        </RelativeLayout>
+</RelativeLayout>
 
 
-</ScrollView>
