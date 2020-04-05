@@ -10,7 +10,6 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.TeamDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -86,14 +85,8 @@ object TeamManager
         }
     }
 
-    fun retrieveAllTeams(orderBy: TeamOrderBy = TeamOrderBy.NAME): Query
-    {
-        var query: Query? = null
-        TeamOrderBy.values().forEach {
-            if(orderBy == it) query = TeamDAO().retrieveAllTeams(it.toString())
-        }
-        return query!!
-    }
+    fun retrieveAllTeams(): Query
+            = TeamDAO().retrieveAllTeams()
 
     suspend fun updateUserInTeam(newUser: User): Boolean = withContext(IO)
     {
@@ -149,14 +142,16 @@ object TeamManager
         }
     }
 
-    fun retrieveTeamsByPrefix(textToSearch: String): Query
+    fun retrieveTeamsByPrefix(textToSearch: String): Pair<Query, Boolean>
     {
         val preparation = SearchPreparation(textToSearch)
         val doCompleteSearch = preparation.doCompleteSearch(textToSearch)
-        return TeamDAO().retrieveTeamsByPrefix(preparation.preparedText, doCompleteSearch)
+        return Pair(TeamDAO().retrieveTeamsByPrefix(preparation.preparedText, doCompleteSearch), doCompleteSearch)
     }
 
     private const val TAG = "TeamManager"
     const val groupName = "groupName"
     const val groupId = "groupId"
+    const val searchName = "searchName"
+    const val searchNameComplete = "searchNameComplete"
 }

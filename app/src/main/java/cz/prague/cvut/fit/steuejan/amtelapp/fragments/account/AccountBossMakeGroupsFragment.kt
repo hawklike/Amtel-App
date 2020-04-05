@@ -83,7 +83,7 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 
     private fun setupRecycler()
     {
-        val query = TeamManager.retrieveAllTeams(TeamOrderBy.GROUP)
+        val query = TeamManager.retrieveAllTeams().orderBy(TeamOrderBy.GROUP.toString())
         val options = FirestoreRecyclerOptions.Builder<Team>()
             .setQuery(query, Team::class.java)
             .setLifecycleOwner(viewLifecycleOwner)

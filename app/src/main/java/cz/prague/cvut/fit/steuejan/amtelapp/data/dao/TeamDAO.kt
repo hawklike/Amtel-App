@@ -32,8 +32,8 @@ class TeamDAO : DAO
     override suspend fun delete(documentId: String): Unit
             = delete(collection, documentId)
 
-    fun retrieveAllTeams(orderBy: String): Query
-            = retrieveAll(collection, orderBy)
+    fun retrieveAllTeams(): Query
+            = retrieveAllAndGetQuery(collection)
 
     fun retrieveAllUsers(orderBy: String, teamId: String): Query
     {

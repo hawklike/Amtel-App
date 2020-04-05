@@ -111,11 +111,19 @@ class TeamsFragment : AbstractMainActivityFragment()
             {
                 if(text.isNotEmpty())
                 {
-                    val query = TeamManager.retrieveTeamsByPrefix(text.toString())
-                    adapter?.updateOptions(setQueryOptions(query))
+                    val result = TeamManager.retrieveTeamsByPrefix(text.toString())
+                    val isCompleteSearch = result.second
+                    val query = result.first
+
+                    viewModel.query =
+                        if(isCompleteSearch) query.orderBy(TeamManager.searchNameComplete)
+                        else query.orderBy(TeamManager.searchName)
+
+                    adapter?.updateOptions(setQueryOptions(viewModel.orderBy))
                 }
                 else
                 {
+                    viewModel.query = TeamManager.retrieveAllTeams()
                     adapter?.updateOptions(setQueryOptions(viewModel.orderBy))
                 }
             }
@@ -126,7 +134,7 @@ class TeamsFragment : AbstractMainActivityFragment()
 
     private fun setQueryOptions(orderBy: TeamOrderBy): FirestorePagingOptions<Team>
     {
-        val query = TeamManager.retrieveAllTeams(orderBy)
+        val query = viewModel.query.orderBy(orderBy.toString())
         return setQueryOptions(query)
     }
 
@@ -143,6 +151,4 @@ class TeamsFragment : AbstractMainActivityFragment()
             .setLifecycleOwner(this)
             .build()
     }
-
-
 }

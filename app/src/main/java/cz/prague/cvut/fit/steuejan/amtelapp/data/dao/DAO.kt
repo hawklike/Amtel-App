@@ -70,6 +70,12 @@ interface DAO
             .orderBy(orderBy, Query.Direction.ASCENDING)
     }
 
+    fun retrieveAllAndGetQuery(collectionName: String): Query
+    {
+        return Firebase.firestore
+            .collection(collectionName)
+    }
+
     suspend fun retrieveAll(collectionName: String): QuerySnapshot
     {
         return Firebase.firestore
