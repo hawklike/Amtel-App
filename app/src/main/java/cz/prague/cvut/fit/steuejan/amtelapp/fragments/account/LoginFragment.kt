@@ -11,7 +11,6 @@ import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.google.android.material.textfield.TextInputLayout
-import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
@@ -54,7 +53,6 @@ class LoginFragment : AbstractMainActivityFragment()
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
-        activity?.window?.navigationBarColor = App.getColor(R.color.blue)
         setToolbarTitle("")
         setListeners()
         setObservers()
@@ -87,12 +85,12 @@ class LoginFragment : AbstractMainActivityFragment()
                     if(email.isNotEmpty())
                     {
                         message(text = String.format(getString(R.string.reset_email_message), email))
-                        positiveButton(R.string.ok) { AuthManager.sendResetPassword(email) }
+                        positiveButton(text = "Zaslat") { AuthManager.sendResetPassword(email) }
                     }
                     else
                     {
                         message(R.string.empty_email_message)
-                        positiveButton(text = "Zaslat")
+                        positiveButton(R.string.ok)
                     }
                 }
         }
