@@ -19,7 +19,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowTeamPlayersAdapterVM
 
-class ShowTeamPlayersAdapter(private val context: Context, private val list: MutableList<User>) : RecyclerView.Adapter<ShowTeamPlayersAdapter.ViewHolder>()
+class ShowTeamPlayersAdapter(private val context: Context, private val list: MutableList<User>)
+    : RecyclerView.Adapter<ShowTeamPlayersAdapter.ViewHolder>()
 {
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(ShowTeamPlayersAdapterVM::class.java)
 

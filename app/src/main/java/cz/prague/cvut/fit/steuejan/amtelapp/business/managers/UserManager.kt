@@ -100,5 +100,13 @@ object UserManager
     fun retrieveAllUsers(): Query
             = UserDAO().retrieveAllUsers()
 
+    fun retrieveUsersByPrefix(textToSearch: String): Query
+    {
+        val preparation = SearchPreparation(textToSearch)
+        return UserDAO().retrieveTeamsByPrefix(preparation.preparedText, searchSurname)
+    }
+
     private const val TAG = "UserManager"
+
+    const val searchSurname = "searchSurname"
 }

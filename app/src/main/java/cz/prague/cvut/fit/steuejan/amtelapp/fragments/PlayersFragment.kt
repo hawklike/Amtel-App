@@ -1,6 +1,8 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +14,7 @@ import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.google.firebase.firestore.Query
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowUsersPagingAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.FragmentPlayersBinding
@@ -131,31 +134,25 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
 
     private fun searchUser()
     {
-//        binding.search.addTextChangedListener(object: TextWatcher
-//        {
-//            override fun afterTextChanged(text: Editable)
-//            {
-//                if(text.isNotEmpty())
-//                {
-//                    val result = UserManager.retrieveUsersByPrefix(text.toString())
-//                    val isCompleteSearch = result.second
-//                    val query = result.first
-//
-//                    viewModel.query =
-//                        if(isCompleteSearch) query.orderBy(UserManager.searchNameComplete)
-//                        else query.orderBy(UserManager.searchName)
-//
-//                    adapter?.updateOptions(setQueryOptions(viewModel.orderBy))
-//                }
-//                else
-//                {
-//                    viewModel.query = UserManager.retrieveAllUsers()
-//                    adapter?.updateOptions(setQueryOptions(viewModel.orderBy))
-//                }
-//            }
-//            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-//            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-//        })
+        binding.search.addTextChangedListener(object: TextWatcher
+        {
+            override fun afterTextChanged(text: Editable)
+            {
+                if(text.isNotEmpty())
+                {
+                    val query = UserManager.retrieveUsersByPrefix(text.toString())
+                    viewModel.query = query.orderBy(UserManager.searchSurname)
+                    adapter?.updateOptions(setQueryOptions(viewModel.orderBy))
+                }
+                else
+                {
+                    viewModel.query = UserManager.retrieveAllUsers()
+                    adapter?.updateOptions(setQueryOptions(viewModel.orderBy))
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+        })
     }
 
     private fun setQueryOptions(orderBy: UserOrderBy): FirestorePagingOptions<User>

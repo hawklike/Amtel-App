@@ -29,4 +29,7 @@ class UserDAO : DAO
 
     fun retrieveAllUsers(): Query
             = retrieveAllAndGetQuery(collection)
+
+    fun retrieveTeamsByPrefix(textToSearch: String, searchField: String): Query
+            = retrieveByPrefix(collection, textToSearch, searchField)
 }
