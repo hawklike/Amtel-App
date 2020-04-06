@@ -146,7 +146,10 @@ object TeamManager
     {
         val preparation = SearchPreparation(textToSearch)
         val doCompleteSearch = preparation.doCompleteSearch(textToSearch)
-        return Pair(TeamDAO().retrieveTeamsByPrefix(preparation.preparedText, doCompleteSearch), doCompleteSearch)
+        val searchField =
+            if(doCompleteSearch) searchNameComplete
+            else searchName
+        return Pair(TeamDAO().retrieveTeamsByPrefix(preparation.preparedText, searchField), doCompleteSearch)
     }
 
     private const val TAG = "TeamManager"

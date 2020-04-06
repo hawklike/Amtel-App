@@ -1,7 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 
 import android.util.Log
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.GroupDAO
@@ -185,10 +184,6 @@ object GroupManager
             NoTeam
         }
     }
-
-
-    fun retrieveAllGroups(orderBy: String): Query
-            = GroupDAO().retrieveAllGroups(orderBy)
 
     const val name = "name"
     const val visibility = "visibility"

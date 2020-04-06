@@ -63,13 +63,6 @@ interface DAO
             .await()
     }
 
-    fun retrieveAll(collectionName: String, orderBy: String): Query
-    {
-        return Firebase.firestore
-            .collection(collectionName)
-            .orderBy(orderBy, Query.Direction.ASCENDING)
-    }
-
     fun retrieveAllAndGetQuery(collectionName: String): Query
     {
         return Firebase.firestore
@@ -84,12 +77,8 @@ interface DAO
             .await()
     }
 
-    fun retrieveByPrefix(collectionName: String, textToSearch: String, isTeamAndDoCompleteSearch: Boolean = false): Query
+    fun retrieveByPrefix(collectionName: String, textToSearch: String, searchField: String): Query
     {
-        val searchField =
-            if(isTeamAndDoCompleteSearch) "searchNameComplete"
-            else "searchName"
-
         return Firebase.firestore
             .collection(collection)
             .whereGreaterThanOrEqualTo(searchField, textToSearch)

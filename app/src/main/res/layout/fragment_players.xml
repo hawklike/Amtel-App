@@ -1,36 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:background="@color/veryVeryLightGrey">
+
+    <include layout="@layout/curve" />
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:id="@+id/zzSortLayout"
+        android:layout_marginBottom="@dimen/card_margin"
+        style="@style/CardRelativeLayout">
 
-        <include
-            layout="@layout/toolbar"
+        <EditText
+            android:id="@+id/search"
+            style="@style/TextInputEditTextStyle"
+            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAutofill="no"
+            android:layout_marginBottom="@dimen/card_margin"
+            android:hint="Hledat hráče podle příjmení"
+            android:layout_marginEnd="56dp"
+            android:inputType="text" />
+
+        <TextView
+            android:id="@+id/zzSortTitle"
+            android:layout_below="@id/search"
+            android:layout_width="wrap_content"
+            android:text="Řadit podle:"
+            android:textStyle="bold"
+            android:textSize="@dimen/common_text_size"
+            android:textColor="@color/darkGrey"
             android:layout_height="wrap_content"/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/veryVeryLightGrey"
-            android:layout_below="@id/toolbar">
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/sortBy"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/zzSortTitle"
+            app:singleSelection="true"
+            app:checkedChip="@id/sortBySurname"
+            android:layout_marginBottom="4dp"
+            android:layout_height="wrap_content">
 
-            <include layout="@layout/curve" />
-
-            <TextView
-                android:layout_width="match_parent"
+            <com.google.android.material.chip.Chip
+                android:id="@+id/sortByName"
+                style="@style/CustomChoiceChip"
+                android:layout_width="wrap_content"
+                app:chipBackgroundColor="@color/chips_background"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_centerVertical="true"
-                android:text="@string/players" />
+                android:text="Jména"/>
 
-        </RelativeLayout>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/sortBySurname"
+                style="@style/CustomChoiceChip"
+                android:layout_width="wrap_content"
+                app:chipBackgroundColor="@color/chips_background"
+                android:layout_height="wrap_content"
+                android:text="Příjmení"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/sortByTeam"
+                style="@style/CustomChoiceChip"
+                android:layout_width="wrap_content"
+                app:chipBackgroundColor="@color/chips_background"
+                android:layout_height="wrap_content"
+                android:text="Týmu"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/sortByAge"
+                style="@style/CustomChoiceChip"
+                android:layout_width="wrap_content"
+                app:chipBackgroundColor="@color/chips_background"
+                android:layout_height="wrap_content"
+                android:text="Věku"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/sortByRole"
+                style="@style/CustomChoiceChip"
+                android:layout_width="wrap_content"
+                app:chipBackgroundColor="@color/chips_background"
+                android:layout_height="wrap_content"
+                android:text="Role"/>
+
+        </com.google.android.material.chip.ChipGroup>
 
     </RelativeLayout>
 
-</ScrollView>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_below="@id/zzSortLayout"
+        android:layout_marginEnd="@dimen/card_margin">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/users"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</RelativeLayout>
+
+

@@ -9,7 +9,7 @@ enum class UserRole
         return when(this)
         {
             HEAD_OF_LEAGUE -> "head_of_league"
-            TEAM_MANAGER -> "team_manager"
+            TEAM_MANAGER -> "manager_of_team"
             PLAYER -> "player"
         }
     }
@@ -20,7 +20,8 @@ fun String.toRole(): UserRole
     return when(this)
     {
         "head_of_league" -> UserRole.HEAD_OF_LEAGUE
-        "team_manager" -> UserRole.TEAM_MANAGER
+        "manager_of_team" -> UserRole.TEAM_MANAGER
+        "team_manager" -> UserRole.TEAM_MANAGER //TODO: delete this (deprecated)
         "player" -> UserRole.PLAYER
         else -> throw IllegalArgumentException("given role doesn't exist")
     }

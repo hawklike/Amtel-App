@@ -62,6 +62,6 @@ class TeamDAO : DAO
         }
     }
 
-    fun retrieveTeamsByPrefix(textToSearch: String, doCompleteSearch: Boolean): Query
-            = retrieveByPrefix(collection, textToSearch, doCompleteSearch)
+    fun retrieveTeamsByPrefix(textToSearch: String, searchField: String): Query
+            = retrieveByPrefix(collection, textToSearch, searchField)
 }

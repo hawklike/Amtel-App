@@ -4,15 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowUsersFirestoreAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
-import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowUsersPagingAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 
+@Deprecated("Replaced with UsersFragment")
 class AccountBossPlayersFragment : AbstractMainActivityFragment()
 {
     companion object
@@ -23,7 +20,7 @@ class AccountBossPlayersFragment : AbstractMainActivityFragment()
     override fun getName(): String = "AccountBossPlayersFragment"
 
     private var recyclerView: RecyclerView? = null
-    private var adapter: ShowUsersFirestoreAdapter? = null
+    private var adapter: ShowUsersPagingAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
@@ -64,18 +61,15 @@ class AccountBossPlayersFragment : AbstractMainActivityFragment()
     //TODO: use FirestorePagingAdapter
     private fun setupRecycler()
     {
-        val query = UserManager.retrieveAllUsers()
-        val options = FirestoreRecyclerOptions.Builder<User>()
-            .setQuery(query, User::class.java)
-            .build()
-
-        recyclerView?.setHasFixedSize(true)
-        recyclerView?.layoutManager = LinearLayoutManager(context)
-        adapter = ShowUsersFirestoreAdapter(
-            activity!!,
-            options
-        )
-        recyclerView?.adapter = adapter
+//        val query = UserManager.retrieveAllUsers()
+//        val options = FirestoreRecyclerOptions.Builder<User>()
+//            .setQuery(query, User::class.java)
+//            .build()
+//
+//        recyclerView?.setHasFixedSize(true)
+//        recyclerView?.layoutManager = LinearLayoutManager(context)
+//        adapter = ShowUsersPagingAdapter(options)
+//        recyclerView?.adapter = adapter
     }
 
 }

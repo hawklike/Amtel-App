@@ -43,9 +43,6 @@ class GroupDAO : DAO
     override suspend fun delete(documentId: String): Unit
             = delete(collection, documentId)
 
-    fun retrieveAllGroups(orderBy: String): Query
-            = retrieveAll(collection, orderBy)
-
     fun retrieveAllGroupsExceptPlayoff(orderBy: String): Query
     {
         return Firebase.firestore

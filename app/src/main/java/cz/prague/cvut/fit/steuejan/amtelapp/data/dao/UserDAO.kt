@@ -27,6 +27,6 @@ class UserDAO : DAO
     override suspend fun delete(documentId: String): Unit
             = delete(collection, documentId)
 
-    fun retrieveAllUsers(orderBy: String): Query
-            = retrieveAll(collection, orderBy)
+    fun retrieveAllUsers(): Query
+            = retrieveAllAndGetQuery(collection)
 }
