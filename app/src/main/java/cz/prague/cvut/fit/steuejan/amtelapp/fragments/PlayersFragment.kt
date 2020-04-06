@@ -168,7 +168,7 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
             .setPrefetchDistance(2)
-            .setPageSize(5)
+            .setPageSize(4)
             .build()
 
         return FirestorePagingOptions.Builder<User>()
