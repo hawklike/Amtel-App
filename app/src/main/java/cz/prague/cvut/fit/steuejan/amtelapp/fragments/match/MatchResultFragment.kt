@@ -16,7 +16,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchDiscussionActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.TeamInfoActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowPlayersAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
@@ -116,6 +116,7 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         homeCard?.removeAllViews()
         awayCard?.removeAllViews()
 
+        adapter?.onClick = null
         recyclerView?.adapter = null
         adapter = null
         recyclerView = null
@@ -222,10 +223,12 @@ class MatchResultFragment : AbstractMatchActivityFragment()
     {
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        adapter = ShowPlayersAdapter(round.homePlayers + round.awayPlayers, winners = getWinners())
-        adapter?.onClick = {
+        adapter = ShowPlayersAdapter(
+            round.homePlayers + round.awayPlayers,
+            winners = getWinners()
+        )
             //TODO show player profile
-        }
+        adapter?.onClick
         recyclerView?.adapter = adapter
     }
 

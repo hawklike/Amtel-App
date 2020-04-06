@@ -4,10 +4,10 @@ import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SearchPreparation
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
@@ -18,6 +18,8 @@ object UserManager
         val (englishName, englishSurname) = StringUtil.prepareCzechOrdering(user.name, user.surname)
         user.englishName = englishName
         user.englishSurname = englishSurname
+
+        user.searchSurname = SearchPreparation(user.surname).preparedText
 
         return@withContext try
         {
@@ -95,14 +97,16 @@ object UserManager
         }
     }
 
-    fun retrieveAllUsers(orderBy: UserOrderBy = UserOrderBy.SURNAME): Query
+    fun retrieveAllUsers(): Query
+            = UserDAO().retrieveAllUsers()
+
+    fun retrieveUsersByPrefix(textToSearch: String): Query
     {
-        var query: Query? = null
-        UserOrderBy.values().forEach {
-            if(orderBy == it) query = UserDAO().retrieveAllUsers(it.toString())
-        }
-        return query!!
+        val preparation = SearchPreparation(textToSearch)
+        return UserDAO().retrieveTeamsByPrefix(preparation.preparedText, searchSurname)
     }
 
     private const val TAG = "UserManager"
+
+    const val searchSurname = "searchSurname"
 }

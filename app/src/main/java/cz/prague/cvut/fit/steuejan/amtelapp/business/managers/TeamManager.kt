@@ -4,11 +4,12 @@ import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SearchPreparation
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.TeamDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -20,6 +21,12 @@ object TeamManager
     {
         return@withContext try
         {
+            val search = SearchPreparation(team.name)
+            team.searchNameComplete = search.preparedText
+            team.searchName = search.removeSportClubAcronym()
+
+            team.englishName = StringUtil.prepareCzechOrdering(team.name)
+
             TeamDAO().insert(team)
             Log.i(TAG, "setTeam(): $team successfully set/updated in database")
             team
@@ -78,14 +85,8 @@ object TeamManager
         }
     }
 
-    fun retrieveAllTeams(orderBy: TeamOrderBy = TeamOrderBy.NAME): Query
-    {
-        var query: Query? = null
-        TeamOrderBy.values().forEach {
-            if(orderBy == it) query = TeamDAO().retrieveAllTeams(it.toString())
-        }
-        return query!!
-    }
+    fun retrieveAllTeams(): Query
+            = TeamDAO().retrieveAllTeams()
 
     suspend fun updateUserInTeam(newUser: User): Boolean = withContext(IO)
     {
@@ -125,7 +126,7 @@ object TeamManager
                 group.self.teamIds[year.toString()]?.let { teamIds ->
                     teamIds.forEach { teamId ->
                         with(findTeam(teamId)) {
-                            if(this is ValidTeam) teams.add(this.self)
+                            if(this is ValidTeam) teams.add(self)
                         }
                     }
                 }
@@ -141,7 +142,19 @@ object TeamManager
         }
     }
 
+    fun retrieveTeamsByPrefix(textToSearch: String): Pair<Query, Boolean>
+    {
+        val preparation = SearchPreparation(textToSearch)
+        val doCompleteSearch = preparation.doCompleteSearch(textToSearch)
+        val searchField =
+            if(doCompleteSearch) searchNameComplete
+            else searchName
+        return Pair(TeamDAO().retrieveTeamsByPrefix(preparation.preparedText, searchField), doCompleteSearch)
+    }
+
     private const val TAG = "TeamManager"
     const val groupName = "groupName"
     const val groupId = "groupId"
+    const val searchName = "searchName"
+    const val searchNameComplete = "searchNameComplete"
 }

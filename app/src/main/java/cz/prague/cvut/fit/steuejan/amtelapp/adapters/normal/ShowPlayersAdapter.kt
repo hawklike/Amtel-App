@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.adapters
+package cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal
 
 import android.content.res.ColorStateList
 import android.graphics.Typeface
@@ -26,7 +26,7 @@ class ShowPlayersAdapter(
     private val team: Team? = null
 ) : RecyclerView.Adapter<ShowPlayersAdapter.ViewHolder>()
 {
-    var onClick: (player: Player) -> Unit = { toast(R.string.not_working_yet) }
+    var onClick: ((player: Player) -> Unit)? = { toast(R.string.not_working_yet) }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -38,7 +38,7 @@ class ShowPlayersAdapter(
 
         init
         {
-            card.setOnClickListener { onClick.invoke(getItem(adapterPosition)) }
+            card.setOnClickListener { onClick?.invoke(getItem(adapterPosition)) }
         }
     }
 

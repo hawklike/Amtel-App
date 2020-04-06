@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -28,10 +27,7 @@ class LoginFragment : AbstractMainActivityFragment()
     private lateinit var emailLayout: TextInputLayout
     private lateinit var passwordLayout: TextInputLayout
     private lateinit var checkButton: Button
-
     private lateinit var lostPassword: TextView
-
-    private var loginLayout: RelativeLayout? = null
 
     companion object
     {
@@ -51,15 +47,13 @@ class LoginFragment : AbstractMainActivityFragment()
         checkButton = view.findViewById(R.id.login_checkButton)
         emailLayout = view.findViewById(R.id.login_email)
         passwordLayout = view.findViewById(R.id.login_password)
-
         lostPassword = view.findViewById(R.id.login_lost_password)
-        loginLayout = view.findViewById(R.id.login)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
     {
         super.onActivityCreated(savedInstanceState)
-        setToolbarTitle(AuthManager.profileDrawerOptionMenu)
+        setToolbarTitle("")
         setListeners()
         setObservers()
     }
@@ -69,8 +63,6 @@ class LoginFragment : AbstractMainActivityFragment()
         super.onDestroyView()
         checkButton.setOnClickListener(null)
         lostPassword.setOnClickListener(null)
-        loginLayout?.removeAllViews()
-        loginLayout = null
     }
 
     private fun setListeners()
@@ -93,7 +85,7 @@ class LoginFragment : AbstractMainActivityFragment()
                     if(email.isNotEmpty())
                     {
                         message(text = String.format(getString(R.string.reset_email_message), email))
-                        positiveButton(R.string.ok) { AuthManager.sendResetPassword(email) }
+                        positiveButton(text = "Zaslat") { AuthManager.sendResetPassword(email) }
                     }
                     else
                     {
@@ -167,15 +159,8 @@ class LoginFragment : AbstractMainActivityFragment()
         setProgressBar(on)
         when(on)
         {
-            true -> {
-                loginLayout?.visibility = View.GONE
-                lostPassword.visibility = View.GONE
-
-            }
-            false -> {
-                loginLayout?.visibility = View.VISIBLE
-                lostPassword.visibility = View.VISIBLE
-            }
+            true -> lostPassword.visibility = View.GONE
+            false -> lostPassword.visibility = View.VISIBLE
         }
     }
 }

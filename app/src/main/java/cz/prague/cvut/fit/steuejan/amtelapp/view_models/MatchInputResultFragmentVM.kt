@@ -196,22 +196,22 @@ class MatchInputResultFragmentVM : ViewModel()
         when(round)
         {
             1 -> {
-                match.usersId[0] = homePlayers.first().id
-                match.usersId[1] = awayPlayers.first().id
+                match.usersId[0] = if(homePlayers.isNotEmpty()) homePlayers.first().id else null
+                match.usersId[1] = if(awayPlayers.isNotEmpty()) awayPlayers.first().id else null
             }
 
             2 -> {
-                match.usersId[2] = homePlayers.first().id
-                match.usersId[3] = homePlayers.last().id
-                match.usersId[4] = awayPlayers.first().id
-                match.usersId[5] = awayPlayers.last().id
+                match.usersId[2] = if(homePlayers.isNotEmpty()) homePlayers.first().id else null
+                match.usersId[3] = if(homePlayers.isNotEmpty()) homePlayers.last().id else null
+                match.usersId[4] = if(awayPlayers.isNotEmpty()) awayPlayers.first().id else null
+                match.usersId[5] = if(awayPlayers.isNotEmpty()) awayPlayers.last().id else null
             }
 
             3 -> {
-                match.usersId[6] = homePlayers.first().id
-                match.usersId[7] = homePlayers.last().id
-                match.usersId[8] = awayPlayers.first().id
-                match.usersId[9] = awayPlayers.last().id
+                match.usersId[6] = if(homePlayers.isNotEmpty()) homePlayers.first().id else null
+                match.usersId[7] = if(homePlayers.isNotEmpty()) homePlayers.last().id else null
+                match.usersId[8] = if(awayPlayers.isNotEmpty()) awayPlayers.first().id else null
+                match.usersId[9] = if(awayPlayers.isNotEmpty()) awayPlayers.last().id else null
             }
         }
     }

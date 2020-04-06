@@ -1,8 +1,9 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.adapters
+package cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,13 +17,14 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.UsersAdapterVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowTeamPlayersAdapterVM
 
-class ShowTeamPlayersAdapter(private val context: Context, private val list: MutableList<User>) : RecyclerView.Adapter<ShowTeamPlayersAdapter.ViewHolder>()
+class ShowTeamPlayersAdapter(private val context: Context, private val list: MutableList<User>)
+    : RecyclerView.Adapter<ShowTeamPlayersAdapter.ViewHolder>()
 {
-    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(UsersAdapterVM::class.java)
+    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(ShowTeamPlayersAdapterVM::class.java)
 
-    var onDelete: (users: MutableList<User>) -> Unit = {}
+    var onDelete: ((users: MutableList<User>) -> Unit)? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -39,12 +41,12 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
                 MaterialDialog(context)
                     .title(R.string.delete_user_confirmation_message)
                     .show {
-                        positiveButton(R.string.yes) {
+                        positiveButton(text = "Smazat") {
                             viewModel.deleteUser(getItem(adapterPosition))
                             list.removeAt(adapterPosition)
                             notifyItemRemoved(adapterPosition)
                             notifyItemRangeChanged(adapterPosition, list.size)
-                            onDelete.invoke(list)
+                            onDelete?.invoke(list)
                         }
                         negativeButton()
                     }
@@ -68,12 +70,12 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
         val user = getItem(position)
         if(user.role.toRole() == UserRole.TEAM_MANAGER)
         {
-            holder.deleteButton.visibility = View.GONE
+            holder.deleteButton.visibility = GONE
             holder.fullName.setTextColor(App.getColor(R.color.blue))
             holder.email.setTextColor(App.getColor(R.color.blue))
             holder.birthdate.setTextColor(App.getColor(R.color.blue))
+            holder.editButton.visibility = GONE
         }
-        else holder.editButton.visibility = View.VISIBLE
 
         holder.fullName.text = String.format(context.getString(R.string.full_name_placeholder), user.surname, user.name)
         holder.email.text = user.email

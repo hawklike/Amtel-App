@@ -8,7 +8,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import kotlinx.coroutines.launch
 
-class UsersAdapterVM : ViewModel()
+class ShowTeamPlayersAdapterVM : ViewModel()
 {
     fun deleteUser(user: User)
     {

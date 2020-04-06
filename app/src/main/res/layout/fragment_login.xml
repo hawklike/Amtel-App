@@ -3,35 +3,71 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:viewBindingIgnore="true"
     android:fillViewport="true">
 
-<RelativeLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/veryVeryLightGrey"
     android:orientation="vertical">
 
-    <include layout="@layout/curve" />
-
     <RelativeLayout
-        android:id="@+id/login"
-        style="@style/CardRelativeLayout"
-        android:paddingBottom="4dp">
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineTop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <include
+            android:id="@+id/include"
+            layout="@layout/curve"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <ImageView
-            android:id="@+id/login_logo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="48dp"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/amtel_logo_dark"
-            android:contentDescription="application logo" />
+            android:src="@drawable/amtel_logo_white"
+            android:adjustViewBounds="true"
+            android:layout_marginBottom="36dp"
+            android:scaleType="centerInside" />
+
+    </RelativeLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.3" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        style="@style/CardRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.36">
+
+        <TextView
+            android:id="@+id/login_text"
+            style="@style/TextViewTitle"
+            android:layout_marginTop="16dp"
+            android:text="Přihlášení" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/login_email"
-            android:layout_below="@+id/login_logo"
-            android:hint="@string/email"
             style="@style/TextInputLayout"
+            android:layout_below="@id/login_text"
+            android:hint="@string/email"
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -55,37 +91,42 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/login_lost_password"
-                style="@style/TextViewInClickableLayout"
-                android:layout_below="@id/login_password"
-                android:layout_marginStart="8dp"
-                android:gravity="center"
-                android:text="@string/lost_password"
-                android:textColor="@color/blue"
-                android:textSize="13sp" />
+        <TextView
+            android:id="@+id/login_lost_password"
+            style="@style/TextViewInClickableLayout"
+            android:layout_below="@id/login_password"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="@string/lost_password"
+            android:textColor="@color/blue"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/login_checkButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_lost_password"
+            android:layout_marginStart="@dimen/card_margin"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="@dimen/card_margin"
+            android:layout_marginBottom="18dp"
+            android:background="@drawable/button"
+            android:backgroundTint="@color/blue"
+            android:elevation="2dp"
+            android:minHeight="10dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:stateListAnimator="@null"
+            android:text="Přihlásit se"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/login_checkButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/button"
-        android:elevation="2dp"
-        android:minHeight="10dp"
-        android:textAllCaps="false"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:stateListAnimator="@null"
-        android:text="Přihlásit se"
-        android:textColor="@color/white"
-        android:textSize="16sp" />
 
-</RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

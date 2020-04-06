@@ -21,7 +21,7 @@ import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchArrangementActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchViewPagerActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowMatchesFirestoreAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowMatchesFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
@@ -98,6 +98,9 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
     {
         super.onDestroyView()
         if(::setWeek.isInitialized) setWeek.setOnClickListener(null)
+        adapter?.onNextClickGuest = null
+        adapter?.onNextClickOwner = null
+        recyclerView?.adapter = null
         recyclerView = null
         adapter = null
         chooseWeekLayout?.removeAllViews()
@@ -198,7 +201,11 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(context)
-        adapter = ShowMatchesFirestoreAdapter(user, options, isPlayoff)
+        adapter = ShowMatchesFirestoreAdapter(
+            user,
+            options,
+            isPlayoff
+        )
 
         adapter?.onNextClickOwner = { match ->
             startMatchArrangementActivity(match)

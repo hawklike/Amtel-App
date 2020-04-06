@@ -76,20 +76,20 @@ class AccountFragment : AbstractMainActivityFragment()
     {
         val adapter = ViewPagerAdapter(childFragmentManager)
 
+        tabs.tabMode = TabLayout.MODE_FIXED
+        tabs.tabGravity = TabLayout.GRAVITY_FILL
+        tabs.layoutParams.width= ViewGroup.LayoutParams.MATCH_PARENT
+
         val role = user.role.toRole()
         if(role == HEAD_OF_LEAGUE)
         {
             adapter.addFragment(AccountBossAddTMFragment.newInstance(), getString(R.string.account_boss_adapter_add_TM))
             adapter.addFragment(AccountBossMakeGroupsFragment.newInstance(), getString(R.string.account_boss_adapter_make_groups))
-            adapter.addFragment(AccountBossPlayersFragment.newInstance(), getString(R.string.players))
+//            adapter.addFragment(AccountBossPlayersFragment.newInstance(), getString(R.string.players))
             adapter.addFragment(AccountPersonalFragment.newInstance(), getString(R.string.account_adapter_personal))
         }
         else if(role == TEAM_MANAGER)
         {
-            tabs.tabMode = TabLayout.MODE_FIXED
-            tabs.tabGravity = TabLayout.GRAVITY_FILL
-            tabs.layoutParams.width= ViewGroup.LayoutParams.MATCH_PARENT
-
             launch {
                 setProgressBar(true)
                 user.teamId?.let {

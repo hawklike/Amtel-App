@@ -14,7 +14,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayoffActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.RankingViewPagerActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.RoundsViewPagerActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsMenuAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowGroupsMenuAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsMenuFragmentVM
@@ -72,6 +72,7 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
     override fun onDestroyView()
     {
         super.onDestroyView()
+        adapter?.onNextClick = null
         recyclerView = null
         adapter = null
     }
@@ -82,7 +83,11 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
             progressBar.visibility = View.GONE
             recyclerView?.setHasFixedSize(true)
             recyclerView?.layoutManager = LinearLayoutManager(activity!!)
-            adapter = ShowGroupsMenuAdapter(activity!!, it, isRanking)
+            adapter = ShowGroupsMenuAdapter(
+                activity!!,
+                it,
+                isRanking
+            )
             onNextClick(adapter)
             recyclerView?.adapter = adapter
         }

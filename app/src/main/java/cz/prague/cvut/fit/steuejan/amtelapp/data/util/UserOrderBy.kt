@@ -2,7 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.data.util
 
 enum class UserOrderBy
 {
-    NAME, SURNAME, TEAM, EMAIL, SEX;
+    NAME, SURNAME, TEAM, EMAIL, SEX, ROLE, AGE;
 
     override fun toString(): String
     {
@@ -13,6 +13,8 @@ enum class UserOrderBy
             TEAM -> "teamName"
             EMAIL -> "email"
             SEX -> "sex"
+            ROLE -> "role"
+            AGE -> "birthdate"
         }
     }
 }

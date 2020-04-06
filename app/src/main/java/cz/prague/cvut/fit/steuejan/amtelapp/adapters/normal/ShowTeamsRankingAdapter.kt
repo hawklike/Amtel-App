@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.adapters
+package cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -17,7 +17,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
 class ShowTeamsRankingAdapter(private val list: List<Team>, private val year: String, var orderBy: RankingOrderBy)
     : RecyclerView.Adapter<ShowTeamsRankingAdapter.ViewHolder>()
 {
-    var onClick: (player: Team) -> Unit = { toast(R.string.not_working_yet) }
+    var onClick: ((player: Team) -> Unit)? = { toast(R.string.not_working_yet) }
     private var previousOrderBy = orderBy
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -34,7 +34,7 @@ class ShowTeamsRankingAdapter(private val list: List<Team>, private val year: St
 
         init
         {
-            card.setOnClickListener { onClick.invoke(getItem(adapterPosition)) }
+            card.setOnClickListener { onClick?.invoke(getItem(adapterPosition)) }
         }
     }
 

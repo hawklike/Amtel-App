@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowGroupsBossAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowGroupsBossAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.callbacks.ItemMoveCallback
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
@@ -132,7 +132,10 @@ class ManageGroupsActivity : AbstractBaseActivity()
         recyclerView?.layoutManager = LinearLayoutManager(this)
 
         viewModel.groups.observe(this) {
-            adapter = ShowGroupsBossAdapter(this, it.toMutableList())
+            adapter = ShowGroupsBossAdapter(
+                this,
+                it.toMutableList()
+            )
 
             val callback: ItemTouchHelper.Callback = ItemMoveCallback(adapter!!)
             val touchHelper = ItemTouchHelper(callback)

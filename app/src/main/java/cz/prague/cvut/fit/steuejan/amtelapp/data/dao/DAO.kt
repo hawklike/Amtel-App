@@ -63,11 +63,10 @@ interface DAO
             .await()
     }
 
-    fun retrieveAll(collectionName: String, orderBy: String): Query
+    fun retrieveAllAndGetQuery(collectionName: String): Query
     {
         return Firebase.firestore
             .collection(collectionName)
-            .orderBy(orderBy, Query.Direction.ASCENDING)
     }
 
     suspend fun retrieveAll(collectionName: String): QuerySnapshot
@@ -76,5 +75,13 @@ interface DAO
             .collection(collectionName)
             .get()
             .await()
+    }
+
+    fun retrieveByPrefix(collectionName: String, textToSearch: String, searchField: String): Query
+    {
+        return Firebase.firestore
+            .collection(collection)
+            .whereGreaterThanOrEqualTo(searchField, textToSearch)
+            .whereLessThanOrEqualTo(searchField, textToSearch + '\uf8ff')
     }
 }
