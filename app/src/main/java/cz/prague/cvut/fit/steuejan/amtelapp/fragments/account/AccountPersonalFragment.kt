@@ -155,6 +155,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         }
 
         addPersonalInfo.setOnClickListener {
+            progressDialog.show()
             val fullName = fullNameLayout.editText?.text.toString().trim().shrinkWhitespaces()
             val birthdate = birthdateLayout.editText?.text.toString().trim()
             val phoneNumber = phoneNumberLayout.editText?.text.toString().removeWhitespaces()
@@ -179,6 +180,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     private fun isPersonalInformationSaved()
     {
         viewModel.isPersonalInfoChanged().observe(viewLifecycleOwner) { state ->
+            progressDialog.dismiss()
             updateUser(state)
             val title = viewModel.createAfterPersonalInfoDialog(state).title
 
@@ -230,6 +232,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         viewModel.confirmName().observe(viewLifecycleOwner) { nameState ->
             if(nameState is InvalidName)
                 fullNameLayout.error = nameState.errorMessage
+            progressDialog.dismiss()
         }
     }
 
@@ -238,6 +241,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         viewModel.confirmBirthdate().observe(viewLifecycleOwner) { birthdateState ->
             if(birthdateState is InvalidBirthdate)
                 birthdateLayout.error = birthdateState.errorMessage
+            progressDialog.dismiss()
         }
     }
 
@@ -246,12 +250,14 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         viewModel.confirmPhoneNumber().observe(viewLifecycleOwner) { phoneUmberState ->
             if(phoneUmberState is InvalidPhoneNumber)
                 phoneNumberLayout.error = phoneUmberState.errorMessage
+            progressDialog.dismiss()
         }
     }
 
     private fun isPasswordChanged()
     {
         viewModel.isPasswordChanged().observe(viewLifecycleOwner) { success ->
+            progressDialog.dismiss()
             val dialog = viewModel.createAfterPasswordChangeDialog(success)
 
             val title = dialog.first
@@ -282,10 +288,11 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         MaterialDialog(activity!!)
             .title(R.string.password_change_confirmation_title)
             .show {
-                positiveButton(R.string.yes) {
+                positiveButton(text = "Změnit") {
                     viewModel.addNewPassword(newPassword)
+                    progressDialog.show()
                 }
-                negativeButton(R.string.no) {
+                negativeButton {
                     passwordLayout.editText?.text?.clear()
                     confirmPasswordLayout.editText?.text?.clear()
                 }

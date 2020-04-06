@@ -110,6 +110,7 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 
             nameLayout.error = null
             viewModel.createGroup(groupName, playingPlayOff)
+            progressDialog.show()
         }
 
         showGroups.setOnClickListener {
@@ -149,6 +150,7 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
     private fun isGroupCreated()
     {
         viewModel.group.observe(viewLifecycleOwner) {
+            progressDialog.dismiss()
             val title = viewModel.displayDialog(it).title
 
             viewModel.updateGroups(it)
