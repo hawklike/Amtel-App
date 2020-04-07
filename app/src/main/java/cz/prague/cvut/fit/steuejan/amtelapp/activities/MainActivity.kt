@@ -19,6 +19,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.PlayersFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.ShowGroupsMenuFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.TeamsFragment
@@ -54,6 +55,7 @@ class MainActivity : AbstractBaseActivity()
     {
         progressLayout?.removeAllViews()
         progressLayout = null
+        DateUtil.serverTime = null
         super.onDestroy()
     }
 

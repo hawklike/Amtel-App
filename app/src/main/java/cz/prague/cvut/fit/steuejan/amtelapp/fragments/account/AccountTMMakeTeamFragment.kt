@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -91,6 +92,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     override fun onResume()
     {
         super.onResume()
+        isLineUpAllowed()
         if(::team.isInitialized && team is ValidTeam)
         {
             val users = (team as ValidTeam).self.users
@@ -114,10 +116,29 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         createTeamLayout = null
     }
 
-    override fun onDestroy()
+    private fun isLineUpAllowed()
     {
-        super.onDestroy()
-        adapter = null
+        viewModel.isLineUpAllowed()
+        viewModel.isLineUpAllowed.observe(viewLifecycleOwner) { allowed ->
+            if(!viewModel.deadlineDialogShown)
+            {
+                MaterialDialog(activity!!).show {
+                    title(text = "Uzavření soupisky")
+                    message(text = viewModel.deadlineDialog)
+                    positiveButton()
+                }
+                viewModel.deadlineDialogShown = true
+            }
+
+            adapter?.isAllowed = allowed
+            adapter?.notifyDataSetChanged()
+            if(allowed)
+            {
+                view?.findViewById<TextView>(R.id.account_tm_make_team_add_player_text)?.alpha = 1f
+                view?.findViewById<ImageView>(R.id.account_tm_make_team_add_player_button)?.alpha = 1f
+                addPlayer.setOnClickListener { addPlayer() }
+            }
+        }
     }
 
     private fun setupRecycler()
@@ -166,17 +187,18 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
             deleteErrors()
 
             MaterialDialog(activity!!)
-                .title(R.string.create_team_dialog_title)
+                .title(text = "Uložit tým?")
                 .message(R.string.create_team_dialog_message)
                 .show {
-                    positiveButton(R.string.yes) {
+                    positiveButton(text = "Uložit") {
+                        progressDialog.show()
                         viewModel.createTeam(user, name, place, playingDays)
                     }
-                    negativeButton(R.string.no)
+                    negativeButton()
                 }
         }
 
-        addPlayer.setOnClickListener { addPlayer() }
+        addPlayer.setOnClickListener { toast("V průběhu ligy nelze přidávat nové hráče.") }
     }
 
     private fun addPlayer()
@@ -191,7 +213,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         else
         {
             toast(getString(R.string.no_team_alert))
-            (Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet."))
+            Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet.")
         }
     }
 
@@ -221,7 +243,11 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         {
             nameLayout.editText?.setText((team as ValidTeam).self.name)
             placeLayout.editText?.setText((team as ValidTeam).self.place)
-            playingDaysLayout.editText?.setText((team as ValidTeam).self.playingDays.joinToString(", "))
+            playingDaysLayout.editText?.setText((team as ValidTeam).self.
+                playingDays.
+                joinToString(", ") {
+                    it.trim()
+                })
             disableName()
         }
         else
@@ -241,7 +267,10 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         viewModel.playingDays.observe(viewLifecycleOwner) { daysState ->
             if(daysState is InvalidPlayingDays)
+            {
+                progressDialog.dismiss()
                 playingDaysLayout.error = daysState.errorMessage
+            }
         }
     }
 
@@ -249,7 +278,10 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         viewModel.place.observe(viewLifecycleOwner) { placeState ->
             if(placeState is InvalidPlace)
+            {
+                progressDialog.dismiss()
                 placeLayout.error = placeState.errorMessage
+            }
         }
     }
 
@@ -257,7 +289,10 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         viewModel.name.observe(viewLifecycleOwner) { nameState ->
             if(nameState is InvalidName)
+            {
+                progressDialog.dismiss()
                 nameLayout.error = nameState.errorMessage
+            }
         }
     }
 
@@ -280,6 +315,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     private fun isTeamCreated()
     {
         viewModel.newTeam.observe(viewLifecycleOwner) { teamState ->
+            progressDialog.dismiss()
             val title = viewModel.displayAfterDialog(teamState, user).title
 
             MaterialDialog(activity!!)

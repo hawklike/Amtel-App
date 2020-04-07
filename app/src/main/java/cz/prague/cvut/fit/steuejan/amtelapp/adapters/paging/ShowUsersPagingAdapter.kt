@@ -84,6 +84,9 @@ class ShowUsersPagingAdapter(options: FirestorePagingOptions<User>, private val 
 
         holder.team.visibility = VISIBLE
 
+        if(user.role.toRole() == HEAD_OF_LEAGUE || user.role.toRole() == TEAM_MANAGER)
+            holder.email.visibility = VISIBLE
+
         holder.fullName.text =
             if(orderBy == UserOrderBy.SURNAME) String.format(context.getString(R.string.full_name_placeholder), user.surname, user.name)
             else String.format(context.getString(R.string.full_name_placeholder), user.name, user.surname)

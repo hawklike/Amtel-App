@@ -100,7 +100,7 @@ object DateUtil
 
     const val DATE_FORMAT = "dd.MM.yyyy"
 
-    var actualSeason: String = "0"
+    internal var actualSeason: String = "0"
 
     private val actualYear: Int
         get()
@@ -109,6 +109,8 @@ object DateUtil
             calendar.time = Date()
             return calendar[Calendar.YEAR]
         }
+
+    internal var serverTime: Date? = null
 }
 
 fun Date.toMyString(format: String = DateUtil.DATE_FORMAT): String

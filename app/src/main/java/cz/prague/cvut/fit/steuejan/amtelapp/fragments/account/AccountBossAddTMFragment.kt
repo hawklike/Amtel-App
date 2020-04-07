@@ -6,21 +6,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.afollestad.materialdialogs.datetime.datePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.shrinkWhitespaces
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidRegistration
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossAddTMFragmentVM
+import java.util.*
 
 class AccountBossAddTMFragment : AbstractMainActivityFragment()
 {
@@ -39,6 +43,11 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     private lateinit var emailLayout: TextInputLayout
     private lateinit var addUserButton: FloatingActionButton
 
+    private lateinit var deadlineFromLayout: TextInputLayout
+    private lateinit var deadlineToLayout: TextInputLayout
+
+    private lateinit var deleteDeadline: TextView
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
         return inflater.inflate(R.layout.account_boss_add_tm, container, false)
@@ -51,6 +60,9 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
         surnameLayout = view.findViewById(R.id.account_boss_add_tm_surname)
         emailLayout = view.findViewById(R.id.account_boss_add_tm_email)
         addUserButton = view.findViewById(R.id.account_boss_add_tm_add)
+        deadlineFromLayout = view.findViewById(R.id.account_boss_add_deadline_date_from)
+        deadlineToLayout = view.findViewById(R.id.account_boss_add_deadline_date_to)
+        deleteDeadline = view.findViewById(R.id.account_boss_deadline_delete)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -66,6 +78,9 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     {
         super.onDestroyView()
         addUserButton.setOnClickListener(null)
+        deadlineFromLayout.editText?.setOnClickListener(null)
+        deadlineToLayout.editText?.setOnClickListener(null)
+        deleteDeadline.setOnClickListener(null)
 
         addTeamManagerLayout?.removeAllViews()
         chooseDeadlineLayout?.removeAllViews()
@@ -90,12 +105,83 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
             deleteErrors()
             viewModel.confirmCredentials(name, surname, email)
         }
+
+        deadlineFromLayout.editText?.setOnClickListener {
+           showDeadlineDialog(deadlineFromLayout, true)
+        }
+
+        deadlineToLayout.editText?.setOnClickListener {
+            showDeadlineDialog(deadlineToLayout, false)
+        }
+
+        deleteDeadline.setOnClickListener {
+            MaterialDialog(activity!!).show {
+                title(text = "Vymazat deadline soupisky?")
+                negativeButton()
+                positiveButton(text = "Smazat") {
+                    progressDialog.show()
+                    viewModel.deleteDeadline()
+                    deadlineFromLayout.editText?.text?.clear()
+                    deadlineToLayout.editText?.text?.clear()
+                }
+            }
+        }
+    }
+
+    private fun showDeadlineDialog(textInputLayout: TextInputLayout, from: Boolean)
+    {
+        var deadline = Date()
+        MaterialDialog(activity!!).show {
+            val savedDate = textInputLayout.editText?.text?.let {
+                viewModel.setDialogDeadline(it)
+            }
+
+            datePicker(currentDate = savedDate) { _, date ->
+                val dateText = date.toMyString()
+                deadline = date.time
+                textInputLayout.editText?.setText(dateText)
+            }
+            positiveButton(text = "Uložit") {
+                viewModel.setDeadline(deadline, from)
+                progressDialog.show()
+            }
+        }
     }
 
     private fun setObservers()
     {
+        getDeadline()
         registerUser()
         isRegistrationSuccessful()
+        isDeadlineAdded()
+        isDeadlineDeleted()
+    }
+
+    private fun isDeadlineDeleted()
+    {
+        viewModel.isDeadlineDeleted.observe(viewLifecycleOwner) { deleted ->
+            progressDialog.dismiss()
+            if(deleted) toast("Úspěšně smazáno.")
+            else toast("Smazání se nepodařilo.")
+        }
+    }
+
+    private fun getDeadline()
+    {
+        viewModel.getDeadline()
+        viewModel.deadline.observe(viewLifecycleOwner) {
+            deadlineFromLayout.editText?.setText(it.first)
+            deadlineToLayout.editText?.setText(it.second)
+        }
+    }
+
+    private fun isDeadlineAdded()
+    {
+        viewModel.isDeadlineAdded.observe(viewLifecycleOwner) { success ->
+            progressDialog.dismiss()
+            if(success) toast("Deadline byl úspěšně uložen.")
+            else toast("Deadline se nepodařilo uložit.")
+        }
     }
 
     private fun registerUser()
@@ -117,10 +203,11 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
             .title(R.string.user_registration_confirmation_title)
             .message(text = "${credentials.name} ${credentials.surname}\n${credentials.email}")
             .show {
-                positiveButton(R.string.yes) {
+                positiveButton(text = "Přidat") {
                     viewModel.createUser(credentials)
+                    progressDialog.show()
                 }
-                negativeButton(R.string.no)
+                negativeButton()
             }
     }
 
@@ -128,6 +215,8 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     private fun isRegistrationSuccessful()
     {
         viewModel.registration.observe(viewLifecycleOwner) { registration ->
+            progressDialog.dismiss()
+
             val title: String
             val message: String
 
