@@ -23,6 +23,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toDayInWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
+import org.joda.time.DateTime
 import java.util.*
 
 class AccountTMMakeTeamFragmentVM : ViewModel()
@@ -52,8 +53,12 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val _serverTime = SingleLiveEvent<Date>()
-    val serverTime: LiveData<Date> = _serverTime
+    var deadline: Pair<Date?, Date?>? = null
+
+    /*---------------------------------------------------*/
+
+    private val _isLineUpAllowed = MutableLiveData<Boolean>()
+    val isLineUpAllowed: LiveData<Boolean> = _isLineUpAllowed
 
     /*---------------------------------------------------*/
 
@@ -117,18 +122,18 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
         )
     }
 
-    fun getServerTime()
+    fun isLineUpAllowed()
     {
         if(DateUtil.serverTime == null)
         {
             viewModelScope.launch {
                 LeagueManager.getServerTime()?.let {
                     DateUtil.serverTime = it
-                    _serverTime.value = it
+                    isLineUpAllowed(it)
                 }
             }
         }
-        else _serverTime.value = DateUtil.serverTime
+        else isLineUpAllowed(DateUtil.serverTime)
     }
 
     private fun confirmInput(name: String, playingDays: String): Boolean
@@ -160,9 +165,34 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
     fun getDialogDays(items: List<CharSequence>): List<Day> =
         items.map { it.toString().toDayInWeek() }.sortedBy { it.ordinal }
 
-    fun isAfterDeadline(it: Date)
+    private fun isLineUpAllowed(serverTime: Date?)
     {
+        if(deadline == null)
+        {
+            viewModelScope.launch {
+                LeagueManager.getDeadline()?.let { deadlineRange ->
+                    val from = deadlineRange.first
+                    val to = deadlineRange.second
+                    deadline = deadlineRange
+                    _isLineUpAllowed.value = isLineUpAllowed(serverTime, from, to)
+                }
+            }
+        }
+        else
+        {
+            val from = deadline?.first
+            val to = deadline?.second
+            _isLineUpAllowed.value = isLineUpAllowed(serverTime, from, to)
+        }
+    }
 
+    private fun isLineUpAllowed(serverTime: Date?, from: Date?, to: Date?): Boolean
+    {
+        return if(serverTime == null) false
+        else if(from == null && to == null) true
+        else if(from == null && to != null) !DateUtil.isDateBetween(serverTime, Date(0), to)
+        else if(from != null && to == null) !DateUtil.isDateBetween(serverTime, from, DateTime().plusYears(30).toDate())
+        else !DateUtil.isDateBetween(serverTime, from, to)
     }
 
 }

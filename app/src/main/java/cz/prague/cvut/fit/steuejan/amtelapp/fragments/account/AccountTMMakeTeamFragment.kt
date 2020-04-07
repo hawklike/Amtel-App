@@ -91,7 +91,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     override fun onResume()
     {
         super.onResume()
-        getServerTime()
+        isLineUpAllowed()
         if(::team.isInitialized && team is ValidTeam)
         {
             val users = (team as ValidTeam).self.users
@@ -115,11 +115,12 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         createTeamLayout = null
     }
 
-    private fun getServerTime()
+    private fun isLineUpAllowed()
     {
-        viewModel.getServerTime()
-        viewModel.serverTime.observe(viewLifecycleOwner) {
-//            viewModel.isAfterDeadline(it)
+        viewModel.isLineUpAllowed()
+        viewModel.isLineUpAllowed.observe(viewLifecycleOwner) { allowed ->
+            if(allowed) toast("Dovoleno")
+            else toast("Zamítnuto")
         }
     }
 
