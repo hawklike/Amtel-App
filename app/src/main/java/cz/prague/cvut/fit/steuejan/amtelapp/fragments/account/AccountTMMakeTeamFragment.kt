@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -119,8 +120,24 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         viewModel.isLineUpAllowed()
         viewModel.isLineUpAllowed.observe(viewLifecycleOwner) { allowed ->
-            if(allowed) toast("Dovoleno")
-            else toast("Zamítnuto")
+            if(!viewModel.deadlineDialogShown)
+            {
+                MaterialDialog(activity!!).show {
+                    title(text = "Uzavření soupisky")
+                    message(text = viewModel.deadlineDialog)
+                    positiveButton()
+                }
+                viewModel.deadlineDialogShown = true
+            }
+
+            adapter?.isAllowed = allowed
+            adapter?.notifyDataSetChanged()
+            if(allowed)
+            {
+                view?.findViewById<TextView>(R.id.account_tm_make_team_add_player_text)?.alpha = 1f
+                view?.findViewById<ImageView>(R.id.account_tm_make_team_add_player_button)?.alpha = 1f
+                addPlayer.setOnClickListener { addPlayer() }
+            }
         }
     }
 
@@ -181,7 +198,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
                 }
         }
 
-        addPlayer.setOnClickListener { addPlayer() }
+        addPlayer.setOnClickListener { toast("V průběhu ligy nelze přidávat nové hráče.") }
     }
 
     private fun addPlayer()
@@ -196,7 +213,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         else
         {
             toast(getString(R.string.no_team_alert))
-            (Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet."))
+            Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet.")
         }
     }
 

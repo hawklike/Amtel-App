@@ -16,6 +16,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Day
@@ -28,6 +29,13 @@ import java.util.*
 
 class AccountTMMakeTeamFragmentVM : ViewModel()
 {
+    var deadlineDialogShown: Boolean = false
+    private var deadline: Pair<Date?, Date?>? = null
+
+    var deadlineDialog: String = ""
+
+    /*---------------------------------------------------*/
+
     private val nameState = MutableLiveData<NameState>()
     val name: LiveData<NameState> = nameState
 
@@ -50,10 +58,6 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     private val _team = MutableLiveData<Team>()
     val team: LiveData<Team> = _team
-
-    /*---------------------------------------------------*/
-
-    var deadline: Pair<Date?, Date?>? = null
 
     /*---------------------------------------------------*/
 
@@ -189,10 +193,26 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
     private fun isLineUpAllowed(serverTime: Date?, from: Date?, to: Date?): Boolean
     {
         return if(serverTime == null) false
-        else if(from == null && to == null) true
-        else if(from == null && to != null) !DateUtil.isDateBetween(serverTime, Date(0), to)
-        else if(from != null && to == null) !DateUtil.isDateBetween(serverTime, from, DateTime().plusYears(30).toDate())
-        else !DateUtil.isDateBetween(serverTime, from, to)
+        else if(from == null && to == null)
+        {
+            deadlineDialog = "Termín uzavření soupisky není dosud stanoven."
+            true
+        }
+        else if(from == null && to != null)
+        {
+            deadlineDialog = "Tvorba soupisky je uzavřena do ${to.toMyString()}."
+            !DateUtil.isDateBetween(serverTime, Date(0), to)
+        }
+        else if(from != null && to == null)
+        {
+            deadlineDialog = "Tvorba soupisky je uzavřena od ${from.toMyString()}."
+            !DateUtil.isDateBetween(serverTime, from, DateTime().plusYears(30).toDate())
+        }
+        else
+        {
+            deadlineDialog = "Tvorba soupisky je uzavřena od ${from?.toMyString()} do ${to?.toMyString()}."
+            !DateUtil.isDateBetween(serverTime, from, to)
+        }
     }
 
 }
