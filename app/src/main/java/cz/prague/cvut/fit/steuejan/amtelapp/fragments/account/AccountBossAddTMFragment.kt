@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -45,6 +46,8 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     private lateinit var deadlineFromLayout: TextInputLayout
     private lateinit var deadlineToLayout: TextInputLayout
 
+    private lateinit var deleteDeadline: TextView
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
         return inflater.inflate(R.layout.account_boss_add_tm, container, false)
@@ -59,6 +62,7 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
         addUserButton = view.findViewById(R.id.account_boss_add_tm_add)
         deadlineFromLayout = view.findViewById(R.id.account_boss_add_deadline_date_from)
         deadlineToLayout = view.findViewById(R.id.account_boss_add_deadline_date_to)
+        deleteDeadline = view.findViewById(R.id.account_boss_deadline_delete)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -76,6 +80,7 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
         addUserButton.setOnClickListener(null)
         deadlineFromLayout.editText?.setOnClickListener(null)
         deadlineToLayout.editText?.setOnClickListener(null)
+        deleteDeadline.setOnClickListener(null)
 
         addTeamManagerLayout?.removeAllViews()
         chooseDeadlineLayout?.removeAllViews()
@@ -108,6 +113,19 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
         deadlineToLayout.editText?.setOnClickListener {
             showDeadlineDialog(deadlineToLayout, false)
         }
+
+        deleteDeadline.setOnClickListener {
+            MaterialDialog(activity!!).show {
+                title(text = "Vymazat deadline soupisky?")
+                negativeButton()
+                positiveButton(text = "Smazat") {
+                    progressDialog.show()
+                    viewModel.deleteDeadline()
+                    deadlineFromLayout.editText?.text?.clear()
+                    deadlineToLayout.editText?.text?.clear()
+                }
+            }
+        }
     }
 
     private fun showDeadlineDialog(textInputLayout: TextInputLayout, from: Boolean)
@@ -136,6 +154,16 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
         registerUser()
         isRegistrationSuccessful()
         isDeadlineAdded()
+        isDeadlineDeleted()
+    }
+
+    private fun isDeadlineDeleted()
+    {
+        viewModel.isDeadlineDeleted.observe(viewLifecycleOwner) { deleted ->
+            progressDialog.dismiss()
+            if(deleted) toast("Úspěšně smazáno.")
+            else toast("Smazání se nepodařilo.")
+        }
     }
 
     private fun getDeadline()

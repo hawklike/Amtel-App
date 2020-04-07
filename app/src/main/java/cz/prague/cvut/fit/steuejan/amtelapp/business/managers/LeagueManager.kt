@@ -37,7 +37,7 @@ object LeagueManager
         catch(ex: Exception) { false }
      }
 
-    suspend fun setDeadline(deadline: Date, from: Boolean): Boolean = withContext(IO)
+    suspend fun setDeadline(deadline: Date?, from: Boolean): Boolean = withContext(IO)
     {
         return@withContext try
         {

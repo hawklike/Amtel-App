@@ -85,6 +85,7 @@
                     android:text="Uzavření soupisek" />
 
             <RelativeLayout
+                android:id="@+id/account_boss_deadline_fields_layout"
                 android:layout_below="@id/account_boss_deadline_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -134,6 +135,16 @@
 
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/account_boss_deadline_delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/account_boss_deadline_fields_layout"
+                android:gravity="center_horizontal"
+                android:textSize="13sp"
+                android:textColor="@color/blue"
+                android:layout_marginBottom="8dp"
+                android:text="Vymazat"/>
 
         </RelativeLayout>
 

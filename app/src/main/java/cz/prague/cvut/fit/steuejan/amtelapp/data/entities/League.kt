@@ -10,8 +10,8 @@ import java.util.*
 @Parcelize
 data class League(override var id: String? = LeagueManager.leagueId,
                   var actualSeason: Int = DateUtil.actualSeason.toInt(),
-                  var deadlineFrom: MutableMap<String, Date> = mutableMapOf(),
-                  var deadlineTo: MutableMap<String, Date> = mutableMapOf(),
+                  var deadlineFrom: MutableMap<String, Date?> = mutableMapOf(),
+                  var deadlineTo: MutableMap<String, Date?> = mutableMapOf(),
                   @ServerTimestamp
                   var serverTime: Date? = null
                   ) : Parcelable, Entity<League>()

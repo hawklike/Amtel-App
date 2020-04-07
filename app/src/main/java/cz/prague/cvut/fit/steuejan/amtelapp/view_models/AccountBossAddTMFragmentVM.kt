@@ -36,6 +36,11 @@ class AccountBossAddTMFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
+    private val _deadlineDeleted = SingleLiveEvent<Boolean>()
+    val isDeadlineDeleted: LiveData<Boolean> = _deadlineDeleted
+
+    /*---------------------------------------------------*/
+
     private val _deadline = SingleLiveEvent<Pair<String?, String?>>()
     val deadline: LiveData<Pair<String?, String?>> = _deadline
 
@@ -135,8 +140,6 @@ class AccountBossAddTMFragmentVM : ViewModel()
 
     private fun setDeadlineInPreferences(deadline: String?, from: Boolean)
     {
-        deadline ?: return
-
         val label =
             if(from) "DEADLINE_FROM"
             else "DEADLINE_TO"
@@ -146,6 +149,17 @@ class AccountBossAddTMFragmentVM : ViewModel()
             .edit()
             .putString(label, deadline)
             .apply()
+    }
+
+    fun deleteDeadline()
+    {
+        viewModelScope.launch {
+            val ok1 = LeagueManager.setDeadline(null, true)
+            val ok2 = LeagueManager.setDeadline(null, false)
+            setDeadlineInPreferences(null, true)
+            setDeadlineInPreferences(null, false)
+            _deadlineDeleted.value = ok1 && ok2
+        }
     }
 
 }
