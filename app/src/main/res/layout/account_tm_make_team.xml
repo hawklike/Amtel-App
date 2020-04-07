@@ -37,7 +37,7 @@
                 android:layout_marginEnd="8dp"
                 android:hint="@string/name"
                 app:errorEnabled="true"
-                app:errorTextColor="@android:color/holo_red_dark">
+                app:errorTextColor="@color/red">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/account_tm_make_team_editText1"
@@ -58,7 +58,7 @@
                 android:layout_marginEnd="8dp"
                 android:hint="@string/court_address"
                 app:errorEnabled="true"
-                app:errorTextColor="@android:color/holo_red_dark">
+                app:errorTextColor="@color/red">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/account_tm_make_team_editText2"
@@ -79,7 +79,7 @@
                 android:layout_below="@id/account_tm_make_team_place"
                 android:hint="@string/playing_days"
                 app:errorEnabled="true"
-                app:errorTextColor="@android:color/holo_red_dark">
+                app:errorTextColor="@color/red">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/account_tm_make_team_editText3"

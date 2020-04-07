@@ -82,25 +82,58 @@
                 <TextView
                     android:id="@+id/account_boss_deadline_text"
                     style="@style/TextViewTitle"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/set_deadline" />
+                    android:text="Uzavření soupisek" />
+
+            <RelativeLayout
+                android:layout_below="@id/account_boss_deadline_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/account_boss_add_deadline_date"
+                    android:id="@+id/account_boss_add_deadline_date_from"
                     style="@style/TextInputLayout"
-                    android:layout_below="@id/account_boss_deadline_text"
-                    android:layout_marginBottom="16dp"
-                    android:hint="@string/deadline"
+                    android:layout_toStartOf="@id/dash"
+                    android:hint="Od"
                     app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/account_boss_add_deadline_ediText1"
                         style="@style/TextInputEditTextStyle"
                         android:clickable="true"
+                        android:gravity="center_horizontal"
                         android:focusable="false"
                         android:inputType="date" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/dash"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/dash"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/account_boss_add_deadline_date_to"
+                    style="@style/TextInputLayout"
+                    android:layout_toEndOf="@id/dash"
+                    android:hint="Do"
+                    app:errorEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/account_boss_add_deadline_ediText2"
+                        style="@style/TextInputEditTextStyle"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:gravity="center_horizontal"
+                        android:inputType="date" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </RelativeLayout>
+
 
         </RelativeLayout>
 

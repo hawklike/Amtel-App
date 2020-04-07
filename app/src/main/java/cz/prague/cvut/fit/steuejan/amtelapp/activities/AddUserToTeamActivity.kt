@@ -7,6 +7,7 @@ import android.widget.RadioGroup
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.datetime.datePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
@@ -30,6 +31,11 @@ class AddUserToTeamActivity : AbstractBaseActivity()
     private lateinit var birthdateLayout: TextInputLayout
     private lateinit var sexGroup: RadioGroup
     private lateinit var addButton: FloatingActionButton
+
+    private val progressDialog by lazy {
+        MaterialDialog(this)
+            .customView(R.layout.progress_layout)
+    }
 
     companion object
     {
@@ -73,6 +79,8 @@ class AddUserToTeamActivity : AbstractBaseActivity()
         }
 
         addButton.setOnClickListener {
+            progressDialog.show()
+
             val name = nameLayout.editText?.text.toString().trim().shrinkWhitespaces()
             val surname = surnameLayout.editText?.text.toString().trim().shrinkWhitespaces()
             val email = emailLayout.editText?.text.toString().trim()
@@ -108,7 +116,10 @@ class AddUserToTeamActivity : AbstractBaseActivity()
     {
         viewModel.confirmName().observe(this) { name ->
             if(name is InvalidName)
+            {
+                progressDialog.dismiss()
                 nameLayout.error = name.errorMessage
+            }
         }
     }
 
@@ -116,7 +127,10 @@ class AddUserToTeamActivity : AbstractBaseActivity()
     {
         viewModel.confirmSurname().observe(this) { surname ->
             if(surname is InvalidSurname)
+            {
+                progressDialog.dismiss()
                 surnameLayout.error = surname.errorMessage
+            }
         }
     }
 
@@ -124,7 +138,10 @@ class AddUserToTeamActivity : AbstractBaseActivity()
     {
         viewModel.confirmEmail().observe(this) { email ->
             if(email is InvalidEmail)
+            {
+                progressDialog.dismiss()
                 emailLayout.error = email.errorMessage
+            }
         }
     }
 
@@ -132,13 +149,17 @@ class AddUserToTeamActivity : AbstractBaseActivity()
     {
         viewModel.confirmBirthdate().observe(this) { birthdate ->
             if(birthdate is InvalidBirthdate)
+            {
+                progressDialog.dismiss()
                 birthdateLayout.error = birthdate.errorMessage
+            }
         }
     }
 
     private fun isUserAdded()
     {
         viewModel.isUserAdded().observe(this) { teamState ->
+            progressDialog.dismiss()
             val title = viewModel.createDialog(teamState).title
 
             if(teamState is ValidTeam)

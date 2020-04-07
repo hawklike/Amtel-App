@@ -9,18 +9,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.LeagueManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Day
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toDayInWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
+import java.util.*
 
 class AccountTMMakeTeamFragmentVM : ViewModel()
 {
@@ -46,6 +49,11 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     private val _team = MutableLiveData<Team>()
     val team: LiveData<Team> = _team
+
+    /*---------------------------------------------------*/
+
+    private val _serverTime = SingleLiveEvent<Date>()
+    val serverTime: LiveData<Date> = _serverTime
 
     /*---------------------------------------------------*/
 
@@ -109,6 +117,20 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
         )
     }
 
+    fun getServerTime()
+    {
+        if(DateUtil.serverTime == null)
+        {
+            viewModelScope.launch {
+                LeagueManager.getServerTime()?.let {
+                    DateUtil.serverTime = it
+                    _serverTime.value = it
+                }
+            }
+        }
+        else _serverTime.value = DateUtil.serverTime
+    }
+
     private fun confirmInput(name: String, playingDays: String): Boolean
     {
         var isOk = true
@@ -124,7 +146,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
             playingDaysState.value = InvalidPlayingDays()
             isOk = false
         }
-        else playingDaysState.value = ValidPlayingDays(playingDays.split(","))
+        else playingDaysState.value = ValidPlayingDays(playingDays.split(",").map { it.trim() })
 
         return isOk
     }
@@ -137,5 +159,10 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     fun getDialogDays(items: List<CharSequence>): List<Day> =
         items.map { it.toString().toDayInWeek() }.sortedBy { it.ordinal }
+
+    fun isAfterDeadline(it: Date)
+    {
+
+    }
 
 }

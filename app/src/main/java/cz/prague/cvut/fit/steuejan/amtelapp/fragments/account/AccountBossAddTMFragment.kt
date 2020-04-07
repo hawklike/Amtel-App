@@ -42,7 +42,8 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     private lateinit var emailLayout: TextInputLayout
     private lateinit var addUserButton: FloatingActionButton
 
-    private lateinit var deadlineLayout: TextInputLayout
+    private lateinit var deadlineFromLayout: TextInputLayout
+    private lateinit var deadlineToLayout: TextInputLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
@@ -56,7 +57,8 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
         surnameLayout = view.findViewById(R.id.account_boss_add_tm_surname)
         emailLayout = view.findViewById(R.id.account_boss_add_tm_email)
         addUserButton = view.findViewById(R.id.account_boss_add_tm_add)
-        deadlineLayout = view.findViewById(R.id.account_boss_add_deadline_date)
+        deadlineFromLayout = view.findViewById(R.id.account_boss_add_deadline_date_from)
+        deadlineToLayout = view.findViewById(R.id.account_boss_add_deadline_date_to)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -72,7 +74,8 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     {
         super.onDestroyView()
         addUserButton.setOnClickListener(null)
-        deadlineLayout.editText?.setOnClickListener(null)
+        deadlineFromLayout.editText?.setOnClickListener(null)
+        deadlineToLayout.editText?.setOnClickListener(null)
 
         addTeamManagerLayout?.removeAllViews()
         chooseDeadlineLayout?.removeAllViews()
@@ -98,22 +101,31 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
             viewModel.confirmCredentials(name, surname, email)
         }
 
-        deadlineLayout.editText?.setOnClickListener {
-            var deadline = Date()
-            MaterialDialog(activity!!).show {
-                val savedDate = deadlineLayout.editText?.text?.let {
-                    viewModel.setDialogDeadline(it)
-                }
+        deadlineFromLayout.editText?.setOnClickListener {
+           showDeadlineDialog(deadlineFromLayout, true)
+        }
 
-                datePicker(currentDate = savedDate) { _, date ->
-                    val dateText = date.toMyString()
-                    deadline = date.time
-                    deadlineLayout.editText?.setText(dateText)
-                }
-                positiveButton(text = "Uložit") {
-                    viewModel.setDeadline(deadline)
-                    progressDialog.show()
-                }
+        deadlineToLayout.editText?.setOnClickListener {
+            showDeadlineDialog(deadlineToLayout, false)
+        }
+    }
+
+    private fun showDeadlineDialog(textInputLayout: TextInputLayout, from: Boolean)
+    {
+        var deadline = Date()
+        MaterialDialog(activity!!).show {
+            val savedDate = textInputLayout.editText?.text?.let {
+                viewModel.setDialogDeadline(it)
+            }
+
+            datePicker(currentDate = savedDate) { _, date ->
+                val dateText = date.toMyString()
+                deadline = date.time
+                textInputLayout.editText?.setText(dateText)
+            }
+            positiveButton(text = "Uložit") {
+                viewModel.setDeadline(deadline, from)
+                progressDialog.show()
             }
         }
     }
@@ -130,7 +142,8 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     {
         viewModel.getDeadline()
         viewModel.deadline.observe(viewLifecycleOwner) {
-            deadlineLayout.editText?.setText(it)
+            deadlineFromLayout.editText?.setText(it.first)
+            deadlineToLayout.editText?.setText(it.second)
         }
     }
 

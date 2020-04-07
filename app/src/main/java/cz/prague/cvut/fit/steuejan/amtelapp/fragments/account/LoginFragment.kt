@@ -68,11 +68,11 @@ class LoginFragment : AbstractMainActivityFragment()
     private fun setListeners()
     {
         checkButton.setOnClickListener {
+            progressDialog.show()
             val email = emailLayout.editText!!.text.toString().trim()
             val password = passwordLayout.editText!!.text.toString().trim()
 
             deleteErrors()
-            loading(true)
             //TODO: change back to password
             viewModel.loginUser(email, "123456")
         }
@@ -106,29 +106,39 @@ class LoginFragment : AbstractMainActivityFragment()
     private fun confirmEmail()
     {
         viewModel.confirmEmail().observe(viewLifecycleOwner) { credentialState ->
-            loading(false)
             if(credentialState is InvalidEmail)
+            {
+                progressDialog.dismiss()
                 emailLayout.error = credentialState.errorMessage
+            }
         }
     }
 
     private fun confirmPassword()
     {
         viewModel.confirmPassword().observe(viewLifecycleOwner) { credentialState ->
-            loading(false)
             if(credentialState is InvalidPassword)
+            {
+                progressDialog.dismiss()
                 passwordLayout.error = credentialState.errorMessage
+            }
         }
     }
 
     private fun getUser()
     {
         viewModel.getUser().observe(viewLifecycleOwner) { user ->
+            progressDialog.dismiss()
+
             val dialog = viewModel.createAfterDialog(user)
             val title = dialog.title
             val message = dialog.message
 
             if(user is NoUser) passwordLayout.editText?.text?.clear()
+            if(user is SignedUser && message == null) {
+                userSignedIn(user)
+                return@observe
+            }
 
             MaterialDialog(activity!!)
                 .title(text = title).also {
@@ -137,30 +147,25 @@ class LoginFragment : AbstractMainActivityFragment()
                 .show {
                     positiveButton(R.string.ok)
                     onDismiss {
-                        loading(false)
                         if(user is SignedUser)
                         {
-                            mainActivityModel.isUserLoggedIn(SignedUser(user.self, user.firstSign))
-                            mainActivityModel.setUser(user.self)
+                            userSignedIn(user)
+
                         }
                     }
                 }
         }
     }
 
+    private fun userSignedIn(user: SignedUser)
+    {
+        mainActivityModel.isUserLoggedIn(SignedUser(user.self, user.firstSign))
+        mainActivityModel.setUser(user.self)
+    }
+
     private fun deleteErrors()
     {
         emailLayout.error = null
         passwordLayout.error = null
-    }
-
-    private fun loading(on: Boolean)
-    {
-        setProgressBar(on)
-        when(on)
-        {
-            true -> lostPassword.visibility = View.GONE
-            false -> lostPassword.visibility = View.VISIBLE
-        }
     }
 }

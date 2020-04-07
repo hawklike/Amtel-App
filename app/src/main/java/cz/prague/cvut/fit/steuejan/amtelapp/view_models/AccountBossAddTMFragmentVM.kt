@@ -36,8 +36,8 @@ class AccountBossAddTMFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val _deadline = SingleLiveEvent<String>()
-    val deadline: LiveData<String> = _deadline
+    private val _deadline = SingleLiveEvent<Pair<String?, String?>>()
+    val deadline: LiveData<Pair<String?, String?>> = _deadline
 
     /*---------------------------------------------------*/
 
@@ -99,41 +99,52 @@ class AccountBossAddTMFragmentVM : ViewModel()
         else birthdate.toString().toCalendar()
     }
 
-    fun setDeadline(deadline: Date)
+    fun setDeadline(deadline: Date, from: Boolean)
     {
         viewModelScope.launch {
-            with(LeagueManager.setDeadline(deadline)) {
+            with(LeagueManager.setDeadline(deadline, from)) {
                 _deadlineAdded.value = this
-                if(this) setDeadlineInPreferences(deadline.toMyString())
+                if(this) setDeadlineInPreferences(deadline.toMyString(), from)
             }
         }
     }
 
     fun getDeadline()
     {
-        val deadline = PreferenceManager
+        val deadlineFrom = PreferenceManager
             .getDefaultSharedPreferences(context)
-            .getString("DEADLINE", null)
+            .getString("DEADLINE_FROM", null)
 
-        if(deadline == null)
+        val deadlineTo = PreferenceManager
+            .getDefaultSharedPreferences(context)
+            .getString("DEADLINE_TO", null)
+
+        if(deadlineFrom == null || deadlineTo == null)
         {
             viewModelScope.launch {
                 val result = LeagueManager.getDeadline()
                 result?.let {
-                    setDeadlineInPreferences(it.toMyString())
-                    _deadline.value = it.toMyString()
+                    setDeadlineInPreferences(it.first?.toMyString(), true)
+                    setDeadlineInPreferences(it.second?.toMyString(), false)
+                    _deadline.value = Pair(it.first?.toMyString(), it.second?.toMyString())
                 }
             }
         }
-        else _deadline.value = deadline
+        else _deadline.value = Pair(deadlineFrom, deadlineTo)
     }
 
-    private fun setDeadlineInPreferences(deadline: String)
+    private fun setDeadlineInPreferences(deadline: String?, from: Boolean)
     {
+        deadline ?: return
+
+        val label =
+            if(from) "DEADLINE_FROM"
+            else "DEADLINE_TO"
+
         PreferenceManager.
             getDefaultSharedPreferences(context)
             .edit()
-            .putString("DEADLINE", deadline)
+            .putString(label, deadline)
             .apply()
     }
 

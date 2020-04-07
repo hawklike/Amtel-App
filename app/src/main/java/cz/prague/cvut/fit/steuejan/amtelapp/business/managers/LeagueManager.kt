@@ -37,7 +37,7 @@ object LeagueManager
         catch(ex: Exception) { false }
      }
 
-    suspend fun setDeadline(deadline: Date): Boolean = withContext(IO)
+    suspend fun setDeadline(deadline: Date, from: Boolean): Boolean = withContext(IO)
     {
         return@withContext try
         {
@@ -45,7 +45,8 @@ object LeagueManager
             val league = dao.findById(leagueId).toObject<League>()
             if(league != null)
             {
-                league.deadline[DateUtil.actualSeason] = deadline
+                if(from) league.deadlineFrom[DateUtil.actualSeason] = deadline
+                else league.deadlineTo[DateUtil.actualSeason] = deadline
                 dao.insert(league)
                 return@withContext true
             }
@@ -54,18 +55,39 @@ object LeagueManager
         catch(ex: Exception) { false }
     }
 
-    suspend fun getDeadline(): Date? = withContext(IO)
+    suspend fun getDeadline(): Pair<Date?, Date?>? = withContext(IO)
     {
         return@withContext try
         {
             val league = LeagueDAO().findById(leagueId).toObject<League>()
-            league?.deadline?.get(DateUtil.actualSeason)
+            val from = league?.deadlineFrom?.get(DateUtil.actualSeason)
+            val to = league?.deadlineTo?.get(DateUtil.actualSeason)
+            Pair(from, to)
         }
         catch(ex: Exception) { null }
     }
 
+    suspend fun getServerTime(): Date? = withContext(IO)
+    {
+        val date: Date?
+        return@withContext try
+        {
+            val dao = LeagueDAO()
+            val league = dao.findById(leagueId).toObject<League>()
+            league?.let { dao.insert(it) }
+            date = dao.findById(leagueId).toObject<League>()?.serverTime
+            dao.update(leagueId, mapOf(serverTime to null))
+            Log.i("LeagueManager", "successfully retrieved serverTime: $date")
+            date
+        }
+        catch(ex: Exception)
+        {
+            Log.e("LeagueManager", "serverTime not retrieved")
+            null
+        }
+    }
 
-
+    private const val serverTime = "serverTime"
     private const val actualSeason = "actualSeason"
-    private const val leagueId = "league"
+    internal const val leagueId = "league"
 }
