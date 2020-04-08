@@ -9,6 +9,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.*
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -422,13 +423,13 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
 
     private fun countMatchScore(match: Match, isDefaultLoss: Boolean)
     {
-        val serviceIntent = Intent(this, CountMatchScoreService::class.java).apply {
+        val intent = Intent(this, CountMatchScoreService::class.java).apply {
             putExtra(CountMatchScoreService.HOME_TEAM, homeTeam)
             putExtra(CountMatchScoreService.AWAY_TEAM, awayTeam)
             putExtra(CountMatchScoreService.MATCH, match)
             putExtra(CountMatchScoreService.DEFAULT_LOSS, isDefaultLoss)
         }
-        startService(serviceIntent)
+        ContextCompat.startForegroundService(this, intent)
     }
 
     private fun disableDefaultEndGame()

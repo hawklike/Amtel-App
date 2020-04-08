@@ -8,6 +8,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -52,7 +53,6 @@
         <service
             android:name=".services.SeasonFinisherService"
             android:exported="false"/>
-
         <service
             android:name=".services.CountMatchScoreService"
             android:exported="false"/>

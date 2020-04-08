@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -288,18 +289,18 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             games.text = result.games
             disableInputButtonIf { !isHeadOfLeague && match.edits[round.toString()] == 0 }
             viewModel.sendEmail(homeTeam, awayTeam, sets.text, games.text, userId)
-            matchViewModel.setPage(round)
+//            matchViewModel.setPage(round)
         }
     }
 
     private fun countMatchScore()
     {
-        val serviceIntent = Intent(activity!!, CountMatchScoreService::class.java).apply {
+        val intent = Intent(activity!!, CountMatchScoreService::class.java).apply {
             putExtra(CountMatchScoreService.HOME_TEAM, homeTeam)
             putExtra(CountMatchScoreService.AWAY_TEAM, awayTeam)
             putExtra(CountMatchScoreService.MATCH, match)
         }
-        activity!!.startService(serviceIntent)
+        ContextCompat.startForegroundService(activity!!, intent)
     }
 
     private fun handleDialogs()

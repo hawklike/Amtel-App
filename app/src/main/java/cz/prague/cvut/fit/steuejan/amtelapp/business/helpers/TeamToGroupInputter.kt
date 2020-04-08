@@ -27,11 +27,8 @@ class TeamToGroupInputter
         
         if(team.groupName != null)
         {
-            if(team.groupName != groupName || playoff)
-            {
-                removeFromGroup(team)
-                add2Group(team, groupName)
-            }
+            removeFromGroup(team)
+            add2Group(team, groupName)
         }
         else add2Group(team, groupName)
     }
@@ -55,7 +52,7 @@ class TeamToGroupInputter
 
             group.teamIds[DateUtil.actualSeason] = teamIdsSet.toMutableList()
             GroupManager.setGroup(group)
-            toast(context.getString(R.string.team) + " ${team.name} " + context.getString(R.string.was_moved_to_group) + " $name" + ".", length = Toast.LENGTH_LONG)
+            if(!playoff) toast(context.getString(R.string.team) + " ${team.name} " + context.getString(R.string.was_moved_to_group) + " $name" + ".", length = Toast.LENGTH_LONG)
         }
     }
 
