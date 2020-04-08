@@ -1,59 +1,53 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 
+import android.preference.PreferenceManager
 import android.util.Log
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.AESCrypt
 
 object EmailSender
 {
-    //TODO: refactor to a nicer code
-    //TODO: hash a password
-    fun sendVerificationEmail(mailTo: String, genPassword: String)
+    fun sendEmail(mailTo: String, subject: String, message: String)
     {
-        Firebase.firestore
-            .collection("email_password")
-            .document("noreply.amtelopava@gmail.com")
-            .get()
-            .addOnSuccessListener { password ->
-                if(password != null)
+        password?.let {
+            BackgroundMail.newBuilder(context)
+                .withUsername(USERNAME)
+                .withPassword(AESCrypt.decrypt(it))
+                .withMailTo(mailTo)
+                .withType(BackgroundMail.TYPE_PLAIN)
+                .withSubject(subject)
+                .withBody(message)
+                .withOnSuccessCallback(object : BackgroundMail.OnSendingCallback
                 {
-                    BackgroundMail.newBuilder(App.context)
-                        .withUsername("noreply.amtelopava@gmail.com")
-                        .withPassword(password.data?.get("password").toString())
-                        .withMailTo(mailTo)
-                        .withType(BackgroundMail.TYPE_PLAIN)
-                        .withSubject(App.context.getString(R.string.verificationEmail_subject))
-                        .withBody(createVerificationTemplate(mailTo, genPassword))
-                        .withOnSuccessCallback(object : BackgroundMail.OnSendingCallback
-                        {
-                            override fun onSuccess()
-                            {
-                                Log.i(TAG, "sendVerificationEmail(): email successfully sent")
-                            }
+                    override fun onSuccess()
+                    {
+                        Log.i(TAG, "sendEmail(): email to $mailTo successfully sent")
+                    }
 
-                            override fun onFail(e: Exception)
-                            {
-                                Log.e(TAG, "sendVerificationEmail(): email not sent because ${e.message}")
-                            }
-                        })
-                        .send()
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "sendVerificationEmail(): password not found because $exception")
-            }
+                    override fun onFail(ex: Exception)
+                    {
+                        Log.e(TAG, "sendEmail(): email to $mailTo not sent because ${ex.message}")
+                    }
+                })
+                .send()
+
+        } ?: let { Log.e(TAG, "sendEmail(): password not found") }
     }
 
-   private fun createVerificationTemplate(email: String, password: String): String
-   {
-       val head = App.context.getString(R.string.autoEmail_template_head)
-       val body = "email: $email\nheslo: $password\n\n"
-       val foot = App.context.getString(R.string.autoEmail_template_foot)
-       return "$head$body$foot"
-   }
+    private val password: String?
+    get()
+    {
+        return PreferenceManager
+            .getDefaultSharedPreferences(context)
+            ?.getString(context.getString(R.string.email_password_key), null)
+    }
 
+    var hasPassword = false
+    var headOfLeagueEmail: String? = null
     private const val TAG = "EmailSender"
+    private const val USERNAME = "noreply.amtelopava@gmail.com"
 }

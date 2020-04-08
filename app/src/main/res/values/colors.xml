@@ -1,21 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="blue">#3d8af7</color>
+    <color name="blue">#2FB7F4</color>
+    <color name="darkBlue">#174090</color>
+    <color name="lightBlue">#F7FEFF</color>
     <color name="darkGrey">#444444</color>
+    <color name="green">#15eaa8</color>
+    <color name="darkGreen">#10BD87</color>
     <color name="lightGrey">#aaaaaa</color>
+    <color name="middleLightGrey">#D8D8D8</color>
+    <color name="messageTo">#E7E5E5</color>
+    <color name="veryLightGrey">#F5F5F5</color>
+    <color name="tab_unselected">#80FFFFFF</color>
+    <color name="veryVeryLightGrey">#fafafa</color>
     <color name="white">#ffffff</color>
-    <color name="lightBlue">#0D3D8AF7</color>
+    <color name="iconPrimaryColor">@color/blue</color>
+    <color name="iconFABColor">@color/white</color>
+    <color name="iconToolbarColor">@color/white</color>
+    <color name="red">#e84118</color>
+    <color name="yellow">#EDAE02</color>
+    <color name="purple">#3F4079</color>
+    <color name="grey">#7f8fa6</color>
+
+
+    <color name="blue1">#2998EE</color>
+    <color name="blue2">#299DEF</color>
+    <color name="blue3">#2CADF2</color>
+    <color name="blue4">#33C8F7</color>
+    <color name="blue5">#37D4F9</color>
+    <color name="blue6">#41EFFE</color>
+
+    <color name="toolbar_up">#f12711</color>
+    <color name="toolbar_center">#f24613</color>
+    <color name="toolbar_down">#f36a15</color>
+    <color name="toolbar_left_alt">#C71D0D</color>
+    <color name="toolbar_right_alt">#C25310</color>
 
     <!-- MaterialDrawer DEFAULT colors -->
-    <color name="material_drawer_background">#ffffff</color>
+    <color name="material_drawer_background">@color/veryVeryLightGrey</color>
     <!-- Material DEFAULT text / items colors -->
     <color name="material_drawer_primary_text">#444444</color>
     <color name="material_drawer_primary_icon">#444444</color>
-    <color name="material_drawer_secondary_text">#aaaaaa</color>
-    <color name="material_drawer_hint_text">#aaaaaa</color>
-    <color name="material_drawer_divider">#aaaaaa</color>
+    <color name="material_drawer_secondary_text">#929292</color>
+    <color name="material_drawer_secondary_icon">#929292</color>
+    <color name="material_drawer_hint_text">#929292</color>
+    <color name="material_drawer_divider">@color/lightGrey</color>
     <!-- Material DEFAULT drawer colors -->
-    <color name="material_drawer_selected">#ffffff</color>
-    <color name="material_drawer_selected_legacy">#ffffff</color>
-    <color name="material_drawer_selected_text">#3d8af7</color>
+    <color name="material_drawer_selected">@color/veryVeryLightGrey</color>
+    <color name="material_drawer_selected_legacy">@color/veryVeryLightGrey</color>
+    <color name="material_drawer_selected_text">@color/blue</color>
+
 </resources>

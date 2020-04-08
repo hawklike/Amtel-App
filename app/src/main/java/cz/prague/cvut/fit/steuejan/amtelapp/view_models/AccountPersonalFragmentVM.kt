@@ -7,13 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
@@ -51,9 +53,9 @@ class AccountPersonalFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun confirmPassword(newPassword: String)
+    fun confirmPassword(newPassword: String, confirmation: String)
     {
-        passwordState.value = PasswordState.validate(newPassword)
+        passwordState.value = PasswordState.validate(newPassword, confirmation)
     }
 
     fun addNewPassword(newPassword: String)
@@ -82,7 +84,7 @@ class AccountPersonalFragmentVM : ViewModel()
         return Pair(title, message)
     }
 
-    fun savePersonalInfo(fullName: String, birthdate: String, phoneNumber: String, sex: Sex)
+    fun savePersonalInfo(user: User, fullName: String, birthdate: String, phoneNumber: String, sex: Sex)
     {
         if(confirmPersonalInfo(fullName, birthdate, phoneNumber))
         {
@@ -91,16 +93,21 @@ class AccountPersonalFragmentVM : ViewModel()
             val surname = fullName.split(Regex("[ ]+"))[1]
 
             viewModelScope.launch {
-                val success = UserManager.updateUser(AuthManager.currentUser!!.uid, mapOf(
-                    "name" to name.firstLetterUpperCase(),
-                    "surname" to surname.firstLetterUpperCase(),
-                    "birthdate" to birthdate.toDate(),
-                    "phone" to phone,
-                    "sex" to sex.toBoolean()
-                ))
 
-                if(success) personalInfoChange.value = PersonalInfoSuccess(name, surname, birthdate, phone, sex)
-                else personalInfoChange.value = PersonalInfoFailure
+                user.apply {
+                    this.name = name.firstLetterUpperCase()
+                    this.surname = surname.firstLetterUpperCase()
+                    this.birthdate = birthdate.toDate()
+                    this.phone = phone
+                    this.sex = sex.toBoolean()
+                }
+
+                val success = UserManager.setUser(user)
+
+                TeamManager.updateUserInTeam(user)
+
+                success?.let { personalInfoChange.value = PersonalInfoSuccess(name, surname, birthdate, phone, sex)  }
+                    ?: let { personalInfoChange.value = PersonalInfoFailure }
             }
         }
     }
@@ -138,8 +145,15 @@ class AccountPersonalFragmentVM : ViewModel()
 
     fun createAfterPersonalInfoDialog(state: PersonalInfoState): Message
     {
-        return if(state is PersonalInfoSuccess) Message(App.context.getString(R.string.personalInfo_change_success_title), null)
-        else Message(App.context. getString(R.string.personalInfo_change_failure_title), null)
+        return if(state is PersonalInfoSuccess) Message(
+            App.context.getString(R.string.personalInfo_change_success_title),
+            null
+        )
+        else Message(
+            App.context.getString(
+                R.string.personalInfo_change_failure_title
+            ), null
+        )
     }
 
     fun setDialogBirthdate(birthdate: Editable): Calendar?

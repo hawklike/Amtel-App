@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -23,7 +24,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Companion.TEAM
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ShowUserSimpleAdapter
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowTeamPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
@@ -40,7 +41,6 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
 
     private val viewModel by viewModels<AccountTMMakeTeamFragmentVM>()
 
-    //TODO: [REFACTORING] get team from database in the fragment's view model
     private lateinit var team: TeamState
     private lateinit var user: User
 
@@ -56,8 +56,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     private lateinit var addPlayer: RelativeLayout
 
     private var recyclerView: RecyclerView? = null
-    //TODO: [REFACTORING] use firestore recycler view
-    private var adapter: ShowUserSimpleAdapter? = null
+    private var adapter: ShowTeamPlayersAdapter? = null
 
     override fun getName(): String = "AccountTMMakeTeamFragment"
 
@@ -86,7 +85,6 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         getTeam()
         setupRecycler()
         updateFields()
-        populateAdapter()
         setObservers()
         setListeners()
     }
@@ -94,18 +92,21 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     override fun onResume()
     {
         super.onResume()
+        isLineUpAllowed()
         if(::team.isInitialized && team is ValidTeam)
         {
-            val tmpTeam = (team as ValidTeam).self
-            if(users.size != tmpTeam.usersId.size)
-                viewModel.setTeamUsers(tmpTeam)
+            val users = (team as ValidTeam).self.users
+            populateAdapter(users)
         }
     }
 
     override fun onDestroyView()
     {
         super.onDestroyView()
+        adapter?.onDelete = null
+        recyclerView?.adapter = null
         recyclerView = null
+        adapter = null
 
         createTeam.setOnClickListener(null)
         addPlayer.setOnClickListener(null)
@@ -115,17 +116,48 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         createTeamLayout = null
     }
 
-    override fun onDestroy()
+    private fun isLineUpAllowed()
     {
-        super.onDestroy()
-        adapter = null
+        viewModel.isLineUpAllowed()
+        viewModel.isLineUpAllowed.observe(viewLifecycleOwner) { allowed ->
+            if(!viewModel.deadlineDialogShown)
+            {
+                MaterialDialog(activity!!).show {
+                    title(text = "Uzavření soupisky")
+                    message(text = viewModel.deadlineDialog)
+                    positiveButton()
+                }
+                viewModel.deadlineDialogShown = true
+            }
+
+            adapter?.isAllowed = allowed
+            adapter?.notifyDataSetChanged()
+            if(allowed)
+            {
+                view?.findViewById<TextView>(R.id.account_tm_make_team_add_player_text)?.alpha = 1f
+                view?.findViewById<ImageView>(R.id.account_tm_make_team_add_player_button)?.alpha = 1f
+                addPlayer.setOnClickListener { addPlayer() }
+            }
+        }
     }
 
     private fun setupRecycler()
     {
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(context)
-        adapter = ShowUserSimpleAdapter(activity!!, users)
+        adapter = ShowTeamPlayersAdapter(
+            activity!!,
+            users
+        )
+        adapter?.onDelete = {
+            if(team is ValidTeam)
+            {
+                val tmp = (team as ValidTeam).self
+                tmp.users.clear()
+                tmp.users.addAll(it)
+                mainActivityModel.setTeam(team)
+            }
+        }
         recyclerView?.adapter = adapter
     }
 
@@ -133,6 +165,8 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         playingDaysLayout.editText?.setOnClickListener {
             MaterialDialog(activity!!).show {
+                title(R.string.choose_playing_days)
+
                 val indices = playingDaysLayout.editText?.text?.let {
                     viewModel.setDialogDays(it)
                 } ?: intArrayOf()
@@ -153,17 +187,18 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
             deleteErrors()
 
             MaterialDialog(activity!!)
-                .title(R.string.create_team_dialog_title)
+                .title(text = "Uložit tým?")
                 .message(R.string.create_team_dialog_message)
                 .show {
-                    positiveButton(R.string.yes) {
+                    positiveButton(text = "Uložit") {
+                        progressDialog.show()
                         viewModel.createTeam(user, name, place, playingDays)
                     }
-                    negativeButton(R.string.no)
+                    negativeButton()
                 }
         }
 
-        addPlayer.setOnClickListener { addPlayer() }
+        addPlayer.setOnClickListener { toast("V průběhu ligy nelze přidávat nové hráče.") }
     }
 
     private fun addPlayer()
@@ -178,7 +213,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         else
         {
             toast(getString(R.string.no_team_alert))
-            (Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet."))
+            Log.e(TAG, "Failed to start AddUserToTeamActivity because team is not valid or initialized yet.")
         }
     }
 
@@ -208,7 +243,11 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         {
             nameLayout.editText?.setText((team as ValidTeam).self.name)
             placeLayout.editText?.setText((team as ValidTeam).self.place)
-            playingDaysLayout.editText?.setText((team as ValidTeam).self.playingDays.joinToString(", "))
+            playingDaysLayout.editText?.setText((team as ValidTeam).self.
+                playingDays.
+                joinToString(", ") {
+                    it.trim()
+                })
             disableName()
         }
         else
@@ -217,20 +256,21 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         }
     }
 
-    private fun populateAdapter()
+    private fun populateAdapter(users: List<User>)
     {
-        viewModel.teamUsers.observe(viewLifecycleOwner) { users ->
-            this.users.clear()
-            this.users.addAll(users)
-            adapter?.notifyItemRangeInserted(adapter?.itemCount?.minus(1) ?: 0, users.size)
-        }
+        this.users.clear()
+        this.users.addAll(users)
+        adapter?.notifyDataSetChanged()
     }
 
     private fun confirmDays()
     {
         viewModel.playingDays.observe(viewLifecycleOwner) { daysState ->
             if(daysState is InvalidPlayingDays)
+            {
+                progressDialog.dismiss()
                 playingDaysLayout.error = daysState.errorMessage
+            }
         }
     }
 
@@ -238,7 +278,10 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         viewModel.place.observe(viewLifecycleOwner) { placeState ->
             if(placeState is InvalidPlace)
+            {
+                progressDialog.dismiss()
                 placeLayout.error = placeState.errorMessage
+            }
         }
     }
 
@@ -246,7 +289,10 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         viewModel.name.observe(viewLifecycleOwner) { nameState ->
             if(nameState is InvalidName)
+            {
+                progressDialog.dismiss()
                 nameLayout.error = nameState.errorMessage
+            }
         }
     }
 
@@ -261,14 +307,16 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     private fun getUser()
     {
         user = mainActivityModel.getUser().value ?: User()
-        mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
-            user = observedUser?.copy() ?: user
-        }
+//        mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
+//            user = observedUser?.copy() ?: user
+//            Log.i("AccountTMMakeTeamFragme", "getUser(): user $user observed")
+//        }
     }
 
     private fun isTeamCreated()
     {
         viewModel.newTeam.observe(viewLifecycleOwner) { teamState ->
+            progressDialog.dismiss()
             val title = viewModel.displayAfterDialog(teamState, user).title
 
             MaterialDialog(activity!!)
@@ -286,7 +334,14 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         if(team is ValidTeam)
         {
+            if(users.isEmpty())
+            {
+                users.addAll(team.self.users)
+                try { adapter?.notifyItemInserted(0) }
+                catch(ex: Exception) { adapter?.notifyDataSetChanged() }
+            }
             user.teamId = team.self.id
+            user.teamName = team.self.name
             viewModel.updateUser(user, team.self)
             mainActivityModel.setUser(user)
             mainActivityModel.setTeam(ValidTeam(team.self))

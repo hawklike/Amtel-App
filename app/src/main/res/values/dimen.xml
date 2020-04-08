@@ -2,4 +2,10 @@
 <resources>
     <dimen name="material_drawer_item_primary_text">16sp</dimen>
     <dimen name="material_drawer_item_secondary_text">16sp</dimen>
+    <dimen name="rounded_corners">12dp</dimen>
+    <dimen name="rounded_corners_edit_text">16dp</dimen>
+    <dimen name="common_text_size">16sp</dimen>
+    <dimen name="elevation">3dp</dimen>
+    <dimen name="card_padding">8dp</dimen>
+    <dimen name="card_margin">24dp</dimen>
 </resources>

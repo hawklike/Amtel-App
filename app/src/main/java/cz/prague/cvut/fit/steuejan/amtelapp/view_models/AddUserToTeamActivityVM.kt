@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
@@ -67,13 +67,13 @@ class AddUserToTeamActivityVM : ViewModel()
                     team.name
                 )
 
-                user = UserManager.addUser(user!!)
+                user = UserManager.setUser(user!!)
 
                 if(user != null)
                 {
-                    if(team.usersId.add(user.id!!))
+                    if(team.users.add(user) && team.usersId.add(user.id!!))
                     {
-                        TeamManager.updateTeam(team.id!!, mapOf("usersId" to team.usersId))
+                        TeamManager.updateTeam(team.id, mapOf("users" to team.users, "usersId" to team.usersId))
                         teamState.value = ValidTeam(team)
                     }
                     else teamState.value = NoTeam
@@ -123,8 +123,15 @@ class AddUserToTeamActivityVM : ViewModel()
 
     fun createDialog(teamState: TeamState): Message
     {
-        return if(teamState is ValidTeam) Message(App.context.getString(R.string.add_user_success_message_title), null)
-        else Message(App.context.getString(R.string.add_user_failure_message_title), null)
+        return if(teamState is ValidTeam) Message(
+            App.context.getString(R.string.add_user_success_message_title),
+            null
+        )
+        else Message(
+            App.context.getString(
+                R.string.add_user_failure_message_title
+            ), null
+        )
     }
 
     fun setDialogBirthdate(birthdate: Editable): Calendar?

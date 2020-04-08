@@ -15,6 +15,13 @@ data class User(override var id: String? = null,
                 var role: String = "",
                 var teamId: String? = null,
                 var teamName: String? = null,
-                var matchesId: List<String> = emptyList(),
-                var firstSign: Boolean = true
-                ) : Parcelable, Entity()
+                var firstSign: Boolean = true,
+                var englishName: String = "",
+                var englishSurname: String = "",
+                var searchSurname: String = ""
+                ) : Parcelable, Entity<User>()
+
+fun User.toPlayer(): Player
+{
+    return Player(this.id ?: "", this.name, this.surname, this.email, this.birthdate, this.sex, null)
+}

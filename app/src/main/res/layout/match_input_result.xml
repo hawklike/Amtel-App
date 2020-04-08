@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/curve" />
+
+        <RelativeLayout
+            android:id="@+id/match_input_overview"
+            style="@style/CardRelativeLayout"
+            android:padding="8dp">
+
+            <RelativeLayout
+                android:id="@+id/match_input_home_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/match_input_home_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:layout_marginEnd="16dp"
+                    android:layout_toStartOf="@id/match_input_home_text"
+                    android:text="TK Horní Bludovice"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/match_input_home_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="domácí"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/match_input_away_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_below="@id/match_input_home_layout">
+
+                <TextView
+                    android:id="@+id/match_input_away_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:layout_marginEnd="16dp"
+                    android:layout_toStartOf="@id/match_input_away_text"
+                    android:text="TK Dolní Datyně"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/match_input_away_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentEnd="true"
+                    android:text="hosté"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/match_card_score"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_toStartOf="@id/match_input_report_button"
+                android:layout_alignBottom="@id/match_input_report_button">
+
+                <TextView
+                    android:id="@+id/match_input_sets"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="1 : 2"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/match_input_gems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_toEndOf="@id/match_input_sets"
+                    android:text="4:6, 7:5, 0:6"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="13sp" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/match_input_report_button"
+                style="@style/FloatingActionButton"
+                android:layout_marginTop="12dp"
+                android:layout_below="@id/match_input_away_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                app:srcCompat="@drawable/ic_report_problem_white_24dp" />
+
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/match_input_players_home"
+            style="@style/CardRelativeLayout"
+            android:layout_below="@id/match_input_overview"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="Hráč/i domácího týmu"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:textSize="@dimen/common_text_size"
+            app:errorEnabled="true" />
+
+        <EditText
+            android:id="@+id/match_input_players_away"
+            style="@style/CardRelativeLayout"
+            android:layout_below="@id/match_input_players_home"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="Hráč/i týmu hostů"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:textSize="@dimen/common_text_size"
+            app:errorEnabled="true" />
+
+        <RelativeLayout
+            android:id="@+id/match_input_results"
+            style="@style/CardRelativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_marginBottom="24dp"
+            android:layout_below="@id/match_input_players_away"
+            android:background="@drawable/rounded_object">
+
+            <TextView
+                android:id="@+id/match_input_set_first_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:textColor="@color/darkGrey"
+                android:text="1. set"/>
+
+            <RelativeLayout
+                android:id="@+id/match_input_results_first_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/match_input_set_first_text">
+
+                <TextView
+                    android:id="@+id/dot1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true"
+                    android:text=":"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/match_input_results_first_set_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Domácí"
+                    android:inputType="number"
+                    android:gravity="center"
+                    android:layout_toStartOf="@id/dot1"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="32dp"
+                    android:maxLines="1"
+                    style="@style/TextInputEditTextStyle"
+                    app:errorEnabled="true"
+                    android:importantForAutofill="no" />
+
+                <EditText
+                    android:id="@+id/match_input_results_first_set_away"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Hosté"
+                    android:inputType="number"
+                    android:gravity="center"
+                    android:layout_toEndOf="@id/dot1"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginStart="16dp"
+                    android:maxLines="1"
+                    style="@style/TextInputEditTextStyle"
+                    app:errorEnabled="true"
+                    android:importantForAutofill="no" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/match_input_set_second_text"
+                android:layout_width="match_parent"
+                android:layout_marginTop="8dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/match_input_results_first_set"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:textColor="@color/darkGrey"
+                android:text="2. set"/>
+
+            <RelativeLayout
+                android:id="@+id/match_input_results_second_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/match_input_set_second_text">
+
+                <TextView
+                    android:id="@+id/dot2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true"
+                    android:text=":"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/match_input_results_second_set_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Domácí"
+                    android:inputType="number"
+                    android:gravity="center"
+                    android:layout_toStartOf="@id/dot2"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="32dp"
+                    android:maxLines="1"
+                    style="@style/TextInputEditTextStyle"
+                    app:errorEnabled="true"
+                    android:importantForAutofill="no" />
+
+                <EditText
+                    android:id="@+id/match_input_results_second_set_away"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Hosté"
+                    android:inputType="number"
+                    android:gravity="center"
+                    android:layout_toEndOf="@id/dot2"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginStart="16dp"
+                    android:maxLines="1"
+                    style="@style/TextInputEditTextStyle"
+                    app:errorEnabled="true"
+                    android:importantForAutofill="no" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/match_input_set_third_text"
+                android:layout_width="match_parent"
+                android:layout_marginTop="8dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/match_input_results_second_set"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:textColor="@color/darkGrey"
+                android:text="3. set"/>
+
+            <RelativeLayout
+                android:id="@+id/match_input_results_third_set"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_below="@id/match_input_set_third_text">
+
+                <TextView
+                    android:id="@+id/dot3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true"
+                    android:text=":"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/match_input_results_third_set_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Domácí"
+                    android:inputType="number"
+                    android:gravity="center"
+                    android:layout_toStartOf="@id/dot3"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="32dp"
+                    android:maxLines="1"
+                    style="@style/TextInputEditTextStyle"
+                    app:errorEnabled="true"
+                    android:importantForAutofill="no" />
+
+                <EditText
+                    android:id="@+id/match_input_results_third_set_away"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Hosté"
+                    android:inputType="number"
+                    android:gravity="center"
+                    android:layout_toEndOf="@id/dot3"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginStart="16dp"
+                    android:maxLines="1"
+                    style="@style/TextInputEditTextStyle"
+                    app:errorEnabled="true"
+                    android:importantForAutofill="no" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/match_input_results_save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/match_input_results"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/button"
+            android:elevation="2dp"
+            android:minHeight="10dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:textAllCaps="false"
+            android:stateListAnimator="@null"
+            android:text="Zapsat výsledek"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+</ScrollView>

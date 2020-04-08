@@ -9,21 +9,33 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.LeagueManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Day
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toDayInWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
+import org.joda.time.DateTime
+import java.util.*
 
 class AccountTMMakeTeamFragmentVM : ViewModel()
 {
+    var deadlineDialogShown: Boolean = false
+    private var deadline: Pair<Date?, Date?>? = null
+
+    var deadlineDialog: String = ""
+
+    /*---------------------------------------------------*/
+
     private val nameState = MutableLiveData<NameState>()
     val name: LiveData<NameState> = nameState
 
@@ -49,31 +61,27 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val _teamUsers = MutableLiveData<List<User>>()
-    val teamUsers: LiveData<List<User>> = _teamUsers
+    private val _isLineUpAllowed = MutableLiveData<Boolean>()
+    val isLineUpAllowed: LiveData<Boolean> = _isLineUpAllowed
 
     /*---------------------------------------------------*/
 
     fun createTeam(user: User, name: String, place: String, days: String)
     {
-        if(confirmInput(name, place, days))
+        if(confirmInput(name, days))
         {
             viewModelScope.launch {
                 val _days = playingDaysState.value as ValidPlayingDays
 
-                val usersId = mutableListOf<String>().apply {
+                val users = mutableListOf<User>().apply {
                     user.teamId?.let {
                         val team = TeamManager.findTeam(it)
                         if(team is ValidTeam)
                         {
-                            if(team.self.usersId.isEmpty()) add(user.id!!)
-                            else addAll(team.self.usersId)
+                            if(team.self.users.isEmpty()) add(user)
+                            else addAll(team.self.users)
                         }
-                    } ?: let {
-                        add(user.id!!)
-                        _teamUsers.value = listOf(user)
-                    }
-
+                    } ?: add(user)
                 }
 
                 var team: Team? = Team(
@@ -81,11 +89,12 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
                     name,
                     AuthManager.currentUser!!.uid,
                     _days.self,
-                    place.firstLetterUpperCase(),
-                    usersId
+                    if(place.isEmpty()) null else place.firstLetterUpperCase(),
+                    users.map { it.id!! }.toMutableList(),
+                    users
                 )
 
-                team = TeamManager.addTeam(team!!)
+                team = TeamManager.setTeam(team!!)
 
                 if(team != null) teamState.value = ValidTeam(team)
                 else teamState.value = NoTeam
@@ -93,17 +102,10 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
         }
     }
 
-    fun setTeamUsers(team: Team)
-    {
-        viewModelScope.launch {
-            _teamUsers.value = UserManager.findUsers(team.usersId)
-        }
-    }
-
     fun updateUser(user: User, team: Team)
     {
         viewModelScope.launch {
-            UserManager.updateUser(user.id!!, mapOf(
+            UserManager.updateUser(user.id, mapOf(
                 "teamId" to user.teamId,
                 "teamName" to team.name))
         }
@@ -118,35 +120,44 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
         val title: String = if(teamState is ValidTeam) user.teamId?.let { actualizationTitle } ?: successTitle
         else failureTitle
 
-        return Message(title, null)
+        return Message(
+            title,
+            null
+        )
     }
 
-    private fun confirmInput(name: String, place: String, playingDays: String): Boolean
+    fun isLineUpAllowed()
     {
-        var okName = true
-        var okPlace = true
-        var okDays = true
+        if(DateUtil.serverTime == null)
+        {
+            viewModelScope.launch {
+                LeagueManager.getServerTime()?.let {
+                    DateUtil.serverTime = it
+                    isLineUpAllowed(it)
+                }
+            }
+        }
+        else isLineUpAllowed(DateUtil.serverTime)
+    }
+
+    private fun confirmInput(name: String, playingDays: String): Boolean
+    {
+        var isOk = true
 
         if(name.isEmpty())
         {
             nameState.value = InvalidName()
-            okName = false
-        }
-
-        if(place.isEmpty())
-        {
-            placeState.value = InvalidPlace()
-            okPlace = false
+            isOk = false
         }
 
         if(playingDays.isEmpty())
         {
             playingDaysState.value = InvalidPlayingDays()
-            okDays = false
+            isOk = false
         }
-        else playingDaysState.value = ValidPlayingDays(playingDays.split(","))
+        else playingDaysState.value = ValidPlayingDays(playingDays.split(",").map { it.trim() })
 
-        return okName && okPlace && okDays
+        return isOk
     }
 
     fun setDialogDays(days: Editable): IntArray
@@ -157,5 +168,51 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     fun getDialogDays(items: List<CharSequence>): List<Day> =
         items.map { it.toString().toDayInWeek() }.sortedBy { it.ordinal }
+
+    private fun isLineUpAllowed(serverTime: Date?)
+    {
+        if(deadline == null)
+        {
+            viewModelScope.launch {
+                LeagueManager.getDeadline()?.let { deadlineRange ->
+                    val from = deadlineRange.first
+                    val to = deadlineRange.second
+                    deadline = deadlineRange
+                    _isLineUpAllowed.value = isLineUpAllowed(serverTime, from, to)
+                }
+            }
+        }
+        else
+        {
+            val from = deadline?.first
+            val to = deadline?.second
+            _isLineUpAllowed.value = isLineUpAllowed(serverTime, from, to)
+        }
+    }
+
+    private fun isLineUpAllowed(serverTime: Date?, from: Date?, to: Date?): Boolean
+    {
+        return if(serverTime == null) false
+        else if(from == null && to == null)
+        {
+            deadlineDialog = "Termín uzavření soupisky není dosud stanoven."
+            true
+        }
+        else if(from == null && to != null)
+        {
+            deadlineDialog = "Tvorba soupisky je uzavřena do ${to.toMyString()}."
+            !DateUtil.isDateBetween(serverTime, Date(0), to)
+        }
+        else if(from != null && to == null)
+        {
+            deadlineDialog = "Tvorba soupisky je uzavřena od ${from.toMyString()}."
+            !DateUtil.isDateBetween(serverTime, from, DateTime().plusYears(30).toDate())
+        }
+        else
+        {
+            deadlineDialog = "Tvorba soupisky je uzavřena od ${from?.toMyString()} do ${to?.toMyString()}."
+            !DateUtil.isDateBetween(serverTime, from, to)
+        }
+    }
 
 }

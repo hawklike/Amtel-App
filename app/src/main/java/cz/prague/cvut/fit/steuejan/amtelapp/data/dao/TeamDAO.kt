@@ -4,9 +4,11 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
-import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Entity
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import kotlinx.coroutines.tasks.await
 
 class TeamDAO : DAO
 {
@@ -16,11 +18,6 @@ class TeamDAO : DAO
     {
         if(entity is Team) insert(collection, entity)
         else throw IllegalArgumentException("TeamDAO::insert(): entity is not type of Team and should be")
-    }
-
-    override suspend fun insert(collectionName: String, entity: Entity)
-    {
-        super.insert(collectionName, entity)
     }
 
     override suspend fun findById(id: String): DocumentSnapshot
@@ -35,14 +32,36 @@ class TeamDAO : DAO
     override suspend fun delete(documentId: String): Unit
             = delete(collection, documentId)
 
-    fun retrieveAllTeams(orderBy: String): Query
-            = retrieveAll(collection, orderBy)
+    fun retrieveAllTeams(): Query
+            = retrieveAllAndGetQuery(collection)
 
     fun retrieveAllUsers(orderBy: String, teamId: String): Query
     {
         return Firebase.firestore
-            .collection("users")
+            .collection(UserDAO().collection)
             .whereEqualTo("teamId", teamId)
             .orderBy(orderBy, Query.Direction.ASCENDING)
     }
+
+    suspend fun updateUser(user: User)
+    {
+        val teams = Firebase.firestore
+            .collection(collection)
+            .whereArrayContains("usersId", user.id!!)
+            .get()
+            .await()
+
+        teams.toObjects<Team>().forEach { team ->
+            val oldUser = team.users.find { it.id == user.id }
+            team.users.apply {
+                remove(oldUser)
+                add(user)
+            }
+
+            update(team.id!!, mapOf("users" to team.users))
+        }
+    }
+
+    fun retrieveTeamsByPrefix(textToSearch: String, searchField: String): Query
+            = retrieveByPrefix(collection, textToSearch, searchField)
 }

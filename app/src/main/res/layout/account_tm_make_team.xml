@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <include layout="@layout/curve" />
+
         <RelativeLayout
             android:id="@+id/account_tm_make_team"
             android:layout_width="match_parent"
@@ -17,19 +19,13 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
-            android:background="@drawable/rounded_object">
+            android:background="@drawable/rounded_object"
+            android:elevation="@dimen/elevation">
 
             <TextView
                 android:id="@+id/account_tm_make_team_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:gravity="center"
-                android:text="@string/create_team"
-                android:textColor="@color/darkGrey"
-                android:textSize="16sp" />
+                style="@style/TextViewTitle"
+                android:text="@string/create_team" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/account_tm_make_team_name"
@@ -41,7 +37,7 @@
                 android:layout_marginEnd="8dp"
                 android:hint="@string/name"
                 app:errorEnabled="true"
-                app:errorTextColor="@android:color/holo_red_dark">
+                app:errorTextColor="@color/red">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/account_tm_make_team_editText1"
@@ -62,7 +58,7 @@
                 android:layout_marginEnd="8dp"
                 android:hint="@string/court_address"
                 app:errorEnabled="true"
-                app:errorTextColor="@android:color/holo_red_dark">
+                app:errorTextColor="@color/red">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/account_tm_make_team_editText2"
@@ -83,7 +79,7 @@
                 android:layout_below="@id/account_tm_make_team_place"
                 android:hint="@string/playing_days"
                 app:errorEnabled="true"
-                app:errorTextColor="@android:color/holo_red_dark">
+                app:errorTextColor="@color/red">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/account_tm_make_team_editText3"
@@ -118,45 +114,42 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
+            android:elevation="@dimen/elevation"
             android:background="@drawable/rounded_object">
 
             <TextView
                 android:id="@+id/account_tm_make_team_add_player_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:alpha="0.5"
                 android:text="@string/add_player"
                 android:textColor="@color/darkGrey"
                 android:textSize="16sp" />
 
             <ImageView
                 android:id="@+id/account_tm_make_team_add_player_button"
-                android:background="@drawable/ic_navigate_next_blue_24dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:scaleX="1.5"
-                android:scaleY="1.5"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="8dp" />
+                android:layout_marginEnd="8dp"
+                android:alpha="0.5"
+                android:background="@drawable/ic_navigate_next_blue_24dp"
+                android:scaleX="1.5"
+                android:scaleY="1.5" />
 
         </RelativeLayout>
 
             <TextView
                 android:id="@+id/account_tm_make_team_players_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_below="@id/account_tm_make_team_add_player"
+                style="@style/TextViewTitleLeft"
                 android:gravity="center"
-                android:text="@string/players"
-                android:textColor="@color/darkGrey"
-                android:textSize="16sp" />
+                android:layout_below="@id/account_tm_make_team_add_player"
+                android:text="@string/players" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/account_tm_make_team_players_recyclerView"
@@ -167,6 +160,18 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
                 android:layout_below="@id/account_tm_make_team_players_text"/>
+
+            <FrameLayout
+                android:id="@+id/account_tm_make_team_players_recyclerView_mask"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:background="#80F5F5F5"
+                android:layout_below="@id/account_tm_make_team_players_text"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:minHeight="400dp"/>
 
     </RelativeLayout>
 

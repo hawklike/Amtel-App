@@ -11,6 +11,7 @@ import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager.auth
+import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AbstractBaseActivityVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
@@ -24,27 +25,28 @@ import kotlin.coroutines.CoroutineContext
 abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
 {
     private val logoutIcon: ImageButton by lazy { findViewById<ImageButton>(R.id.toolbar_logout) }
-    protected val baseActivityVM by viewModels<AbstractBaseActivityVM>()
+    val baseActivityVM by viewModels<AbstractBaseActivityVM>()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job + handler
 
     protected open val job: Job = Job()
 
-    private val handler = CoroutineExceptionHandler { _, exception ->
-        Log.e(TAG, "$exception handled !")
+    private val handler = CoroutineExceptionHandler { context, exception ->
+        Log.e(TAG, "Coroutines: $context - $exception handled !")
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
+        toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleFont)
         handleLogout()
     }
 
     private fun handleLogout()
     {
-        baseActivityVM.getLogoutIconVisibility().observe(this) { visibility ->
+        baseActivityVM.logoutIcon.observe(this) { visibility ->
             if(visibility) logoutIcon.visibility = View.VISIBLE
             else logoutIcon.visibility = View.GONE
         }
@@ -76,9 +78,10 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
             isUserLoggedIn(NoUser)
             setUser(null)
             setDrawerSelectedPosition(0)
+            setTeam(NoTeam)
         }
 
-        baseActivityVM.setLogoutIconVisibility(false)
+        baseActivityVM.setLogoutIcon(false)
     }
 
     protected fun setToolbarTitle(title: String)
@@ -97,9 +100,15 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
         }
     }
 
+    override fun onBackPressed()
+    {
+        super.onBackPressed()
+        finish()
+    }
+
     companion object
     {
-        const val TAG = "MainActivity"
+        const val TAG = "BaseActivity"
     }
 
 }

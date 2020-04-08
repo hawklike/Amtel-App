@@ -4,36 +4,43 @@ import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SearchPreparation
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.TeamDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
-import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
-import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 object TeamManager
 {
-    suspend fun addTeam(team: Team): Team? = withContext(IO)
+    suspend fun setTeam(team: Team): Team? = withContext(IO)
     {
         return@withContext try
         {
+            val search = SearchPreparation(team.name)
+            team.searchNameComplete = search.preparedText
+            team.searchName = search.removeSportClubAcronym()
+
+            team.englishName = StringUtil.prepareCzechOrdering(team.name)
+
             TeamDAO().insert(team)
-            Log.i(TAG, "addUser(): $team successfully added to database")
+            Log.i(TAG, "setTeam(): $team successfully set/updated in database")
             team
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addUser(): $team not added to database because $ex")
+            Log.e(TAG, "setTeam(): $team not set/updated in database because ${ex.message}")
             null
         }
     }
 
-    suspend fun updateTeam(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
+    suspend fun updateTeam(documentId: String?, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
     {
+        if(documentId == null) return@withContext false
         return@withContext try
         {
             TeamDAO().update(documentId, mapOfFieldsAndValues)
@@ -42,7 +49,7 @@ object TeamManager
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateTeam(): team with id $documentId not updated because $ex")
+            Log.e(TAG, "updateTeam(): team with id $documentId not updated because ${ex.message}")
             false
         }
     }
@@ -63,30 +70,40 @@ object TeamManager
         }
     }
 
-    suspend fun <T> findTeam(field: String, value: T?): TeamState = withContext(IO)
+    suspend fun <T> findTeams(field: String, value: T?): TeamState = withContext(IO)
     {
         return@withContext try
         {
-            val querySnapshot = TeamDAO().find(field, value)
-            val documents = querySnapshot.toObjects<Team>()
-            Log.i(TAG, "findTeams(): $documents where $field is $value found successfully")
-            ValidTeams(documents)
+            val teams = TeamDAO().find(field, value).toObjects<Team>()
+            Log.i(TAG, "findTeams(): $teams where $field is $value found successfully")
+            ValidTeams(teams)
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "findTeam(): documents not found because $ex")
+            Log.e(TAG, "findTeams(): documents not found because ${ex.message}")
             NoTeam
         }
     }
 
-    fun retrieveAllTeams(orderBy: TeamOrderBy = TeamOrderBy.NAME): Query
+    fun retrieveAllTeams(): Query
+            = TeamDAO().retrieveAllTeams()
+
+    suspend fun updateUserInTeam(newUser: User): Boolean = withContext(IO)
     {
-        var query: Query? = null
-        TeamOrderBy.values().forEach {
-            if(orderBy == it) query = TeamDAO().retrieveAllTeams(it.toString())
+        return@withContext try
+        {
+            TeamDAO().updateUser(newUser)
+            Log.i(TAG, "updateUserInTeam() $newUser succesfully updated")
+            true
         }
-        return query!!
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "updateUserInTeam(): user $newUser not updated because ${ex.message}")
+            false
+        }
     }
+
+    fun retrieveMatches(team: Team): Query = MatchDAO().getMatches(team.id!!)
 
     fun retrieveAllUsers(teamId: String, orderBy: UserOrderBy = UserOrderBy.SURNAME): Query
     {
@@ -97,5 +114,47 @@ object TeamManager
         return query!!
     }
 
+    suspend fun retrieveTeamsInSeason(groupId: String?, year: Int): TeamState = withContext(IO)
+    {
+        if(groupId == null) return@withContext NoTeam
+        return@withContext try
+        {
+            val group = GroupManager.findGroup(groupId)
+            if(group is ValidGroup)
+            {
+                val teams = mutableListOf<Team>()
+                group.self.teamIds[year.toString()]?.let { teamIds ->
+                    teamIds.forEach { teamId ->
+                        with(findTeam(teamId)) {
+                            if(this is ValidTeam) teams.add(self)
+                        }
+                    }
+                }
+                Log.i(TAG, "retrieveTeamsInSeason(): $teams in $groupId [groupId] and $year [year] found successfully")
+                ValidTeams(teams)
+            }
+            else NoTeam
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveTeamsInSeason(): teams not found because ${ex.message}")
+            NoTeam
+        }
+    }
+
+    fun retrieveTeamsByPrefix(textToSearch: String): Pair<Query, Boolean>
+    {
+        val preparation = SearchPreparation(textToSearch)
+        val doCompleteSearch = preparation.doCompleteSearch(textToSearch)
+        val searchField =
+            if(doCompleteSearch) searchNameComplete
+            else searchName
+        return Pair(TeamDAO().retrieveTeamsByPrefix(preparation.preparedText, searchField), doCompleteSearch)
+    }
+
     private const val TAG = "TeamManager"
+    const val groupName = "groupName"
+    const val groupId = "groupId"
+    const val searchName = "searchName"
+    const val searchNameComplete = "searchNameComplete"
 }

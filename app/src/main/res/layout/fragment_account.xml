@@ -4,10 +4,8 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/blue"
-        android:elevation="0dp" >
+        style="@style/AppBarLayout"
+        app:elevation="0dp">
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/account_tabs"

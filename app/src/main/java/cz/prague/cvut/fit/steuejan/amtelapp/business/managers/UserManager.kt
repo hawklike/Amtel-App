@@ -3,16 +3,24 @@ package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.ktx.toObjects
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SearchPreparation
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 object UserManager
 {
-    suspend fun addUser(user: User): User? = withContext(IO)
+    suspend fun setUser(user: User): User? = withContext(IO)
     {
+        val (englishName, englishSurname) = StringUtil.prepareCzechOrdering(user.name, user.surname)
+        user.englishName = englishName
+        user.englishSurname = englishSurname
+
+        user.searchSurname = SearchPreparation(user.surname).preparedText
+
         return@withContext try
         {
             UserDAO().insert(user)
@@ -26,8 +34,9 @@ object UserManager
         }
     }
 
-    suspend fun findUser(id: String): User? = withContext(IO)
+    suspend fun findUser(id: String?): User? = withContext(IO)
     {
+        if(id == null) return@withContext null
         return@withContext try
         {
             val user = UserDAO().findById(id).toObject<User>()
@@ -41,8 +50,24 @@ object UserManager
         }
     }
 
-    suspend fun updateUser(documentId: String, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
+    suspend fun <T> findUsers(field: String, value: T?): List<User>? = withContext(IO)
     {
+        return@withContext try
+        {
+            val users = UserDAO().find(field, value).toObjects<User>()
+            Log.i(TAG, "findUsers(): $users where $field is $value found successfully")
+            users
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "findUsers(): documents not found because ${ex.message}")
+            null
+        }
+    }
+
+    suspend fun updateUser(documentId: String?, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(IO)
+    {
+        if(documentId == null) return@withContext false
         return@withContext try
         {
             UserDAO().update(documentId, mapOfFieldsAndValues)
@@ -51,46 +76,37 @@ object UserManager
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateUser(): user with id $documentId not updated because $ex")
+            Log.e(TAG, "updateUser(): user with id $documentId not updated because ${ex.message}")
             false
         }
     }
 
-    suspend fun findUsers(usersId: List<String>): List<User> = withContext(IO)
+    suspend fun deleteUser(userId: String?): Boolean = withContext(IO)
     {
-        return@withContext usersId.fold(mutableListOf<User>(), { acc, userId ->
-            findUser(userId)?.let { acc.add(it) }
-            return@fold acc
-        })
-    }
-
-    suspend fun deleteUser(userId: String): Boolean = withContext(IO)
-    {
+        if(userId == null) return@withContext false
         return@withContext try
         {
             UserDAO().delete(userId)
-            Log.i(TAG, "deleteUser(): user with id $userId successfully deleted with")
+            Log.i(TAG, "deleteUser(): user with id $userId successfully deleted")
             true
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "deleteUser(): user with id $userId not deleted because $ex")
+            Log.e(TAG, "deleteUser(): user with id $userId not deleted because ${ex.message}")
             false
         }
     }
 
-    fun retrieveAllUsers(orderBy: UserOrderBy = UserOrderBy.SURNAME): Query
+    fun retrieveAllUsers(): Query
+            = UserDAO().retrieveAllUsers()
+
+    fun retrieveUsersByPrefix(textToSearch: String): Query
     {
-        val dao = UserDAO()
-        return when(orderBy)
-        {
-            UserOrderBy.NAME -> dao.retrieveAllUsers("name")
-            UserOrderBy.SURNAME -> dao.retrieveAllUsers("surname")
-            UserOrderBy.TEAM -> dao.retrieveAllUsers("teamName")
-            UserOrderBy.EMAIL -> dao.retrieveAllUsers("email")
-            UserOrderBy.SEX -> dao.retrieveAllUsers("sex")
-        }
+        val preparation = SearchPreparation(textToSearch)
+        return UserDAO().retrieveTeamsByPrefix(preparation.preparedText, searchSurname)
     }
 
     private const val TAG = "UserManager"
+
+    const val searchSurname = "searchSurname"
 }
