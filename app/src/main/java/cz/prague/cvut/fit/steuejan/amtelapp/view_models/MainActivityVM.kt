@@ -2,10 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
 import android.preference.PreferenceManager
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
@@ -93,8 +90,13 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     /*---------------------------------------------------*/
 
-    private val _connection = SingleLiveEvent<Boolean>()
+    private val _connection = MutableLiveData<Boolean>()
     val connection: LiveData<Boolean> = _connection
+
+    /*---------------------------------------------------*/
+
+    private val _headOfLeague = MutableLiveData<User>()
+    val headOfLeague: LiveData<User> = _headOfLeague
 
     /*---------------------------------------------------*/
 
@@ -171,7 +173,7 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
         }
     }
 
-    fun initHeadOfLeagueEmail(tries: Int = 10)
+    fun initHeadOfLeague(repeat: Int = 10)
     {
         viewModelScope.launch {
             if(EmailSender.headOfLeagueEmail == null)
@@ -180,12 +182,14 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
                     if(it.isNotEmpty())
                     {
                         val headOfLeague = it.first()
+                        LeagueManager.headOfLeague = headOfLeague
                         EmailSender.headOfLeagueEmail = headOfLeague.email
+                        _headOfLeague.value = headOfLeague
                     }
-                    else if(tries != 0)
+                    else if(repeat != 0)
                     {
                         delay(5000)
-                        initHeadOfLeagueEmail(tries - 1)
+                        initHeadOfLeague(repeat - 1)
                     }
                 }
             }

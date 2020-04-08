@@ -115,9 +115,10 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     private fun getUser()
     {
         user = mainActivityModel.getUser().value ?: User()
-        mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
-            user = observedUser?.copy() ?: user
-        }
+//        mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
+//            user = observedUser?.copy() ?: user
+//            Log.i("AccountPersonalFragment", "getUser(): user $user observed")
+//        }
     }
 
     @SuppressLint("SetTextI18n")

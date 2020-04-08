@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowGroupsBossAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.callbacks.ItemMoveCallback
+import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowGroupsBossAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Playoff.Companion.PLAYOFF_DAYS
@@ -80,7 +80,7 @@ class ManageGroupsActivity : AbstractBaseActivity()
                 .title(text = "Opravdu chcete otevřít baráž?")
                 .message(text = "Budou vygenerována utkání o postup/sestup a přesunuty nejlepší/nejhorší týmy do patřičných skupin.\n\nBaráž bude otevřena na dva týdny, poté se automaticky uzavře a aktuální sezóna bude ukončena. Po uplynutí dvou týdnů budete moct otevřít novou baráž.\n\nMějte prosím strpení, bude to chvíli trvat.")
                 .show {
-                    positiveButton(R.string.yes) {
+                    positiveButton(text = "Otevřít") {
                         setPlayOff()
                         disablePlayoffButton()
                     }

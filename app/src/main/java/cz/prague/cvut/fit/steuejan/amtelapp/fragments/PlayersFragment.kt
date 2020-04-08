@@ -7,11 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.google.firebase.firestore.Query
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowUsersPagingAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
@@ -89,12 +91,7 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
         adapter?.dataLoadedListener = this
 
         adapter?.onDelete = { user ->
-            MaterialDialog(activity!!)
-            .title(R.string.delete_user_confirmation_message)
-            .show {
-                positiveButton(text = "Smazat") { viewModel.deleteUser(user) }
-                negativeButton()
-            }
+            deleteUser(user)
         }
 
         adapter?.onEdit = {
@@ -102,6 +99,25 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
         }
 
         binding.users.adapter = adapter
+    }
+
+    private fun deleteUser(user: User?)
+    {
+        MaterialDialog(activity!!)
+            .title(R.string.delete_user_confirmation_message)
+            .show {
+                positiveButton(text = "Smazat") {
+                    binding.refreshLayout.isRefreshing = true
+                    viewModel.deleteUser(user)
+                }
+                negativeButton()
+            }
+
+        viewModel.isUserDeleted.observe(viewLifecycleOwner) { deleted ->
+            if(deleted) toast("Hráč byl úspěšně smazán.")
+            else toast("Hráče se nepodařilo smazat.")
+            adapter?.refresh()
+        }
     }
 
     private fun sortUsers()

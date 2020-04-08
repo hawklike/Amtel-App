@@ -23,6 +23,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.callbacks.ItemMoveCallback
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.services.GenerateScheduleService
 import cz.prague.cvut.fit.steuejan.amtelapp.services.GroupDeletionService
@@ -78,7 +79,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
                 MaterialDialog(context)
                     .title(text = "Chcete $option viditelnost skupiny ${group.name}?")
                     .show {
-                        positiveButton(R.string.yes) {
+                        positiveButton(text = option.firstLetterUpperCase()) {
                             viewModel.handleVisibility(!group.visibility, getItem(adapterPosition), this@ViewHolder)
                         }
                         negativeButton()
@@ -93,7 +94,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
                 MaterialDialog(context)
                     .title(text = "Opravdu chcete smazat skupinu ${name.text}?")
                     .show {
-                        positiveButton(R.string.yes) {
+                        positiveButton(text = "Smazat") {
                             deleteGroup(getItem(adapterPosition))
                             list.removeAt(adapterPosition)
                             notifyItemRemoved(adapterPosition)

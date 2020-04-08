@@ -5,6 +5,7 @@ import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.LeagueDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.League
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -86,6 +87,8 @@ object LeagueManager
             null
         }
     }
+
+    var headOfLeague: User? = null
 
     private const val serverTime = "serverTime"
     private const val actualSeason = "actualSeason"

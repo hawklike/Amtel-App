@@ -73,7 +73,7 @@ class MatchArrangementActivityVM : ViewModel()
                 val homeDays = homeTeam.playingDays.map { it.toDayInWeek() }
                 val awayDays = awayTeam.playingDays.map { it.toDayInWeek() }
 
-                _date.value = DateUtil.findDate(homeDays, awayDays, week.range)?.setTime(12, 0)
+                _date.value = DateUtil.findDate(homeDays, awayDays, week.range)?.setTime(16, 0)
                 _date.value?.let { dateAndTime ->
                     MatchManager.updateMatch(match.id!!, mapOf("dateAndTime" to dateAndTime))
                     _match.value?.dateAndTime = dateAndTime

@@ -1,7 +1,9 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
@@ -14,18 +16,25 @@ class PlayersFragmentVM : ViewModel()
     var orderBy = UserOrderBy.SURNAME
     var query = UserManager.retrieveAllUsers()
 
+    /*---------------------------------------------------*/
+
+    private val _userDeleted = SingleLiveEvent<Boolean>()
+    val isUserDeleted: LiveData<Boolean> = _userDeleted
+
+    /*---------------------------------------------------*/
+
     fun deleteUser(user: User?)
     {
         if(user == null) return
         viewModelScope.launch {
-            UserManager.deleteUser(user.id)
+            _userDeleted.value = UserManager.deleteUser(user.id)
             val team = TeamManager.findTeam(user.teamId)
             if(team is ValidTeam)
             {
                 val users = team.self.users
                 val usersId = team.self.usersId
-                users.remove(user)
-                usersId.remove(user.id!!)
+                users.removeAll { it == user }
+                usersId.removeAll { it == user.id }
                 TeamManager.updateTeam(team.self.id, mapOf("users" to users, "usersId" to usersId))
             }
         }

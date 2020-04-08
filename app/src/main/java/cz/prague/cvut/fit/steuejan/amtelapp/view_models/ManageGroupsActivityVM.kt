@@ -4,14 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
-import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Playoff
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toPlayoff
-import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroup
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroups
 import kotlinx.coroutines.launch
 
@@ -31,14 +27,6 @@ class ManageGroupsActivityVM : ViewModel()
     val isPlayOffOpen: LiveData<Boolean> = _isPlayOffOpen
 
     /*---------------------------------------------------*/
-
-    fun setPlayOff()
-    {
-        viewModelScope.launch {
-            val playOff = Group(null, context.getString(R.string.playOff), playingPlayOff = false, playOff = true, rank = Int.MAX_VALUE)
-            if(GroupManager.addPlayoff(playOff) is ValidGroup) toast("Baráž úspěšně otevřena.")
-        }
-    }
 
     fun getGroupsExceptPlayOff()
     {
