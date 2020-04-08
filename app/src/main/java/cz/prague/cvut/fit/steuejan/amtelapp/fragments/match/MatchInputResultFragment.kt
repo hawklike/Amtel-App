@@ -289,7 +289,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             games.text = result.games
             disableInputButtonIf { !isHeadOfLeague && match.edits[round.toString()] == 0 }
             viewModel.sendEmail(homeTeam, awayTeam, sets.text, games.text, userId)
-//            matchViewModel.setPage(round)
+            matchViewModel.setPage(round)
         }
     }
 
@@ -337,7 +337,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         viewModel.isTie.observe(viewLifecycleOwner) { isTie ->
             if(isTie)
             {
-                //not working and don't know why
+                //dialog not dismissed and don't know why
                 dialog.dismiss()
                 displayConfirmationDialog(
                     "Zapsat výsledek?",
