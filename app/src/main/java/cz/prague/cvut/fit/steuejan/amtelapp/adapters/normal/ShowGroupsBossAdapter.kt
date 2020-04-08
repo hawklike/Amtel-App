@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
@@ -181,14 +182,13 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
 
         private fun generateSchedule(regenerate: Boolean)
         {
-            val serviceIntent = Intent(context, GenerateScheduleService::class.java).apply {
+            val intent = Intent(context, GenerateScheduleService::class.java).apply {
                 putExtra(GenerateScheduleService.GROUP, getItem(adapterPosition))
                 putExtra(GenerateScheduleService.ROUNDS, rounds)
                 putExtra(GenerateScheduleService.REGENERATE, regenerate)
-
             }
-            context.startService(serviceIntent)
 
+            ContextCompat.startForegroundService(context, intent)
             generateButton.setTextColor(App.getColor(R.color.red))
         }
     }
