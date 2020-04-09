@@ -9,6 +9,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.removeWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
@@ -155,10 +156,23 @@ class MatchInputResultFragmentVM : ViewModel()
                 if(!isReport)
                 {
                     MatchManager.setMatch(match)
+                    updatePlayers()
                     _matchAdded.value = match
                 }
                 else _isReported.value = match
             }
+        }
+    }
+
+    private suspend fun updatePlayers()
+    {
+        val round: Round = match.rounds[round - 1]
+        val players = with(round) {
+            homePlayers + awayPlayers
+        }
+
+        players.forEach {
+            UserManager.addRound(it.playerId, round, this.round)
         }
     }
 
@@ -243,7 +257,7 @@ class MatchInputResultFragmentVM : ViewModel()
             return false
         }
 
-        match.rounds[this.round - 1] = Round(homeSets, awaySets, homeGames, awayGames, home1, away1, home2, away2, home3, away3)
+        match.rounds[this.round - 1] = Round(homeSets, awaySets, homeGames, awayGames, home1, away1, home2, away2, home3, away3, matchId = match.id!!)
         setMatchScore(homeSets, awaySets)
         return true
     }

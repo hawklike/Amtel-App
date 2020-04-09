@@ -74,9 +74,9 @@ class MatchViewPagerActivity : AbstractViewPagerActivity()
     override fun getData()
     {
         intent.extras?.let { bundle ->
-            match = bundle.getParcelable(MATCH)!!
+            match = bundle.getParcelable(MATCH) ?: Match(id = "Hello there")
             week = bundle.getParcelable<ValidWeek?>(WEEK)?.let { it } ?: InvalidWeek()
-            title = bundle.getString(TITLE)!!
+            title = bundle.getString(TITLE) ?: "AMTEL Opava"
             homeTeam = bundle.getParcelable<Team>(HOME_TEAM)?.let { ValidTeam(it) } ?: NoTeam
             awayTeam = bundle.getParcelable<Team>(AWAY_TEAM)?.let { ValidTeam(it) } ?: NoTeam
         }

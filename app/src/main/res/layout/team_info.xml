@@ -256,7 +256,7 @@
                 style="@style/TextViewTitleLeft"
                 android:layout_below="@id/team_info_charts"
                 android:layout_marginTop="20dp"
-                android:text="@string/matches" />
+                android:text="Utkání" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/team_info_matches_recyclerView"

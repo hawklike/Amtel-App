@@ -7,7 +7,10 @@ import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SearchPreparation
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.PlayerRounds
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Rounds
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
@@ -104,6 +107,25 @@ object UserManager
     {
         val preparation = SearchPreparation(textToSearch)
         return UserDAO().retrieveTeamsByPrefix(preparation.preparedText, searchSurname)
+    }
+
+    suspend fun addRound(userId: String, round: Round, roundPosition: Int)
+    {
+        var playerRounds = UserDAO().getRounds(userId).toObject<PlayerRounds>()
+
+        var rounds: Rounds?
+        if(playerRounds == null)
+        {
+            rounds = Rounds().setRound(round, roundPosition)
+        }
+        else
+        {
+            rounds = playerRounds.rounds[round.matchId]
+            rounds = rounds?.setRound(round, roundPosition) ?: Rounds().setRound(round, roundPosition)
+        }
+
+        playerRounds = PlayerRounds(rounds = mutableMapOf(round.matchId to rounds))
+        UserDAO().addMatches(userId, playerRounds)
     }
 
     private const val TAG = "UserManager"
