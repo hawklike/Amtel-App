@@ -109,24 +109,36 @@ object UserManager
         return UserDAO().retrieveTeamsByPrefix(preparation.preparedText, searchSurname)
     }
 
-    suspend fun addRound(userId: String, round: Round, roundPosition: Int)
+    suspend fun addRound(userId: String, matchId: String, round: Round?, roundPosition: Int): Boolean = withContext(IO)
     {
-        var playerRounds = UserDAO().getRounds(userId).toObject<PlayerRounds>()
-
-        var rounds: Rounds?
-        if(playerRounds == null)
+        return@withContext try
         {
-            rounds = Rounds().setRound(round, roundPosition)
-        }
-        else
-        {
-            rounds = playerRounds.rounds[round.matchId]
-            rounds = rounds?.setRound(round, roundPosition) ?: Rounds().setRound(round, roundPosition)
-        }
+            var playerRounds = UserDAO().getRounds(userId).toObject<PlayerRounds>()
 
-        playerRounds = PlayerRounds(rounds = mutableMapOf(round.matchId to rounds))
-        UserDAO().addMatches(userId, playerRounds)
+            var rounds: Rounds?
+            if(playerRounds == null)
+            {
+                rounds = Rounds().setRound(round, roundPosition)
+            }
+            else
+            {
+                rounds = playerRounds.rounds[matchId]
+                rounds = rounds?.setRound(round, roundPosition) ?: Rounds().setRound(round, roundPosition)
+            }
+
+            playerRounds = PlayerRounds(rounds = mutableMapOf(matchId to rounds))
+            UserDAO().addMatches(userId, playerRounds)
+            true
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "addRound(): round $round not added to user with id $userId because ${ex.message}")
+            false
+        }
     }
+
+    suspend fun deleteRound(userId: String, matchId: String, roundPosition: Int): Boolean
+            = withContext(IO) { addRound(userId, matchId, null, roundPosition) }
 
     private const val TAG = "UserManager"
 
