@@ -73,6 +73,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         matchesAdapter = null
         matchesRecyclerView = null
 
+        playersAdapter?.onClick = null
         playersRecyclerView?.adapter = null
         playersAdapter = null
         playersRecyclerView = null
@@ -129,6 +130,13 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
             team = team
         )
 
+        playersAdapter?.onClick = { player ->
+            val intent = Intent(this, PlayerInfoActivity::class.java).apply {
+                putExtra(PlayerInfoActivity.PLAYER, player)
+            }
+            startActivity(intent)
+        }
+
         playersRecyclerView?.adapter = playersAdapter
     }
 
@@ -150,10 +158,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
             .setQuery(query, config, Match::class.java)
             .build()
 
-        matchesAdapter = ShowTeamMatchesPagingAdapter(
-            viewModel.mTeam ?: Team(id = "mucus"),
-            options
-        )
+        matchesAdapter = ShowTeamMatchesPagingAdapter(viewModel.mTeam ?: Team(id = "mucus"), options)
         matchesAdapter?.onClick = { match ->
             val intent = Intent(this, MatchViewPagerActivity::class.java).apply {
                 putExtra(MatchViewPagerActivity.MATCH, match)

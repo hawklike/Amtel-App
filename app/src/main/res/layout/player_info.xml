@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.TeamInfoActivity">
+    tools:context=".activities.PlayerInfoActivity">
 
     <include layout="@layout/toolbar"/>
 
@@ -22,44 +22,42 @@
             <include layout="@layout/curve" />
 
             <RelativeLayout
-                android:id="@+id/team_info_overview"
+                android:id="@+id/zzPlayerInfoOverview"
                 style="@style/CardRelativeLayout"
                 android:layout_marginTop="12dp"
                 android:padding="8dp">
 
                 <GridLayout
-                    android:id="@+id/team_info_grid"
+                    android:id="@+id/zzGridFirstRow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:columnCount="3"
-                    android:rowCount="2">
+                    android:columnCount="2"
+                    android:rowCount="1">
 
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_row="0"
                         android:layout_column="0"
-                        android:layout_columnWeight="1"
+                        android:layout_columnWeight="2"
                         android:layout_marginBottom="12dp">
 
                         <TextView
-                            android:id="@+id/team_info_matches"
+                            android:id="@+id/team"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
-                            android:text="0"
-                            android:textColor="@color/darkGrey"
-                            android:textSize="24sp" />
+                            android:text="TK Horni Bludovice"
+                            android:textColor="@color/blue"
+                            android:textSize="20sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_below="@id/team_info_matches"
+                            android:layout_below="@id/team"
                             android:layout_centerHorizontal="true"
-                            android:text="Utkání"
+                            android:text="Tým"
                             android:textColor="@color/darkGrey"
                             android:textSize="14sp" />
 
@@ -73,47 +71,20 @@
                         android:layout_columnWeight="1">
 
                         <TextView
-                            android:id="@+id/team_info_rank"
+                            android:id="@+id/group"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
-                            android:text="0"
-                            android:textColor="@color/blue"
-                            android:textSize="24sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/team_info_rank"
-                            android:layout_centerHorizontal="true"
-                            android:text="Pozice"
-                            android:textColor="@color/darkGrey"
-                            android:textSize="14sp" />
-
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_row="0"
-                        android:layout_column="2"
-                        android:layout_columnWeight="1">
-
-                        <TextView
-                            android:id="@+id/team_info_group"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:text=""
                             android:singleLine="true"
                             android:ellipsize="end"
-                            android:textColor="@color/blue"
+                            android:text="A"
+                            android:textColor="@color/darkGrey"
                             android:textSize="24sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_below="@id/team_info_group"
+                            android:layout_below="@id/group"
                             android:layout_centerHorizontal="true"
                             android:text="Skupina"
                             android:textColor="@color/darkGrey"
@@ -121,18 +92,59 @@
 
                     </RelativeLayout>
 
+                </GridLayout>
+
+                <GridLayout
+                    android:id="@+id/zzGridSecondRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/zzGridFirstRow"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:columnCount="3"
+                    android:rowCount="1">
+
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_row="1"
+                        android:layout_row="0"
                         android:layout_column="0"
                         android:layout_columnWeight="1">
 
                         <TextView
-                            android:id="@+id/team_info_successRate"
+                            android:id="@+id/age"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
+                            android:text="0"
+                            android:textColor="@color/darkGrey"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/age"
+                            android:layout_centerHorizontal="true"
+                            android:text="Věk"
+                            android:textColor="@color/darkGrey"
+                            android:textSize="14sp" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_row="0"
+                        android:layout_column="1"
+                        android:layout_columnWeight="1">
+
+                        <TextView
+                            android:id="@+id/successRate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:singleLine="true"
+                            android:ellipsize="end"
                             android:text="0 %"
                             android:textColor="@color/blue"
                             android:textSize="24sp" />
@@ -140,7 +152,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_below="@id/team_info_successRate"
+                            android:layout_below="@id/successRate"
                             android:layout_centerHorizontal="true"
                             android:text="Úspěšnost"
                             android:textColor="@color/darkGrey"
@@ -148,42 +160,16 @@
 
                     </RelativeLayout>
 
-                    <RelativeLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_row="1"
-                        android:layout_column="1"
-                        android:layout_columnWeight="1">
-
-                        <TextView
-                            android:id="@+id/team_info_avgRank"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:text="0"
-                            android:textColor="@color/darkGrey"
-                            android:textSize="24sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/team_info_avgRank"
-                            android:layout_centerHorizontal="true"
-                            android:text="Prům. umístění"
-                            android:textColor="@color/darkGrey"
-                            android:textSize="14sp" />
-
-                    </RelativeLayout>
 
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_row="1"
+                        android:layout_row="0"
                         android:layout_column="2"
                         android:layout_columnWeight="1">
 
                         <TextView
-                            android:id="@+id/team_info_titles"
+                            android:id="@+id/matches"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
@@ -194,32 +180,29 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_below="@id/team_info_titles"
+                            android:layout_below="@id/matches"
                             android:layout_centerHorizontal="true"
-                            android:text="Tituly"
+                            android:text="Zápasy"
                             android:textColor="@color/darkGrey"
                             android:textSize="14sp" />
 
                     </RelativeLayout>
 
-
                 </GridLayout>
-
-
 
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/team_info_charts_title"
+                android:id="@+id/zzStatisticsTitle"
                 style="@style/TextViewTitleLeft"
-                android:layout_below="@id/team_info_overview"
+                android:layout_below="@id/zzPlayerInfoOverview"
                 android:text="@string/statistics" />
 
             <HorizontalScrollView
-                android:id="@+id/team_info_charts"
+                android:id="@+id/zzCharts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/team_info_charts_title"
+                android:layout_below="@id/zzStatisticsTitle"
                 android:layout_marginStart="@dimen/card_margin"
                 android:layout_marginEnd="@dimen/card_margin">
 
@@ -228,25 +211,25 @@
                     android:layout_height="match_parent">
 
                     <com.github.mikephil.charting.charts.PieChart
-                        android:id="@+id/team_info_chart_matches_thisYear"
+                        android:id="@+id/matchesChart"
                         android:layout_width="144dp"
                         android:layout_height="144dp"
                         android:layout_marginEnd="10dp"
                         android:visibility="invisible" />
 
                     <com.github.mikephil.charting.charts.PieChart
-                        android:id="@+id/team_info_chart_sets"
+                        android:id="@+id/setsChart"
                         android:layout_width="144dp"
                         android:layout_height="144dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_toEndOf="@id/team_info_chart_matches_thisYear"
+                        android:layout_toEndOf="@id/matchesChart"
                         android:visibility="invisible" />
 
                     <com.github.mikephil.charting.charts.PieChart
-                        android:id="@+id/team_info_chart_games_total"
+                        android:id="@+id/gamesChart"
                         android:layout_width="144dp"
                         android:layout_height="144dp"
-                        android:layout_toEndOf="@id/team_info_chart_sets"
+                        android:layout_toEndOf="@id/setsChart"
                         android:visibility="invisible" />
 
                 </RelativeLayout>
@@ -254,31 +237,17 @@
             </HorizontalScrollView>
 
             <TextView
-                android:id="@+id/team_info_title_teams"
+                android:id="@+id/zzMatchesTitle"
                 style="@style/TextViewTitleLeft"
-                android:layout_below="@id/team_info_charts"
+                android:layout_below="@id/zzCharts"
                 android:layout_marginTop="20dp"
-                android:text="Utkání" />
+                android:text="Zápasy" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/team_info_matches_recyclerView"
+                android:id="@+id/matchesRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="102dp"
-                android:layout_below="@id/team_info_title_teams"
-                android:layout_marginStart="@dimen/card_margin"
-                android:layout_marginEnd="@dimen/card_margin" />
-
-            <TextView
-                android:id="@+id/team_info_title_players"
-                style="@style/TextViewTitleLeft"
-                android:layout_below="@id/team_info_matches_recyclerView"
-                android:text="@string/players" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/team_info_players_recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="102dp"
-                android:layout_below="@id/team_info_title_players"
+                android:layout_below="@id/zzMatchesTitle"
                 android:layout_marginStart="@dimen/card_margin"
                 android:layout_marginEnd="@dimen/card_margin" />
 

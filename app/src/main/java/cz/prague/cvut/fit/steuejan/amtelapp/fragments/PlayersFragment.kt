@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,9 +16,12 @@ import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.google.firebase.firestore.Query
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayerInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowUsersPagingAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Player
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.toPlayer
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.FragmentPlayersBinding
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
@@ -51,6 +55,7 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
 
         adapter?.onDelete = null
         adapter?.onEdit = null
+        adapter?.onClick = null
         adapter?.dataLoadedListener = null
         binding.users.adapter = null
         adapter = null
@@ -96,6 +101,13 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
 
         adapter?.onEdit = {
             viewModel.editUser(it)
+        }
+
+        adapter?.onClick = { user ->
+            val intent = Intent(activity, PlayerInfoActivity::class.java).apply {
+                putExtra(PlayerInfoActivity.PLAYER, user?.toPlayer() ?: Player())
+            }
+            startActivity(intent)
         }
 
         binding.users.adapter = adapter

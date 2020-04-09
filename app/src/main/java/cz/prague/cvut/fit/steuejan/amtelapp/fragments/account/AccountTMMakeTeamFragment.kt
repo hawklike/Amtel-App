@@ -24,9 +24,11 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Companion.TEAM
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayerInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowTeamPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.toPlayer
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountTMMakeTeamFragmentVM
@@ -104,6 +106,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         super.onDestroyView()
         adapter?.onDelete = null
+        adapter?.onClick = null
         recyclerView?.adapter = null
         recyclerView = null
         adapter = null
@@ -145,10 +148,8 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(context)
-        adapter = ShowTeamPlayersAdapter(
-            activity!!,
-            users
-        )
+        adapter = ShowTeamPlayersAdapter(activity!!, users)
+
         adapter?.onDelete = {
             if(team is ValidTeam)
             {
@@ -158,6 +159,14 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
                 mainActivityModel.setTeam(team)
             }
         }
+
+        adapter?.onClick = { user ->
+            val intent = Intent(activity, PlayerInfoActivity::class.java).apply {
+                putExtra(PlayerInfoActivity.PLAYER, user.toPlayer())
+            }
+            startActivity(intent)
+        }
+
         recyclerView?.adapter = adapter
     }
 

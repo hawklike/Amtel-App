@@ -1,7 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.data.entities
 
 import android.os.Parcelable
-import com.google.firebase.firestore.ServerTimestamp
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
@@ -20,6 +19,6 @@ data class Round(var homeSets: Int? = null,
                  var awayPlayers: MutableList<Player> = mutableListOf(),
                  var homeWinner: Boolean? = null,
                  var matchId: String = "",
-                 @ServerTimestamp
-                 var date: Date? = null
+                 var date: Date = Date(),
+                 var round: Int = 0
                  ) : Parcelable

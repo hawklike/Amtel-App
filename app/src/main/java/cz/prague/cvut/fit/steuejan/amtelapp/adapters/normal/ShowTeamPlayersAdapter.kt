@@ -6,6 +6,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
@@ -26,6 +27,7 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(ShowTeamPlayersAdapterVM::class.java)
 
     var onDelete: ((users: MutableList<User>) -> Unit)? = null
+    var onClick: ((User) -> Unit)? = null
     var isAllowed = false
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -35,6 +37,7 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
         val birthdate: TextView = itemView.findViewById(R.id.user_card_birthdate)
         val deleteButton: ImageView = itemView.findViewById(R.id.user_card_delete)
         val editButton: ImageView = itemView.findViewById(R.id.user_card_edit)
+        private val card: RelativeLayout = itemView.findViewById(R.id.user_card)
 
         init
         {
@@ -57,6 +60,10 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
                         }
                         negativeButton()
                     }
+            }
+
+            card.setOnClickListener {
+                onClick?.invoke(getItem(adapterPosition))
             }
         }
     }

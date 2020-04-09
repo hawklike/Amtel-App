@@ -250,7 +250,7 @@ class MatchInputResultFragmentVM : ViewModel()
             return false
         }
 
-        match.rounds[this.round - 1] = Round(homeSets, awaySets, homeGames, awayGames, home1, away1, home2, away2, home3, away3, matchId = match.id!!)
+        match.rounds[round - 1] = Round(homeSets, awaySets, homeGames, awayGames, home1, away1, home2, away2, home3, away3, matchId = match.id!!, round = round)
         setMatchScore(homeSets, awaySets)
         return true
     }

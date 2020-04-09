@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.data.util
+    package cz.prague.cvut.fit.steuejan.amtelapp.data.util
 
 enum class UserRole
 {
