@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -294,12 +295,12 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private fun countMatchScore()
     {
-        val serviceIntent = Intent(activity!!, CountMatchScoreService::class.java).apply {
+        val intent = Intent(activity!!, CountMatchScoreService::class.java).apply {
             putExtra(CountMatchScoreService.HOME_TEAM, homeTeam)
             putExtra(CountMatchScoreService.AWAY_TEAM, awayTeam)
             putExtra(CountMatchScoreService.MATCH, match)
         }
-        activity!!.startService(serviceIntent)
+        ContextCompat.startForegroundService(activity!!, intent)
     }
 
     private fun handleDialogs()
@@ -336,7 +337,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         viewModel.isTie.observe(viewLifecycleOwner) { isTie ->
             if(isTie)
             {
-                //not working and don't know why
+                //dialog not dismissed and don't know why
                 dialog.dismiss()
                 displayConfirmationDialog(
                     "Zapsat výsledek?",

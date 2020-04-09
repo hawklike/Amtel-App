@@ -124,7 +124,6 @@ class MainActivity : AbstractBaseActivity()
         }
     }
 
-    //TODO: add rules
     private fun createNavigationDrawer(savedInstanceState: Bundle?)
     {
         val profileTitle = AuthManager.profileDrawerOptionMenu

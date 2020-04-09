@@ -208,7 +208,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
     private fun updateSortedGroups(group: Group, teamId: String, nextYear: Int)
     {
         with(finalGroups) {
-            val found = this[binarySearch(group)]
+            val found: Group = this[binarySearch(group)]
             found.teamIds[nextYear.toString()]?.add(teamId)
         }
     }
