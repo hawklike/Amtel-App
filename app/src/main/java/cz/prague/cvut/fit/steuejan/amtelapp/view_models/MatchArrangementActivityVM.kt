@@ -175,7 +175,6 @@ class MatchArrangementActivityVM : ViewModel()
         if(isHomeWinner) setDefaultResult(match, 6, 0)
         else setDefaultResult(match, 0, 6)
 
-//        match.usersId = arrayOfNulls<String>(10).toMutableList()
         match.rounds.forEach {
             it.homePlayers = mutableListOf()
             it.awayPlayers = mutableListOf()
