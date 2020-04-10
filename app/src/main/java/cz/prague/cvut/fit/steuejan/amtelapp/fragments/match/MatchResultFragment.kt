@@ -228,7 +228,7 @@ class MatchResultFragment : AbstractMatchActivityFragment()
 
         adapter?.onClick = { player ->
             val intent = Intent(activity, PlayerInfoActivity::class.java).apply {
-                putExtra(PlayerInfoActivity.PLAYER, player)
+                putExtra(PlayerInfoActivity.PLAYER_ID, player.playerId)
             }
             startActivity(intent)
         }

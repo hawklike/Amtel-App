@@ -132,7 +132,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
 
         playersAdapter?.onClick = { player ->
             val intent = Intent(this, PlayerInfoActivity::class.java).apply {
-                putExtra(PlayerInfoActivity.PLAYER, player)
+                putExtra(PlayerInfoActivity.PLAYER_ID, player.playerId)
             }
             startActivity(intent)
         }

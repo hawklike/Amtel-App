@@ -16,12 +16,14 @@ import cz.prague.cvut.fit.steuejan.amtelapp.databinding.RoundCardSquareBinding
 class ShowPlayerRoundsAdapter(private val rounds: List<Round>, private val player: Player)
     : RecyclerView.Adapter<ShowPlayerRoundsAdapter.ViewHolder>()
 {
+    var onClick: ((Round) -> Unit)? = null
+
     inner class ViewHolder(val binding: RoundCardSquareBinding) : RecyclerView.ViewHolder(binding.root)
     {
         init
         {
             binding.roundCard.setOnClickListener {
-
+                onClick?.invoke(getItem(adapterPosition))
             }
         }
     }

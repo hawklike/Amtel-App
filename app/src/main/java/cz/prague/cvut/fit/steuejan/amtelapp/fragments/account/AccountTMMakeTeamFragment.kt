@@ -28,7 +28,6 @@ import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayerInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowTeamPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
-import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.toPlayer
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountTMMakeTeamFragmentVM
@@ -162,7 +161,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
 
         adapter?.onClick = { user ->
             val intent = Intent(activity, PlayerInfoActivity::class.java).apply {
-                putExtra(PlayerInfoActivity.PLAYER, user.toPlayer())
+                putExtra(PlayerInfoActivity.PLAYER, user)
             }
             startActivity(intent)
         }

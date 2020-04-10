@@ -23,5 +23,5 @@ data class User(override var id: String? = null,
 
 fun User.toPlayer(): Player
 {
-    return Player(this.id ?: "", this.name, this.surname, this.email, this.birthdate, this.sex, null, teamName)
+    return Player(this.id ?: "", this.name, this.surname, this.email, this.birthdate, this.sex, null)
 }
