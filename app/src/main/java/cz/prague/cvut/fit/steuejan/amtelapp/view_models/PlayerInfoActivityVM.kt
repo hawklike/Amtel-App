@@ -4,10 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.states.MatchState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.launch
@@ -17,6 +20,8 @@ class PlayerInfoActivityVM : ViewModel()
 {
     var mRounds: MutableList<Round>? = null
     var mGroupName: String? = null
+
+    var roundNumber = 1
 
     var mUserId = ""
     var mUser: User? = null
@@ -35,6 +40,11 @@ class PlayerInfoActivityVM : ViewModel()
 
     private val _group = MutableLiveData<String?>()
     val group: LiveData<String?> = _group
+
+    /*---------------------------------------------------*/
+
+    private val _match = SingleLiveEvent<MatchState>()
+    val match: LiveData<MatchState> = _match
 
     /*---------------------------------------------------*/
 
@@ -94,5 +104,10 @@ class PlayerInfoActivityVM : ViewModel()
         }
     }
 
-
+    fun getMatch(matchId: String)
+    {
+        viewModelScope.launch {
+            _match.value = MatchManager.findMatch(matchId)
+        }
+    }
 }

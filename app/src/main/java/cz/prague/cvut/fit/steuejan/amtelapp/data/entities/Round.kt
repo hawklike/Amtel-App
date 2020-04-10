@@ -20,5 +20,5 @@ data class Round(var homeSets: Int? = null,
                  var homeWinner: Boolean? = null,
                  var matchId: String = "",
                  var date: Date = Date(),
-                 var round: Int = 0
+                 var round: Int = 1
                  ) : Parcelable

@@ -2,6 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
 
 import android.util.Log
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
@@ -48,6 +49,22 @@ object MatchManager
         {
             Log.e(TAG, "updateMatch(): match with id $documentId not updated because ${ex.message}")
             false
+        }
+    }
+
+    suspend fun findMatch(id: String?): MatchState = withContext(IO)
+    {
+        if(id == null) return@withContext NoMatch
+        return@withContext try
+        {
+            val match = MatchDAO().findById(id).toObject<Match>()
+            Log.i(TAG, "findMatch(): $match found in database")
+            match?.let { ValidMatch(match) } ?: NoMatch
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "findMatch(): match with id $id not found in database because ${ex.message}")
+            NoMatch
         }
     }
 

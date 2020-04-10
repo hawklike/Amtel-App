@@ -1,10 +1,13 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.data.util
 
 import android.os.Parcelable
+import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.IgnoreExtraProperties
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
+@IgnoreExtraProperties
 data class Rounds(var first: Round? = null, var second: Round? = null, var third: Round? = null) : Parcelable
 {
     fun getRound(roundPosition: Int): Round?
@@ -18,6 +21,7 @@ data class Rounds(var first: Round? = null, var second: Round? = null, var third
         }
     }
 
+    @Exclude
     fun getActiveRounds(): List<Round>
     {
         val rounds = mutableListOf<Round>()
