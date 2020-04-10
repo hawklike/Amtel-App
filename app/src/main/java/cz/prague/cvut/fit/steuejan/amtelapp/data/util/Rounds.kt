@@ -18,6 +18,15 @@ data class Rounds(var first: Round? = null, var second: Round? = null, var third
         }
     }
 
+    fun getActiveRounds(): List<Round>
+    {
+        val rounds = mutableListOf<Round>()
+        (1..3).map {
+            getRound(it)?.run { rounds.add(this) }
+        }
+        return rounds
+    }
+
     fun setRound(round: Round?, roundPosition: Int): Rounds
     {
         when(roundPosition)

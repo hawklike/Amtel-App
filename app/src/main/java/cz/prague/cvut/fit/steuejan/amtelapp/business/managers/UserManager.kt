@@ -140,6 +140,19 @@ object UserManager
     suspend fun deleteRound(userId: String, matchId: String, roundPosition: Int): Boolean
             = withContext(IO) { addRound(userId, matchId, null, roundPosition) }
 
+    suspend fun retrieveRounds(userId: String): PlayerRounds? = withContext(IO)
+    {
+        return@withContext try
+        {
+            UserDAO().getRounds(userId).toObject<PlayerRounds>()
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveRounds(): rounds of a user with id $userId not retrieved because ${ex.message}")
+            null
+        }
+    }
+
     private const val TAG = "UserManager"
 
     const val searchSurname = "searchSurname"
