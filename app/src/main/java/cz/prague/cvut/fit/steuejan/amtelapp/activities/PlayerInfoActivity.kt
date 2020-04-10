@@ -1,7 +1,9 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,7 +21,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidMatch
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.PlayerInfoActivityVM
 import java.util.*
 
-class PlayerInfoActivity : AbstractBaseActivity()
+class PlayerInfoActivity : AbstractProfileActivity()
 {
     private lateinit var binding: PlayerInfoBinding
 
@@ -45,21 +47,27 @@ class PlayerInfoActivity : AbstractBaseActivity()
         super.onCreate(savedInstanceState)
         setToolbarTitle("Načítám hráče...")
         setArrowBack()
-        getPlayer()
+        setPlayer()
     }
 
     override fun onDestroy()
     {
         super.onDestroy()
+        with(binding) {
+            roundsChart.setOnChartValueSelectedListener(null)
+            setsChart.setOnChartValueSelectedListener(null)
+            gamesChart.setOnChartValueSelectedListener(null)
+            team.setOnClickListener(null)
+            roundsRecyclerView.adapter = null
+        }
         adapter?.onClick = null
-        binding.roundsRecyclerView.adapter = null
         adapter = null
     }
 
-    private fun getPlayer()
+    private fun setPlayer()
     {
         intent.extras?.let { bundle ->
-            viewModel.mUserId = bundle.getString(PLAYER_ID, "Není mucus jako mucus.")
+            viewModel.mUserId = bundle.getString(PLAYER_ID, "tome, jestli ctes tuto zpravu, napis mi na facebook")
             viewModel.mUser = bundle.getParcelable(PLAYER)
         }
         viewModel.getPlayer()
@@ -72,10 +80,10 @@ class PlayerInfoActivity : AbstractBaseActivity()
     {
         if(!isPlayerExisting(player)) return
         setToolbarTitle("${player?.name} ${player?.surname}")
+        setRounds()
         setTeamName()
         setAge()
-        getRounds()
-        getGroup()
+        setGroup()
     }
 
 
@@ -97,6 +105,15 @@ class PlayerInfoActivity : AbstractBaseActivity()
     private fun setTeamName()
     {
         binding.team.text = viewModel.mUser?.teamName ?: "-"
+
+        viewModel.mUser?.teamId?.let { teamId ->
+            binding.team.setOnClickListener {
+                val intent = Intent(this, TeamInfoActivity::class.java).apply {
+                    putExtra(TeamInfoActivity.TEAM_ID, teamId)
+                }
+                startActivity(intent)
+            }
+        }
     }
 
     private fun setAge()
@@ -104,21 +121,56 @@ class PlayerInfoActivity : AbstractBaseActivity()
         binding.age.text = DateUtil.getAge(viewModel.mUser?.birthdate ?: Date()).toString()
     }
 
-    private fun getRounds()
+    private fun setRounds()
     {
         if(viewModel.mRounds == null) viewModel.getRounds()
         viewModel.rounds.observe(this) {
             setupRecycler(it)
+            setSuccessRate()
+            setNumberOfRounds()
+            setCharts()
         }
     }
 
-    private fun getGroup()
+    private fun setNumberOfRounds()
+    {
+        binding.rounds.text = viewModel.getNumberOfRounds().toString()
+    }
+
+    private fun setGroup()
     {
         if(viewModel.mGroupName == null) viewModel.getGroup()
         else binding.group.text = viewModel.mGroupName
 
         viewModel.group.observe(this) {
             binding.group.text = it ?: "-"
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun setSuccessRate()
+    {
+        val rate = viewModel.getSuccessRate()
+        binding.successRate.text = "$rate %"
+    }
+
+    private fun setCharts()
+    {
+        with(binding) {
+            roundsChart.visibility = VISIBLE
+            setsChart.visibility = VISIBLE
+            gamesChart.visibility = VISIBLE
+
+            val entries = viewModel.getChartData()
+
+            if(entries.first.size == 3) initChart(roundsChart, entries.first, "Zápasy", R.color.blue, R.color.red, R.color.lightGrey)
+            else initChart(roundsChart, entries.first, "Zápasy", R.color.lightGrey)
+
+            if(entries.second.size == 2) initChart(setsChart, entries.second, "Sety")
+            else initChart(setsChart, entries.second, "Sety", R.color.lightGrey)
+
+            if(entries.third.size == 2) initChart(gamesChart, entries.third, "Gemy")
+            else initChart(gamesChart, entries.third, "Gemy", R.color.lightGrey)
         }
     }
 
