@@ -2,6 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.data.entities
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 @Parcelize
 data class Round(var homeSets: Int? = null,
@@ -16,5 +17,8 @@ data class Round(var homeSets: Int? = null,
                  var awayGemsSet3: Int? = null,
                  var homePlayers: MutableList<Player> = mutableListOf(),
                  var awayPlayers: MutableList<Player> = mutableListOf(),
-                 var homeWinner: Boolean? = null
+                 var homeWinner: Boolean? = null,
+                 var matchId: String = "",
+                 var date: Date = Date(),
+                 var round: Int = 1
                  ) : Parcelable

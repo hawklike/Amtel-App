@@ -43,6 +43,7 @@
         <activity android:name=".activities.PlayoffActivity"/>
         <activity android:name=".activities.TeamInfoActivity"/>
         <activity android:name=".activities.MatchDiscussionActivity"/>
+        <activity android:name=".activities.PlayerInfoActivity"/>
 
         <service
             android:name=".services.GenerateScheduleService"

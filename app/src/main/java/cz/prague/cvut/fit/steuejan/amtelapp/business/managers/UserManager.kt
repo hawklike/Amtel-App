@@ -7,7 +7,10 @@ import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SearchPreparation
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.PlayerRounds
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Rounds
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
@@ -104,6 +107,50 @@ object UserManager
     {
         val preparation = SearchPreparation(textToSearch)
         return UserDAO().retrieveTeamsByPrefix(preparation.preparedText, searchSurname)
+    }
+
+    suspend fun addRound(userId: String, matchId: String, round: Round?, roundPosition: Int): Boolean = withContext(IO)
+    {
+        return@withContext try
+        {
+            var playerRounds = UserDAO().getRounds(userId).toObject<PlayerRounds>()
+
+            var rounds: Rounds?
+            if(playerRounds == null)
+            {
+                rounds = Rounds().setRound(round, roundPosition)
+            }
+            else
+            {
+                rounds = playerRounds.rounds[matchId]
+                rounds = rounds?.setRound(round, roundPosition) ?: Rounds().setRound(round, roundPosition)
+            }
+
+            playerRounds = PlayerRounds(rounds = mutableMapOf(matchId to rounds))
+            UserDAO().addMatches(userId, playerRounds)
+            true
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "addRound(): round $round not added to user with id $userId because ${ex.message}")
+            false
+        }
+    }
+
+    suspend fun deleteRound(userId: String, matchId: String, roundPosition: Int): Boolean
+            = withContext(IO) { addRound(userId, matchId, null, roundPosition) }
+
+    suspend fun retrieveRounds(userId: String): PlayerRounds? = withContext(IO)
+    {
+        return@withContext try
+        {
+            UserDAO().getRounds(userId).toObject<PlayerRounds>()
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveRounds(): rounds of a user with id $userId not retrieved because ${ex.message}")
+            null
+        }
     }
 
     private const val TAG = "UserManager"

@@ -24,6 +24,7 @@ class MatchViewPagerActivity : AbstractViewPagerActivity()
     private lateinit var week: WeekState
 
     private var isReport = false
+    private var round = 0
 
     private lateinit var title: String
 
@@ -33,6 +34,7 @@ class MatchViewPagerActivity : AbstractViewPagerActivity()
     companion object
     {
         const val MATCH = "match"
+        const val ROUND = "round"
         const val WEEK = "week"
         const val TITLE = "title"
         const val HOME_TEAM = "home"
@@ -74,11 +76,12 @@ class MatchViewPagerActivity : AbstractViewPagerActivity()
     override fun getData()
     {
         intent.extras?.let { bundle ->
-            match = bundle.getParcelable(MATCH)!!
+            match = bundle.getParcelable(MATCH) ?: Match(id = "Hello there")
             week = bundle.getParcelable<ValidWeek?>(WEEK)?.let { it } ?: InvalidWeek()
-            title = bundle.getString(TITLE)!!
+            title = bundle.getString(TITLE) ?: "AMTEL Opava"
             homeTeam = bundle.getParcelable<Team>(HOME_TEAM)?.let { ValidTeam(it) } ?: NoTeam
             awayTeam = bundle.getParcelable<Team>(AWAY_TEAM)?.let { ValidTeam(it) } ?: NoTeam
+            round = bundle.getInt(ROUND, 0)
         }
     }
 
@@ -93,6 +96,7 @@ class MatchViewPagerActivity : AbstractViewPagerActivity()
             adapter.addFragment(MatchViewFactory.getFragment(title, it), "$it. " + getString(R.string.match))
         }
         viewPager.adapter = adapter
+        viewPager.setCurrentItem(round, true)
     }
 
     override fun onBackPressed()

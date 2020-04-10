@@ -227,7 +227,10 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         }
 
         inputResult.setOnClickListener {
-           getInputAndConfirm()
+            val round = match.rounds[round - 1]
+            viewModel.homePlayersBefore = round.homePlayers
+            viewModel.awayPlayersBefore = round.awayPlayers
+            getInputAndConfirm()
         }
 
         reportButton.setOnClickListener {

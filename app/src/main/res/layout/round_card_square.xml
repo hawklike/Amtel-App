@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/roundCard"
+    style="@style/SimpleCardView"
+    android:layout_width="wrap_content"
+    android:layout_height="116dp"
+    android:layout_marginEnd="10dp"
+    android:elevation="2dp"
+    android:minWidth="100dp">
+
+    <TextView
+        android:id="@+id/homePlayers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="Jiri Suchy"
+        android:textColor="@color/darkGrey"
+        android:textSize="@dimen/common_text_size" />
+
+    <Button
+        android:id="@+id/result"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_alignParentBottom="true"
+        android:text="-"
+        android:textSize="13sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/lightGrey"
+        style="?android:attr/borderlessButtonStyle"
+        android:clickable="false"
+        android:background="@drawable/circle_blue"/>
+
+    <RelativeLayout
+        android:id="@+id/zzResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_below="@id/homePlayers">
+
+        <TextView
+            android:id="@+id/sets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1 : 2"
+            android:textColor="@color/darkGrey"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/games"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/sets"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:text="6:3, 6:2"
+            android:textColor="@color/darkGrey"
+            android:textSize="13sp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/awayPlayers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/zzResult"
+        android:text="Milan Kundera"
+        android:layout_above="@id/date"
+        android:textColor="@color/darkGrey"
+        android:textSize="@dimen/common_text_size" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/result"
+        android:layout_marginStart="8dp"
+        android:layout_alignParentBottom="true"
+        android:text="12.3.2020"
+        android:textColor="@color/darkGrey"
+        android:textSize="12sp" />
+
+</RelativeLayout>

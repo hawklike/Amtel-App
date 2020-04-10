@@ -9,6 +9,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.removeWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
@@ -88,6 +89,9 @@ class MatchInputResultFragmentVM : ViewModel()
     private var m_isInputOk = true
     var round: Int = 1
 
+    var homePlayersBefore = listOf<Player>()
+    var awayPlayersBefore = listOf<Player>()
+
     private lateinit var homePlayersText: String
     private lateinit var awayPlayersText: String
 
@@ -150,14 +154,43 @@ class MatchInputResultFragmentVM : ViewModel()
             if(calculateScore(match, home1, away1, home2, away2, home3, away3, ignoreTie))
             {
                 val (homeUsers, awayUsers) = parsePlayers(homePlayers, awayPlayers)
-                addPlayersToMatch(homeUsers, awayUsers)
                 if(!isHeadOfLeague) match.edits[round.toString()] = match.edits[round.toString()]!! - 1
                 if(!isReport)
                 {
                     MatchManager.setMatch(match)
+                    updatePlayers(homeUsers, awayUsers)
                     _matchAdded.value = match
                 }
                 else _isReported.value = match
+            }
+        }
+    }
+
+    private suspend fun updatePlayers(homeUsers: List<User>, awayUsers: List<User>)
+    {
+        val roundNumber = round
+        val round: Round = match.rounds[roundNumber - 1]
+
+        val before = homePlayersBefore + awayPlayersBefore
+        val now = homeUsers + awayUsers
+
+        if(before.isEmpty())
+        {
+            now.forEach {
+                UserManager.addRound(it.id!!, match.id!!, round, roundNumber)
+            }
+        }
+        else if(before.size == now.size)
+        {
+            //side note: id means the same as playerId, it is only a different name but has the same purpose
+            now.forEachIndexed { index, nowUser ->
+                //player was changed
+                if(nowUser.id != before[index].playerId)
+                    //delete round from a previous user
+                    UserManager.deleteRound(before[index].playerId, match.id!!, roundNumber)
+
+                // add/update round to a current user
+                UserManager.addRound(nowUser.id!!, match.id!!, round, roundNumber)
             }
         }
     }
@@ -191,32 +224,6 @@ class MatchInputResultFragmentVM : ViewModel()
         return Pair(homeUsers, awayUsers)
     }
 
-    private fun addPlayersToMatch(homePlayers: List<User>, awayPlayers: List<User>)
-    {
-        when(round)
-        {
-            1 -> {
-                match.usersId[0] = if(homePlayers.isNotEmpty()) homePlayers.first().id else null
-                match.usersId[1] = if(awayPlayers.isNotEmpty()) awayPlayers.first().id else null
-            }
-
-            2 -> {
-                match.usersId[2] = if(homePlayers.isNotEmpty()) homePlayers.first().id else null
-                match.usersId[3] = if(homePlayers.isNotEmpty()) homePlayers.last().id else null
-                match.usersId[4] = if(awayPlayers.isNotEmpty()) awayPlayers.first().id else null
-                match.usersId[5] = if(awayPlayers.isNotEmpty()) awayPlayers.last().id else null
-            }
-
-            3 -> {
-                match.usersId[6] = if(homePlayers.isNotEmpty()) homePlayers.first().id else null
-                match.usersId[7] = if(homePlayers.isNotEmpty()) homePlayers.last().id else null
-                match.usersId[8] = if(awayPlayers.isNotEmpty()) awayPlayers.first().id else null
-                match.usersId[9] = if(awayPlayers.isNotEmpty()) awayPlayers.last().id else null
-            }
-        }
-    }
-
-
     private fun calculateScore(match: Match, home1: Int, away1: Int, home2: Int, away2: Int, home3: Int?, away3: Int?, ignoreTie: Boolean): Boolean
     {
         val homeGames = home1 + home2 + (home3 ?: 0)
@@ -243,7 +250,7 @@ class MatchInputResultFragmentVM : ViewModel()
             return false
         }
 
-        match.rounds[this.round - 1] = Round(homeSets, awaySets, homeGames, awayGames, home1, away1, home2, away2, home3, away3)
+        match.rounds[round - 1] = Round(homeSets, awaySets, homeGames, awayGames, home1, away1, home2, away2, home3, away3, matchId = match.id!!, round = round)
         setMatchScore(homeSets, awaySets)
         return true
     }
