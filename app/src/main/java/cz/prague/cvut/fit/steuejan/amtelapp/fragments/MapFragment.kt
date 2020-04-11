@@ -94,8 +94,8 @@ class MapFragment : AbstractBaseFragment(), OnMapReadyCallback
 
     override fun onMapReady(googleMap: GoogleMap)
     {
-        map = googleMap
         val opava = LatLng(49.940659, 17.894798)
+        map = googleMap
 
         launch {
             val address = withContext(Dispatchers.IO) {
@@ -113,7 +113,7 @@ class MapFragment : AbstractBaseFragment(), OnMapReadyCallback
             else
             {
                 val court = LatLng(address.latitude, address.longitude)
-                map.addMarker(MarkerOptions().position(court).title("Kurt"))
+                map.addMarker(MarkerOptions().position(court).title("Zde hrají legendy"))
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(court, 15f))
             }
         }
