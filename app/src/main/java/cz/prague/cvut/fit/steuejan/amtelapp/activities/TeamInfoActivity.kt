@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View.VISIBLE
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.fragment.app.commit
 import androidx.lifecycle.observe
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +22,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.toPlayer
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.MapFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.RankingFragmentVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.TeamInfoActivityVM
 
@@ -93,6 +95,7 @@ class TeamInfoActivity : AbstractProfileActivity()
            setTitles()
            setMatches()
            setPlayers()
+           setMap()
        }
        else viewModel.getTeam(teamId)
 
@@ -225,6 +228,13 @@ class TeamInfoActivity : AbstractProfileActivity()
 
             if(entries.third.size == 2) initChart(chartSets, entries.third, getString(R.string.sets))
             else initChart(chartSets, entries.third, getString(R.string.sets), R.color.lightGrey)
+        }
+    }
+
+    private fun setMap()
+    {
+        supportFragmentManager.commit {
+            replace(R.id.team_info_map_container, MapFragment.newInstance())
         }
     }
 }

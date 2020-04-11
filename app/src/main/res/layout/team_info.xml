@@ -202,10 +202,7 @@
 
                     </RelativeLayout>
 
-
                 </GridLayout>
-
-
 
             </RelativeLayout>
 
@@ -279,6 +276,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="102dp"
                 android:layout_below="@id/team_info_title_players"
+                android:layout_marginStart="@dimen/card_margin"
+                android:layout_marginEnd="@dimen/card_margin" />
+
+            <TextView
+                android:id="@+id/team_info_title_map"
+                style="@style/TextViewTitleLeft"
+                android:layout_below="@id/team_info_players_recyclerView"
+                android:text="Domácí kurt" />
+
+            <FrameLayout
+                android:id="@+id/team_info_map_container"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_below="@id/team_info_title_map"
                 android:layout_marginStart="@dimen/card_margin"
                 android:layout_marginEnd="@dimen/card_margin" />
 
