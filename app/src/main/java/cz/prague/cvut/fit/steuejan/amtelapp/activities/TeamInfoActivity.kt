@@ -234,7 +234,7 @@ class TeamInfoActivity : AbstractProfileActivity()
     private fun setMap()
     {
         supportFragmentManager.commit {
-            replace(R.id.team_info_map_container, MapFragment.newInstance())
+            replace(R.id.team_info_map_container, MapFragment.newInstance(viewModel.mTeam?.place))
         }
     }
 }

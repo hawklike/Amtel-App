@@ -283,7 +283,7 @@
                 android:id="@+id/team_info_title_map"
                 style="@style/TextViewTitleLeft"
                 android:layout_below="@id/team_info_players_recyclerView"
-                android:text="Domácí kurt" />
+                android:text="Domovský kurt" />
 
             <FrameLayout
                 android:id="@+id/team_info_map_container"

@@ -30,13 +30,14 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activities.MainActivity"
             android:windowSoftInputMode="adjustResize" />
+
         <activity android:name=".activities.AddUserToTeamActivity" />
         <activity android:name=".activities.ManageGroupsActivity" />
         <activity android:name=".activities.RoundsViewPagerActivity" />

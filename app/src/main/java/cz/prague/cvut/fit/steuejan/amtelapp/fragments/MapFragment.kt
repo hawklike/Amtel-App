@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments
 
+import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.FragmentMapBinding
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractBaseFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MapFragment : AbstractBaseFragment(), OnMapReadyCallback
 {
@@ -18,12 +22,13 @@ class MapFragment : AbstractBaseFragment(), OnMapReadyCallback
     private val binding get() = _binding!!
 
     private lateinit var map: GoogleMap
+    private var address: String? = null
 
     companion object
     {
         private const val ADDRESS = "address"
 
-        fun newInstance(address: String = ""): MapFragment
+        fun newInstance(address: String?): MapFragment
         {
             val fragment = MapFragment()
             fragment.arguments = Bundle().apply {
@@ -34,6 +39,12 @@ class MapFragment : AbstractBaseFragment(), OnMapReadyCallback
     }
 
     override fun getName(): String = "MapFragment"
+
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
+        super.onCreate(savedInstanceState)
+        address = arguments?.getString(ADDRESS)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
@@ -53,8 +64,11 @@ class MapFragment : AbstractBaseFragment(), OnMapReadyCallback
     override fun onDestroyView()
     {
         super.onDestroyView()
-        map.clear()
-        map.isMyLocationEnabled = false
+        if(::map.isInitialized)
+        {
+            map.clear()
+            map.isMyLocationEnabled = false
+        }
         binding.map.getMapAsync(null)
         binding.map.onDestroy()
         _binding = null
@@ -81,10 +95,27 @@ class MapFragment : AbstractBaseFragment(), OnMapReadyCallback
     override fun onMapReady(googleMap: GoogleMap)
     {
         map = googleMap
+        val opava = LatLng(49.940659, 17.894798)
 
-        // Add a marker in Sydney, Australia, and move the camera.
-        val sydney = LatLng(49.940434, 13.374128)
-        map.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        map.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        launch {
+            val address = withContext(Dispatchers.IO) {
+                try
+                {
+                    address ?: return@withContext null
+                    val foundAddresses = Geocoder(context).getFromLocationName(address,1)
+                    if(foundAddresses.isNotEmpty()) foundAddresses[0]
+                    else null
+                }
+                catch(ex: Exception) { null }
+            }
+
+            if(address == null) map.moveCamera(CameraUpdateFactory.newLatLngZoom(opava, 10f))
+            else
+            {
+                val court = LatLng(address.latitude, address.longitude)
+                map.addMarker(MarkerOptions().position(court).title("Kurt"))
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(court, 15f))
+            }
+        }
     }
 }
