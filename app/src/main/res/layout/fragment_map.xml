@@ -6,7 +6,7 @@
     app:cardCornerRadius="@dimen/rounded_corners"
     app:cardElevation="0dp">
 
-    <cz.prague.cvut.fit.steuejan.amtelapp.customViews.AnchoredMapView
+    <cz.prague.cvut.fit.steuejan.amtelapp.custom_views.AnchoredMapView
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

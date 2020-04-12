@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.GroupRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Playoff
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toPlayoff
@@ -31,7 +31,7 @@ class ManageGroupsActivityVM : ViewModel()
     fun getGroupsExceptPlayOff()
     {
         viewModelScope.launch {
-            val groups = GroupManager.retrieveAllGroupsExceptPlayoff()
+            val groups = GroupRepository.retrieveAllGroupsExceptPlayoff()
             if(groups is ValidGroups) _groups.value = groups.self
         }
     }
@@ -39,7 +39,7 @@ class ManageGroupsActivityVM : ViewModel()
     fun getPlayoff()
     {
         viewModelScope.launch {
-            val results = GroupManager.findGroups("playOff", true)
+            val results = GroupRepository.findGroups("playOff", true)
             if(results is ValidGroups && results.self.isNotEmpty())
             {
                 val playOff = results.self.first().toPlayoff()

@@ -10,7 +10,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.HEAD_OF_LEAGUE
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.TEAM_MANAGER
@@ -94,7 +94,7 @@ class AccountFragment : AbstractMainActivityFragment()
             launch {
                 setProgressBar(true)
                 user.teamId?.let {
-                    val team = TeamManager.findTeam(it)
+                    val team = TeamRepository.findTeam(it)
                     if(team is ValidTeam) mainActivityModel.setTeam(team)
                 } ?: mainActivityModel.setTeam(NoTeam)
 

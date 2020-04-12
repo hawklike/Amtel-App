@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MessageManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MessageRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Message
 import kotlinx.coroutines.launch
 
@@ -18,7 +18,7 @@ class MatchDiscussionActivityVM : ViewModel()
     fun addMessage(messageText: String, matchId: String?)
     {
         viewModelScope.launch {
-            MessageManager.addMessage(Message(messageText = messageText), matchId, false)?.let {
+            MessageRepository.addMessage(Message(messageText = messageText), matchId, false)?.let {
                 _messageSent.value = true
             }
         }

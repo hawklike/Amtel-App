@@ -9,8 +9,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
@@ -41,11 +41,11 @@ class LoginFragmentVM : ViewModel()
                 val firebaseUser = AuthManager.signInUser(email, password)
                 if(firebaseUser != null)
                 {
-                    val user = UserManager.findUser(firebaseUser.uid)
+                    val user = UserRepository.findUser(firebaseUser.uid)
                     userState.value = user?.let { SignedUser(it, user.firstSign) } ?: NoUser
                     user?.let {
                         if(user.firstSign)
-                            UserManager.updateUser(user.id, mapOf("firstSign" to false))
+                            UserRepository.updateUser(user.id, mapOf("firstSign" to false))
                     }
                 }
                 else userState.value = NoUser

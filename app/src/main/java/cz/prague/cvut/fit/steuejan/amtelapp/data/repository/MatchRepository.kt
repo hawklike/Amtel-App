@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
+package cz.prague.cvut.fit.steuejan.amtelapp.data.repository
 
 import android.util.Log
 import com.google.firebase.firestore.Query
@@ -16,9 +16,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidMatch
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
-object MatchManager
+object MatchRepository
 {
-    private const val TAG = "MatchManager"
+    private const val TAG = "MatchRepository"
 
     suspend fun setMatch(match: Match): MatchState = withContext(IO)
     {

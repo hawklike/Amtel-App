@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.GroupRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
@@ -28,7 +28,7 @@ class ScheduleRoundFragmentVM : ViewModel()
             viewModelScope.launch {
                 val roundDates = group.roundDates
                 roundDates[round.toString()] = week.toInt()
-                if(GroupManager.updateGroup(group.id, mapOf("roundDates" to roundDates)))
+                if(GroupRepository.updateGroup(group.id, mapOf("roundDates" to roundDates)))
                 {
                     _week.value = validWeek
                 }

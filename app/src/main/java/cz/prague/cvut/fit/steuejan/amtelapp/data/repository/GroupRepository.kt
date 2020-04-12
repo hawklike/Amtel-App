@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
+package cz.prague.cvut.fit.steuejan.amtelapp.data.repository
 
 import android.util.Log
 import com.google.firebase.firestore.ktx.toObject
@@ -11,9 +11,9 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-object GroupManager
+object GroupRepository
 {
-    private const val TAG = "GroupManager"
+    private const val TAG = "GroupRepository"
 
     suspend fun setGroup(group: Group): GroupState = withContext(IO)
     {

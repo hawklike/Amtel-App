@@ -10,10 +10,10 @@ import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.LeagueManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
@@ -75,7 +75,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
                 val users = mutableListOf<User>().apply {
                     user.teamId?.let {
-                        val team = TeamManager.findTeam(it)
+                        val team = TeamRepository.findTeam(it)
                         if(team is ValidTeam)
                         {
                             if(team.self.users.isEmpty()) add(user)
@@ -94,7 +94,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
                     users
                 )
 
-                team = TeamManager.setTeam(team!!)
+                team = TeamRepository.setTeam(team!!)
 
                 if(team != null) teamState.value = ValidTeam(team)
                 else teamState.value = NoTeam
@@ -105,7 +105,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
     fun updateUser(user: User, team: Team)
     {
         viewModelScope.launch {
-            UserManager.updateUser(user.id, mapOf(
+            UserRepository.updateUser(user.id, mapOf(
                 "teamId" to user.teamId,
                 "teamName" to team.name))
         }
@@ -131,7 +131,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
         if(DateUtil.serverTime == null)
         {
             viewModelScope.launch {
-                LeagueManager.getServerTime()?.let {
+                LeagueRepository.getServerTime()?.let {
                     DateUtil.serverTime = it
                     isLineUpAllowed(it)
                 }
@@ -174,7 +174,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
         if(deadline == null)
         {
             viewModelScope.launch {
-                LeagueManager.getDeadline()?.let { deadlineRange ->
+                LeagueRepository.getDeadline()?.let { deadlineRange ->
                     val from = deadlineRange.first
                     val to = deadlineRange.second
                     deadline = deadlineRange

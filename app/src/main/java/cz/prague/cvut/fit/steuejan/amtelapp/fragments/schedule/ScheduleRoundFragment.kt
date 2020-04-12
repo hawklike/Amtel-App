@@ -22,7 +22,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchArrangementActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchViewPagerActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowMatchesFirestoreAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
@@ -191,8 +191,8 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
     private fun setupRecycler()
     {
         val query =
-            if(isPlayoff) MatchManager.getMatches(round, group, DateUtil.actualSeason.toInt() - 1)
-            else MatchManager.getMatches(round, group, DateUtil.actualSeason.toInt())
+            if(isPlayoff) MatchRepository.getMatches(round, group, DateUtil.actualSeason.toInt() - 1)
+            else MatchRepository.getMatches(round, group, DateUtil.actualSeason.toInt())
 
         val options = FirestoreRecyclerOptions.Builder<Match>()
             .setQuery(query, Match::class.java)

@@ -3,9 +3,9 @@ package cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.RankingSolver
+import cz.prague.cvut.fit.steuejan.amtelapp.business.RankingSolver
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy.POINTS
@@ -36,7 +36,7 @@ class RankingFragmentVM : ViewModel()
         viewModelScope.launch {
             if(mTeams.isEmpty())
             {
-                val teams = TeamManager.retrieveTeamsInSeason(groupId, year)
+                val teams = TeamRepository.retrieveTeamsInSeason(groupId, year)
                 if(teams is ValidTeams)
                 {
                     mTeams = teams.self
@@ -53,11 +53,17 @@ class RankingFragmentVM : ViewModel()
         withContext(Default) {
             if(teamByPoints.isEmpty() && orderBy == POINTS)
             {
-                sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
+                sortedTeams = RankingSolver(
+                    teams,
+                    year
+                ).withOrder(orderBy).sort()
                 teamByPoints = sortedTeams
             }
             else if(teamByPoints.isNotEmpty() && orderBy == POINTS) sortedTeams = teamByPoints
-            else sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
+            else sortedTeams = RankingSolver(
+                teams,
+                year
+            ).withOrder(orderBy).sort()
 
             if(reverse) sortedTeams = sortedTeams.reversed()
         }

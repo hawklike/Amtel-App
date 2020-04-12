@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.observe
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.LeagueManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.RulesFragmentBinding
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
@@ -70,7 +70,7 @@ class RulesFragment : AbstractMainActivityFragment()
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             type = "message/rfc822"
             data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(LeagueManager.headOfLeague?.email ?: ""))
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(LeagueRepository.headOfLeague?.email ?: ""))
         }
 
         try { startActivity(Intent.createChooser(intent, "Poslat email" + "...")) }
@@ -79,7 +79,7 @@ class RulesFragment : AbstractMainActivityFragment()
 
     private fun call()
     {
-        LeagueManager.headOfLeague?.phone?.let {
+        LeagueRepository.headOfLeague?.phone?.let {
             val intent = Intent(Intent.ACTION_DIAL)
             intent.data = Uri.parse("tel:$it")
             startActivity(intent)
@@ -88,15 +88,15 @@ class RulesFragment : AbstractMainActivityFragment()
 
     private fun getHeadOfLeague()
     {
-        if(LeagueManager.headOfLeague == null)
+        if(LeagueRepository.headOfLeague == null)
         {
             mainActivityModel.initHeadOfLeague(5)
             mainActivityModel.headOfLeague.observe(viewLifecycleOwner) {
-                LeagueManager.headOfLeague = it
+                LeagueRepository.headOfLeague = it
                 populateContactCard(it)
             }
         }
-        else populateContactCard(LeagueManager.headOfLeague)
+        else populateContactCard(LeagueRepository.headOfLeague)
     }
 
     @SuppressLint("SetTextI18n")

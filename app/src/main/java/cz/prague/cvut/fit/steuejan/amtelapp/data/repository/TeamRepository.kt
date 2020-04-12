@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
+package cz.prague.cvut.fit.steuejan.amtelapp.data.repository
 
 import android.util.Log
 import com.google.firebase.firestore.Query
@@ -15,7 +15,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
-object TeamManager
+object TeamRepository
 {
     suspend fun setTeam(team: Team): Team? = withContext(IO)
     {
@@ -119,7 +119,7 @@ object TeamManager
         if(groupId == null) return@withContext NoTeam
         return@withContext try
         {
-            val group = GroupManager.findGroup(groupId)
+            val group = GroupRepository.findGroup(groupId)
             if(group is ValidGroup)
             {
                 val teams = mutableListOf<Team>()
@@ -152,7 +152,7 @@ object TeamManager
         return Pair(TeamDAO().retrieveTeamsByPrefix(preparation.preparedText, searchField), doCompleteSearch)
     }
 
-    private const val TAG = "TeamManager"
+    private const val TAG = "TeamRepository"
     const val groupName = "groupName"
     const val groupId = "groupId"
     const val searchName = "searchName"

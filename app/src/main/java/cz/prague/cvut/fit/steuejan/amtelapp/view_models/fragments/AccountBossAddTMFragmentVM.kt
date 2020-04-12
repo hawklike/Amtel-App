@@ -9,9 +9,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.LeagueManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.*
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
@@ -57,7 +57,7 @@ class AccountBossAddTMFragmentVM : ViewModel()
                 val (name, surname, email) = credentials
                 val user = User(uid, name, surname, email, role = UserRole.TEAM_MANAGER.toString())
 
-                UserManager.setUser(user)?.let {
+                UserRepository.setUser(user)?.let {
                     EmailSender.sendEmail(
                         email,
                         App.context.getString(R.string.verificationEmail_subject),
@@ -107,7 +107,7 @@ class AccountBossAddTMFragmentVM : ViewModel()
     fun setDeadline(deadline: Date, from: Boolean)
     {
         viewModelScope.launch {
-            with(LeagueManager.setDeadline(deadline, from)) {
+            with(LeagueRepository.setDeadline(deadline, from)) {
                 _deadlineAdded.value = this
                 if(this) setDeadlineInPreferences(deadline.toMyString(), from)
             }
@@ -127,7 +127,7 @@ class AccountBossAddTMFragmentVM : ViewModel()
         if(deadlineFrom == null || deadlineTo == null)
         {
             viewModelScope.launch {
-                val result = LeagueManager.getDeadline()
+                val result = LeagueRepository.getDeadline()
                 result?.let {
                     setDeadlineInPreferences(it.first?.toMyString(), true)
                     setDeadlineInPreferences(it.second?.toMyString(), false)
@@ -154,8 +154,8 @@ class AccountBossAddTMFragmentVM : ViewModel()
     fun deleteDeadline()
     {
         viewModelScope.launch {
-            val ok1 = LeagueManager.setDeadline(null, true)
-            val ok2 = LeagueManager.setDeadline(null, false)
+            val ok1 = LeagueRepository.setDeadline(null, true)
+            val ok2 = LeagueRepository.setDeadline(null, false)
             setDeadlineInPreferences(null, true)
             setDeadlineInPreferences(null, false)
             _deadlineDeleted.value = ok1 && ok2

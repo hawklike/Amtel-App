@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.PieEntry
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.states.MatchState
@@ -67,7 +67,7 @@ class PlayerInfoActivityVM : ViewModel()
         if(mUser == null)
         {
             viewModelScope.launch {
-                UserManager.findUser(mUserId)?.let {
+                UserRepository.findUser(mUserId)?.let {
                     mUser = it
                     mUserId = it.id!!
                     _player.value = it
@@ -86,7 +86,7 @@ class PlayerInfoActivityVM : ViewModel()
     {
         mRounds = mutableListOf()
         viewModelScope.launch {
-            UserManager.retrieveRounds(mUserId)?.let { playerRounds ->
+            UserRepository.retrieveRounds(mUserId)?.let { playerRounds ->
                 withContext(Default) {
                     with(playerRounds.rounds.values) {
                         forEach { rounds ->
@@ -106,7 +106,7 @@ class PlayerInfoActivityVM : ViewModel()
     fun getGroup()
     {
         viewModelScope.launch {
-            with(TeamManager.findTeam(mUser?.teamId)) {
+            with(TeamRepository.findTeam(mUser?.teamId)) {
                 if(this is ValidTeam)
                 {
                     mGroupName = self.groupName
@@ -124,7 +124,7 @@ class PlayerInfoActivityVM : ViewModel()
     fun getMatch(matchId: String)
     {
         viewModelScope.launch {
-            _match.value = MatchManager.findMatch(matchId)
+            _match.value = MatchRepository.findMatch(matchId)
         }
     }
 

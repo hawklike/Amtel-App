@@ -7,7 +7,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowGroupsBossAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.GroupRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import kotlinx.coroutines.launch
 
@@ -28,7 +28,7 @@ class ShowGroupsBossAdapterVM : ViewModel()
     fun handleVisibility(visible: Boolean, group: Group, holder: ShowGroupsBossAdapter.ViewHolder)
     {
         viewModelScope.launch {
-            if(GroupManager.updateGroup(group.id, mapOf(GroupManager.visibility to visible)))
+            if(GroupRepository.updateGroup(group.id, mapOf(GroupRepository.visibility to visible)))
             {
                 if(visible)
                 {

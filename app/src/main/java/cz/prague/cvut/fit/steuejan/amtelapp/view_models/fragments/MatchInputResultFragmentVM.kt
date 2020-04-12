@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.removeWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
@@ -157,7 +157,7 @@ class MatchInputResultFragmentVM : ViewModel()
                 if(!isHeadOfLeague) match.edits[round.toString()] = match.edits[round.toString()]!! - 1
                 if(!isReport)
                 {
-                    MatchManager.setMatch(match)
+                    MatchRepository.setMatch(match)
                     updatePlayers(homeUsers, awayUsers)
                     _matchAdded.value = match
                 }
@@ -177,7 +177,7 @@ class MatchInputResultFragmentVM : ViewModel()
         if(before.isEmpty())
         {
             now.forEach {
-                UserManager.addRound(it.id!!, match.id!!, round, roundNumber)
+                UserRepository.addRound(it.id!!, match.id!!, round, roundNumber)
             }
         }
         else if(before.size == now.size)
@@ -187,10 +187,10 @@ class MatchInputResultFragmentVM : ViewModel()
                 //player was changed
                 if(nowUser.id != before[index].playerId)
                     //delete round from a previous user
-                    UserManager.deleteRound(before[index].playerId, match.id!!, roundNumber)
+                    UserRepository.deleteRound(before[index].playerId, match.id!!, roundNumber)
 
                 // add/update round to a current user
-                UserManager.addRound(nowUser.id!!, match.id!!, round, roundNumber)
+                UserRepository.addRound(nowUser.id!!, match.id!!, round, roundNumber)
             }
         }
     }

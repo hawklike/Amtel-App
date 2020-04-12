@@ -8,7 +8,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.ScheduleGenerator
+import cz.prague.cvut.fit.steuejan.amtelapp.business.ScheduleGenerator
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

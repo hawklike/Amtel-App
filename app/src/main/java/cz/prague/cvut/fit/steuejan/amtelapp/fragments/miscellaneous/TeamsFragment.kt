@@ -15,7 +15,7 @@ import com.google.firebase.firestore.Query
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.TeamInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowTeamsPagingAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.FragmentTeamsBinding
@@ -123,19 +123,19 @@ class TeamsFragment : AbstractMainActivityFragment(), ShowTeamsPagingAdapter.Dat
             {
                 if(text.isNotEmpty())
                 {
-                    val result = TeamManager.retrieveTeamsByPrefix(text.toString())
+                    val result = TeamRepository.retrieveTeamsByPrefix(text.toString())
                     val isCompleteSearch = result.second
                     val query = result.first
 
                     viewModel.query =
-                        if(isCompleteSearch) query.orderBy(TeamManager.searchNameComplete)
-                        else query.orderBy(TeamManager.searchName)
+                        if(isCompleteSearch) query.orderBy(TeamRepository.searchNameComplete)
+                        else query.orderBy(TeamRepository.searchName)
 
                     adapter?.updateOptions(setQueryOptions(viewModel.orderBy))
                 }
                 else
                 {
-                    viewModel.query = TeamManager.retrieveAllTeams()
+                    viewModel.query = TeamRepository.retrieveAllTeams()
                     adapter?.updateOptions(setQueryOptions(viewModel.orderBy))
                 }
             }

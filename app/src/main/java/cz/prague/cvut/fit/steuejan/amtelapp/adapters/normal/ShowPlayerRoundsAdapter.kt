@@ -7,7 +7,7 @@ import androidx.annotation.ColorRes
 import androidx.recyclerview.widget.RecyclerView
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.getColor
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Player
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
@@ -40,7 +40,7 @@ class ShowPlayerRoundsAdapter(private val rounds: List<Round>, private val playe
     override fun onBindViewHolder(holder: ViewHolder, position: Int)
     {
         val round = getItem(position)
-        val result = MatchManager.getResults(round)
+        val result = MatchRepository.getResults(round)
 
         with(holder) {
             binding.homePlayers.text = round.homePlayers.joinToString(", ") { "${it.name} ${it.surname}" }

@@ -1,8 +1,8 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.helpers
+package cz.prague.cvut.fit.steuejan.amtelapp.business
 
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.GroupRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -15,7 +15,7 @@ class ScheduleGenerator
 {
     suspend fun generateMatches(group: Group, rounds: Int): Boolean
     {
-        with(TeamManager.findTeams("groupId", group.id)) {
+        with(TeamRepository.findTeams("groupId", group.id)) {
             return if(this is ValidTeams)
             {
                 try
@@ -34,7 +34,7 @@ class ScheduleGenerator
         val year = DateUtil.actualSeason
         var ok = true
 
-        return if(MatchManager.deleteAllMatches(group.id, year.toInt()))
+        return if(MatchRepository.deleteAllMatches(group.id, year.toInt()))
         {
             group.teamIds[DateUtil.actualSeason]?.forEach { teamId ->
                 if(!clearTeamStatistics(teamId, year)) ok = false
@@ -51,14 +51,14 @@ class ScheduleGenerator
         tournament.setTeams(teams)
         tournament.setRounds(rounds)
         tournament.createMatches(group).forEach {
-            with(MatchManager.setMatch(it)) {
+            with(MatchRepository.setMatch(it)) {
                 if(this is ValidMatch) addMatchToTeams(self, teams)
             }
         }
 
         val map = group.rounds
         map[DateUtil.actualSeason] = rounds
-        GroupManager.updateGroup(group.id, mapOf("rounds" to map))
+        GroupRepository.updateGroup(group.id, mapOf("rounds" to map))
     }
 
     private suspend fun addMatchToTeams(match: Match, teams: List<Team>)
@@ -66,13 +66,13 @@ class ScheduleGenerator
         val homeTeam = teams.find { it.id == match.homeId }
         val awayTeam = teams.find { it.id == match.awayId }
 
-        homeTeam?.let { TeamManager.setTeam(it) }
-        awayTeam?.let { TeamManager.setTeam(it) }
+        homeTeam?.let { TeamRepository.setTeam(it) }
+        awayTeam?.let { TeamRepository.setTeam(it) }
     }
 
     private suspend fun clearTeamStatistics(teamId: String, year: String): Boolean
     {
-        val team = TeamManager.findTeam(teamId)
+        val team = TeamRepository.findTeam(teamId)
         if(team is ValidTeam)
         {
             team.self.apply {
@@ -86,7 +86,7 @@ class ScheduleGenerator
                 positiveSetsPerYear[year] = 0
                 negativeSetsPerYear[year] = 0
             }
-            return TeamManager.setTeam(team.self) != null
+            return TeamRepository.setTeam(team.self) != null
         }
         return false
     }

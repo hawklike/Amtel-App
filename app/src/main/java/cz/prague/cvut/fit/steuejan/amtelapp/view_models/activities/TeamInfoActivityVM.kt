@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.PieEntry
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
@@ -126,7 +126,7 @@ class TeamInfoActivityVM : ViewModel()
     fun getTeam(id: String)
     {
         viewModelScope.launch {
-            val team = TeamManager.findTeam(id)
+            val team = TeamRepository.findTeam(id)
             if(team is ValidTeam) _team.value = team.self
         }
     }

@@ -1,6 +1,6 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.helpers
+package cz.prague.cvut.fit.steuejan.amtelapp.business
 
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
@@ -179,7 +179,7 @@ class RankingSolver(private val teams: List<Team>, private val year: Int)
 
         val matches = mutableListOf<Match>()
         combinedTeams.forEach {
-            matches.addAll(MatchManager.getCommonMatches(it.first, it.second, year))
+            matches.addAll(MatchRepository.getCommonMatches(it.first, it.second, year))
         }
 
         return matches

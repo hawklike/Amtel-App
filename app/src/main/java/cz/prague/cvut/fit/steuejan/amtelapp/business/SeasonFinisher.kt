@@ -1,11 +1,11 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.helpers
+package cz.prague.cvut.fit.steuejan.amtelapp.business
 
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.LeagueManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.GroupRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -30,7 +30,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
     private var actualSeason = DateUtil.actualSeason.toInt()
 
     suspend fun createPlayoff(): Boolean
-            = GroupManager.addPlayoff(playoff) is ValidGroup
+            = GroupRepository.addPlayoff(playoff) is ValidGroup
 
     /*
     Updates team's final position in a group in a season.
@@ -42,15 +42,18 @@ class SeasonFinisher(private val groups: MutableList<Group>)
 
         groups.forEach { group ->
             group.teamIds[(actualSeason + 1).toString()] = mutableListOf()
-            with(GroupManager.retrieveTeamsInGroup(group.id)) {
+            with(GroupRepository.retrieveTeamsInGroup(group.id)) {
                 if(this is ValidTeams)
                 {
-                    val rankedTeams = RankingSolver(self, actualSeason).sort()
+                    val rankedTeams = RankingSolver(
+                        self,
+                        actualSeason
+                    ).sort()
                     groupsWithSortedTeams[group] = rankedTeams
                     for(i in rankedTeams.indices)
                     {
                         rankedTeams[i].results.add(i+1)
-                        TeamManager.setTeam(rankedTeams[i])
+                        TeamRepository.setTeam(rankedTeams[i])
                     }
                 }
             }
@@ -88,7 +91,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
 
         addOtherTeamsToNextSeason()
         updateGroups()
-        LeagueManager.changeSeason()
+        LeagueRepository.changeSeason()
     }
 
     private fun addOtherTeamsToNextSeason()
@@ -107,7 +110,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
     private suspend fun updateGroups()
     {
         finalGroups.forEach {
-            GroupManager.setGroup(it)
+            GroupRepository.setGroup(it)
         }
     }
 
@@ -152,7 +155,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         tournament.createMatches(playoff).forEach {
             it.betterGroup = teams.first().groupName
             it.worseGroup = teams.last().groupName
-            with(MatchManager.setMatch(it)) {
+            with(MatchRepository.setMatch(it)) {
                 if(this is ValidMatch) addMatchToTeams(self, teams)
             }
         }
@@ -163,8 +166,8 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         val homeTeam = teams.find { it.id == match.homeId }
         val awayTeam = teams.find { it.id == match.awayId }
 
-        homeTeam?.let { TeamManager.setTeam(it) }
-        awayTeam?.let { TeamManager.setTeam(it) }
+        homeTeam?.let { TeamRepository.setTeam(it) }
+        awayTeam?.let { TeamRepository.setTeam(it) }
     }
 
     /*
@@ -181,7 +184,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
                 val worseGroup = groupsPlayingPlayoff[i+1]
                 updateSortedGroups(worseGroup, team.id!!, nextYear)
                 resolvedTeamIds.add(team.id!!)
-                TeamManager.updateTeam(team.id, mapOf(TeamManager.groupId to worseGroup.id!!, TeamManager.groupName to worseGroup.name))
+                TeamRepository.updateTeam(team.id, mapOf(TeamRepository.groupId to worseGroup.id!!, TeamRepository.groupName to worseGroup.name))
             }
         }
     }
@@ -200,7 +203,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
                 val betterGroup = groupsPlayingPlayoff[i-1]
                 updateSortedGroups(betterGroup, team.id!!, nextYear)
                 resolvedTeamIds.add(team.id!!)
-                TeamManager.updateTeam(team.id, mapOf(TeamManager.groupId to betterGroup.id!!, TeamManager.groupName to betterGroup.name))
+                TeamRepository.updateTeam(team.id, mapOf(TeamRepository.groupId to betterGroup.id!!, TeamRepository.groupName to betterGroup.name))
             }
         }
     }
@@ -219,10 +222,13 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         {
             groups.forEach { group ->
                 group.teamIds[(actualSeason + 1).toString()] = mutableListOf()
-                with(GroupManager.retrieveTeamsInGroup(group.id)) {
+                with(GroupRepository.retrieveTeamsInGroup(group.id)) {
                     if(this is ValidTeams)
                     {
-                        val rankedTeams = RankingSolver(self, actualSeason).sort()
+                        val rankedTeams = RankingSolver(
+                            self,
+                            actualSeason
+                        ).sort()
                         groupsWithSortedTeams[group] = rankedTeams
                     }
                 }
@@ -235,7 +241,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         if(predicate.invoke())
         {
             //already sorted by rank (the lower, the better the group is)
-            with(GroupManager.retrieveAllGroupsExceptPlayoff()) {
+            with(GroupRepository.retrieveAllGroupsExceptPlayoff()) {
                 if(this is ValidGroups) groups.addAll(self)
             }
         }

@@ -16,7 +16,7 @@ import com.github.mikephil.charting.charts.PieChart
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowTeamMatchesPagingAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -135,7 +135,7 @@ class TeamInfoActivity : AbstractProfileActivity()
         matchesRecyclerView?.setHasFixedSize(true)
         matchesRecyclerView?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        val query = TeamManager.retrieveMatches(viewModel.mTeam ?: Team(id = "hlen"))
+        val query = TeamRepository.retrieveMatches(viewModel.mTeam ?: Team(id = "hlen"))
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
             .setPrefetchDistance(4)

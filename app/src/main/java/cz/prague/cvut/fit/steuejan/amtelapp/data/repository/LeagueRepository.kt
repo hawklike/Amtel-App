@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
+package cz.prague.cvut.fit.steuejan.amtelapp.data.repository
 
 import android.util.Log
 import com.google.firebase.firestore.ktx.toObject
@@ -10,8 +10,10 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import java.util.*
 
-object LeagueManager
+object LeagueRepository
 {
+    private const val TAG = "LeagueRepository"
+
     suspend fun getActualSeason(): Int? = withContext(IO)
     {
         return@withContext try

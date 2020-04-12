@@ -20,7 +20,7 @@ import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.ManageGroupsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowTeamsFirestoreAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
@@ -83,7 +83,7 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 
     private fun setupRecycler()
     {
-        val query = TeamManager.retrieveAllTeams().orderBy(TeamOrderBy.GROUP.toString())
+        val query = TeamRepository.retrieveAllTeams().orderBy(TeamOrderBy.GROUP.toString())
         val options = FirestoreRecyclerOptions.Builder<Team>()
             .setQuery(query, Team::class.java)
             .setLifecycleOwner(viewLifecycleOwner)

@@ -17,22 +17,23 @@
         android:background="@color/veryVeryLightGrey"
         android:layout_below="@id/toolbar">
 
-        <include layout="@layout/curve" />
+        <include layout="@layout/curve"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxHeight="80dp"
             android:gravity="center"
-            android:text="Čtvrtletní zpravodaje vedoucího soutěže reflektující průběh aktuální sezony."
-            android:layout_marginTop="12dp"
+            android:text="Čtvrtletní zpravodaje vedoucího soutěže reflektující průběh aktuální sezóny."
             android:layout_marginStart="@dimen/card_margin"
             android:layout_marginEnd="@dimen/card_margin"
             android:textSize="@dimen/common_text_size"
             android:textColor="@color/white"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginTop="124dp"
+            android:layout_marginTop="104dp"
             android:id="@+id/reports"
             android:layout_marginStart="@dimen/card_margin"
             android:layout_marginEnd="@dimen/card_margin"
@@ -42,6 +43,7 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/addReport"
             style="@style/FloatingActionButton"
+            android:visibility="gone"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="@dimen/card_margin"

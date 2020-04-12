@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
+package cz.prague.cvut.fit.steuejan.amtelapp.data.repository
 
 import android.util.Log
 import com.google.firebase.firestore.Query
@@ -8,8 +8,10 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Message
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
-object MessageManager
+object MessageRepository
 {
+    private const val TAG = "MessageRepository"
+
     suspend fun addMessage(message: Message, matchId: String?, private: Boolean): Message? = withContext(IO)
     {
         if(matchId == null) return@withContext null
@@ -39,6 +41,4 @@ object MessageManager
 
         return updated
     }
-
-    const val TAG = "MessageManager"
 }

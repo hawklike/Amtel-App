@@ -7,9 +7,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.EmailManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.LeagueManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.EmailRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
@@ -103,7 +103,7 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
     fun prepareUser(uid: String)
     {
         viewModelScope.launch {
-            val user = UserManager.findUser(uid)
+            val user = UserRepository.findUser(uid)
             user?.let {
                 isUserLoggedIn(SignedUser(it))
                 setUser(it)
@@ -121,7 +121,7 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
         if(email == null)
         {
             viewModelScope.launch {
-                EmailManager.getPassword()?.let {
+                EmailRepository.getPassword()?.let {
                     EmailSender.hasPassword = true
                     PreferenceManager.
                         getDefaultSharedPreferences(context)
@@ -139,7 +139,7 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
         if(DateUtil.actualSeason.toInt() == 0)
         {
             viewModelScope.launch {
-                LeagueManager.getActualSeason()?.let {
+                LeagueRepository.getActualSeason()?.let {
                     DateUtil.actualSeason = it.toString()
                 }
             }
@@ -178,11 +178,11 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
         viewModelScope.launch {
             if(EmailSender.headOfLeagueEmail == null)
             {
-                UserManager.findUsers("role", UserRole.HEAD_OF_LEAGUE.toString())?.let {
+                UserRepository.findUsers("role", UserRole.HEAD_OF_LEAGUE.toString())?.let {
                     if(it.isNotEmpty())
                     {
                         val headOfLeague = it.first()
-                        LeagueManager.headOfLeague = headOfLeague
+                        LeagueRepository.headOfLeague = headOfLeague
                         EmailSender.headOfLeagueEmail = headOfLeague.email
                         _headOfLeague.value = headOfLeague
                     }

@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.managers
+package cz.prague.cvut.fit.steuejan.amtelapp.data.repository
 
 import android.util.Log
 import com.google.firebase.firestore.Query
@@ -14,7 +14,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Rounds
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
-object UserManager
+object UserRepository
 {
     suspend fun setUser(user: User): User? = withContext(IO)
     {
@@ -153,7 +153,7 @@ object UserManager
         }
     }
 
-    private const val TAG = "UserManager"
+    private const val TAG = "UserRepository"
 
     const val searchSurname = "searchSurname"
 }

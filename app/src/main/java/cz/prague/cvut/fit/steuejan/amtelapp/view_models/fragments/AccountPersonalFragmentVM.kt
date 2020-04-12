@@ -9,9 +9,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
@@ -102,9 +102,9 @@ class AccountPersonalFragmentVM : ViewModel()
                     this.sex = sex.toBoolean()
                 }
 
-                val success = UserManager.setUser(user)
+                val success = UserRepository.setUser(user)
 
-                TeamManager.updateUserInTeam(user)
+                TeamRepository.updateUserInTeam(user)
 
                 success?.let { personalInfoChange.value = PersonalInfoSuccess(name, surname, birthdate, phone, sex)  }
                     ?: let { personalInfoChange.value = PersonalInfoFailure }

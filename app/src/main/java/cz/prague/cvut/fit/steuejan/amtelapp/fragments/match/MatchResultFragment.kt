@@ -18,7 +18,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchDiscussionActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayerInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.TeamInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowPlayersAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -182,8 +182,8 @@ class MatchResultFragment : AbstractMatchActivityFragment()
 
         group.text = StringUtil.createLabel(match.groupName)
 
-        sets.text = MatchManager.getResults(round).sets
-        games.text = MatchManager.getResults(round).games
+        sets.text = MatchRepository.getResults(round).sets
+        games.text = MatchRepository.getResults(round).games
 
         place.text = match.place?.let { it } ?: getString(R.string.place_not_found)
         date.text = match.dateAndTime?.toMyString(getString(R.string.dateTime_format)) ?: getString(R.string.dateTime_not_found)

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.GroupManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.GroupRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
@@ -45,13 +45,13 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
         if(confirmName(groupName))
         {
             viewModelScope.launch {
-                val groups = GroupManager.findGroups("name", groupName)
+                val groups = GroupRepository.findGroups("name", groupName)
                 if(groups is ValidGroups && groups.self.isNotEmpty())
                 {
                     _group.value = NoGroup
                     return@launch
                 }
-                _group.value = GroupManager.setGroup(Group(null, groupName, playingPlayOff = playingPlayOff)).let {
+                _group.value = GroupRepository.setGroup(Group(null, groupName, playingPlayOff = playingPlayOff)).let {
                     if(it is ValidGroup) ValidGroup(it.self)
                     else NoGroup
                 }
@@ -62,7 +62,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
     fun getGroups()
     {
         viewModelScope.launch {
-            val groups = GroupManager.retrieveAllGroupsExceptPlayoff()
+            val groups = GroupRepository.retrieveAllGroupsExceptPlayoff()
                 if(groups is ValidGroups) setAllGroups(groups.self)
         }
     }
@@ -117,7 +117,7 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
     {
         GlobalScope.launch {
             for(i in groups.indices)
-                GroupManager.updateGroup(groups[i].id!!, mapOf("rank" to i))
+                GroupRepository.updateGroup(groups[i].id!!, mapOf("rank" to i))
         }
     }
 

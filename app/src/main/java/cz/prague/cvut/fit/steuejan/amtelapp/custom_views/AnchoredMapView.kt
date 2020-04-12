@@ -1,4 +1,4 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.customViews
+package cz.prague.cvut.fit.steuejan.amtelapp.custom_views
 
 import android.content.Context
 import android.util.AttributeSet

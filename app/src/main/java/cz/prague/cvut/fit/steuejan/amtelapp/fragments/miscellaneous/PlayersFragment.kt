@@ -18,7 +18,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayerInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowUsersPagingAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.FragmentPlayersBinding
@@ -36,8 +36,7 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
 
     companion object
     {
-        fun newInstance(): PlayersFragment =
-            PlayersFragment()
+        fun newInstance(): PlayersFragment = PlayersFragment()
     }
 
     override fun getName(): String = "PlayersFragment"
@@ -167,13 +166,13 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
             {
                 if(text.isNotEmpty())
                 {
-                    val query = UserManager.retrieveUsersByPrefix(text.toString())
-                    viewModel.query = query.orderBy(UserManager.searchSurname)
+                    val query = UserRepository.retrieveUsersByPrefix(text.toString())
+                    viewModel.query = query.orderBy(UserRepository.searchSurname)
                     adapter?.updateOptions(setQueryOptions(viewModel.orderBy))
                 }
                 else
                 {
-                    viewModel.query = UserManager.retrieveAllUsers()
+                    viewModel.query = UserRepository.retrieveAllUsers()
                     adapter?.updateOptions(setQueryOptions(viewModel.orderBy))
                 }
             }

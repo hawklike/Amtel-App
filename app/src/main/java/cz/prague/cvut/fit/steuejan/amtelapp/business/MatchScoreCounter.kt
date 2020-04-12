@@ -1,10 +1,10 @@
-package cz.prague.cvut.fit.steuejan.amtelapp.business.helpers
+package cz.prague.cvut.fit.steuejan.amtelapp.business
 
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_DEFAULT_LOSS
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_LOOSE
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.POINTS_WIN
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 
@@ -40,7 +40,7 @@ class MatchScoreCounter(private val match: Match, private val homeTeam: Team, pr
             match.awayScore = awayScore
         }
 
-        MatchManager.setMatch(match)
+        MatchRepository.setMatch(match)
         if(playoff) resolvePlayoff(homeScore, awayScore)
         updatePoints(homeScore, awayScore)
     }
@@ -79,12 +79,13 @@ class MatchScoreCounter(private val match: Match, private val homeTeam: Team, pr
         team.matchesPerYear[year] = team.pointsPerMatch[year]!!.size
 
         initSetsStatistics(team)
-        TeamManager.setTeam(team)
+        TeamRepository.setTeam(team)
     }
 
     private suspend fun resolvePlayoff(homeScore: Int, awayScore: Int)
     {
-        val inputter = TeamToGroupInputter().isPlayoff(true)
+        val inputter = TeamToGroupInputter()
+            .isPlayoff(true)
         if(homeScore < awayScore)
         {
             //home team loses and therefore goes to a lower group in the next season

@@ -10,10 +10,10 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MessageManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MessageRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.*
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Message
@@ -53,8 +53,8 @@ class MatchArrangementActivityVM : ViewModel()
     fun getTeams(week: WeekState)
     {
         viewModelScope.launch {
-            val home = TeamManager.findTeam(match.value?.homeId)
-            val away = TeamManager.findTeam(match.value?.awayId)
+            val home = TeamRepository.findTeam(match.value?.homeId)
+            val away = TeamRepository.findTeam(match.value?.awayId)
 
             if(home is ValidTeam && away is ValidTeam)
             {
@@ -75,7 +75,7 @@ class MatchArrangementActivityVM : ViewModel()
 
                 _date.value = DateUtil.findDate(homeDays, awayDays, week.range)?.setTime(16, 0)
                 _date.value?.let { dateAndTime ->
-                    MatchManager.updateMatch(match.id!!, mapOf("dateAndTime" to dateAndTime))
+                    MatchRepository.updateMatch(match.id!!, mapOf("dateAndTime" to dateAndTime))
                     _match.value?.dateAndTime = dateAndTime
                     sendEmail(dateAndTime = dateAndTime, place = match.place?.let { it } ?: homeTeam.place)
                 }
@@ -86,7 +86,7 @@ class MatchArrangementActivityVM : ViewModel()
     fun sendMessage(fullname: String, messageText: String, matchId: String?)
     {
         viewModelScope.launch {
-            MessageManager.addMessage(Message(fullname, messageText, AuthManager.currentUser?.uid ?: ""), matchId, true)
+            MessageRepository.addMessage(Message(fullname, messageText, AuthManager.currentUser?.uid ?: ""), matchId, true)
         }
     }
 
@@ -100,7 +100,7 @@ class MatchArrangementActivityVM : ViewModel()
     {
         _date.value = date.time
         viewModelScope.launch {
-            if(MatchManager.updateMatch(match.value?.id, mapOf("dateAndTime" to date.time)))
+            if(MatchRepository.updateMatch(match.value?.id, mapOf("dateAndTime" to date.time)))
             {
                 toast(context.getString(R.string.match_dateTime_change_success), length = Toast.LENGTH_LONG)
                 _match.value?.dateAndTime = date.time
@@ -114,7 +114,7 @@ class MatchArrangementActivityVM : ViewModel()
         if(place != match.value?.place ?: "")
         {
             viewModelScope.launch {
-                if(MatchManager.updateMatch(match.value?.id, mapOf("place" to place)))
+                if(MatchRepository.updateMatch(match.value?.id, mapOf("place" to place)))
                 {
                     toast(context.getString(R.string.match_place_change_success), length = Toast.LENGTH_LONG)
                     _match.value?.place = place
@@ -127,7 +127,7 @@ class MatchArrangementActivityVM : ViewModel()
     fun initPlace()
     {
         match.value?.place ?: viewModelScope.launch {
-            MatchManager.updateMatch(match.value?.id, mapOf("place" to teams.value?.first?.place))
+            MatchRepository.updateMatch(match.value?.id, mapOf("place" to teams.value?.first?.place))
         }
     }
 

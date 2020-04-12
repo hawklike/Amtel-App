@@ -9,8 +9,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.UserManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
@@ -67,13 +67,13 @@ class AddUserToTeamActivityVM : ViewModel()
                     team.name
                 )
 
-                user = UserManager.setUser(user!!)
+                user = UserRepository.setUser(user!!)
 
                 if(user != null)
                 {
                     if(team.users.add(user) && team.usersId.add(user.id!!))
                     {
-                        TeamManager.updateTeam(team.id, mapOf("users" to team.users, "usersId" to team.usersId))
+                        TeamRepository.updateTeam(team.id, mapOf("users" to team.users, "usersId" to team.usersId))
                         teamState.value = ValidTeam(team)
                     }
                     else teamState.value = NoTeam

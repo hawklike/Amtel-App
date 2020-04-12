@@ -24,8 +24,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowMessagesFirestoreAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MessageManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MessageRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -334,7 +334,7 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
         messagesRecyclerView?.layoutManager = LinearLayoutManager(this)
 
         match.id?.let {
-            val query = MessageManager.getMessages(it, true)
+            val query = MessageRepository.getMessages(it, true)
 
             val options = FirestoreRecyclerOptions.Builder<Message>()
                 .setQuery(query, Message::class.java)
