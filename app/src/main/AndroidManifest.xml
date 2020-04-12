@@ -49,6 +49,7 @@
         <activity android:name=".activities.MatchDiscussionActivity" />
         <activity android:name=".activities.PlayerInfoActivity" />
         <activity android:name=".activities.InputReportActivity" />
+        <activity android:name=".activities.ShowReportActivity"/>
 
         <service
             android:name=".services.GenerateScheduleService"

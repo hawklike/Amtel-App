@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.InputReportActivity
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.ShowReportActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowReportsAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Report
@@ -97,6 +98,15 @@ class ReportsFragment : AbstractMainActivityFragment()
 
         adapter?.onEdit = { report ->
             startInputReportActivity(report)
+        }
+
+        adapter?.onClick = { report ->
+            report?.let {
+                val intent = Intent(activity, ShowReportActivity::class.java).apply {
+                    putExtra(ShowReportActivity.REPORT, it)
+                }
+                startActivity(intent)
+            }
         }
 
         binding.reports.adapter = adapter
