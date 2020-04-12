@@ -8,11 +8,10 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="8dp"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="@color/darkGrey"
-        android:text="Skvelz napdpis skveleho clanku"/>
+        android:textColor="@color/darkGrey" />
 
     <TextView
         android:id="@+id/lead"
@@ -20,15 +19,16 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/common_text_size"
         android:textColor="@color/lightGrey"
-        android:layout_marginBottom="4dp"
-        android:text="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Praesent vitae arcu tempor neque lacinia pretium. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Vivamus porttitor turpis ac leo."
+        android:maxLines="7"
+        android:ellipsize="end"
+        android:layout_marginBottom="8dp"
         android:layout_below="@id/title" />
 
     <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="12.3.2020"
+        android:textSize="13sp"
         android:layout_below="@id/lead"
         android:textColor="@color/blue"
         android:layout_alignParentEnd="true"/>

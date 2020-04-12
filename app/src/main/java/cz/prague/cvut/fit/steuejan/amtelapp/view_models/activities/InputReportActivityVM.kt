@@ -12,7 +12,6 @@ class InputReportActivityVM : ViewModel()
 {
     var report: Report? = null
     var published: Boolean = false
-        private set
 
     /*---------------------------------------------------*/
 
@@ -26,10 +25,10 @@ class InputReportActivityVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    fun publishRecord(title: String, lead: String, text: String)
+    fun publishRecord(id: String?, title: String, lead: String, text: String)
     {
         viewModelScope.launch {
-            ReportRepository.setReport(Report(null, title, lead, text))?.let {
+            ReportRepository.setReport(Report(id, title, lead, text))?.let {
                 published = true
                 _reportPublished.value = true
             } ?: let { _reportPublished.value = false }

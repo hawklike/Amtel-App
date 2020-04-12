@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,6 +29,7 @@ class ReportsFragment : AbstractMainActivityFragment()
 
     companion object
     {
+        const val REFRESH_CODE = 1996
         fun newInstance(): ReportsFragment = ReportsFragment()
     }
 
@@ -66,8 +68,7 @@ class ReportsFragment : AbstractMainActivityFragment()
             with(binding) {
                 addReport.visibility = VISIBLE
                 addReport.setOnClickListener {
-                    val intent = Intent(activity, InputReportActivity::class.java)
-                    startActivity(intent)
+                    startInputReportActivity(null)
                 }
             }
         }
@@ -94,6 +95,24 @@ class ReportsFragment : AbstractMainActivityFragment()
 
         adapter = ShowReportsAdapter(options)
 
+        adapter?.onEdit = { report ->
+            startInputReportActivity(report)
+        }
+
         binding.reports.adapter = adapter
+    }
+
+    private fun startInputReportActivity(report: Report?)
+    {
+        val intent = Intent(activity, InputReportActivity::class.java).apply {
+            putExtra(InputReportActivity.REPORT, report)
+        }
+        startActivityForResult(intent, REFRESH_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == REFRESH_CODE && resultCode == RESULT_OK) adapter?.refresh()
     }
 }

@@ -6,51 +6,40 @@
     android:fillViewport="true"
     android:orientation="vertical">
 
-    <include
-        layout="@layout/toolbar"
+    <include layout="@layout/curve"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="90dp"/>
 
-    <RelativeLayout
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/veryVeryLightGrey"
-        android:layout_below="@id/toolbar">
+        android:layout_height="wrap_content"
+        android:maxHeight="80dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Čtvrtletní zpravodaje vedoucího soutěže reflektující průběh aktuální sezóny."
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_marginEnd="@dimen/card_margin"
+        android:textSize="@dimen/common_text_size"
+        android:textColor="@color/white"/>
 
-        <include layout="@layout/curve"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="104dp"
+        android:id="@+id/reports"
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_marginEnd="@dimen/card_margin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxHeight="80dp"
-            android:gravity="center"
-            android:text="Čtvrtletní zpravodaje vedoucího soutěže reflektující průběh aktuální sezóny."
-            android:layout_marginStart="@dimen/card_margin"
-            android:layout_marginEnd="@dimen/card_margin"
-            android:textSize="@dimen/common_text_size"
-            android:textColor="@color/white"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginTop="104dp"
-            android:id="@+id/reports"
-            android:layout_marginStart="@dimen/card_margin"
-            android:layout_marginEnd="@dimen/card_margin"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addReport"
-            style="@style/FloatingActionButton"
-            android:visibility="gone"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="@dimen/card_margin"
-            android:layout_marginBottom="@dimen/card_margin"
-            app:srcCompat="@drawable/ic_add_white_24dp" />
-
-    </RelativeLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addReport"
+        style="@style/FloatingActionButton"
+        android:visibility="gone"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/card_margin"
+        android:layout_marginBottom="@dimen/card_margin"
+        app:srcCompat="@drawable/ic_add_white_24dp" />
 
 </RelativeLayout>
+
 

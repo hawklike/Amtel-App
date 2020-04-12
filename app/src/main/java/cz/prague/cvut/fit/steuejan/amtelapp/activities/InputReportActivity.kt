@@ -30,7 +30,7 @@ class InputReportActivity : AbstractBaseActivity()
         private const val REPORT_TITLE = "lastReportTitle"
         private const val REPORT_LEAD = "lastReportLead"
         private const val REPORT_TEXT = "lastReportText"
-        private const val REPORT = "report"
+        const val REPORT = "report"
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -58,7 +58,7 @@ class InputReportActivity : AbstractBaseActivity()
     override fun onResume()
     {
         super.onResume()
-        with(PreferenceManager.getDefaultSharedPreferences(this)) {
+        viewModel.report ?: with(PreferenceManager.getDefaultSharedPreferences(this)) {
             with(binding) {
                 title.setText(getString(REPORT_TITLE, ""))
                 lead.setText(getString(REPORT_LEAD, ""))
@@ -96,6 +96,16 @@ class InputReportActivity : AbstractBaseActivity()
             }
     }
 
+    override fun onBackPressed()
+    {
+        if(viewModel.published)
+        {
+            setResult(RESULT_OK)
+            finish()
+        }
+        else finish()
+    }
+
     private fun setupLayout()
     {
         intent.extras?.let { bundle ->
@@ -107,6 +117,11 @@ class InputReportActivity : AbstractBaseActivity()
             with(binding) {
                 deleteReport.visibility = VISIBLE
                 publishReport.visibility = GONE
+                saveReport.text = getString(R.string.actualize)
+                title.setText(it.title)
+                lead.setText(it.lead)
+                text.setText(it.text)
+                viewModel.published = true
             }
         } ?: setToolbarTitle("Napsat článek")
     }
@@ -114,7 +129,16 @@ class InputReportActivity : AbstractBaseActivity()
     private fun saveReport()
     {
         binding.saveReport.setOnClickListener {
-            toast("Uloženo")
+            viewModel.report?.let {
+                with(binding) {
+                    progressDialog.show()
+                    val title = title.text.toString().trim()
+                    val lead = lead.text.toString().trim()
+                    val text = text.text.toString().trim()
+                    viewModel.publishRecord(it.id, title, lead, text)
+                }
+            }
+            ?: toast("Uloženo")
         }
     }
 
@@ -122,7 +146,7 @@ class InputReportActivity : AbstractBaseActivity()
     {
         binding.publishReport.setOnClickListener {
             MaterialDialog(this).show {
-                title(text = "Opravdu chcete publikovat článek?")
+                title(text = "Opravdu chcete článek publikovat?")
                 message(text = "Žádné strachy, článek budete moct kdykoliv upravit nebo smazat.")
                 positiveButton(text = "Publikovat") {
                     progressDialog.show()
@@ -130,7 +154,7 @@ class InputReportActivity : AbstractBaseActivity()
                         val title = title.text.toString().trim()
                         val lead = lead.text.toString().trim()
                         val text = text.text.toString().trim()
-                        viewModel.publishRecord(title, lead, text)
+                        viewModel.publishRecord(null, title, lead, text)
                     }
                 }
                 negativeButton()
@@ -139,8 +163,16 @@ class InputReportActivity : AbstractBaseActivity()
 
         viewModel.reportPublished.observe(this) { published ->
             progressDialog.dismiss()
-            if(published) toast("Publikováno")
-            else toast("Publikování se nezdařilo!")
+            if(viewModel.report != null)
+            {
+                if(published) toast("Aktualizováno")
+                else toast("Aktualizace se nezdařila!")
+            }
+            else
+            {
+                if(published) toast("Publikováno")
+                else toast("Publikování se nezdařilo!")
+            }
         }
     }
 
@@ -148,7 +180,7 @@ class InputReportActivity : AbstractBaseActivity()
     {
         binding.deleteReport.setOnClickListener {
             MaterialDialog(this).show {
-                title(text = "Opravdu chcete smazat článek?")
+                title(text = "Opravdu chcete článek smazat?")
                 positiveButton(text = "Smazat") {
                     progressDialog.show()
                     viewModel.deleteReport()
