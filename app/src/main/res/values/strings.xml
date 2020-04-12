@@ -201,4 +201,6 @@
     <string name="discussion_rules">Zde se nachází prostor pro diskuzi. Chovejte se prosím slušně. V opačném případě může být váš příspěvek smazán.</string>
     <string name="discussion">Diskuze</string>
     <string name="dash">–</string>
+    <string name="reports">Zpravodaje</string>
+    <string name="actualize">Aktualizovat</string>
 </resources>

@@ -21,7 +21,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractBaseFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.RankingFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.RankingFragmentVM
 
 //TODO: resolve data when screen rotates
 class RankingFragment : AbstractBaseFragment()

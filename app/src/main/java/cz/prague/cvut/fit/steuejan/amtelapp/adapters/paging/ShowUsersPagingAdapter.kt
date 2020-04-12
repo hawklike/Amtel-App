@@ -5,6 +5,7 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter
@@ -27,6 +28,7 @@ class ShowUsersPagingAdapter(options: FirestorePagingOptions<User>, private val 
 {
     var onDelete: ((User?) -> Unit)? = null
     var onEdit: ((User?) -> Unit)? = null
+    var onClick: ((User?) -> Unit)? = null
 
     var orderBy = UserOrderBy.SURNAME
 
@@ -40,6 +42,7 @@ class ShowUsersPagingAdapter(options: FirestorePagingOptions<User>, private val 
         val team: TextView = itemView.findViewById(R.id.user_card_team)
         val deleteButton: ImageView = itemView.findViewById(R.id.user_card_delete)
         val editButton: ImageView = itemView.findViewById(R.id.user_card_edit)
+        private val card: RelativeLayout = itemView.findViewById(R.id.user_card)
 
         init
         {
@@ -49,6 +52,10 @@ class ShowUsersPagingAdapter(options: FirestorePagingOptions<User>, private val 
 
             editButton.setOnClickListener {
                 onEdit?.invoke(getUser(adapterPosition))
+            }
+
+            card.setOnClickListener {
+                onClick?.invoke(getUser(adapterPosition))
             }
         }
     }

@@ -4,25 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="cz.prague.cvut.fit.steuejan.amtelapp">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <dist:module dist:instant="true" />
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/amtel_opava"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name=".App"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
 
         <activity
             android:name=".activities.SplashActivity"
-            android:theme="@style/SplashTheme"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -31,31 +36,33 @@
 
         <activity
             android:name=".activities.MainActivity"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
 
-        <activity android:name=".activities.AddUserToTeamActivity"/>
-        <activity android:name=".activities.ManageGroupsActivity"/>
-        <activity android:name=".activities.RoundsViewPagerActivity"/>
-        <activity android:name=".activities.MatchViewPagerActivity"/>
-        <activity android:name=".activities.MatchArrangementActivity"/>
-        <activity android:name=".activities.RankingViewPagerActivity"/>
-        <activity android:name=".activities.PlayoffActivity"/>
-        <activity android:name=".activities.TeamInfoActivity"/>
-        <activity android:name=".activities.MatchDiscussionActivity"/>
+        <activity android:name=".activities.AddUserToTeamActivity" />
+        <activity android:name=".activities.ManageGroupsActivity" />
+        <activity android:name=".activities.RoundsViewPagerActivity" />
+        <activity android:name=".activities.MatchViewPagerActivity" />
+        <activity android:name=".activities.MatchArrangementActivity" />
+        <activity android:name=".activities.RankingViewPagerActivity" />
+        <activity android:name=".activities.PlayoffActivity" />
+        <activity android:name=".activities.TeamInfoActivity" />
+        <activity android:name=".activities.MatchDiscussionActivity" />
+        <activity android:name=".activities.PlayerInfoActivity" />
+        <activity android:name=".activities.InputReportActivity" />
+        <activity android:name=".activities.ShowReportActivity"/>
 
         <service
             android:name=".services.GenerateScheduleService"
-            android:exported="false"/>
+            android:exported="false" />
         <service
             android:name=".services.GroupDeletionService"
-            android:exported="false"/>
+            android:exported="false" />
         <service
             android:name=".services.SeasonFinisherService"
-            android:exported="false"/>
-
+            android:exported="false" />
         <service
             android:name=".services.CountMatchScoreService"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>

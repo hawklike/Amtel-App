@@ -18,16 +18,18 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.PlayersFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.ShowGroupsMenuFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.TeamsFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.LoginFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.menu.ShowGroupsMenuFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.PlayersFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.ReportsFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.RulesFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.TeamsFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
 
 class MainActivity : AbstractBaseActivity()
@@ -46,7 +48,7 @@ class MainActivity : AbstractBaseActivity()
         viewModel.checkInternetConnection()
         viewModel.getActualSeason()
         viewModel.initEmailPassword()
-        viewModel.initHeadOfLeagueEmail()
+        viewModel.initHeadOfLeague()
         setObservers(savedInstanceState)
         createNavigationDrawer(savedInstanceState)
     }
@@ -123,7 +125,6 @@ class MainActivity : AbstractBaseActivity()
         }
     }
 
-    //TODO: add rules
     private fun createNavigationDrawer(savedInstanceState: Bundle?)
     {
         val profileTitle = AuthManager.profileDrawerOptionMenu
@@ -132,6 +133,8 @@ class MainActivity : AbstractBaseActivity()
         val schedule = PrimaryDrawerItem().withName(getString(R.string.schedule)).withIcon(FontAwesome.Icon.faw_calendar_alt)
         val teams = SecondaryDrawerItem().withName(getString(R.string.teams)).withIcon(FontAwesome.Icon.faw_users)
         val players = SecondaryDrawerItem().withName(getString(R.string.players)).withIcon(FontAwesome.Icon.faw_user)
+        val rules = SecondaryDrawerItem().withName(getString(R.string.rules)).withIcon(FontAwesome.Icon.faw_connectdevelop)
+        val reports = SecondaryDrawerItem().withName(getString(R.string.reports)).withIcon(FontAwesome.Icon.faw_newspaper)
 
         drawer = DrawerBuilder()
             .withActivity(this)
@@ -145,7 +148,9 @@ class MainActivity : AbstractBaseActivity()
                 schedule,
                 DividerDrawerItem(),
                 teams,
-                players
+                players,
+                rules,
+                reports
             )
             .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener
             {
@@ -162,6 +167,8 @@ class MainActivity : AbstractBaseActivity()
                         schedule -> populateFragment(ShowGroupsMenuFragment.newInstance(false))
                         teams -> populateFragment(TeamsFragment.newInstance())
                         players -> populateFragment(PlayersFragment.newInstance())
+                        rules  -> populateFragment(RulesFragment.newInstance())
+                        reports -> populateFragment(ReportsFragment.newInstance())
                     }
                     return false
                 }

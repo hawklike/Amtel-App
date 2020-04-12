@@ -6,36 +6,27 @@ import android.os.Bundle
 import android.view.View.VISIBLE
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.annotation.ColorRes
+import androidx.fragment.app.commit
 import androidx.lifecycle.observe
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
-import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.formatter.ValueFormatter
-import com.github.mikephil.charting.highlight.Highlight
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import cz.prague.cvut.fit.steuejan.amtelapp.App
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowTeamMatchesPagingAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.toPlayer
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.RankingFragmentVM
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.TeamInfoActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.MapFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.TeamInfoActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.RankingFragmentVM
 
-class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
+class TeamInfoActivity : AbstractProfileActivity()
 {
     private val viewModel by viewModels<TeamInfoActivityVM>()
 
@@ -61,18 +52,16 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
     override fun onDestroy()
     {
         super.onDestroy()
-        if(::chartMatchesThisYear.isInitialized)
-            chartMatchesThisYear.setOnChartValueSelectedListener(null)
-        if(::chartMatchesTotal.isInitialized)
-            chartMatchesTotal.setOnChartValueSelectedListener(null)
-        if(::chartSets.isInitialized)
-            chartSets.setOnChartValueSelectedListener(null)
+        if(::chartMatchesThisYear.isInitialized) chartMatchesThisYear.setOnChartValueSelectedListener(null)
+        if(::chartMatchesTotal.isInitialized) chartMatchesTotal.setOnChartValueSelectedListener(null)
+        if(::chartSets.isInitialized) chartSets.setOnChartValueSelectedListener(null)
 
         matchesAdapter?.onClick = null
         matchesRecyclerView?.adapter = null
         matchesAdapter = null
         matchesRecyclerView = null
 
+        playersAdapter?.onClick = null
         playersRecyclerView?.adapter = null
         playersAdapter = null
         playersRecyclerView = null
@@ -87,7 +76,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
             teamId = bundle.getString(TEAM_ID) ?: teamId
             bundle.getParcelableArrayList<Team>(SEASON_TABLE)?.toList()?.let { viewModel.seasonRanking = it }
         }
-        setToolbarTitle("Název týmu se načítá...")
+        setToolbarTitle("Načítám tým...")
         setArrowBack()
         initAll()
     }
@@ -106,6 +95,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
            setTitles()
            setMatches()
            setPlayers()
+           setMap()
        }
        else viewModel.getTeam(teamId)
 
@@ -129,6 +119,13 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
             team = team
         )
 
+        playersAdapter?.onClick = { player ->
+            val intent = Intent(this, PlayerInfoActivity::class.java).apply {
+                putExtra(PlayerInfoActivity.PLAYER_ID, player.playerId)
+            }
+            startActivity(intent)
+        }
+
         playersRecyclerView?.adapter = playersAdapter
     }
 
@@ -138,11 +135,11 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         matchesRecyclerView?.setHasFixedSize(true)
         matchesRecyclerView?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        val query = TeamManager.retrieveMatches(viewModel.mTeam ?: Team(id = "hlen"))
+        val query = TeamRepository.retrieveMatches(viewModel.mTeam ?: Team(id = "hlen"))
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
-            .setPrefetchDistance(4)
-            .setPageSize(10)
+            .setPrefetchDistance(6)
+            .setPageSize(4)
             .build()
 
         val options = FirestorePagingOptions.Builder<Match>()
@@ -150,10 +147,7 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
             .setQuery(query, config, Match::class.java)
             .build()
 
-        matchesAdapter = ShowTeamMatchesPagingAdapter(
-            viewModel.mTeam ?: Team(id = "mucus"),
-            options
-        )
+        matchesAdapter = ShowTeamMatchesPagingAdapter(viewModel.mTeam ?: Team(id = "mucus"), options)
         matchesAdapter?.onClick = { match ->
             val intent = Intent(this, MatchViewPagerActivity::class.java).apply {
                 putExtra(MatchViewPagerActivity.MATCH, match)
@@ -237,49 +231,10 @@ class TeamInfoActivity : AbstractBaseActivity(), OnChartValueSelectedListener
         }
     }
 
-    private fun initChart(chart: PieChart, entries: List<PieEntry>, title: String, @ColorRes vararg colors: Int = intArrayOf(R.color.blue, R.color.red))
+    private fun setMap()
     {
-        val dataSet = PieDataSet(entries, title)
-        dataSet.colors = colors.map { App.getColor(it) }
-        dataSet.valueTextSize = 16f
-        dataSet.valueTextColor =
-            if(colors.size == 1) App.getColor(colors.first())
-            else App.getColor(R.color.white)
-
-        val data = PieData(dataSet)
-
-        data.setValueFormatter(CustomFormatter())
-        chart.setOnChartValueSelectedListener(this)
-
-        chart.legend.isEnabled = false
-        chart.description.isEnabled = false
-
-        chart.holeRadius = 48f
-        chart.transparentCircleRadius = 48f
-        chart.setHoleColor(App.getColor(R.color.veryVeryLightGrey))
-
-        chart.setDrawEntryLabels(false)
-
-        chart.centerText = title
-        chart.setCenterTextSize(16f)
-        chart.setCenterTextColor(App.getColor(R.color.darkGrey))
-
-        chart.data = data
-        chart.animateY(1400, Easing.EaseInOutQuad)
-        chart.invalidate()
-    }
-
-    class CustomFormatter : ValueFormatter()
-    {
-        override fun getFormattedValue(value: Float): String
-                = if(value.toInt() == 0) "" else "${value.toInt()}"
-    }
-
-    override fun onNothingSelected() {}
-
-    override fun onValueSelected(e: Entry, h: Highlight)
-    {
-        val pie = e as? PieEntry
-        toast(pie?.label ?: "Můj vedoucí bakalářky Tomáš Nováček je borec, dokonce i abstinent.")
+        supportFragmentManager.commit {
+            replace(R.id.team_info_map_container, MapFragment.newInstance(viewModel.mTeam?.place))
+        }
     }
 }

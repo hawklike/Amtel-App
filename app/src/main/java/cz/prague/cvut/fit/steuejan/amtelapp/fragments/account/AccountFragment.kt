@@ -1,6 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.TeamManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.HEAD_OF_LEAGUE
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.TEAM_MANAGER
@@ -69,6 +70,7 @@ class AccountFragment : AbstractMainActivityFragment()
         user = mainActivityModel.getUser().value ?: User()
         mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
             user = observedUser?.copy() ?: user
+            Log.i("AccountFragment", "getUser(): user $user observed")
         }
     }
 
@@ -85,7 +87,6 @@ class AccountFragment : AbstractMainActivityFragment()
         {
             adapter.addFragment(AccountBossAddTMFragment.newInstance(), getString(R.string.account_boss_adapter_add_TM))
             adapter.addFragment(AccountBossMakeGroupsFragment.newInstance(), getString(R.string.account_boss_adapter_make_groups))
-//            adapter.addFragment(AccountBossPlayersFragment.newInstance(), getString(R.string.players))
             adapter.addFragment(AccountPersonalFragment.newInstance(), getString(R.string.account_adapter_personal))
         }
         else if(role == TEAM_MANAGER)
@@ -93,7 +94,7 @@ class AccountFragment : AbstractMainActivityFragment()
             launch {
                 setProgressBar(true)
                 user.teamId?.let {
-                    val team = TeamManager.findTeam(it)
+                    val team = TeamRepository.findTeam(it)
                     if(team is ValidTeam) mainActivityModel.setTeam(team)
                 } ?: mainActivityModel.setTeam(NoTeam)
 

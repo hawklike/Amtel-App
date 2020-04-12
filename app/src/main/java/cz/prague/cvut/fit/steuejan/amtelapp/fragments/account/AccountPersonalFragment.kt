@@ -25,7 +25,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toSex
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountPersonalFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.AccountPersonalFragmentVM
 
 class AccountPersonalFragment : AbstractMainActivityFragment()
 {
@@ -115,9 +115,10 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     private fun getUser()
     {
         user = mainActivityModel.getUser().value ?: User()
-        mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
-            user = observedUser?.copy() ?: user
-        }
+//        mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
+//            user = observedUser?.copy() ?: user
+//            Log.i("AccountPersonalFragment", "getUser(): user $user observed")
+//        }
     }
 
     @SuppressLint("SetTextI18n")

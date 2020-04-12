@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -20,8 +21,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMatchActivityFragment
@@ -30,7 +31,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchInputResultFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.MatchInputResultFragmentVM
 
 class MatchInputResultFragment : AbstractMatchActivityFragment()
 {
@@ -174,8 +175,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
         homeName.text = match.home
         awayName.text = match.away
-        sets.text = MatchManager.getResults(round).sets
-        games.text = MatchManager.getResults(round).games
+        sets.text = MatchRepository.getResults(round).sets
+        games.text = MatchRepository.getResults(round).games
 
         firstSetHome.setText(round.homeGemsSet1?.toString())
         firstSetAway.setText(round.awayGemsSet1?.toString())
@@ -226,7 +227,10 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         }
 
         inputResult.setOnClickListener {
-           getInputAndConfirm()
+            val round = match.rounds[round - 1]
+            viewModel.homePlayersBefore = round.homePlayers
+            viewModel.awayPlayersBefore = round.awayPlayers
+            getInputAndConfirm()
         }
 
         reportButton.setOnClickListener {
@@ -272,7 +276,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private fun isReported()
     {
         viewModel.isReported.observe(viewLifecycleOwner) { match ->
-            val result = MatchManager.getResults(match.rounds[round - 1])
+            val result = MatchRepository.getResults(match.rounds[round - 1])
             viewModel.sendEmail(homeTeam, awayTeam, result.sets, result.games, userId)
             toast("Výsledek byl odeslán k posouzení.")
         }
@@ -283,7 +287,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         viewModel.matchAdded.observe(viewLifecycleOwner) {
             countMatchScore()
             dialog.dismiss()
-            val result = MatchManager.getResults(match.rounds[round - 1])
+            val result = MatchRepository.getResults(match.rounds[round - 1])
             sets.text = result.sets
             games.text = result.games
             disableInputButtonIf { !isHeadOfLeague && match.edits[round.toString()] == 0 }
@@ -294,12 +298,12 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private fun countMatchScore()
     {
-        val serviceIntent = Intent(activity!!, CountMatchScoreService::class.java).apply {
+        val intent = Intent(activity!!, CountMatchScoreService::class.java).apply {
             putExtra(CountMatchScoreService.HOME_TEAM, homeTeam)
             putExtra(CountMatchScoreService.AWAY_TEAM, awayTeam)
             putExtra(CountMatchScoreService.MATCH, match)
         }
-        activity!!.startService(serviceIntent)
+        ContextCompat.startForegroundService(activity!!, intent)
     }
 
     private fun handleDialogs()
@@ -336,7 +340,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         viewModel.isTie.observe(viewLifecycleOwner) { isTie ->
             if(isTie)
             {
-                //not working and don't know why
+                //dialog not dismissed and don't know why
                 dialog.dismiss()
                 displayConfirmationDialog(
                     "Zapsat výsledek?",

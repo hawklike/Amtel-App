@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <include layout="@layout/curve" />
+
+        <RelativeLayout
+            android:id="@+id/zzContactLayout"
+            style="@style/CardRelativeLayout"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/zzContactTitle"
+                style="@style/TextViewTitle"
+                android:text="Vedoucí soutěže" />
+
+            <TextView
+                android:id="@+id/contactName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/EditTextStyle"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:textColor="@color/blue"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"
+                android:layout_below="@id/zzContactTitle"
+                android:text="Načítám jméno..."/>
+
+            <TextView
+                android:id="@+id/contactEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/EditTextStyle"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:textSize="13sp"
+                android:layout_below="@id/contactName"
+                android:text="Načítám email.."/>
+
+
+            <TextView
+                android:id="@+id/contactPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/EditTextStyle"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:textSize="13sp"
+                android:layout_below="@id/contactEmail"
+                android:text="Načítám tel. číslo..."/>
+
+        </RelativeLayout>
+
+    <ScrollView
+        android:layout_below="@id/zzContactLayout"
+        android:layout_marginTop="@dimen/card_margin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/zzRulesTitle"
+                style="@style/TextViewTitleLeft"
+                android:layout_marginTop="0dp"
+                android:gravity="center"
+                android:text="Pravidla" />
+
+            <TextView
+                android:id="@+id/rules"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/card_margin"
+                android:layout_marginEnd="@dimen/card_margin"
+                android:layout_below="@id/zzRulesTitle"
+                android:textColor="@color/darkGrey"
+                android:textSize="@dimen/common_text_size"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

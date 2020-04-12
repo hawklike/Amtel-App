@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
@@ -23,10 +24,11 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.callbacks.ItemMoveCallback
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.services.GenerateScheduleService
 import cz.prague.cvut.fit.steuejan.amtelapp.services.GroupDeletionService
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsBossAdapterVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.adapters.ShowGroupsBossAdapterVM
 import java.util.*
 
 class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<Group>)
@@ -78,7 +80,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
                 MaterialDialog(context)
                     .title(text = "Chcete $option viditelnost skupiny ${group.name}?")
                     .show {
-                        positiveButton(R.string.yes) {
+                        positiveButton(text = option.firstLetterUpperCase()) {
                             viewModel.handleVisibility(!group.visibility, getItem(adapterPosition), this@ViewHolder)
                         }
                         negativeButton()
@@ -93,7 +95,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
                 MaterialDialog(context)
                     .title(text = "Opravdu chcete smazat skupinu ${name.text}?")
                     .show {
-                        positiveButton(R.string.yes) {
+                        positiveButton(text = "Smazat") {
                             deleteGroup(getItem(adapterPosition))
                             list.removeAt(adapterPosition)
                             notifyItemRemoved(adapterPosition)
@@ -180,14 +182,13 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
 
         private fun generateSchedule(regenerate: Boolean)
         {
-            val serviceIntent = Intent(context, GenerateScheduleService::class.java).apply {
+            val intent = Intent(context, GenerateScheduleService::class.java).apply {
                 putExtra(GenerateScheduleService.GROUP, getItem(adapterPosition))
                 putExtra(GenerateScheduleService.ROUNDS, rounds)
                 putExtra(GenerateScheduleService.REGENERATE, regenerate)
-
             }
-            context.startService(serviceIntent)
 
+            ContextCompat.startForegroundService(context, intent)
             generateButton.setTextColor(App.getColor(R.color.red))
         }
     }

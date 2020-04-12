@@ -9,6 +9,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.*
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,21 +24,21 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowMessagesFirestoreAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MessageManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MessageRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.services.CountMatchScoreService
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchArrangementActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.MatchArrangementActivityVM
 import java.util.*
 
 class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAdapter.DataLoadedListener
@@ -143,7 +144,7 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
         defaultEndGame.setOnClickListener(null)
         addToCalendar.setOnClickListener(null)
         homeName.setOnClickListener(null)
-        awayName.setOnLongClickListener(null)
+        awayName.setOnClickListener(null)
 
         messagesAdapter?.dataLoadedListener = null
         messagesRecyclerView?.adapter = null
@@ -333,7 +334,7 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
         messagesRecyclerView?.layoutManager = LinearLayoutManager(this)
 
         match.id?.let {
-            val query = MessageManager.getMessages(it, true)
+            val query = MessageRepository.getMessages(it, true)
 
             val options = FirestoreRecyclerOptions.Builder<Message>()
                 .setQuery(query, Message::class.java)
@@ -422,13 +423,13 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
 
     private fun countMatchScore(match: Match, isDefaultLoss: Boolean)
     {
-        val serviceIntent = Intent(this, CountMatchScoreService::class.java).apply {
+        val intent = Intent(this, CountMatchScoreService::class.java).apply {
             putExtra(CountMatchScoreService.HOME_TEAM, homeTeam)
             putExtra(CountMatchScoreService.AWAY_TEAM, awayTeam)
             putExtra(CountMatchScoreService.MATCH, match)
             putExtra(CountMatchScoreService.DEFAULT_LOSS, isDefaultLoss)
         }
-        startService(serviceIntent)
+        ContextCompat.startForegroundService(this, intent)
     }
 
     private fun disableDefaultEndGame()

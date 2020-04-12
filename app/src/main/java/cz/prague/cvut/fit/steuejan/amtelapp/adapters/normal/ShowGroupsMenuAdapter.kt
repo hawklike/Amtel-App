@@ -14,7 +14,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsMenuAdapterVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.adapters.ShowGroupsMenuAdapterVM
 
 class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, private val isRanking: Boolean)
     : RecyclerView.Adapter<ShowGroupsMenuAdapter.ViewHolder>()
