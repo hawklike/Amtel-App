@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <include layout="@layout/toolbar"/>
+
+    <include
+        layout="@layout/curve"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/toolbar" />
+
+    <RelativeLayout
+        android:id="@+id/zzTitleLayout"
+        style="@style/CardRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar">
+
+        <TextView
+            android:id="@+id/zzTitle"
+            style="@style/TextViewTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Titulek" />
+
+        <cz.prague.cvut.fit.steuejan.amtelapp.custom_views.AnchoredEditText
+            android:id="@+id/title"
+            style="@style/TextInputEditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/zzTitle"
+            android:gravity="top"
+            android:layout_marginBottom="16dp"
+            android:maxLines="4"
+            android:minLines="2" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_marginTop="@dimen/card_margin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/zzButtonsLayout"
+        android:layout_below="@id/zzTitleLayout">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/zzLeadLayout"
+                android:layout_marginTop="0dp"
+                style="@style/CardRelativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/zzLead"
+                    style="@style/TextViewTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Perex" />
+
+                <cz.prague.cvut.fit.steuejan.amtelapp.custom_views.AnchoredEditText
+                    android:id="@+id/lead"
+                    style="@style/TextInputEditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/zzLead"
+                    android:gravity="top"
+                    android:layout_marginBottom="16dp"
+                    android:maxLines="6"
+                    android:minLines="4" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                style="@style/CardRelativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:layout_below="@id/zzLeadLayout">
+
+                <TextView
+                    android:id="@+id/zzText"
+                    style="@style/TextViewTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Článek" />
+
+                <EditText
+                    android:id="@+id/text"
+                    style="@style/TextInputEditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/zzText"
+                    android:gravity="top"
+                    android:layout_marginBottom="16dp"
+                    android:maxLines="1000"
+                    android:minLines="10" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/zzButtonsLayout"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_marginStart="@dimen/card_margin"
+        android:layout_marginEnd="@dimen/card_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/saveReport"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button"
+            android:minHeight="10dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:textAllCaps="false"
+            android:stateListAnimator="@null"
+            android:text="Uložit"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/publishReport"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button"
+            android:minHeight="10dp"
+            android:paddingTop="8dp"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:paddingBottom="8dp"
+            android:textAllCaps="false"
+            android:stateListAnimator="@null"
+            android:text="Publikovat"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/deleteReport"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button"
+            android:minHeight="10dp"
+            android:paddingTop="8dp"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            android:paddingBottom="8dp"
+            android:textAllCaps="false"
+            android:stateListAnimator="@null"
+            android:text="Publikovat"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

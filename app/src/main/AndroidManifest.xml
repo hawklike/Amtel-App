@@ -48,6 +48,7 @@
         <activity android:name=".activities.TeamInfoActivity" />
         <activity android:name=".activities.MatchDiscussionActivity" />
         <activity android:name=".activities.PlayerInfoActivity" />
+        <activity android:name=".activities.InputReportActivity" />
 
         <service
             android:name=".services.GenerateScheduleService"
