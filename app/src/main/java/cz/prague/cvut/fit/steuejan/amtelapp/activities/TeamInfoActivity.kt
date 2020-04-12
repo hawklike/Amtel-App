@@ -22,9 +22,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.toPlayer
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.MapFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.RankingFragmentVM
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.TeamInfoActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.MapFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.RankingFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.TeamInfoActivityVM
 
 class TeamInfoActivity : AbstractProfileActivity()
 {

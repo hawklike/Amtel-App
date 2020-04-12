@@ -26,7 +26,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidName
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossMakeGroupsFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.AccountBossMakeGroupsFragmentVM
 
 class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 {

@@ -38,7 +38,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.services.CountMatchScoreService
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchArrangementActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.MatchArrangementActivityVM
 import java.util.*
 
 class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAdapter.DataLoadedListener

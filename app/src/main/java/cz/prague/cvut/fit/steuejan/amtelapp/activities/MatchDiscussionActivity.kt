@@ -20,7 +20,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowMessagesPagingAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MessageManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Message
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchDiscussionActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.MatchDiscussionActivityVM
 
 class MatchDiscussionActivity : AbstractBaseActivity(), ShowMessagesPagingAdapter.DataLoadedListener
 {

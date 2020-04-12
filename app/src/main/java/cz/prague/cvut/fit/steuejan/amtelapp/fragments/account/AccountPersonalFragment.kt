@@ -25,7 +25,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toSex
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountPersonalFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.AccountPersonalFragmentVM
 
 class AccountPersonalFragment : AbstractMainActivityFragment()
 {

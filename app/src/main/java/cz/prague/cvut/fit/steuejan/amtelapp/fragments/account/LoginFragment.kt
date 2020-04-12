@@ -18,7 +18,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidEmail
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidPassword
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.LoginFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.LoginFragmentVM
 
 class LoginFragment : AbstractMainActivityFragment()
 {

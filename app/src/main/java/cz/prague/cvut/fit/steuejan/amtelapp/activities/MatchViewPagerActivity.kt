@@ -14,7 +14,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.match.MatchViewFactory
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchViewPagerActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.MatchViewPagerActivityVM
 
 class MatchViewPagerActivity : AbstractViewPagerActivity()
 {

@@ -31,7 +31,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchInputResultFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.MatchInputResultFragmentVM
 
 class MatchInputResultFragment : AbstractMatchActivityFragment()
 {

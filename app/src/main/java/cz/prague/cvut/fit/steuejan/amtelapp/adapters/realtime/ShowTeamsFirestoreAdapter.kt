@@ -15,12 +15,13 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.TeamsAdapterVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.adapters.TeamsAdapterVM
 
 class ShowTeamsFirestoreAdapter(private val context: Context, options: FirestoreRecyclerOptions<Team>)
     : FirestoreRecyclerAdapter<Team, ShowTeamsFirestoreAdapter.ViewHolder>(options)
 {
-    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(TeamsAdapterVM::class.java)
+    private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
+        TeamsAdapterVM::class.java)
 
     @Suppress("MemberVisibilityCanBePrivate")
     var groups: List<String> = listOf()

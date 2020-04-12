@@ -24,7 +24,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Playoff.Companion.PLAYOFF_DAYS
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountBossMakeGroupsFragment.Companion.GROUPS
 import cz.prague.cvut.fit.steuejan.amtelapp.services.SeasonFinisherService
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ManageGroupsActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.ManageGroupsActivityVM
 import java.util.*
 import kotlin.collections.ArrayList
 

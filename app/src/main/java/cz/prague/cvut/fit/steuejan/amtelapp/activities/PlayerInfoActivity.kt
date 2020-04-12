@@ -18,7 +18,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.toPlayer
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.PlayerInfoBinding
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidMatch
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.PlayerInfoActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.PlayerInfoActivityVM
 import java.util.*
 
 class PlayerInfoActivity : AbstractProfileActivity()

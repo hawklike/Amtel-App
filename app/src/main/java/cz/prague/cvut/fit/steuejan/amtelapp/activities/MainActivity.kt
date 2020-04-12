@@ -20,15 +20,15 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.PlayersFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.RulesFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.ShowGroupsMenuFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.TeamsFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.PlayersFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.RulesFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.menu.ShowGroupsMenuFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.TeamsFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.LoginFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
 
 class MainActivity : AbstractBaseActivity()

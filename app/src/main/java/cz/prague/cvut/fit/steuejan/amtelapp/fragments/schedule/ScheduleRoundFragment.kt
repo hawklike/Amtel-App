@@ -35,8 +35,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.PlayoffActivityVM
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ScheduleRoundFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.PlayoffActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.ScheduleRoundFragmentVM
 
 class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 {
