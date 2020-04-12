@@ -6,6 +6,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Report
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.ReportRepository
 
 class ReportDAO : DAO
 {
@@ -32,5 +33,5 @@ class ReportDAO : DAO
     fun retrieveAllReports(): Query
         = Firebase.firestore
         .collection(collection)
-        .orderBy("date")
+        .orderBy(ReportRepository.DATE, Query.Direction.DESCENDING)
 }

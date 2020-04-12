@@ -85,8 +85,6 @@ class InputReportActivity : AbstractBaseActivity()
             title = binding.title.text.toString()
             lead = binding.lead.text.toString()
             text = binding.text.text.toString()
-            if(!title.isNullOrBlank() || !lead.isNullOrBlank() || !text.isNullOrBlank())
-                toast("Uloženo")
         }
 
         PreferenceManager
@@ -148,6 +146,29 @@ class InputReportActivity : AbstractBaseActivity()
 
     private fun deleteReport()
     {
+        binding.deleteReport.setOnClickListener {
+            MaterialDialog(this).show {
+                title(text = "Opravdu chcete smazat článek?")
+                positiveButton(text = "Smazat") {
+                    progressDialog.show()
+                    viewModel.deleteReport()
+                }
+                negativeButton()
+            }
+        }
 
+        viewModel.reportDeleted.observe(this) { deleted ->
+            progressDialog.dismiss()
+            if(deleted)
+            {
+                toast("Smazáno")
+                with(binding) {
+                    title.text?.clear()
+                    lead.text?.clear()
+                    text.text?.clear()
+                }
+            }
+            else toast("Smazání se nezdařilo!")
+        }
     }
 }

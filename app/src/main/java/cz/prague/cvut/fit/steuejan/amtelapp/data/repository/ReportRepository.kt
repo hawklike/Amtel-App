@@ -1,6 +1,7 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.data.repository
 
 import android.util.Log
+import com.google.firebase.firestore.Query
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.ReportDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Report
 import kotlinx.coroutines.Dispatchers
@@ -9,7 +10,7 @@ import kotlinx.coroutines.withContext
 object ReportRepository
 {
     const val TAG = "ReportRepository"
-    const val PUBLISHED = "published"
+    const val DATE = "date"
 
     suspend fun setReport(report: Report): Report? = withContext(Dispatchers.IO)
     {
@@ -26,19 +27,22 @@ object ReportRepository
         }
     }
 
-    suspend fun updateReport(documentId: String?, mapOfFieldsAndValues: Map<String, Any?>): Boolean = withContext(Dispatchers.IO)
+    suspend fun deleteReport(reportId: String?): Boolean = withContext(Dispatchers.IO)
     {
-        if(documentId == null) return@withContext false
+        if(reportId == null) return@withContext false
         return@withContext try
         {
-            ReportDAO().update(documentId, mapOfFieldsAndValues)
-            Log.i(TAG, "updateReport(): report with id $documentId successfully updated with $mapOfFieldsAndValues")
+            ReportDAO().delete(reportId)
+            Log.i(TAG, "deleteReport(): report with id $reportId successfully deleted")
             true
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateReport(): report with id $documentId not updated because ${ex.message}")
+            Log.e(TAG, "deleteReport(): report with id $reportId not deleted because ${ex.message}")
             false
         }
     }
+
+    fun retrieveAllReports(): Query
+            = ReportDAO().retrieveAllReports()
 }

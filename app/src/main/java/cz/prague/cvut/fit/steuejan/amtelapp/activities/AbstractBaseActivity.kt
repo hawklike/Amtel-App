@@ -62,8 +62,8 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
             .title(R.string.logout)
             .message(R.string.logout_message)
             .show{
-                positiveButton(R.string.yes) { logout() }
-                negativeButton(R.string.no)
+                positiveButton(text = "Odhlásit") { logout() }
+                negativeButton()
             }
     }
 

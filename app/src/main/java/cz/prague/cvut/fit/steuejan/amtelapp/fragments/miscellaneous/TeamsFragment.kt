@@ -15,8 +15,8 @@ import com.google.firebase.firestore.Query
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.TeamInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowTeamsPagingAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.FragmentTeamsBinding
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
@@ -154,7 +154,7 @@ class TeamsFragment : AbstractMainActivityFragment(), ShowTeamsPagingAdapter.Dat
     {
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
-            .setPrefetchDistance(2)
+            .setPrefetchDistance(5)
             .setPageSize(5)
             .build()
 

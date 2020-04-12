@@ -16,15 +16,15 @@ import com.github.mikephil.charting.charts.PieChart
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowTeamMatchesPagingAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.toPlayer
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.MapFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.RankingFragmentVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.TeamInfoActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.RankingFragmentVM
 
 class TeamInfoActivity : AbstractProfileActivity()
 {
@@ -138,8 +138,8 @@ class TeamInfoActivity : AbstractProfileActivity()
         val query = TeamRepository.retrieveMatches(viewModel.mTeam ?: Team(id = "hlen"))
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
-            .setPrefetchDistance(4)
-            .setPageSize(10)
+            .setPrefetchDistance(6)
+            .setPageSize(4)
             .build()
 
         val options = FirestorePagingOptions.Builder<Match>()

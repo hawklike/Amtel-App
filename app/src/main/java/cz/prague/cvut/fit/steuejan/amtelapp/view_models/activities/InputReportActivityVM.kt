@@ -10,16 +10,14 @@ import kotlinx.coroutines.launch
 
 class InputReportActivityVM : ViewModel()
 {
-    var reportId: String? = null
     var report: Report? = null
-
     var published: Boolean = false
         private set
 
     /*---------------------------------------------------*/
 
-//    private val _reportSaved = SingleLiveEvent<Boolean>()
-//    val reportSaved: LiveData<Boolean> = _reportSaved
+    private val _reportDeleted = SingleLiveEvent<Boolean>()
+    val reportDeleted: LiveData<Boolean> = _reportDeleted
 
     /*---------------------------------------------------*/
 
@@ -28,25 +26,20 @@ class InputReportActivityVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-//    fun saveReport(title: String, lead: String, text: String)
-//    {
-//        viewModelScope.launch {
-//            ReportRepository.setReport(Report(reportId, title, lead, text))?.let {
-//                reportId = it.id
-//                _reportSaved.value = true
-//            }
-//            ?: let { _reportSaved.value = false }
-//        }
-//    }
-
     fun publishRecord(title: String, lead: String, text: String)
     {
         viewModelScope.launch {
-            ReportRepository.setReport(Report(reportId, title, lead, text))?.let {
-                reportId = it.id
+            ReportRepository.setReport(Report(null, title, lead, text))?.let {
                 published = true
                 _reportPublished.value = true
             } ?: let { _reportPublished.value = false }
+        }
+    }
+
+    fun deleteReport()
+    {
+        viewModelScope.launch {
+            _reportDeleted.value = ReportRepository.deleteReport(report?.id)
         }
     }
 }

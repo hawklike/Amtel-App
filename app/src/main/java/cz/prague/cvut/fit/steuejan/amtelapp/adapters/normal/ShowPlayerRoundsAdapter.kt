@@ -7,10 +7,10 @@ import androidx.annotation.ColorRes
 import androidx.recyclerview.widget.RecyclerView
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.getColor
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Player
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.RoundCardSquareBinding
 
 class ShowPlayerRoundsAdapter(private val rounds: List<Round>, private val player: Player)
@@ -42,13 +42,13 @@ class ShowPlayerRoundsAdapter(private val rounds: List<Round>, private val playe
         val round = getItem(position)
         val result = MatchRepository.getResults(round)
 
-        with(holder) {
-            binding.homePlayers.text = round.homePlayers.joinToString(", ") { "${it.name} ${it.surname}" }
-            binding.awayPlayers.text = round.awayPlayers.joinToString(", ") { "${it.name} ${it.surname}" }
-            binding.sets.text = result.sets
-            binding.games.text = result.games
-            binding.date.text = round.date.toMyString()
-            resolveWinner(this, round)
+        with(holder.binding) {
+            homePlayers.text = round.homePlayers.joinToString(", ") { "${it.name} ${it.surname}" }
+            awayPlayers.text = round.awayPlayers.joinToString(", ") { "${it.name} ${it.surname}" }
+            sets.text = result.sets
+            games.text = result.games
+            date.text = round.date.toMyString()
+            resolveWinner(holder, round)
         }
     }
 
