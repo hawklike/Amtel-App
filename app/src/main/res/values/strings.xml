@@ -44,7 +44,7 @@
     <string name="password_change_failure_message">Zkuste se prosím odhlásit a pak znovu přihlásit.</string>
     <string name="password_change_confirmation_title">Opravdu chcete změnit heslo?</string>
     <string name="autoEmail_template_head">Dobrý den,\nbyl Vám udělen přístup do aplikace AMTEL Opava. Vaše přiřazená role je vedoucí týmu. Pro přihlášení zadejte v aplikaci následující kombinaci:\n\n</string>
-    <string name="autoEmail_template_foot">Heslo Vám bylo náhodně vygenerováno. Můžete si jej změnit v aplikaci.\n\nS přáním příjemného dne,\nMgr. Jiří Vaněk\n\nPoznámka: Tento email je automaticky vygenerovaný, neodpovídejte na něj prosím.</string>
+    <string name="autoEmail_template_foot">Heslo Vám bylo náhodně vygenerováno. Můžete si jej změnit v aplikaci.\n\nS přáním příjemného dne,\nAdministrátor aplikace AMTEL Opava\n\nPoznámka: Tento email je automaticky vygenerovaný, neodpovídejte na něj prosím.</string>
     <string name="personal_information">Osobní údaje</string>
     <string name="birthdate">Datum narození</string>
     <string name="phone_number">Telefonní číslo</string>
@@ -203,4 +203,5 @@
     <string name="dash">–</string>
     <string name="reports">Zpravodaje</string>
     <string name="actualize">Aktualizovat</string>
+    <string name="adminEmail">admin.amtelopava@seznam.cz</string>
 </resources>

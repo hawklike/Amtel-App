@@ -5,15 +5,14 @@ import android.text.Editable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.*
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
@@ -60,7 +59,7 @@ class AccountBossAddTMFragmentVM : ViewModel()
                 UserRepository.setUser(user)?.let {
                     EmailSender.sendEmail(
                         email,
-                        App.context.getString(R.string.verificationEmail_subject),
+                        context.getString(R.string.verificationEmail_subject),
                         createVerificationTemplate(email, password))
                     _registration.value = ValidRegistration
                 } ?: let { _registration.value = InvalidRegistration }
@@ -92,9 +91,9 @@ class AccountBossAddTMFragmentVM : ViewModel()
 
     private fun createVerificationTemplate(email: String, password: String): String
     {
-        val head = App.context.getString(R.string.autoEmail_template_head)
+        val head = context.getString(R.string.autoEmail_template_head)
         val body = "email: $email\nheslo: $password\n\n"
-        val foot = App.context.getString(R.string.autoEmail_template_foot)
+        val foot = context.getString(R.string.autoEmail_template_foot)
         return "$head$body$foot"
     }
 

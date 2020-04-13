@@ -185,13 +185,22 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
         viewModelScope.launch {
             if(EmailSender.headOfLeagueEmail == null)
             {
-                UserRepository.findUsers("role", UserRole.HEAD_OF_LEAGUE.toString())?.let {
-                    if(it.isNotEmpty())
+                UserRepository.findUsers("role", UserRole.HEAD_OF_LEAGUE.toString())?.let { users ->
+                    if(users.isNotEmpty())
                     {
-                        val headOfLeague = it.first()
-                        LeagueRepository.headOfLeague = headOfLeague
-                        EmailSender.headOfLeagueEmail = headOfLeague.email
-                        _headOfLeague.value = headOfLeague
+                        users.toMutableList().let { mutableUsers ->
+                            mutableUsers.find { it.email == context.getString(R.string.adminEmail) } ?.let { admin ->
+                                mutableUsers.remove(admin)
+                            }
+
+                            if(mutableUsers.isNotEmpty())
+                            {
+                                val headOfLeague = mutableUsers.first()
+                                LeagueRepository.headOfLeague = headOfLeague
+                                EmailSender.headOfLeagueEmail = headOfLeague.email
+                                _headOfLeague.value = headOfLeague
+                            }
+                        }
                     }
                     else if(repeat != 0)
                     {
