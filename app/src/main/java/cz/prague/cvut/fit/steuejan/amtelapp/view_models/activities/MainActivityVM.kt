@@ -14,6 +14,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.EmailRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.PLAYER
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
@@ -111,6 +113,11 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
             val user = UserRepository.findUser(uid)
             if(user != null)
             {
+                if(user.role.toRole() == PLAYER)
+                {
+                    _userAccountDeleted.value = true
+                    return@launch
+                }
                 isUserLoggedIn(SignedUser(user))
                 setUser(user)
                 Log.i(AbstractBaseActivity.TAG, "displayAccount(): $user currently logged in")

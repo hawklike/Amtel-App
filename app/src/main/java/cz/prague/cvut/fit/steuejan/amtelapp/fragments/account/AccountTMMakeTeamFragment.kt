@@ -24,6 +24,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Companion.TEAM
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.EditUserActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayerInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowTeamPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -38,6 +39,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         fun newInstance(): AccountTMMakeTeamFragment = AccountTMMakeTeamFragment()
         const val NEW_USER_CODE = 1
+        const val EDIT_USER_CODE = 2
     }
 
     private val viewModel by viewModels<AccountTMMakeTeamFragmentVM>()
@@ -106,6 +108,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         super.onDestroyView()
         adapter?.onDelete = null
         adapter?.onClick = null
+        adapter?.onEdit = null
         recyclerView?.adapter = null
         recyclerView = null
         adapter = null
@@ -164,6 +167,13 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
                 putExtra(PlayerInfoActivity.PLAYER, user)
             }
             startActivity(intent)
+        }
+
+        adapter?.onEdit = { user ->
+            val intent = Intent(activity, EditUserActivity::class.java).apply {
+                putExtra(EditUserActivity.USER, user)
+            }
+            startActivityForResult(intent, EDIT_USER_CODE)
         }
 
         recyclerView?.adapter = adapter

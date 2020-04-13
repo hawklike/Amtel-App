@@ -12,6 +12,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.PLAYER
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
@@ -42,11 +43,15 @@ class LoginFragmentVM : ViewModel()
                 if(firebaseUser != null)
                 {
                     val user = UserRepository.findUser(firebaseUser.uid)
-                    userState.value = user?.let { SignedUser(it, user.firstSign) } ?: DeletedUser
-                    user?.let {
-                        if(user.firstSign)
-                            UserRepository.updateUser(user.id, mapOf("firstSign" to false))
+
+                    if(user != null)
+                    {
+                        if(user.role.toRole() == PLAYER) userState.value = DeletedUser
+                        else userState.value = SignedUser(user, user.firstSign)
+
+                        if(user.firstSign) UserRepository.updateUser(user.id, mapOf("firstSign" to false))
                     }
+                    else userState.value = DeletedUser
                 }
                 else userState.value = NoUser
             }
