@@ -117,10 +117,11 @@
                     android:layout_marginStart="8dp"
                     android:elevation="0dp"
                     android:minHeight="0dp"
+                    android:clickable="false"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
                     android:text="Předat roli"
-                    android:textColor="@color/blue"
+                    android:textColor="@color/middleLightGrey"
                     android:textSize="@dimen/common_text_size" />
 
                 <TextView
@@ -135,7 +136,10 @@
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/saveButton"
                     style="@style/FloatingActionButton"
+                    android:layout_marginEnd="1dp"
                     android:layout_below="@id/birthdate"
+                    android:clickable="false"
+                    app:backgroundTint="@color/middleLightGrey"
                     android:layout_alignParentEnd="true"
                     android:layout_marginBottom="8dp"
                     app:srcCompat="@drawable/ic_save_white_24dp" />

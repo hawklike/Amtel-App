@@ -81,8 +81,12 @@ class ShowUsersPagingAdapter(options: FirestorePagingOptions<User>, private val 
             }
 
             with(holder.editButton) {
-                visibility = if(user.email == context.getString(R.string.adminEmail)) GONE
-                else VISIBLE
+                visibility =
+                    if(user.role.toRole() == HEAD_OF_LEAGUE) GONE
+                    else VISIBLE
+
+//                visibility = if(user.email == context.getString(R.string.adminEmail)) GONE
+//                else VISIBLE
             }
         }
         else
