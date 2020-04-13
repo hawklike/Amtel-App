@@ -7,12 +7,12 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.EmailRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.EmailRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
@@ -100,15 +100,22 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     /*---------------------------------------------------*/
 
+    private val _userAccountDeleted = SingleLiveEvent<Boolean>()
+    val userAccountDeleted: LiveData<Boolean> = _userAccountDeleted
+
+    /*---------------------------------------------------*/
+
     fun prepareUser(uid: String)
     {
         viewModelScope.launch {
             val user = UserRepository.findUser(uid)
-            user?.let {
-                isUserLoggedIn(SignedUser(it))
-                setUser(it)
+            if(user != null)
+            {
+                isUserLoggedIn(SignedUser(user))
+                setUser(user)
                 Log.i(AbstractBaseActivity.TAG, "displayAccount(): $user currently logged in")
             }
+            else _userAccountDeleted.value = true
         }
     }
 

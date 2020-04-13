@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
@@ -28,6 +29,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.PlayersFragm
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.ReportsFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.RulesFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.TeamsFragment
+import cz.prague.cvut.fit.steuejan.amtelapp.states.DeletedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
@@ -68,6 +70,7 @@ class MainActivity : AbstractBaseActivity()
         updateDrawer()
         showProgressBar()
         checkInternetConnection()
+        userAccountDeleted()
     }
 
     private fun checkInternetConnection()
@@ -107,20 +110,35 @@ class MainActivity : AbstractBaseActivity()
         }
 
         viewModel.isUserLoggedIn().observe(this) { user ->
-            if(user is SignedUser)
+            when(user)
             {
-                Log.i(TAG, "displayAccount(): ${user.self} is signed")
-                if(::drawer.isInitialized)
-                    drawer.updateName(0, StringHolder(getString(R.string.account)))
-                baseActivityVM.setLogoutIcon(true)
-                populateFragment(AccountFragment.newInstance())
+                is SignedUser -> {
+                    Log.i(TAG, "displayAccount(): ${user.self} is signed")
+                    if(::drawer.isInitialized) drawer.updateName(0, StringHolder(getString(R.string.account)))
+                    baseActivityVM.setLogoutIcon(true)
+                    populateFragment(AccountFragment.newInstance())
+                }
+                is DeletedUser -> userDeleted(0)
+                else -> {
+                    Log.i(TAG, "displayAccount(): user unsigned")
+                    if(::drawer.isInitialized) drawer.updateName(0, StringHolder(getString(R.string.login)))
+                    populateFragment(LoginFragment.newInstance())
+                }
             }
-            else
+        }
+    }
+
+    private fun userAccountDeleted()
+    {
+        viewModel.userAccountDeleted.observe(this) { deleted ->
+            if(deleted)
             {
-                Log.i(TAG, "displayAccount(): user unsigned")
-                if(::drawer.isInitialized)
-                    drawer.updateName(0, StringHolder(getString(R.string.login)))
-                populateFragment(LoginFragment.newInstance())
+                MaterialDialog(this).show {
+                    title(text = "Neplatný účet")
+                    message(text = "Váš účet byl smazán.")
+                    positiveButton()
+                    onDismiss { userDeleted(2) }
+                }
             }
         }
     }
@@ -130,7 +148,7 @@ class MainActivity : AbstractBaseActivity()
         val profileTitle = AuthManager.profileDrawerOptionMenu
         val profile = PrimaryDrawerItem().withIdentifier(0).withName(profileTitle).withIcon(FontAwesome.Icon.faw_user_edit)
         val results = PrimaryDrawerItem().withName(getString(R.string.results)).withIcon(FontAwesome.Icon.faw_list_ol)
-        val schedule = PrimaryDrawerItem().withName(getString(R.string.schedule)).withIcon(FontAwesome.Icon.faw_calendar_alt)
+        val schedule = PrimaryDrawerItem().withIdentifier(2).withName(getString(R.string.schedule)).withIcon(FontAwesome.Icon.faw_calendar_alt)
         val teams = SecondaryDrawerItem().withName(getString(R.string.teams)).withIcon(FontAwesome.Icon.faw_users)
         val players = SecondaryDrawerItem().withName(getString(R.string.players)).withIcon(FontAwesome.Icon.faw_user)
         val rules = SecondaryDrawerItem().withName(getString(R.string.rules)).withIcon(FontAwesome.Icon.faw_connectdevelop)
@@ -187,6 +205,13 @@ class MainActivity : AbstractBaseActivity()
         viewModel.getDrawerSelectedPosition().observe(this) {
             if(::drawer.isInitialized) drawer.setSelectionAtPosition(it, false)
         }
+    }
+
+    private fun userDeleted(menuItem: Long)
+    {
+        logout()
+        drawer.setSelection(menuItem, true)
+        viewModel.setDrawerSelectedPosition(drawer.currentSelectedPosition)
     }
 
     private fun populateFragment(fragment: AbstractMainActivityFragment)

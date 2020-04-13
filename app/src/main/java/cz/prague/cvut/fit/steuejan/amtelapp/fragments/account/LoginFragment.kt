@@ -14,10 +14,7 @@ import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
-import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidEmail
-import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidPassword
-import cz.prague.cvut.fit.steuejan.amtelapp.states.NoUser
-import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.LoginFragmentVM
 
 class LoginFragment : AbstractMainActivityFragment()
@@ -132,26 +129,26 @@ class LoginFragment : AbstractMainActivityFragment()
 
             val dialog = viewModel.createAfterDialog(user)
             val title = dialog.title
-            val message = dialog.message
+            val welcomeFirstMessage = dialog.message
 
             if(user is NoUser) passwordLayout.editText?.text?.clear()
-            if(user is SignedUser && message == null) {
+            else if(user is SignedUser && welcomeFirstMessage == null)
+            {
                 userSignedIn(user)
                 return@observe
             }
+            else userDeleted()
 
             MaterialDialog(activity!!)
                 .title(text = title).also {
-                    if(message != null) it.message(text = message)
+                    if(welcomeFirstMessage != null)
+                        it.message(text = welcomeFirstMessage)
                 }
                 .show {
                     positiveButton(R.string.ok)
                     onDismiss {
                         if(user is SignedUser)
-                        {
                             userSignedIn(user)
-
-                        }
                     }
                 }
         }
@@ -161,6 +158,12 @@ class LoginFragment : AbstractMainActivityFragment()
     {
         mainActivityModel.isUserLoggedIn(SignedUser(user.self, user.firstSign))
         mainActivityModel.setUser(user.self)
+    }
+
+    private fun userDeleted()
+    {
+        mainActivityModel.isUserLoggedIn(DeletedUser)
+        mainActivityModel.setUser(null)
     }
 
     private fun deleteErrors()
