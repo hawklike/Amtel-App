@@ -41,6 +41,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     private var accountPersonalLayout: RelativeLayout? = null
     private var changePasswordLayout: RelativeLayout? = null
     private var personalInfoLayout: RelativeLayout? = null
+    private var changeEmailLayout: RelativeLayout? = null
 
     private lateinit var fullNameLayout: TextInputLayout
     private lateinit var birthdateLayout: TextInputLayout
@@ -52,6 +53,9 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     private lateinit var confirmPasswordLayout: TextInputLayout
     private lateinit var changePassword: FloatingActionButton
 
+    private lateinit var emailLayout: TextInputLayout
+    private lateinit var changeEmail: FloatingActionButton
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
         return inflater.inflate(R.layout.account_personal, container, false)
@@ -62,19 +66,23 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
-        accountPersonalLayout = view.findViewById(R.id.account_personal)
-        changePasswordLayout = view.findViewById(R.id.account_personal_change_password)
         personalInfoLayout = view.findViewById(R.id.account_personal_personal_information)
+        changePasswordLayout = view.findViewById(R.id.account_personal_change_password)
+        accountPersonalLayout = view.findViewById(R.id.account_personal)
 
-        fullNameLayout = view.findViewById(R.id.account_personal_personal_information_fullName)
+        addPersonalInfo = view.findViewById(R.id.account_personal_personal_information_add_button)
         birthdateLayout = view.findViewById(R.id.account_personal_personal_information_birthdate)
         phoneNumberLayout = view.findViewById(R.id.account_personal_personal_information_phone)
+        fullNameLayout = view.findViewById(R.id.account_personal_personal_information_fullName)
         sexGroup = view.findViewById(R.id.account_personal_personal_information_sex)
-        addPersonalInfo = view.findViewById(R.id.account_personal_personal_information_add_button)
 
-        passwordLayout = view.findViewById(R.id.account_personal_password)
         confirmPasswordLayout = view.findViewById(R.id.account_personal_password_confirmation)
         changePassword = view.findViewById(R.id.account_personal_add_password_button)
+        passwordLayout = view.findViewById(R.id.account_personal_password)
+
+        changeEmail = view.findViewById(R.id.account_personal_change_email_button)
+        changeEmailLayout = view.findViewById(R.id.account_personal_change_email)
+        emailLayout = view.findViewById(R.id.account_personal_email)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -88,16 +96,19 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     {
         super.onDestroyView()
         sexGroup.setOnCheckedChangeListener(null)
-        changePassword.setOnClickListener(null)
         addPersonalInfo.setOnClickListener(null)
+        changePassword.setOnClickListener(null)
+        changeEmail.setOnClickListener(null)
 
+        accountPersonalLayout?.removeAllViews()
         changePasswordLayout?.removeAllViews()
         personalInfoLayout?.removeAllViews()
-        accountPersonalLayout?.removeAllViews()
+        changeEmailLayout?.removeAllViews()
 
+        accountPersonalLayout = null
         changePasswordLayout = null
         personalInfoLayout = null
-        accountPersonalLayout = null
+        changeEmailLayout = null
     }
 
     private fun setObservers()
@@ -110,15 +121,12 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         confirmPhoneNumber()
         isPasswordChanged()
         isPersonalInformationSaved()
+        isEmailChanged()
     }
 
     private fun getUser()
     {
         user = mainActivityModel.getUser().value ?: User()
-//        mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
-//            user = observedUser?.copy() ?: user
-//            Log.i("AccountPersonalFragment", "getUser(): user $user observed")
-//        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -176,6 +184,13 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
                 }
             }
         }
+
+        changeEmail.setOnClickListener {
+            val email = emailLayout.editText?.text.toString().trim()
+            emailLayout.error = null
+            if(viewModel.confirmEmail(email)) displayChangeEmailDialog(email)
+            else emailLayout.error = getString(R.string.email_failure_message)
+        }
     }
 
     private fun isPersonalInformationSaved()
@@ -223,7 +238,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
                     passwordLayout.error = password.errorMessage
                     passwordLayout.editText?.text?.clear()
                 }
-                is ValidPassword -> displayDialog(password.self)
+                is ValidPassword -> displayChangePasswordDialog(password.self)
             }
         }
     }
@@ -277,6 +292,37 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         }
     }
 
+    private fun isEmailChanged()
+    {
+        viewModel.isEmailChanged().observe(viewLifecycleOwner) { email ->
+            if(email is ValidEmail)
+            {
+                viewModel.updateUserEmail(user, email.self)
+                viewModel.isUserUpdated().observe(viewLifecycleOwner) { updated ->
+                    if(updated)
+                    {
+                        progressDialog.dismiss()
+                        showDialog("Email byl úspěšně změněn", "Nyní se přihlásíte pomocí nového emailu.")
+                    }
+                }
+            }
+            else
+            {
+                progressDialog.dismiss()
+                showDialog("Email se nepodařilo změnit", (email as InvalidEmail).errorMessage)
+            }
+        }
+    }
+
+    private fun showDialog(title: String, message: String)
+    {
+        MaterialDialog(activity!!).show {
+            title(text = title)
+            message(text = message)
+            positiveButton()
+        }
+    }
+
     private fun deletePersonalInfo()
     {
         fullNameLayout.error = null
@@ -284,7 +330,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         phoneNumberLayout.error = null
     }
 
-    private fun displayDialog(newPassword: String)
+    private fun displayChangePasswordDialog(newPassword: String)
     {
         MaterialDialog(activity!!)
             .title(R.string.password_change_confirmation_title)
@@ -296,6 +342,21 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
                 negativeButton {
                     passwordLayout.editText?.text?.clear()
                     confirmPasswordLayout.editText?.text?.clear()
+                }
+            }
+    }
+
+    private fun displayChangeEmailDialog(newEmail: String)
+    {
+        MaterialDialog(activity!!)
+            .title(text = "Opravdu chcete změnit email?")
+            .show {
+                positiveButton(text = "Změnit") {
+                    viewModel.changeEmail(newEmail)
+                    progressDialog.show()
+                }
+                negativeButton {
+                    emailLayout.editText?.text?.clear()
                 }
             }
     }

@@ -112,7 +112,8 @@ class EditUserActivity : AbstractBaseActivity()
 
             changeRoleButton.setOnClickListener {
                 viewModel.team?.let { team ->
-                    val emails = team.users.map { it.email }
+                    val emails = team.users.map { it.email }.toMutableList()
+                    emails.remove(viewModel.user?.email ?: "")
 
                     MaterialDialog(this@EditUserActivity).show {
                         title(text = "Předat roli jinému hráči")
@@ -120,6 +121,8 @@ class EditUserActivity : AbstractBaseActivity()
                             viewModel.chosenEmail = text.toString()
                             viewModel.emailIdx = index
                         }
+                        positiveButton()
+                        negativeButton()
                     }
                 }
             }
