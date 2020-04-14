@@ -67,7 +67,7 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
             }
     }
 
-    private fun logout()
+    fun logout()
     {
         Log.i(TAG, "logout")
         auth.signOut()

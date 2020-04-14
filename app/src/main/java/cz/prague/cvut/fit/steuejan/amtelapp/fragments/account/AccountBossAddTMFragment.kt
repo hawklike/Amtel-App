@@ -211,7 +211,6 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
             }
     }
 
-    //TODO: refactor this
     private fun isRegistrationSuccessful()
     {
         viewModel.registration.observe(viewLifecycleOwner) { registration ->

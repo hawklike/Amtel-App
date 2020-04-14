@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
@@ -24,6 +25,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AddUserToTeamActivity.Companion.TEAM
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.EditUserActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayerInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowTeamPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -38,6 +40,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         fun newInstance(): AccountTMMakeTeamFragment = AccountTMMakeTeamFragment()
         const val NEW_USER_CODE = 1
+        const val EDIT_USER_CODE = 2
     }
 
     private val viewModel by viewModels<AccountTMMakeTeamFragmentVM>()
@@ -55,6 +58,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     private lateinit var createTeam: FloatingActionButton
 
     private lateinit var addPlayer: RelativeLayout
+    private lateinit var refreshLayout: SwipeRefreshLayout
 
     private var recyclerView: RecyclerView? = null
     private var adapter: ShowTeamPlayersAdapter? = null
@@ -70,13 +74,13 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         super.onViewCreated(view, savedInstanceState)
         createTeamLayout = view.findViewById(R.id.account_tm_make_team)
-
         nameLayout = view.findViewById(R.id.account_tm_make_team_name)
         placeLayout = view.findViewById(R.id.account_tm_make_team_place)
         playingDaysLayout = view.findViewById(R.id.account_tm_make_team_playing_day)
         createTeam = view.findViewById(R.id.account_tm_make_team_create)
         addPlayer = view.findViewById(R.id.account_tm_make_team_add_player)
         recyclerView = view.findViewById(R.id.account_tm_make_team_players_recyclerView)
+        refreshLayout = view.findViewById(R.id.account_tm_make_team_refresh_players)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -85,6 +89,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         getUser()
         getTeam()
         setupRecycler()
+        setupRefreshLayout()
         updateFields()
         setObservers()
         setListeners()
@@ -98,7 +103,9 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         {
             val users = (team as ValidTeam).self.users
             populateAdapter(users)
+            refreshLayout.isRefreshing = false
         }
+        else refreshLayout.isRefreshing = false
     }
 
     override fun onDestroyView()
@@ -106,6 +113,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         super.onDestroyView()
         adapter?.onDelete = null
         adapter?.onClick = null
+        adapter?.onEdit = null
         recyclerView?.adapter = null
         recyclerView = null
         adapter = null
@@ -166,7 +174,22 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
             startActivity(intent)
         }
 
+        adapter?.onEdit = { user ->
+            val intent = Intent(activity, EditUserActivity::class.java).apply {
+                putExtra(EditUserActivity.USER, user)
+            }
+            startActivityForResult(intent, EDIT_USER_CODE)
+        }
+
         recyclerView?.adapter = adapter
+    }
+
+    private fun setupRefreshLayout()
+    {
+        refreshLayout.setColorSchemeResources(R.color.blue)
+        refreshLayout.setOnRefreshListener {
+            onResume()
+        }
     }
 
     private fun setListeners()
@@ -238,7 +261,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == NEW_USER_CODE && resultCode == RESULT_OK)
         {
-            val team = data?.getParcelableExtra<Team>(TEAM)
+            val team = data?.getParcelableExtra<Team>(AddUserToTeamActivity.TEAM)
             team?.let {
                 mainActivityModel.setTeam(ValidTeam(it))
             }
@@ -315,10 +338,6 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     private fun getUser()
     {
         user = mainActivityModel.getUser().value ?: User()
-//        mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
-//            user = observedUser?.copy() ?: user
-//            Log.i("AccountTMMakeTeamFragme", "getUser(): user $user observed")
-//        }
     }
 
     private fun isTeamCreated()

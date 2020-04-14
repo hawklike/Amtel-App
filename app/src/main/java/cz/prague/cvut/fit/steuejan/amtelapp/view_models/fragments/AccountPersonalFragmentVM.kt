@@ -12,9 +12,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
@@ -50,6 +50,21 @@ class AccountPersonalFragmentVM : ViewModel()
 
     private val personalInfoChange = SingleLiveEvent<PersonalInfoState>()
     fun isPersonalInfoChanged(): LiveData<PersonalInfoState> = personalInfoChange
+
+    /*---------------------------------------------------*/
+
+    private val emailChange = SingleLiveEvent<EmailState>()
+    fun isEmailChanged(): LiveData<EmailState> = emailChange
+
+    /*---------------------------------------------------*/
+
+    private val userUpdated = SingleLiveEvent<Boolean>()
+    fun isUserUpdated(): LiveData<Boolean> = userUpdated
+
+    /*---------------------------------------------------*/
+
+    private val updatedTeam = SingleLiveEvent<Team>()
+    fun isTeamUpdated(): LiveData<Team> = updatedTeam
 
     /*---------------------------------------------------*/
 
@@ -89,17 +104,18 @@ class AccountPersonalFragmentVM : ViewModel()
         if(confirmPersonalInfo(fullName, birthdate, phoneNumber))
         {
             val phone: String? = if(phoneNumber.isEmpty()) null else phoneNumber
-            val name = fullName.split(Regex("[ ]+"))[0]
-            val surname = fullName.split(Regex("[ ]+"))[1]
+            val name = fullName.split(Regex("[ ]+")).first()
+            val surname = fullName.split(Regex("[ ]+")).drop(1).joinToString(" ")
 
             viewModelScope.launch {
 
                 user.apply {
-                    this.name = name.firstLetterUpperCase()
-                    this.surname = surname.firstLetterUpperCase()
+                    this.name = name
+                    this.surname = surname
                     this.birthdate = birthdate.toDate()
                     this.phone = phone
                     this.sex = sex.toBoolean()
+                    this.firstSign = false
                 }
 
                 val success = UserRepository.setUser(user)
@@ -160,6 +176,40 @@ class AccountPersonalFragmentVM : ViewModel()
     {
         return if(birthdate.isEmpty()) null
         else birthdate.toString().toCalendar()
+    }
+
+    fun confirmEmail(email: String): Boolean
+            = EmailState.validate(email) is ValidEmail
+
+    fun changeEmail(newEmail: String)
+    {
+        viewModelScope.launch {
+            emailChange.value = AuthManager.changeEmail(newEmail)
+        }
+    }
+
+    fun updateUserEmail(user: User, email: String)
+    {
+        viewModelScope.launch {
+            user.email = email
+            UserRepository.setUser(user)?.let { user ->
+                user.teamId?.let {
+                    TeamRepository.updateUserInTeam(user)
+                }
+                userUpdated.value = true
+            }
+            ?: let { userUpdated.value = false }
+        }
+    }
+
+    fun updateTeam(teamId: String?)
+    {
+        teamId.let {
+            viewModelScope.launch {
+                val team = TeamRepository.findTeam(teamId)
+                if(team is ValidTeam) updatedTeam.value = team.self
+            }
+        }
     }
 
 }

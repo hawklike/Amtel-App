@@ -33,7 +33,7 @@ class UserDAO : DAO
             = delete(collection, documentId)
 
     fun retrieveAllUsers(): Query
-            = retrieveAllAndGetQuery(collection)
+            = retrieveAllAndGetQuery(collection).whereEqualTo("admin", false)
 
     fun retrieveTeamsByPrefix(textToSearch: String, searchField: String): Query
             = retrieveByPrefix(collection, textToSearch, searchField)

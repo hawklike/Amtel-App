@@ -29,6 +29,7 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
 
     var onDelete: ((users: MutableList<User>) -> Unit)? = null
     var onClick: ((User) -> Unit)? = null
+    var onEdit: ((User) -> Unit)? = null
     var isAllowed = false
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -65,6 +66,10 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
 
             card.setOnClickListener {
                 onClick?.invoke(getItem(adapterPosition))
+            }
+
+            card.setOnClickListener {
+                onEdit?.invoke(getItem(adapterPosition))
             }
         }
     }

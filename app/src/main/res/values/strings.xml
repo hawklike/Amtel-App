@@ -10,9 +10,9 @@
     <string name="account">Účet</string>
     <string name="login">Přihlášení</string>
     <string name="user_login_success_title">Přihlášení proběhlo úspěšně</string>
-    <string name="user_login_success_message">Vítejte!\n\nZdá se, že jste se přihlásil/a poprvé. Jako první prosím vyplňte Vaše osobní údaje v sekci:\n\nÚčet > OSOBNÍ.</string>
+    <string name="user_login_success_message">Vítejte!\n\nZdá se, že jste se přihlásil/a poprvé. Jako první prosím vyplňte Vaše osobní údaje v sekci:\n\nÚčet > OSOBNÍ.\n\nZákladní tipy a rady pro organizaci vlastního týmu naleznete v sekci \'Zpravodaje\'.</string>
     <string name="user_login_failure_title">Přihlášení se nezdařilo</string>
-    <string name="user_login_failure_message">Zadali jste neplatnou kombinaci emailu a hesla. Jste připojen/a k internetu?</string>
+    <string name="user_login_failure_message">Zadali jste neplatnou kombinaci emailu a hesla.</string>
     <string name="invalidEmail_error">Zadejte prosím validní email.</string>
     <string name="invalidPassword_error">Vyplňte prosím heslo.</string>
     <string name="logout">Odhlášení</string>
@@ -44,7 +44,7 @@
     <string name="password_change_failure_message">Zkuste se prosím odhlásit a pak znovu přihlásit.</string>
     <string name="password_change_confirmation_title">Opravdu chcete změnit heslo?</string>
     <string name="autoEmail_template_head">Dobrý den,\nbyl Vám udělen přístup do aplikace AMTEL Opava. Vaše přiřazená role je vedoucí týmu. Pro přihlášení zadejte v aplikaci následující kombinaci:\n\n</string>
-    <string name="autoEmail_template_foot">Heslo Vám bylo náhodně vygenerováno. Můžete si jej změnit v aplikaci.\n\nS přáním příjemného dne,\nMgr. Jiří Vaněk\n\nPoznámka: Tento email je automaticky vygenerovaný, neodpovídejte na něj prosím.</string>
+    <string name="autoEmail_template_foot">Heslo Vám bylo náhodně vygenerováno. Můžete si jej změnit v aplikaci.\n\nS přáním příjemného dne,\nAdministrátor aplikace AMTEL Opava\n\nPoznámka: Tento email je automaticky vygenerovaný, neodpovídejte na něj prosím.</string>
     <string name="personal_information">Osobní údaje</string>
     <string name="birthdate">Datum narození</string>
     <string name="phone_number">Telefonní číslo</string>
@@ -203,4 +203,5 @@
     <string name="dash">–</string>
     <string name="reports">Zpravodaje</string>
     <string name="actualize">Aktualizovat</string>
+    <string name="adminEmail">admin.amtelopava@seznam.cz</string>
 </resources>
