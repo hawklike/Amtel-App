@@ -43,13 +43,11 @@ class LoginFragmentVM : ViewModel()
                 if(firebaseUser != null)
                 {
                     val user = UserRepository.findUser(firebaseUser.uid)
-
                     if(user != null)
                     {
+                        if(user.firstSign) UserRepository.updateUser(user.id, mapOf("firstSign" to false))
                         if(user.role.toRole() == PLAYER) userState.value = DeletedUser
                         else userState.value = SignedUser(user, user.firstSign)
-
-                        if(user.firstSign) UserRepository.updateUser(user.id, mapOf("firstSign" to false))
                     }
                     else userState.value = DeletedUser
                 }

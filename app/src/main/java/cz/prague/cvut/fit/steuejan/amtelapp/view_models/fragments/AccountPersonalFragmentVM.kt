@@ -115,6 +115,7 @@ class AccountPersonalFragmentVM : ViewModel()
                     this.birthdate = birthdate.toDate()
                     this.phone = phone
                     this.sex = sex.toBoolean()
+                    this.firstSign = false
                 }
 
                 val success = UserRepository.setUser(user)

@@ -149,12 +149,12 @@ class MainActivity : AbstractBaseActivity()
     {
         val profileTitle = AuthManager.profileDrawerOptionMenu
         val profile = PrimaryDrawerItem().withIdentifier(0).withName(profileTitle).withIcon(FontAwesome.Icon.faw_user_edit)
-        val results = PrimaryDrawerItem().withName(getString(R.string.results)).withIcon(FontAwesome.Icon.faw_list_ol)
+        val results = PrimaryDrawerItem().withIdentifier(1).withName(getString(R.string.results)).withIcon(FontAwesome.Icon.faw_list_ol)
         val schedule = PrimaryDrawerItem().withIdentifier(2).withName(getString(R.string.schedule)).withIcon(FontAwesome.Icon.faw_calendar_alt)
-        val teams = SecondaryDrawerItem().withName(getString(R.string.teams)).withIcon(FontAwesome.Icon.faw_users)
-        val players = SecondaryDrawerItem().withName(getString(R.string.players)).withIcon(FontAwesome.Icon.faw_user)
-        val rules = SecondaryDrawerItem().withName(getString(R.string.rules)).withIcon(FontAwesome.Icon.faw_connectdevelop)
-        val reports = SecondaryDrawerItem().withName(getString(R.string.reports)).withIcon(FontAwesome.Icon.faw_newspaper)
+        val teams = SecondaryDrawerItem().withIdentifier(3).withName(getString(R.string.teams)).withIcon(FontAwesome.Icon.faw_users)
+        val players = SecondaryDrawerItem().withIdentifier(4).withName(getString(R.string.players)).withIcon(FontAwesome.Icon.faw_user)
+        val rules = SecondaryDrawerItem().withIdentifier(5).withName(getString(R.string.rules)).withIcon(FontAwesome.Icon.faw_connectdevelop)
+        val reports = SecondaryDrawerItem().withIdentifier(6).withName(getString(R.string.reports)).withIcon(FontAwesome.Icon.faw_newspaper)
 
         drawer = DrawerBuilder()
             .withActivity(this)

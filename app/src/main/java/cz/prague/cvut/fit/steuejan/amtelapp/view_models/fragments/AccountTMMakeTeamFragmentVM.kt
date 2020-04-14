@@ -89,7 +89,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
                     name,
                     AuthManager.currentUser!!.uid,
                     _days.self,
-                    if(place.isEmpty()) null else place.firstLetterUpperCase(),
+                    if(place.isEmpty()) null else place,
                     users.map { it.id!! }.toMutableList(),
                     users
                 )
