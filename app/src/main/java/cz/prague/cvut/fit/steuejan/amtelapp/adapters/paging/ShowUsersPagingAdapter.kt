@@ -15,6 +15,7 @@ import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.getColor
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
@@ -135,7 +136,7 @@ class ShowUsersPagingAdapter(options: FirestorePagingOptions<User>, private val 
             LoadingState.LOADING_MORE -> dataLoadedListener?.onLoading()
             LoadingState.LOADED -> dataLoadedListener?.onLoaded()
             LoadingState.FINISHED -> {
-                if(itemCount > 7) App.toast("Více už toho není.")
+                if(itemCount > 12) toast("Více už toho není.")
                 dataLoadedListener?.onLoaded()
             }
             LoadingState.ERROR -> {}

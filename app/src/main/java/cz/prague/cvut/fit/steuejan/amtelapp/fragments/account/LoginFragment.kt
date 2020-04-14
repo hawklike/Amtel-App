@@ -137,20 +137,16 @@ class LoginFragment : AbstractMainActivityFragment()
                 userSignedIn(user)
                 return@observe
             }
-            else userDeleted()
+            else if(user is DeletedUser) userDeleted()
 
-            MaterialDialog(activity!!)
-                .title(text = title).also {
-                    if(welcomeFirstMessage != null)
-                        it.message(text = welcomeFirstMessage)
+            MaterialDialog(activity!!).show {
+                title(text = title)
+                message(text = welcomeFirstMessage)
+                positiveButton()
+                onDismiss {
+                    if(user is SignedUser) userSignedIn(user)
                 }
-                .show {
-                    positiveButton(R.string.ok)
-                    onDismiss {
-                        if(user is SignedUser)
-                            userSignedIn(user)
-                    }
-                }
+            }
         }
     }
 

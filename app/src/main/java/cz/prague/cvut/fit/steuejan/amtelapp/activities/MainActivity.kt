@@ -131,15 +131,17 @@ class MainActivity : AbstractBaseActivity()
     private fun userAccountDeleted()
     {
         viewModel.userAccountDeleted.observe(this) { deleted ->
-            if(deleted)
-            {
-                MaterialDialog(this).show {
-                    title(text = "Neplatný účet")
-                    message(text = "Váš účet byl smazán.")
-                    positiveButton()
-                    onDismiss { userDeleted(2) }
-                }
-            }
+            if(deleted) showUserDeletedDialog { userDeleted(2) }
+        }
+    }
+
+    private fun showUserDeletedDialog(onDismiss: () -> Unit)
+    {
+        MaterialDialog(this).show {
+            title(text = "Neplatný účet")
+            message(text = "Váš účet byl smazán.")
+            positiveButton()
+            onDismiss { onDismiss.invoke() }
         }
     }
 

@@ -105,6 +105,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
             populateAdapter(users)
             refreshLayout.isRefreshing = false
         }
+        else refreshLayout.isRefreshing = false
     }
 
     override fun onDestroyView()
