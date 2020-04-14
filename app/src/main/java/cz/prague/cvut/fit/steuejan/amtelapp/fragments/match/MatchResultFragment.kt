@@ -15,9 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchDiscussionActivity
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayerInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.TeamInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowPlayersAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -181,8 +182,8 @@ class MatchResultFragment : AbstractMatchActivityFragment()
 
         group.text = StringUtil.createLabel(match.groupName)
 
-        sets.text = MatchManager.getResults(round).sets
-        games.text = MatchManager.getResults(round).games
+        sets.text = MatchRepository.getResults(round).sets
+        games.text = MatchRepository.getResults(round).games
 
         place.text = match.place?.let { it } ?: getString(R.string.place_not_found)
         date.text = match.dateAndTime?.toMyString(getString(R.string.dateTime_format)) ?: getString(R.string.dateTime_not_found)
@@ -223,12 +224,14 @@ class MatchResultFragment : AbstractMatchActivityFragment()
     {
         recyclerView?.setHasFixedSize(true)
         recyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        adapter = ShowPlayersAdapter(
-            round.homePlayers + round.awayPlayers,
-            winners = getWinners()
-        )
-            //TODO show player profile
-        adapter?.onClick
+        adapter = ShowPlayersAdapter(round.homePlayers + round.awayPlayers, winners = getWinners())
+
+        adapter?.onClick = { player ->
+            val intent = Intent(activity, PlayerInfoActivity::class.java).apply {
+                putExtra(PlayerInfoActivity.PLAYER_ID, player.playerId)
+            }
+            startActivity(intent)
+        }
         recyclerView?.adapter = adapter
     }
 

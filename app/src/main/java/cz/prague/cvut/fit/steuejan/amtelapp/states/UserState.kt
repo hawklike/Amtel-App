@@ -8,6 +8,7 @@ sealed class UserState
 
 @Parcelize
 data class SignedUser(var self: User, val firstSign: Boolean = false) : UserState(), Parcelable
-
 @Parcelize
 object NoUser : UserState(), Parcelable
+@Parcelize
+object DeletedUser: UserState(), Parcelable

@@ -12,7 +12,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.fragments.schedule.ScheduleRoundFrag
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ScheduleRoundsActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.ScheduleRoundsActivityVM
 
 class RoundsViewPagerActivity : AbstractViewPagerActivity()
 {

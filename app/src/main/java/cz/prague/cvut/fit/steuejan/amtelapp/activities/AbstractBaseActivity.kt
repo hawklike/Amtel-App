@@ -10,11 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager.auth
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager.auth
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoUser
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AbstractBaseActivityVM
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.AbstractBaseActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.MainActivityVM
 import kotlinx.android.synthetic.main.toolbar.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -62,12 +62,12 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
             .title(R.string.logout)
             .message(R.string.logout_message)
             .show{
-                positiveButton(R.string.yes) { logout() }
-                negativeButton(R.string.no)
+                positiveButton(text = "Odhlásit") { logout() }
+                negativeButton()
             }
     }
 
-    private fun logout()
+    fun logout()
     {
         Log.i(TAG, "logout")
         auth.signOut()

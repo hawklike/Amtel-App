@@ -4,13 +4,6 @@
     style="@style/SimpleCardView"
     android:layout_marginBottom="10dp">
 
-    <ImageView
-        android:id="@+id/team_card_add"
-        android:layout_centerVertical="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true" />
-
     <TextView
         android:id="@+id/team_card_name"
         android:layout_width="match_parent"
@@ -18,7 +11,6 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:layout_marginEnd="16dp"
-        android:layout_toStartOf="@id/team_card_add"
         android:text="TK Horní Bludovice"
         android:textColor="@color/darkGrey"
         android:textSize="16sp" />

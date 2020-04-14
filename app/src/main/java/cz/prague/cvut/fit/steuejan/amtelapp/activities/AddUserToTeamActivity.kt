@@ -17,7 +17,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AddUserToTeamActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.AddUserToTeamActivityVM
 
 class AddUserToTeamActivity : AbstractBaseActivity()
 {

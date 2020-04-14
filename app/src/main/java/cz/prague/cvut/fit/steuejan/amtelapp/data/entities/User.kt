@@ -18,7 +18,8 @@ data class User(override var id: String? = null,
                 var firstSign: Boolean = true,
                 var englishName: String = "",
                 var englishSurname: String = "",
-                var searchSurname: String = ""
+                var searchSurname: String = "",
+                val admin: Boolean = false
                 ) : Parcelable, Entity<User>()
 
 fun User.toPlayer(): Player

@@ -8,7 +8,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SeasonFinisher
+import cz.prague.cvut.fit.steuejan.amtelapp.business.SeasonFinisher
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +48,9 @@ class SeasonFinisherService : Service(), CoroutineScope
         if(intent == null) return START_NOT_STICKY
 
         val groups = intent.getParcelableArrayListExtra<Group>(GROUPS_EXCEPT_PLAYOFF)
-        val seasonFinisher = SeasonFinisher(groups)
+        val seasonFinisher = SeasonFinisher(
+            groups
+        )
 
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, notificationBuilder.build())

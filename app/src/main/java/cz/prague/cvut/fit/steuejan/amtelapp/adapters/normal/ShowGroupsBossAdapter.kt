@@ -28,7 +28,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.services.GenerateScheduleService
 import cz.prague.cvut.fit.steuejan.amtelapp.services.GroupDeletionService
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.ShowGroupsBossAdapterVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.adapters.ShowGroupsBossAdapterVM
 import java.util.*
 
 class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<Group>)

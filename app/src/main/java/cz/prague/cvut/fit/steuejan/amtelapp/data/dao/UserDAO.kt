@@ -3,7 +3,12 @@ package cz.prague.cvut.fit.steuejan.amtelapp.data.dao
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.PlayerRounds
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import kotlinx.coroutines.tasks.await
 
 class UserDAO : DAO
 {
@@ -28,8 +33,30 @@ class UserDAO : DAO
             = delete(collection, documentId)
 
     fun retrieveAllUsers(): Query
-            = retrieveAllAndGetQuery(collection)
+            = retrieveAllAndGetQuery(collection).whereEqualTo("admin", false)
 
     fun retrieveTeamsByPrefix(textToSearch: String, searchField: String): Query
             = retrieveByPrefix(collection, textToSearch, searchField)
+
+    suspend fun getRounds(userId: String): DocumentSnapshot
+    {
+        return Firebase.firestore
+            .collection(collection)
+            .document(userId)
+            .collection("rounds")
+            .document("playerRounds")
+            .get()
+            .await()
+    }
+
+    suspend fun addMatches(userId: String, rounds: PlayerRounds)
+    {
+        Firebase.firestore
+            .collection(collection)
+            .document(userId)
+            .collection("rounds")
+            .document("playerRounds")
+            .set(rounds, SetOptions.merge())
+            .await()
+    }
 }

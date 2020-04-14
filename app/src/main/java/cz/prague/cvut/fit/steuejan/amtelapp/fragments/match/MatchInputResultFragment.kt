@@ -21,8 +21,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.managers.MatchManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMatchActivityFragment
@@ -31,7 +31,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import cz.prague.cvut.fit.steuejan.amtelapp.states.WeekState
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MatchInputResultFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.MatchInputResultFragmentVM
 
 class MatchInputResultFragment : AbstractMatchActivityFragment()
 {
@@ -175,8 +175,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
         homeName.text = match.home
         awayName.text = match.away
-        sets.text = MatchManager.getResults(round).sets
-        games.text = MatchManager.getResults(round).games
+        sets.text = MatchRepository.getResults(round).sets
+        games.text = MatchRepository.getResults(round).games
 
         firstSetHome.setText(round.homeGemsSet1?.toString())
         firstSetAway.setText(round.awayGemsSet1?.toString())
@@ -227,7 +227,10 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         }
 
         inputResult.setOnClickListener {
-           getInputAndConfirm()
+            val round = match.rounds[round - 1]
+            viewModel.homePlayersBefore = round.homePlayers
+            viewModel.awayPlayersBefore = round.awayPlayers
+            getInputAndConfirm()
         }
 
         reportButton.setOnClickListener {
@@ -273,7 +276,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private fun isReported()
     {
         viewModel.isReported.observe(viewLifecycleOwner) { match ->
-            val result = MatchManager.getResults(match.rounds[round - 1])
+            val result = MatchRepository.getResults(match.rounds[round - 1])
             viewModel.sendEmail(homeTeam, awayTeam, result.sets, result.games, userId)
             toast("Výsledek byl odeslán k posouzení.")
         }
@@ -284,7 +287,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         viewModel.matchAdded.observe(viewLifecycleOwner) {
             countMatchScore()
             dialog.dismiss()
-            val result = MatchManager.getResults(match.rounds[round - 1])
+            val result = MatchRepository.getResults(match.rounds[round - 1])
             sets.text = result.sets
             games.text = result.games
             disableInputButtonIf { !isHeadOfLeague && match.edits[round.toString()] == 0 }

@@ -23,7 +23,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActi
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidRegistration
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.AccountBossAddTMFragmentVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.AccountBossAddTMFragmentVM
 import java.util.*
 
 class AccountBossAddTMFragment : AbstractMainActivityFragment()
@@ -211,7 +211,6 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
             }
     }
 
-    //TODO: refactor this
     private fun isRegistrationSuccessful()
     {
         viewModel.registration.observe(viewLifecycleOwner) { registration ->

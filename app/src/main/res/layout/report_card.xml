@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card"
+    style="@style/SimpleCardView"
+    android:layout_marginBottom="10dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/darkGrey" />
+
+    <TextView
+        android:id="@+id/lead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/common_text_size"
+        android:textColor="@color/lightGrey"
+        android:maxLines="7"
+        android:ellipsize="end"
+        android:layout_marginBottom="8dp"
+        android:layout_below="@id/title" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:layout_below="@id/lead"
+        android:textColor="@color/blue"
+        android:layout_alignParentEnd="true"/>
+
+    <ImageButton
+        android:id="@+id/edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:visibility="gone"
+        android:background="@drawable/ic_edit_blue_24dp"
+        android:layout_alignTop="@id/date"/>
+</RelativeLayout>

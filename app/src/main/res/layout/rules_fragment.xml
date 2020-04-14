@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:fillViewport="true"
-    android:orientation="vertical">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
         <include layout="@layout/curve" />
 
@@ -59,23 +54,35 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/zzRulesTitle"
-            style="@style/TextViewTitleLeft"
-            android:gravity="center"
-            android:layout_below="@id/zzContactLayout"
-            android:text="Pravidla" />
+    <ScrollView
+        android:layout_below="@id/zzContactLayout"
+        android:layout_marginTop="@dimen/card_margin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/rules"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/card_margin"
-            android:layout_marginEnd="@dimen/card_margin"
-            android:layout_below="@id/zzRulesTitle"
-            android:textColor="@color/darkGrey"
-            android:textSize="@dimen/common_text_size"/>
+            android:layout_height="wrap_content">
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/zzRulesTitle"
+                style="@style/TextViewTitleLeft"
+                android:layout_marginTop="0dp"
+                android:gravity="center"
+                android:text="Pravidla" />
 
-</ScrollView>
+            <TextView
+                android:id="@+id/rules"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/card_margin"
+                android:layout_marginEnd="@dimen/card_margin"
+                android:layout_below="@id/zzRulesTitle"
+                android:textColor="@color/darkGrey"
+                android:textSize="@dimen/common_text_size"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

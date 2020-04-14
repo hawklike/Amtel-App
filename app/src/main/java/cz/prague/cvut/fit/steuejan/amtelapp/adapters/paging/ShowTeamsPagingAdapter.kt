@@ -60,7 +60,7 @@ class ShowTeamsPagingAdapter(options: FirestorePagingOptions<Team>)
             LoadingState.LOADING_MORE -> dataLoadedListener?.onLoading()
             LoadingState.LOADED -> dataLoadedListener?.onLoaded()
             LoadingState.FINISHED -> {
-                if(itemCount > 7) toast("Více už toho není.")
+                if(itemCount > 15) toast("Více už toho není.")
                 dataLoadedListener?.onLoaded()
             }
             LoadingState.ERROR -> {}

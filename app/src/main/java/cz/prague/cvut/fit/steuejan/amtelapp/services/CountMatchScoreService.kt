@@ -7,7 +7,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.MatchScoreCounter
+import cz.prague.cvut.fit.steuejan.amtelapp.business.MatchScoreCounter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import kotlinx.coroutines.CoroutineScope
@@ -52,7 +52,11 @@ class CountMatchScoreService : Service(), CoroutineScope
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, notification)
         launch {
-            MatchScoreCounter(match, homeTeam, awayTeam)
+            MatchScoreCounter(
+                match,
+                homeTeam,
+                awayTeam
+            )
                 .withDefaultLoss(defaultLoss)
                 .countTotalScore()
             stopForeground(true)

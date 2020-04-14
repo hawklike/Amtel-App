@@ -10,7 +10,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toPlayoff
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.schedule.ScheduleRoundFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.NoUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.PlayoffActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.PlayoffActivityVM
 
 class PlayoffActivity : AbstractBaseActivity()
 {

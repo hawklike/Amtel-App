@@ -7,7 +7,7 @@ import com.afollestad.materialdialogs.customview.customView
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MainActivity
-import cz.prague.cvut.fit.steuejan.amtelapp.view_models.MainActivityVM
+import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.MainActivityVM
 
 abstract class AbstractMainActivityFragment : AbstractBaseFragment()
 {
