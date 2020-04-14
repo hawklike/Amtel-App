@@ -54,6 +54,7 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
     override fun onDestroyView()
     {
         super.onDestroyView()
+        binding.refreshLayout.setOnRefreshListener(null)
 
         adapter?.onDelete = null
         adapter?.onEdit = null

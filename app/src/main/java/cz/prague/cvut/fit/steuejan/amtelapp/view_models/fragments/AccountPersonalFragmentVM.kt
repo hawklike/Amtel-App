@@ -14,6 +14,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
@@ -59,6 +60,11 @@ class AccountPersonalFragmentVM : ViewModel()
 
     private val userUpdated = SingleLiveEvent<Boolean>()
     fun isUserUpdated(): LiveData<Boolean> = userUpdated
+
+    /*---------------------------------------------------*/
+
+    private val updatedTeam = SingleLiveEvent<Team>()
+    fun isTeamUpdated(): LiveData<Team> = updatedTeam
 
     /*---------------------------------------------------*/
 
@@ -192,6 +198,16 @@ class AccountPersonalFragmentVM : ViewModel()
                 userUpdated.value = true
             }
             ?: let { userUpdated.value = false }
+        }
+    }
+
+    fun updateTeam(teamId: String?)
+    {
+        teamId.let {
+            viewModelScope.launch {
+                val team = TeamRepository.findTeam(teamId)
+                if(team is ValidTeam) updatedTeam.value = team.self
+            }
         }
     }
 

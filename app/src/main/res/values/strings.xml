@@ -10,7 +10,7 @@
     <string name="account">Účet</string>
     <string name="login">Přihlášení</string>
     <string name="user_login_success_title">Přihlášení proběhlo úspěšně</string>
-    <string name="user_login_success_message">Vítejte!\n\nZdá se, že jste se přihlásil/a poprvé. Jako první prosím vyplňte Vaše osobní údaje v sekci:\n\nÚčet > OSOBNÍ.</string>
+    <string name="user_login_success_message">Vítejte!\n\nZdá se, že jste se přihlásil/a poprvé. Jako první prosím vyplňte Vaše osobní údaje v sekci:\n\nÚčet > OSOBNÍ.\n\nZákladní tipy a rady pro organizaci vlastního týmu naleznete v sekci \'Zpravodaje\'.</string>
     <string name="user_login_failure_title">Přihlášení se nezdařilo</string>
     <string name="user_login_failure_message">Zadali jste neplatnou kombinaci emailu a hesla.</string>
     <string name="invalidEmail_error">Zadejte prosím validní email.</string>

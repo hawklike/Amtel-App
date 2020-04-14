@@ -48,6 +48,7 @@ class TeamsFragment : AbstractMainActivityFragment(), ShowTeamsPagingAdapter.Dat
     override fun onDestroyView()
     {
         super.onDestroyView()
+        binding.refreshLayout.setOnRefreshListener(null)
 
         adapter?.onClick = null
         adapter?.dataLoadedListener = null

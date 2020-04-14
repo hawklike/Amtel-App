@@ -197,29 +197,37 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     {
         viewModel.isPersonalInfoChanged().observe(viewLifecycleOwner) { state ->
             progressDialog.dismiss()
-            updateUser(state)
+            update(state)
             val title = viewModel.createAfterPersonalInfoDialog(state).title
 
             MaterialDialog(activity!!)
                 .title(text = title)
                 .show {
                     positiveButton(R.string.ok)
-                    onDismiss {
-                    }
+                    onDismiss {}
                 }
         }
     }
 
-    private fun updateUser(state: PersonalInfoState)
+    private fun update(state: PersonalInfoState)
     {
         if(state is PersonalInfoSuccess)
         {
+            updateTeam(user.teamId)
             user.name = state.name
             user.surname = state.surname
             user.birthdate = state.birthdate.toDate()
             user.phone = state.phoneNumber
             user.sex = state.sex.toBoolean()
             mainActivityModel.setUser(user)
+        }
+    }
+
+    private fun updateTeam(teamId: String?)
+    {
+        viewModel.updateTeam(teamId)
+        viewModel.isTeamUpdated().observe(viewLifecycleOwner) { team ->
+            mainActivityModel.setTeam(ValidTeam(team))
         }
     }
 
@@ -302,6 +310,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
                     if(updated)
                     {
                         progressDialog.dismiss()
+                        updateTeam(user.teamId)
                         showDialog("Email byl úspěšně změněn", "Nyní se přihlásíte pomocí nového emailu.")
                     }
                 }
