@@ -141,7 +141,7 @@ class LoginFragment : AbstractMainActivityFragment()
 
             MaterialDialog(activity!!).show {
                 title(text = title)
-                message(text = welcomeFirstMessage)
+                welcomeFirstMessage?.let { message(text = it) }
                 positiveButton()
                 onDismiss {
                     if(user is SignedUser) userSignedIn(user)
