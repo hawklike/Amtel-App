@@ -101,6 +101,7 @@ class AccountFragment : AbstractMainActivityFragment()
                 adapter.addFragment(AccountTMMakeTeamFragment.newInstance(), getString(R.string.account_tm_adapter_make_team))
                 adapter.addFragment(AccountPersonalFragment.newInstance(), getString(R.string.account_adapter_personal))
                 adapter.notifyDataSetChanged()
+                setProgressBar(false)
             }
         }
         viewPager.adapter = adapter

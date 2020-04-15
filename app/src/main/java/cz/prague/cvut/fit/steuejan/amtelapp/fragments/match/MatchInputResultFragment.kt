@@ -14,6 +14,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.WhichButton
+import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -434,7 +436,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                 if(round == 2 && match.groupName == getString(R.string.fifty_plus_group)) listItemMultiChoice(this, players, editText)
                 else listItemSingleChoice(this, players, editText)
             }
-            positiveButton(R.string.ok)
+
+            positiveButton()
         }
     }
 
@@ -451,8 +454,11 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
      //output looks like this: <<name>> - <<email>>, <<name>> - <<email>>
     private fun listItemMultiChoice(dialog: MaterialDialog, players: List<String>, editText: EditText): MaterialDialog
     {
-        return dialog.listItemsMultiChoice(items = players) { _, _, items ->
-            editText.setText(items.joinToString("$COMMA ") { it.toString().replace("\n", " $EM_DASH ") })
+        return dialog.listItemsMultiChoice(items = players, waitForPositiveButton = false) { _, indices, items ->
+            editText.setText(items.joinToString("$COMMA ") {
+                it.toString().replace("\n", " $EM_DASH ")
+            })
+            dialog.setActionButtonEnabled(WhichButton.POSITIVE, indices.size == 2)
         }
     }
 
