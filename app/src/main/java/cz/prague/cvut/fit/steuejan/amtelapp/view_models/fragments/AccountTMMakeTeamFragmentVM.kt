@@ -29,9 +29,7 @@ import java.util.*
 
 class AccountTMMakeTeamFragmentVM : ViewModel()
 {
-    var deadlineDialogShown: Boolean = false
     private var deadline: Pair<Date?, Date?>? = null
-
     var deadlineDialog: String = ""
 
     /*---------------------------------------------------*/

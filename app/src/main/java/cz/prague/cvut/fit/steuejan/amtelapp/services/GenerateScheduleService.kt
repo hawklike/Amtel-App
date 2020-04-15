@@ -40,9 +40,6 @@ class GenerateScheduleService : Service(), CoroutineScope
 
     private val notificationBuilder by lazy {
         NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_list_white_24dp)
-            .setContentTitle("Generuji utkání...")
-            .setProgress(0, 0, true)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int
@@ -56,7 +53,7 @@ class GenerateScheduleService : Service(), CoroutineScope
         val generator = ScheduleGenerator()
 
         createNotificationChannel()
-        startForeground(NOTIFICATION_ID, notificationBuilder.build())
+        startForeground(NOTIFICATION_ID, startNotification().build())
         launch {
             isSuccess =
                 if(regenerate) generator.regenerateMatches(group, rounds)
@@ -72,6 +69,18 @@ class GenerateScheduleService : Service(), CoroutineScope
     {
         super.onDestroy()
         job.cancel()
+    }
+
+    private fun startNotification(): NotificationCompat.Builder
+    {
+        notificationBuilder
+            .setSmallIcon(R.drawable.ic_list_white_24dp)
+            .setContentTitle("Generuji utkání...")
+            .setContentText(null)
+            .setProgress(0, 0, true)
+
+        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
+        return notificationBuilder
     }
 
     private fun updateNotification()

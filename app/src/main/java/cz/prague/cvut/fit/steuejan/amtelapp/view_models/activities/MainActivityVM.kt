@@ -59,6 +59,16 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     /*---------------------------------------------------*/
 
+    var isDeadlineAlertShown: Boolean = false
+        set(value)
+        {
+            state.set(DEADLINE_ALERT_SHOWN, value)
+            field = value
+        }
+        get() = state.get<Boolean>(DEADLINE_ALERT_SHOWN) ?: field
+
+    /*---------------------------------------------------*/
+
     private val user = SingleLiveEvent<User?>()
 
     fun setUser(user: User?)
@@ -223,6 +233,7 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
     {
         const val TITLE = "title"
         const val DRAWER_POSITION = "position"
+        const val DEADLINE_ALERT_SHOWN = "shown"
     }
 
     private val TAG = "MainActivityVM"

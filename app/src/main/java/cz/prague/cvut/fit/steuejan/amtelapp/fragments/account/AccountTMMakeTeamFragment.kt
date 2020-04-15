@@ -130,14 +130,14 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     {
         viewModel.isLineUpAllowed()
         viewModel.isLineUpAllowed.observe(viewLifecycleOwner) { allowed ->
-            if(!viewModel.deadlineDialogShown)
+            if(!mainActivityModel.isDeadlineAlertShown)
             {
                 MaterialDialog(activity!!).show {
                     title(text = "Uzavření soupisky")
                     message(text = viewModel.deadlineDialog)
                     positiveButton()
                 }
-                viewModel.deadlineDialogShown = true
+                mainActivityModel.isDeadlineAlertShown = true
             }
 
             adapter?.isAllowed = allowed

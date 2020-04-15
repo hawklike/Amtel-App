@@ -78,6 +78,12 @@ class ShowGroupsMenuAdapterVM : ViewModel()
                     holder.rounds.setTextColor(App.getColor(R.color.blue))
                     holder.actualRound.setTextColor(App.getColor(R.color.blue))
                 }
+                else
+                {
+                    holder.name.setTextColor(App.getColor(R.color.darkGrey))
+                    holder.rounds.setTextColor(App.getColor(R.color.darkGrey))
+                    holder.actualRound.setTextColor(App.getColor(R.color.darkGrey))
+                }
             }
         }
     }

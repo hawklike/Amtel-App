@@ -45,7 +45,7 @@ class TeamInfoActivity : AbstractProfileActivity()
     companion object
     {
         const val TEAM = "team"
-        const val SEASON_TABLE = "ranking"
+        const val RANKING = "ranking"
         const val TEAM_ID = "teamId"
     }
 
@@ -71,14 +71,21 @@ class TeamInfoActivity : AbstractProfileActivity()
     {
         setContentView(R.layout.team_info)
         super.onCreate(savedInstanceState)
-        intent.extras?.let { bundle ->
-            viewModel.mTeam = bundle.getParcelable(TEAM)
-            teamId = bundle.getString(TEAM_ID) ?: teamId
-            bundle.getParcelableArrayList<Team>(SEASON_TABLE)?.toList()?.let { viewModel.seasonRanking = it }
-        }
+        getData()
         setToolbarTitle("Načítám tým...")
         setArrowBack()
         initAll()
+    }
+
+    private fun getData()
+    {
+        intent.extras?.let { bundle ->
+            viewModel.mTeam = bundle.getParcelable(TEAM)
+            teamId = bundle.getString(TEAM_ID) ?: teamId
+            bundle.getInt(RANKING).let { rank ->
+                if(rank != 0) viewModel.setTeamRank(rank)
+            }
+        }
     }
 
     private fun initAll()
@@ -181,14 +188,12 @@ class TeamInfoActivity : AbstractProfileActivity()
     private fun setCurrentRank()
     {
         val teamRank = findViewById<TextView>(R.id.team_info_rank)
-        if(viewModel.seasonRanking.isNotEmpty()) viewModel.calculateTeamRank()
-        else
+        if(viewModel.teamRank.value == null)
         {
             val rankingViewModel by viewModels<RankingFragmentVM>()
             viewModel.mTeam?.groupId?.let { rankingViewModel.loadTeams(it, DateUtil.actualSeason.toInt(), RankingOrderBy.POINTS) }
             rankingViewModel.teams.observe(this) {
-                viewModel.seasonRanking = it
-                viewModel.calculateTeamRank()
+                viewModel.calculateTeamRank(it)
             }
         }
 

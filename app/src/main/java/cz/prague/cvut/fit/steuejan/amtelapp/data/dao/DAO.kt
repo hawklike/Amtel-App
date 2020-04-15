@@ -18,12 +18,13 @@ interface DAO
     suspend fun update(documentId: String, mapOfFieldsAndValues: Map<String, Any?>)
     suspend fun delete(documentId: String)
 
-    suspend fun <T> insert(collectionName: String, entity: Entity<T>)
+    suspend fun <T> insert(collectionName: String, entity: Entity<T>, merge: Boolean = true)
     {
         val collection = Firebase.firestore.collection(collectionName)
         val document = entity.id?.let { collection.document(it) } ?: collection.document()
         entity.id = document.id
-        document.set(entity, SetOptions.merge()).await()
+        if(merge) document.set(entity, SetOptions.merge()).await()
+        else document.set(entity).await()
     }
 
     suspend fun findById(collectionName: String, id: String): DocumentSnapshot

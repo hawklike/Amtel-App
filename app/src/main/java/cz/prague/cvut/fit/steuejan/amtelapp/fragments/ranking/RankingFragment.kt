@@ -32,8 +32,8 @@ class RankingFragment : AbstractBaseFragment()
     private var group = Group()
 
     private val teams: MutableList<Team> = mutableListOf()
-    private var orderBy = RankingOrderBy.POINTS
-    private var reverseOrder = false
+//    private var orderBy = RankingOrderBy.POINTS
+//    private var reverseOrder = false
 
     private lateinit var actualSortOption: TextView
 
@@ -109,7 +109,7 @@ class RankingFragment : AbstractBaseFragment()
     private fun loadData()
     {
         progressBar.visibility = VISIBLE
-        viewModel.loadTeams(group.id!!, year, orderBy)
+        viewModel.loadTeams(group.id!!, year, viewModel.orderBy)
     }
 
     private fun setupRecycler()
@@ -119,12 +119,12 @@ class RankingFragment : AbstractBaseFragment()
         adapter = ShowTeamsRankingAdapter(
             teams,
             year.toString(),
-            orderBy
+            viewModel.orderBy
         )
-        adapter?.onClick = { team ->
+        adapter?.onClick = { team, position ->
             val intent = Intent(activity!!, TeamInfoActivity::class.java).apply {
                 putExtra(TeamInfoActivity.TEAM, team)
-                putParcelableArrayListExtra(TeamInfoActivity.SEASON_TABLE, ArrayList(teams))
+                putExtra(TeamInfoActivity.RANKING, position + 1)
             }
             startActivity(intent)
         }
@@ -134,11 +134,11 @@ class RankingFragment : AbstractBaseFragment()
 
     private fun populateAdapter()
     {
-        viewModel.teams.observe(viewLifecycleOwner) {
+        viewModel.teams.observe(viewLifecycleOwner) { orderedTeams ->
             progressBar.visibility = GONE
             teams.clear()
-            teams.addAll(it)
-            adapter?.orderBy = orderBy
+            teams.addAll(orderedTeams)
+            adapter?.orderBy = viewModel.orderBy
             adapter?.notifyDataSetChanged()
         }
     }
@@ -176,9 +176,9 @@ class RankingFragment : AbstractBaseFragment()
         setNormalStyle(actualSortOption)
         setBoldStyle(view)
         actualSortOption = view
-        reverseOrder = if(orderBy == this.orderBy) !reverseOrder else false
-        this.orderBy = orderBy
-        viewModel.loadTeams(group.id!!, year, orderBy, reverseOrder)
+        viewModel.reverseOrder = if(orderBy == viewModel.orderBy) !viewModel.reverseOrder else false
+        viewModel.orderBy = orderBy
+        viewModel.loadTeams(group.id!!, year, orderBy, viewModel.reverseOrder)
     }
 
     private fun setNormalStyle(view: TextView)
