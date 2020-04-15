@@ -30,7 +30,7 @@ object GroupRepository
         }
     }
 
-    suspend fun addPlayoff(playOff: Group): GroupState = withContext(IO)
+    suspend fun setPlayoff(playOff: Group): GroupState = withContext(IO)
     {
         return@withContext try
         {

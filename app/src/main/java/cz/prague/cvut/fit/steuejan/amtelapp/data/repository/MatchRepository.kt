@@ -120,7 +120,7 @@ object MatchRepository
         catch(ex: Exception) { false }
     }
 
-    suspend fun deleteMatch(matchId: String?): Boolean = withContext(IO)
+    private suspend fun deleteMatch(matchId: String?): Boolean = withContext(IO)
     {
         if(matchId == null) return@withContext false
         return@withContext try

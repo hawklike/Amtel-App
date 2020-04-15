@@ -98,21 +98,6 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
         }
     }
 
-    fun displayDialog(group: GroupState): Message
-    {
-        val successTitle = context.getString(R.string.create_group_success_title)
-        val failureTitle = context.getString(R.string.create_group_failure_title)
-
-        return if(group is ValidGroup) Message(
-            successTitle,
-            null
-        )
-        else Message(
-            failureTitle,
-            null
-        )
-    }
-
     fun updateRanks(groups: List<Group>)
     {
         GlobalScope.launch {

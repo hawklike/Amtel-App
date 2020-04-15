@@ -29,7 +29,7 @@ object LeagueRepository
         }
     }
 
-    suspend fun changeSeason(): Boolean = withContext(IO)
+    suspend fun incrementSeason(): Boolean = withContext(IO)
     {
         return@withContext try
         {
