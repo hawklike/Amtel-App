@@ -1,10 +1,12 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
+import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.*
@@ -277,7 +279,8 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
             putExtra(CalendarContract.Events.EVENT_LOCATION, match.place)
         }
 
-        startActivity(Intent.createChooser(intent, "Přidat utkání" + "..."))
+        try { startActivity(Intent.createChooser(intent, "Přidat utkání" + "...")) }
+        catch(ex: ActivityNotFoundException) { toast("Nemáte nainstalovaný kalendář.") }
     }
 
     private fun defaultEndGame()
@@ -312,7 +315,8 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
             opponent?.phone?.let {
                 val intent = Intent(Intent.ACTION_DIAL)
                 intent.data = Uri.parse("tel:$it")
-                startActivity(intent)
+                try { startActivity(intent) }
+                catch(ex: ActivityNotFoundException) { toast("Z vašeho zařízení nelze volat.") }
             } ?: toast("${opponent?.name} ${opponent?.surname} nemá uložené telefonní číslo.")
         }
     }
