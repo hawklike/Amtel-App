@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 
 class InputReportActivityVM : ViewModel()
 {
+    //if not null, the report was already written before showing the input report activity
     var report: Report? = null
     var published: Boolean = false
 
