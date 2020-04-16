@@ -5,7 +5,7 @@
     android:paddingTop="8dp"
     android:paddingBottom="8dp">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/ranking_team_card_rank"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,7 +16,7 @@
         android:textColor="@color/darkGrey"
         android:textSize="@dimen/common_text_size" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/ranking_team_card_team"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         android:textColor="@color/blue"
         android:textSize="@dimen/common_text_size" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/ranking_team_card_matches"
         android:layout_width="28dp"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
         android:textColor="@color/darkGrey"
         android:textSize="@dimen/common_text_size" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/ranking_team_card_wins"
         android:layout_width="28dp"
         android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
         android:textColor="@color/darkGrey"
         android:textSize="@dimen/common_text_size" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/ranking_team_card_losses"
         android:layout_width="28dp"
         android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
         android:textColor="@color/darkGrey"
         android:textSize="@dimen/common_text_size" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/ranking_team_card_sets_positive"
         android:layout_width="28dp"
         android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
         android:textColor="@color/darkGrey"
         android:textSize="@dimen/common_text_size" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/ranking_team_card_sets_negative"
         android:layout_width="28dp"
         android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
         android:textColor="@color/darkGrey"
         android:textSize="@dimen/common_text_size" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/ranking_team_card_points"
         android:layout_width="28dp"
         android:layout_height="wrap_content"

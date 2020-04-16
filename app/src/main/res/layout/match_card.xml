@@ -15,7 +15,7 @@
         android:scaleX="1.5"
         android:scaleY="1.5" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/match_card_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         android:layout_marginEnd="16dp"
         android:layout_toStartOf="@id/match_card_next">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/match_card_sets"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
 
     </RelativeLayout>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/match_card_away"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

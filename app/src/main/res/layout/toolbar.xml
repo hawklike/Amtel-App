@@ -6,7 +6,7 @@
     android:elevation="0dp"
     android:minHeight="?attr/actionBarSize">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/toolbar_title"
         style="@style/ToolbarTitleFont"
         android:layout_marginEnd="4dp"

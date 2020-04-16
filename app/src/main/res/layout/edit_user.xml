@@ -30,7 +30,7 @@
             android:id="@+id/account_personal_personal_information"
             style="@style/CardRelativeLayout">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/zzTitle"
                     style="@style/TextViewTitle"
                     android:text="Osobní údaje" />
@@ -124,7 +124,7 @@
                     android:textColor="@color/middleLightGrey"
                     android:textSize="@dimen/common_text_size" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/newTeamManager"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

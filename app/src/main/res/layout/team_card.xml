@@ -4,7 +4,7 @@
     style="@style/SimpleCardView"
     android:layout_marginBottom="10dp">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/team_card_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,7 +15,7 @@
         android:textColor="@color/darkGrey"
         android:textSize="16sp" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/team_card_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

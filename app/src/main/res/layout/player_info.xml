@@ -43,7 +43,7 @@
                         android:layout_columnWeight="2"
                         android:layout_marginBottom="12dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/team"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
                             android:textColor="@color/blue"
                             android:textSize="22sp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/team"
@@ -72,7 +72,7 @@
                         android:layout_column="1"
                         android:layout_columnWeight="1">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/group"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
                             android:textColor="@color/darkGrey"
                             android:textSize="24sp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/group"
@@ -113,7 +113,7 @@
                         android:layout_column="0"
                         android:layout_columnWeight="1">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/age"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -122,7 +122,7 @@
                             android:textColor="@color/darkGrey"
                             android:textSize="24sp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/age"
@@ -140,7 +140,7 @@
                         android:layout_column="1"
                         android:layout_columnWeight="1">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/successRate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -151,7 +151,7 @@
                             android:textColor="@color/blue"
                             android:textSize="24sp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/successRate"
@@ -170,7 +170,7 @@
                         android:layout_column="2"
                         android:layout_columnWeight="1">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/rounds"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -179,7 +179,7 @@
                             android:textColor="@color/darkGrey"
                             android:textSize="24sp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/rounds"
@@ -194,7 +194,7 @@
 
             </RelativeLayout>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/zzStatisticsTitle"
                 style="@style/TextViewTitleLeft"
                 android:layout_below="@id/zzPlayerInfoOverview"
@@ -238,7 +238,7 @@
 
             </HorizontalScrollView>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/zzMatchesTitle"
                 style="@style/TextViewTitleLeft"
                 android:layout_below="@id/zzCharts"

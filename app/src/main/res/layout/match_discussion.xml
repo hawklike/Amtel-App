@@ -21,7 +21,7 @@
 
         <include layout="@layout/curve" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxHeight="80dp"

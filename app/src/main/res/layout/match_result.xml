@@ -11,7 +11,7 @@
         style="@style/CardRelativeLayout"
         android:padding="8dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/match_result_home"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
             android:textColor="@color/darkGrey"
             android:textSize="@dimen/common_text_size" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/match_result_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
             android:layout_below="@id/match_result_home"
             android:layout_toStartOf="@id/match_result_group">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/match_result_sets"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/match_result_gems"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
 
         </RelativeLayout>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/match_result_away"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
             android:textColor="@color/darkGrey"
             android:textSize="@dimen/common_text_size" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/match_result_place"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
             android:textColor="@color/darkGrey"
             android:textSize="13sp" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/match_result_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
 
     </RelativeLayout>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/match_result_title_teams"
         style="@style/TextViewTitleLeft"
         android:layout_below="@id/match_result_overview"
@@ -149,7 +149,7 @@
                     android:textColor="@color/white"
                     android:textSize="13sp" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/match_result_card_home_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -162,7 +162,7 @@
                     android:textColor="@color/darkGrey"
                     android:textSize="@dimen/common_text_size" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/match_result_card_home_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -199,7 +199,7 @@
                     android:textColor="@color/white"
                     android:textSize="13sp" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/match_result_card_away_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -212,7 +212,7 @@
                     android:textColor="@color/darkGrey"
                     android:textSize="@dimen/common_text_size" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/match_result_card_away_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -229,7 +229,7 @@
 
     </HorizontalScrollView>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/match_result_title_players"
         style="@style/TextViewTitleLeft"
         android:layout_below="@id/match_result_teams_scrollView"
