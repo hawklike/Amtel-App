@@ -18,14 +18,14 @@
             android:paddingStart="@dimen/card_margin"
             android:paddingEnd="@dimen/card_margin">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/lead"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/lightGrey"
                 android:textSize="@dimen/common_text_size"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text"
                 android:layout_below="@id/lead"
                 android:layout_marginTop="@dimen/card_margin"

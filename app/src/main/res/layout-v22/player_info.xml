@@ -27,91 +27,82 @@
                 android:layout_marginTop="12dp"
                 android:padding="8dp">
 
-                <GridLayout
-                    android:id="@+id/zzGridFirstRow"
+                <LinearLayout
+                    android:id="@+id/zzTopRow"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="12dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:columnCount="2"
-                    android:rowCount="1">
+                    android:baselineAligned="false">
 
-                    <RelativeLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_row="0"
-                        android:layout_column="0"
-                        android:layout_columnWeight="2"
-                        android:layout_marginBottom="12dp">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/team"
-                            android:layout_width="wrap_content"
+                        <RelativeLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="-"
-                            android:singleLine="true"
-                            android:ellipsize="end"
-                            android:layout_centerHorizontal="true"
-                            android:textColor="@color/blue"
-                            android:textSize="22sp" />
+                            android:layout_weight="2"
+                            android:layout_marginBottom="10dp">
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/team"
-                            android:layout_centerHorizontal="true"
-                            android:text="Tým"
-                            android:textColor="@color/darkGrey"
-                            android:textSize="14sp" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/team"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:singleLine="true"
+                                android:ellipsize="end"
+                                android:layout_centerHorizontal="true"
+                                android:textColor="@color/blue"
+                                android:textSize="22sp" />
 
-                    </RelativeLayout>
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/team"
+                                android:layout_centerHorizontal="true"
+                                android:text="Tým"
+                                android:textColor="@color/darkGrey"
+                                android:textSize="14sp" />
 
-                    <RelativeLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_row="0"
-                        android:layout_column="1"
-                        android:layout_columnWeight="1">
+                        </RelativeLayout>
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/group"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:singleLine="true"
-                            android:text="-"
-                            android:ellipsize="end"
-                            android:textColor="@color/darkGrey"
-                            android:textSize="24sp" />
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content">
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/group"
-                            android:layout_centerHorizontal="true"
-                            android:text="Skupina"
-                            android:textColor="@color/darkGrey"
-                            android:textSize="14sp" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/group"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:singleLine="true"
+                                android:text="-"
+                                android:ellipsize="end"
+                                android:textColor="@color/darkGrey"
+                                android:textSize="24sp" />
 
-                    </RelativeLayout>
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/group"
+                                android:layout_centerHorizontal="true"
+                                android:text="Skupina"
+                                android:textColor="@color/darkGrey"
+                                android:textSize="14sp" />
 
-                </GridLayout>
+                        </RelativeLayout>
 
-                <GridLayout
-                    android:id="@+id/zzGridSecondRow"
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_below="@id/zzTopRow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/zzGridFirstRow"
-                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:columnCount="3"
-                    android:rowCount="1">
+                    android:baselineAligned="false">
 
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_row="0"
-                        android:layout_column="0"
-                        android:layout_columnWeight="1">
+                        android:layout_weight="1">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/age"
@@ -136,9 +127,7 @@
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_row="0"
-                        android:layout_column="1"
-                        android:layout_columnWeight="1">
+                        android:layout_weight="1">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/successRate"
@@ -166,9 +155,7 @@
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_row="0"
-                        android:layout_column="2"
-                        android:layout_columnWeight="1">
+                        android:layout_weight="1">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/rounds"
@@ -190,7 +177,7 @@
 
                     </RelativeLayout>
 
-                </GridLayout>
+                </LinearLayout>
 
             </RelativeLayout>
 

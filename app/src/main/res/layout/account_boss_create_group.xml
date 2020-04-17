@@ -15,7 +15,7 @@
             android:id="@+id/account_boss_create_group"
             style="@style/CardRelativeLayout">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/account_boss_create_group_text"
                 style="@style/TextViewTitle"
                 android:text="@string/create_group" />
@@ -59,7 +59,7 @@
             style="@style/CardRelativeLayout"
             android:layout_below="@id/account_boss_create_group">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/account_boss_create_group_show_groups_text"
                 style="@style/TextViewInClickableLayout"
                 android:text="@string/show_groups" />
@@ -73,7 +73,7 @@
 
         </RelativeLayout>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/account_boss_create_group_teams_text"
             style="@style/TextViewTitleLeft"
             android:layout_below="@id/account_boss_create_group_show_groups"

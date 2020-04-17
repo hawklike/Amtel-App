@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/zzTitle"
             style="@style/TextViewTitle"
             android:layout_width="match_parent"
@@ -57,7 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/zzLead"
                     style="@style/TextViewTitle"
                     android:layout_width="match_parent"
@@ -84,7 +84,7 @@
                 android:layout_marginBottom="@dimen/card_margin"
                 android:layout_below="@id/zzLeadLayout">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/zzText"
                     style="@style/TextViewTitle"
                     android:layout_width="match_parent"

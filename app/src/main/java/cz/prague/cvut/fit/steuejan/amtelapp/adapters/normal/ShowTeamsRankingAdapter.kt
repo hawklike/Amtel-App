@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.annotation.ColorRes
 import androidx.recyclerview.widget.RecyclerView
-import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.getColor
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -17,8 +16,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
 class ShowTeamsRankingAdapter(private val list: List<Team>, private val year: String, var orderBy: RankingOrderBy)
     : RecyclerView.Adapter<ShowTeamsRankingAdapter.ViewHolder>()
 {
-    var onClick: ((player: Team) -> Unit)? = { toast(R.string.not_working_yet) }
-    private var previousOrderBy = orderBy
+    var onClick: ((player: Team, position: Int) -> Unit)? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
@@ -34,7 +32,7 @@ class ShowTeamsRankingAdapter(private val list: List<Team>, private val year: St
 
         init
         {
-            card.setOnClickListener { onClick?.invoke(getItem(adapterPosition)) }
+            card.setOnClickListener { onClick?.invoke(getItem(adapterPosition), adapterPosition) }
         }
     }
 
@@ -61,30 +59,31 @@ class ShowTeamsRankingAdapter(private val list: List<Team>, private val year: St
         holder.positiveSets.text = team.positiveSetsPerYear[year]?.toString() ?: "0"
         holder.negativeSets.text = team.negativeSetsPerYear[year]?.toString() ?: "0"
         holder.points.text = team.pointsPerYear[year]?.toString() ?: "0"
-        orderBy(holder, orderBy, previousOrderBy, position)
+        highlightOption(holder, orderBy)
     }
 
-    private fun orderBy(holder: ViewHolder, orderBy: RankingOrderBy, previousOrderBy: RankingOrderBy, position: Int)
-    {
-        if(orderBy != previousOrderBy)
-        {
-            setColors(holder, previousOrderBy, R.color.darkGrey)
-            setColors(holder, orderBy, R.color.blue)
-            if(position == list.lastIndex) this.previousOrderBy = orderBy
-        }
-    }
-
-    private fun setColors(holder: ViewHolder, orderBy: RankingOrderBy, @ColorRes color: Int)
+    private fun highlightOption(holder: ViewHolder, orderBy: RankingOrderBy)
     {
         when(orderBy)
         {
-            RankingOrderBy.POINTS -> holder.points.setTextColor(App.getColor(color))
-            RankingOrderBy.MATCHES -> holder.matches.setTextColor(App.getColor(color))
-            RankingOrderBy.WINS -> holder.wins.setTextColor(App.getColor(color))
-            RankingOrderBy.LOSSES -> holder.losses.setTextColor(App.getColor(color))
-            RankingOrderBy.POSITIVE_SETS -> holder.positiveSets.setTextColor(App.getColor(color))
-            RankingOrderBy.NEGATIVE_SETS -> holder.negativeSets.setTextColor(App.getColor(color))
+            RankingOrderBy.POINTS -> holder.points.setTextColor(getColor(R.color.blue))
+            RankingOrderBy.MATCHES -> holder.matches.setTextColor(getColor(R.color.blue))
+            RankingOrderBy.WINS -> holder.wins.setTextColor(getColor(R.color.blue))
+            RankingOrderBy.LOSSES -> holder.losses.setTextColor(getColor(R.color.blue))
+            RankingOrderBy.POSITIVE_SETS -> holder.positiveSets.setTextColor(getColor(R.color.blue))
+            RankingOrderBy.NEGATIVE_SETS -> holder.negativeSets.setTextColor(getColor(R.color.blue))
         }
+        disableOtherThan(holder, orderBy)
+    }
+
+    private fun disableOtherThan(holder: ViewHolder, orderBy: RankingOrderBy)
+    {
+        if(orderBy != RankingOrderBy.POINTS) holder.points.setTextColor(getColor(R.color.darkGrey))
+        if(orderBy != RankingOrderBy.MATCHES) holder.matches.setTextColor(getColor(R.color.darkGrey))
+        if(orderBy != RankingOrderBy.WINS) holder.wins.setTextColor(getColor(R.color.darkGrey))
+        if(orderBy != RankingOrderBy.LOSSES) holder.losses.setTextColor(getColor(R.color.darkGrey))
+        if(orderBy != RankingOrderBy.POSITIVE_SETS) holder.positiveSets.setTextColor(getColor(R.color.darkGrey))
+        if(orderBy != RankingOrderBy.NEGATIVE_SETS) holder.negativeSets.setTextColor(getColor(R.color.darkGrey))
     }
 
 }

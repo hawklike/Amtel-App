@@ -24,7 +24,7 @@ class RankingFragmentVM : ViewModel()
     private var teamByPoints: List<Team> = emptyList()
 
     var orderBy = POINTS
-    private set
+    var reverseOrder = false
 
     private var mTeams: List<Team> = emptyList()
 
@@ -53,17 +53,11 @@ class RankingFragmentVM : ViewModel()
         withContext(Default) {
             if(teamByPoints.isEmpty() && orderBy == POINTS)
             {
-                sortedTeams = RankingSolver(
-                    teams,
-                    year
-                ).withOrder(orderBy).sort()
+                sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
                 teamByPoints = sortedTeams
             }
             else if(teamByPoints.isNotEmpty() && orderBy == POINTS) sortedTeams = teamByPoints
-            else sortedTeams = RankingSolver(
-                teams,
-                year
-            ).withOrder(orderBy).sort()
+            else sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
 
             if(reverse) sortedTeams = sortedTeams.reversed()
         }

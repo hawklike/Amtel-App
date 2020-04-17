@@ -190,6 +190,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
 
             ContextCompat.startForegroundService(context, intent)
             generateButton.setTextColor(App.getColor(R.color.red))
+            generateButton.text = context.getString(R.string.regenerate_matches)
         }
     }
 

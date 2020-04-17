@@ -15,11 +15,12 @@ object GroupRepository
 {
     private const val TAG = "GroupRepository"
 
-    suspend fun setGroup(group: Group): GroupState = withContext(IO)
+    suspend fun setGroup(group: Group, merge: Boolean = true): GroupState = withContext(IO)
     {
         return@withContext try
         {
-            GroupDAO().insert(group)
+            if(merge) GroupDAO().insert(group)
+            else GroupDAO().insert(group, false)
             Log.i(TAG, "addGroup(): $group successfully added to database")
             ValidGroup(group)
         }
@@ -30,7 +31,7 @@ object GroupRepository
         }
     }
 
-    suspend fun addPlayoff(playOff: Group): GroupState = withContext(IO)
+    suspend fun setPlayoff(playOff: Group): GroupState = withContext(IO)
     {
         return@withContext try
         {

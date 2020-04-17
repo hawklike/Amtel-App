@@ -17,6 +17,7 @@ import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.ManageGroupsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowTeamsFirestoreAdapter
@@ -26,6 +27,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidName
+import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidGroup
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.AccountBossMakeGroupsFragmentVM
 
 class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
@@ -149,19 +151,17 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 
     private fun isGroupCreated()
     {
-        viewModel.group.observe(viewLifecycleOwner) {
+        viewModel.group.observe(viewLifecycleOwner) { group ->
             progressDialog.dismiss()
-            val title = viewModel.displayDialog(it).title
-
-            viewModel.updateGroups(it)
-
-            MaterialDialog(activity!!)
-                .title(text = title)
-                .show {
-                    positiveButton(R.string.ok)
-                    onDismiss {}
+            if(group is ValidGroup) toast("Skupina ${group.self.name} byla úspěšně vytvořena.")
+            else
+            {
+                val groupName = nameLayout.editText?.text.toString().trim()
+                MaterialDialog(activity!!).show {
+                    title(text = "Skupina $groupName již existuje.")
+                    positiveButton()
                 }
-
+            }
             nameLayout.editText?.text?.clear()
         }
     }

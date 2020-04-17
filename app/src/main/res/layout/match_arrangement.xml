@@ -39,7 +39,7 @@
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:max="100"/>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
@@ -74,7 +74,7 @@
                     android:layout_alignParentEnd="true"
                     app:srcCompat="@drawable/ic_edit_white_24dp" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/match_arrangement_home"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
                     android:textColor="@color/darkGrey"
                     android:textSize="16sp" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/match_arrangement_score"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/match_arrangement_away"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -147,7 +147,7 @@
                     app:errorEnabled="true"
                     android:importantForAutofill="no" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/match_arrangement_default"
                     style="@style/TextViewInClickableLayout"
                     android:layout_below="@id/match_arrangement_change_date"

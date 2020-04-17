@@ -15,7 +15,7 @@
         android:background="@drawable/rounded_object"
         android:elevation="@dimen/elevation">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/ranking_sortBy_title"
             style="@style/TextViewTitle"
             android:layout_marginBottom="16dp"
@@ -29,7 +29,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/ranking_team"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
                 android:textSize="@dimen/common_text_size"
                 android:textColor="@color/darkGrey"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/ranking_matches"
                 android:layout_width="28dp"
                 android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
                 android:textSize="@dimen/common_text_size"
                 android:textColor="@color/darkGrey"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/ranking_wins"
                 android:layout_width="28dp"
                 android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                 android:textSize="@dimen/common_text_size"
                 android:textColor="@color/darkGrey"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/ranking_losses"
                 android:layout_width="28dp"
                 android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
                 android:textSize="@dimen/common_text_size"
                 android:textColor="@color/darkGrey"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/ranking_sets_positive"
                 android:layout_width="28dp"
                 android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
                 android:textSize="@dimen/common_text_size"
                 android:textColor="@color/darkGrey"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/ranking_sets_negative"
                 android:layout_width="28dp"
                 android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
                 android:textSize="@dimen/common_text_size"
                 android:textColor="@color/darkGrey"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/ranking_points"
                 android:layout_width="28dp"
                 android:layout_height="wrap_content"
@@ -116,7 +116,7 @@
             android:layout_gravity="center_horizontal|center_vertical"
             android:max="100"/>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"

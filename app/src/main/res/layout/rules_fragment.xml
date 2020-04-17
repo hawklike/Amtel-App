@@ -11,12 +11,12 @@
             style="@style/CardRelativeLayout"
             android:paddingBottom="8dp">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/zzContactTitle"
                 style="@style/TextViewTitle"
                 android:text="Vedoucí soutěže" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/contactName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
                 android:layout_below="@id/zzContactTitle"
                 android:text="Načítám jméno..."/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/contactEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
                 android:text="Načítám email.."/>
 
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/contactPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -64,14 +64,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/zzRulesTitle"
                 style="@style/TextViewTitleLeft"
                 android:layout_marginTop="0dp"
                 android:gravity="center"
                 android:text="Pravidla" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/rules"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

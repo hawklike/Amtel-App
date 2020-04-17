@@ -2,6 +2,8 @@ package cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal
 
 import android.content.res.ColorStateList
 import android.graphics.Typeface
+import android.os.Build
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,6 +69,20 @@ class ShowPlayersAdapter(
             {
                 holder.name.setTextColor(App.getColor(R.color.blue))
                 holder.surname.setTextColor(App.getColor(R.color.blue))
+
+                //cannot decide if it is better or not
+//                val blueStar = "<font color=#2FB7F4>★</font>"
+//                val whiteStar = "<font color=#FFFFFF>★</font>"
+//                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+//                {
+//                    holder.name.text = Html.fromHtml("$blueStar ${player.name}", Html.FROM_HTML_MODE_LEGACY)
+//                    holder.surname.text = Html.fromHtml("$whiteStar ${player.surname}", Html.FROM_HTML_MODE_LEGACY)
+//                }
+//                else
+//                {
+//                    holder.name.text = Html.fromHtml("$blueStar ${player.name}")
+//                    holder.surname.text = Html.fromHtml("$whiteStar ${player.surname}")
+//                }
             }
         }
         else

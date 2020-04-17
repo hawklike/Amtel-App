@@ -86,7 +86,8 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
             adapter = ShowGroupsMenuAdapter(
                 activity!!,
                 it,
-                isRanking
+                isRanking,
+                mainActivityModel.getUser().value
             )
             onNextClick(adapter)
             recyclerView?.adapter = adapter

@@ -28,7 +28,7 @@
         android:layout_toStartOf="@id/group_card_delete"
         android:contentDescription="skupina viditelnost" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/group_card_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
         android:textColor="@color/darkGrey"
         android:textSize="20sp" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/group_card_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
         android:textColor="@color/darkGrey"
         android:textSize="13sp" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/group_card_playingPlayOff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

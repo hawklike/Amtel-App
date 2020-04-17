@@ -32,9 +32,11 @@ class RankingViewPagerActivity : AbstractViewPagerActivity()
     override fun setupViewPager(viewPager: ViewPager)
     {
         val adapter = ViewPagerAdapter(supportFragmentManager)
-        group.teamIds.keys.forEach {
+        group.teamIds.keys.sorted().forEach {
             adapter.addFragment(RankingFragment.newInstance(group, it.toInt()), it)
         }
+
         viewPager.adapter = adapter
+        viewPager.setCurrentItem(group.teamIds.keys.count() - 1, true)
     }
 }

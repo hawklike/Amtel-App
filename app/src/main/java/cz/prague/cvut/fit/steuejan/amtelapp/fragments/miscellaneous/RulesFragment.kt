@@ -82,7 +82,8 @@ class RulesFragment : AbstractMainActivityFragment()
         LeagueRepository.headOfLeague?.phone?.let {
             val intent = Intent(Intent.ACTION_DIAL)
             intent.data = Uri.parse("tel:$it")
-            startActivity(intent)
+            try { startActivity(intent) }
+            catch(ex: ActivityNotFoundException) { toast("Z vašeho zařízení nelze volat.") }
         }
     }
 
