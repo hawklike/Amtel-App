@@ -4,6 +4,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.GroupRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.TestingUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -23,7 +24,14 @@ class ScheduleGenerator
                     createMatches(self, rounds, group)
                     true
                 }
-                catch(ex: Exception) { false } //TODO: send error to crashlytics
+                catch(ex: Exception)
+                {
+                    with(TestingUtil) {
+                        log("ScheduleGenerator::generateMatches(): $rounds (all) matches in group $group not generated because ${ex.message}")
+                        throwNonFatal(ex)
+                    }
+                    false
+                }
             }
             else false
         }
