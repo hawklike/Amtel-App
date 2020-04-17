@@ -6,6 +6,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SearchPreparation
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.TestingUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.TeamDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -28,12 +29,16 @@ object TeamRepository
             team.englishName = StringUtil.prepareCzechOrdering(team.name)
 
             TeamDAO().insert(team)
-            Log.i(TAG, "setTeam(): $team successfully set/updated in database")
+            Log.d(TAG, "setTeam(): team $team successfully set/updated in database")
             team
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "setTeam(): $team not set/updated in database because ${ex.message}")
+            Log.e(TAG, "setTeam(): team $team not set/updated in database because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::setTeam(): team $team not set/updated in database because ${ex.message}")
+                throwNonFatal(ex)
+            }
             null
         }
     }
@@ -44,12 +49,16 @@ object TeamRepository
         return@withContext try
         {
             TeamDAO().update(documentId, mapOfFieldsAndValues)
-            Log.i(TAG, "updateTeam(): team with id $documentId successfully updated with $mapOfFieldsAndValues")
+            Log.d(TAG, "updateTeam(): team with id $documentId successfully updated with $mapOfFieldsAndValues")
             true
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateTeam(): team with id $documentId not updated because ${ex.message}")
+            Log.e(TAG, "updateTeam(): team with id $documentId not updated with $mapOfFieldsAndValues because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::updateTeam(): team with id $documentId not updated with $mapOfFieldsAndValues because ${ex.message}")
+                throwNonFatal(ex)
+            }
             false
         }
     }
@@ -60,12 +69,16 @@ object TeamRepository
         return@withContext try
         {
             val team = TeamDAO().findById(id).toObject<Team>()
-            Log.i(TAG, "findTeam(): $team found in database")
+            Log.d(TAG, "findTeam(): $team found in database")
             team?.let { ValidTeam(team) } ?: NoTeam
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "findTeam(): team with $id not found in database because ${ex.message}")
+            Log.e(TAG, "findTeam(): team with id $id not found in database because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::findTeam(): team with id $id not found in database because ${ex.message}")
+                throwNonFatal(ex)
+            }
             NoTeam
         }
     }
@@ -75,12 +88,16 @@ object TeamRepository
         return@withContext try
         {
             val teams = TeamDAO().find(field, value).toObjects<Team>()
-            Log.i(TAG, "findTeams(): $teams where $field is $value found successfully")
+            Log.d(TAG, "findTeams(): $teams where $field is $value found successfully")
             ValidTeams(teams)
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "findTeams(): documents not found because ${ex.message}")
+            Log.e(TAG, "findTeams(): documents where $field is $value not found because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::findTeams(): documents where $field is $value not found because ${ex.message}")
+                throwNonFatal(ex)
+            }
             NoTeam
         }
     }
@@ -93,12 +110,16 @@ object TeamRepository
         return@withContext try
         {
             TeamDAO().updateUser(newUser)
-            Log.i(TAG, "updateUserInTeam() $newUser succesfully updated")
+            Log.d(TAG, "updateUserInTeam(): $newUser successfully updated")
             true
         }
         catch(ex: Exception)
         {
             Log.e(TAG, "updateUserInTeam(): user $newUser not updated because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::updateUserInTeam(): user $newUser not updated because ${ex.message}")
+                throwNonFatal(ex)
+            }
             false
         }
     }
@@ -130,14 +151,18 @@ object TeamRepository
                         }
                     }
                 }
-                Log.i(TAG, "retrieveTeamsInSeason(): $teams in $groupId [groupId] and $year [year] found successfully")
+                Log.d(TAG, "retrieveTeamsInSeason(): $teams in group with id $groupId and year $year found successfully")
                 ValidTeams(teams)
             }
             else NoTeam
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "retrieveTeamsInSeason(): teams not found because ${ex.message}")
+            Log.e(TAG, "retrieveTeamsInSeason(): teams in group with id $groupId and year $year not found because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::retrieveTeamsInSeason(): teams in group with id $groupId and year $year not found because ${ex.message}")
+                throwNonFatal(ex)
+            }
             NoTeam
         }
     }

@@ -6,6 +6,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SearchPreparation
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.TestingUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.UserDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.PlayerRounds
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
@@ -27,12 +28,16 @@ object UserRepository
         return@withContext try
         {
             UserDAO().insert(user)
-            Log.i(TAG, "addUser(): $user successfully added to database")
+            Log.d(TAG, "setUser(): user $user successfully set/updated to database")
             user
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addUser(): $user not added to database because $ex")
+            Log.e(TAG, "setUser(): user $user not set/updated to database because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::setUser(): user $user not set/updated to database because ${ex.message}")
+                throwNonFatal(ex)
+            }
             null
         }
     }
@@ -43,12 +48,16 @@ object UserRepository
         return@withContext try
         {
             val user = UserDAO().findById(id).toObject<User>()
-            Log.i(TAG, "findUser(): $user found in database")
+            Log.d(TAG, "findUser(): user $user found in database")
             user
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "findUser(): user with $id not found in database because ${ex.message}")
+            Log.e(TAG, "findUser(): user with id $id not found in database because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::findUser(): user with id $id not found in database because ${ex.message}")
+                throwNonFatal(ex)
+            }
             null
         }
     }
@@ -58,12 +67,16 @@ object UserRepository
         return@withContext try
         {
             val users = UserDAO().find(field, value).toObjects<User>()
-            Log.i(TAG, "findUsers(): $users where $field is $value found successfully")
+            Log.d(TAG, "findUsers(): users $users where $field is $value found successfully")
             users
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "findUsers(): documents not found because ${ex.message}")
+            Log.e(TAG, "findUsers(): users where $field is $value not found because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::findUsers(): users where $field is $value not found because ${ex.message}")
+                throwNonFatal(ex)
+            }
             null
         }
     }
@@ -74,12 +87,16 @@ object UserRepository
         return@withContext try
         {
             UserDAO().update(documentId, mapOfFieldsAndValues)
-            Log.i(TAG, "updateUser(): user with id $documentId successfully updated with $mapOfFieldsAndValues")
+            Log.d(TAG, "updateUser(): user with id $documentId successfully updated with $mapOfFieldsAndValues")
             true
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateUser(): user with id $documentId not updated because ${ex.message}")
+            Log.e(TAG, "updateUser(): user with id $documentId not updated with $mapOfFieldsAndValues because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::updateUser(): user with id $documentId not updated with $mapOfFieldsAndValues because ${ex.message}")
+                throwNonFatal(ex)
+            }
             false
         }
     }
@@ -90,12 +107,16 @@ object UserRepository
         return@withContext try
         {
             UserDAO().delete(userId)
-            Log.i(TAG, "deleteUser(): user with id $userId successfully deleted")
+            Log.d(TAG, "deleteUser(): user with id $userId successfully deleted")
             true
         }
         catch(ex: Exception)
         {
             Log.e(TAG, "deleteUser(): user with id $userId not deleted because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::setUser(): deleteUser(): user with id $userId not deleted because ${ex.message}")
+                throwNonFatal(ex)
+            }
             false
         }
     }
@@ -133,6 +154,10 @@ object UserRepository
         catch(ex: Exception)
         {
             Log.e(TAG, "addRound(): round $round not added to user with id $userId because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::addRound(): round $round not added to user with id $userId because ${ex.message}")
+                throwNonFatal(ex)
+            }
             false
         }
     }
@@ -149,6 +174,10 @@ object UserRepository
         catch(ex: Exception)
         {
             Log.e(TAG, "retrieveRounds(): rounds of a user with id $userId not retrieved because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::retrieveRounds(): rounds of a user with id $userId not retrieved because ${ex.message}")
+                throwNonFatal(ex)
+            }
             null
         }
     }
