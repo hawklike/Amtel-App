@@ -26,11 +26,12 @@ class SeasonFinisher(private val groups: MutableList<Group>)
 
     private val resolvedTeamIds = mutableSetOf<String>()
     private val finalGroups = mutableListOf<Group>()
+    private val teamIdsInPlayoff = mutableListOf<String>()
 
     private var actualSeason = DateUtil.actualSeason.toInt()
 
     suspend fun createPlayoff(): Boolean
-            = GroupRepository.addPlayoff(playoff) is ValidGroup
+            = GroupRepository.setPlayoff(playoff) is ValidGroup
 
     /*
     Updates team's final position in a group in a season.
@@ -87,11 +88,11 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         transferBottomTeams()
         transferTopTeams()
 
-        createMatches()
+        createPlayoffMatches()
 
         addOtherTeamsToNextSeason()
         updateGroups()
-        LeagueRepository.changeSeason()
+        LeagueRepository.incrementSeason()
     }
 
     private fun addOtherTeamsToNextSeason()
@@ -112,13 +113,15 @@ class SeasonFinisher(private val groups: MutableList<Group>)
         finalGroups.forEach {
             GroupRepository.setGroup(it)
         }
+        playoff.teamIds[(DateUtil.actualSeason.toInt() + 1).toString()] = teamIdsInPlayoff
+        GroupRepository.setPlayoff(playoff)
     }
 
     /*
     Creates match between second and last but one team in two sequent
     groups (according to a group's rank - the lower the better group is).
      */
-    private suspend fun createMatches()
+    private suspend fun createPlayoffMatches()
     {
         for(i in 0 until groupsPlayingPlayoff.lastIndex)
         {
@@ -139,6 +142,7 @@ class SeasonFinisher(private val groups: MutableList<Group>)
                         val betterTeam = betterTeams[betterTeams.lastIndex - 1]
                         val worseTeam = worseTeams[1]
                         resolvedTeamIds.addAll(listOf(betterTeam.id!!, worseTeam.id!!))
+                        teamIdsInPlayoff.addAll(listOf(betterTeam.id!!, worseTeam.id!!))
                         //a home team is always the team in a better group
                         setMatches(listOf(betterTeam, worseTeam))
                     }

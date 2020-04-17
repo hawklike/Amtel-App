@@ -15,10 +15,11 @@ class GroupDeletionService : IntentService(GroupDeletionService::class.simpleNam
     }
 
     private var ok = true
+    private lateinit var group: Group
 
     override fun onHandleIntent(intent: Intent)
     {
-        val group = intent.getParcelableExtra<Group>(GROUP)
+        group = intent.getParcelableExtra(GROUP)
 
         runBlocking {
            ok = GroupDeleter(group)
@@ -29,7 +30,7 @@ class GroupDeletionService : IntentService(GroupDeletionService::class.simpleNam
     override fun onDestroy()
     {
         super.onDestroy()
-        if(ok) toast("Skupina byla úspěšně smazána.")
-        else toast("Skupinu se nepodařilo odstranit.")
+        if(ok) toast("Skupina ${group.name} byla úspěšně smazána.")
+        else toast("Skupinu ${group.name} se nepodařilo odstranit.")
     }
 }

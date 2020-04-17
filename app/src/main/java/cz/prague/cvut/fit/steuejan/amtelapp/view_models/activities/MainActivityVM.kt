@@ -7,13 +7,15 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.AbstractBaseActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.EmailRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.EmailRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.PLAYER
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.TeamState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
@@ -54,6 +56,16 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
     }
 
     fun isUserLoggedIn(): LiveData<UserState> = userState
+
+    /*---------------------------------------------------*/
+
+    var isDeadlineAlertShown: Boolean = false
+        set(value)
+        {
+            state.set(DEADLINE_ALERT_SHOWN, value)
+            field = value
+        }
+        get() = state.get<Boolean>(DEADLINE_ALERT_SHOWN) ?: field
 
     /*---------------------------------------------------*/
 
@@ -100,15 +112,27 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     /*---------------------------------------------------*/
 
+    private val _userAccountDeleted = SingleLiveEvent<Boolean>()
+    val userAccountDeleted: LiveData<Boolean> = _userAccountDeleted
+
+    /*---------------------------------------------------*/
+
     fun prepareUser(uid: String)
     {
         viewModelScope.launch {
             val user = UserRepository.findUser(uid)
-            user?.let {
-                isUserLoggedIn(SignedUser(it))
-                setUser(it)
+            if(user != null)
+            {
+                if(user.role.toRole() == PLAYER)
+                {
+                    _userAccountDeleted.value = true
+                    return@launch
+                }
+                isUserLoggedIn(SignedUser(user))
+                setUser(user)
                 Log.i(AbstractBaseActivity.TAG, "displayAccount(): $user currently logged in")
             }
+            else _userAccountDeleted.value = true
         }
     }
 
@@ -178,13 +202,22 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
         viewModelScope.launch {
             if(EmailSender.headOfLeagueEmail == null)
             {
-                UserRepository.findUsers("role", UserRole.HEAD_OF_LEAGUE.toString())?.let {
-                    if(it.isNotEmpty())
+                UserRepository.findUsers("role", UserRole.HEAD_OF_LEAGUE.toString())?.let { users ->
+                    if(users.isNotEmpty())
                     {
-                        val headOfLeague = it.first()
-                        LeagueRepository.headOfLeague = headOfLeague
-                        EmailSender.headOfLeagueEmail = headOfLeague.email
-                        _headOfLeague.value = headOfLeague
+                        users.toMutableList().let { mutableUsers ->
+                            mutableUsers.find { it.email == context.getString(R.string.adminEmail) } ?.let { admin ->
+                                mutableUsers.remove(admin)
+                            }
+
+                            if(mutableUsers.isNotEmpty())
+                            {
+                                val headOfLeague = mutableUsers.first()
+                                LeagueRepository.headOfLeague = headOfLeague
+                                EmailSender.headOfLeagueEmail = headOfLeague.email
+                                _headOfLeague.value = headOfLeague
+                            }
+                        }
                     }
                     else if(repeat != 0)
                     {
@@ -200,6 +233,7 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
     {
         const val TITLE = "title"
         const val DRAWER_POSITION = "position"
+        const val DEADLINE_ALERT_SHOWN = "shown"
     }
 
     private val TAG = "MainActivityVM"

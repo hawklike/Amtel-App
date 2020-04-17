@@ -39,9 +39,4 @@ class PlayersFragmentVM : ViewModel()
             }
         }
     }
-
-    fun editUser(user: User?)
-    {
-        //TODO
-    }
 }

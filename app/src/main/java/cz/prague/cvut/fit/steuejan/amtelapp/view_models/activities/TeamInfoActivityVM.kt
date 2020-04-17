@@ -18,7 +18,7 @@ typealias TripleEntries = Triple<Entries, Entries, Entries>
 
 class TeamInfoActivityVM : ViewModel()
 {
-    var seasonRanking: List<Team> = listOf()
+//    var seasonRanking: List<Team> = listOf()
     var mTeam: Team? = null
 
     /*---------------------------------------------------*/
@@ -40,6 +40,11 @@ class TeamInfoActivityVM : ViewModel()
 
     private val _teamRank = MutableLiveData<Int>()
     val teamRank: LiveData<Int> = _teamRank
+
+    fun setTeamRank(rank: Int)
+    {
+        _teamRank.value = rank
+    }
 
     /*---------------------------------------------------*/
 
@@ -107,19 +112,19 @@ class TeamInfoActivityVM : ViewModel()
         _successRate.value = if(!rate.isNaN()) rate.roundToInt() else 0
     }
 
-    fun calculateTeamRank()
+    fun calculateTeamRank(rankedTeams: List<Team>)
     {
         viewModelScope.launch {
-            for(i in seasonRanking.indices)
+            for(i in rankedTeams.indices)
             {
-                if(seasonRanking[i].id == mTeam?.id)
+                if(rankedTeams[i].id == mTeam?.id)
                 {
                     _teamRank.value = i + 1
                     return@launch
                 }
             }
 
-            if(seasonRanking.isEmpty()) _teamRank.value = 0
+            if(rankedTeams.isEmpty()) _teamRank.value = 0
         }
     }
 

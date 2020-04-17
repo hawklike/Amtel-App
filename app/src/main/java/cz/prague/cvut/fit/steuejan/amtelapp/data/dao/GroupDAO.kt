@@ -18,6 +18,12 @@ class GroupDAO : DAO
         else throw IllegalArgumentException("GroupDAO::insert(): entity is not type of Group and should be")
     }
 
+    suspend fun <T> insert(entity: T, merge: Boolean)
+    {
+        if(entity is Group) insert(collection, entity, merge)
+        else throw IllegalArgumentException("GroupDAO::insert(): entity is not type of Group and should be")
+    }
+
     suspend fun <T> insertPlayOff(entity: T)
     {
         if(entity is Group)

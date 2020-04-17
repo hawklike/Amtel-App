@@ -17,7 +17,7 @@
             android:id="@+id/account_personal_personal_information"
             style="@style/CardRelativeLayout">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/account_personal_personal_information_text"
                 style="@style/TextViewTitle"
                 android:text="@string/personal_information" />
@@ -155,6 +155,41 @@
                 android:id="@+id/account_personal_add_password_button"
                 style="@style/FloatingActionButton"
                 android:layout_below="@id/account_personal_password_confirmation"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="8dp"
+                app:srcCompat="@drawable/ic_check_white_24dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/account_personal_change_email"
+            style="@style/CardRelativeLayout"
+            android:layout_marginBottom="@dimen/card_margin"
+            android:layout_below="@id/account_personal_change_password">
+
+            <TextView
+                android:id="@+id/account_personal_text_email"
+                style="@style/TextViewTitle"
+                android:text="Změnit email" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/account_personal_email"
+                style="@style/TextInputLayout"
+                android:layout_below="@id/account_personal_text_email"
+                android:hint="Nový email"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/account_personal_email_editText1"
+                    style="@style/TextInputEditTextStyle"
+                    android:inputType="textEmailAddress" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/account_personal_change_email_button"
+                style="@style/FloatingActionButton"
+                android:layout_below="@id/account_personal_email"
                 android:layout_alignParentEnd="true"
                 android:layout_marginBottom="8dp"
                 app:srcCompat="@drawable/ic_check_white_24dp" />

@@ -63,8 +63,11 @@ class TeamToGroupInputter
         {
             val season = group.self.teamIds[DateUtil.actualSeason]
             season?.removeAll { it == team.id }
-            if(season != null && season.isEmpty()) group.self.teamIds.remove(DateUtil.actualSeason)
-            GroupRepository.setGroup(group.self)
+            if(season != null && season.isEmpty())
+            {
+                group.self.teamIds.remove(DateUtil.actualSeason)
+            }
+            GroupRepository.setGroup(group.self, false)
         }
     }
 }

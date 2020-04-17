@@ -22,7 +22,6 @@ abstract class AbstractMainActivityFragment : AbstractBaseFragment()
     {
         super.onActivityCreated(savedInstanceState)
         setProgressBar(false)
-        activity?.window?.navigationBarColor = App.getColor(R.color.veryVeryLightGrey)
     }
 
     override fun onDestroyView()

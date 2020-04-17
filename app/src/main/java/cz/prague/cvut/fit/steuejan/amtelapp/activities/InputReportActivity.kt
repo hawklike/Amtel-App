@@ -67,43 +67,21 @@ class InputReportActivity : AbstractBaseActivity()
         }
     }
 
-    override fun onPause()
-    {
-        super.onPause()
-        val title: String?
-        val lead: String?
-        val text: String?
-
-        if(viewModel.published)
-        {
-            title = null
-            lead = null
-            text = null
-        }
-        else
-        {
-            title = binding.title.text.toString()
-            lead = binding.lead.text.toString()
-            text = binding.text.text.toString()
-        }
-
-        PreferenceManager
-            .getDefaultSharedPreferences(this)
-            .edit {
-                putString(REPORT_TITLE, title)
-                putString(REPORT_LEAD, lead)
-                putString(REPORT_TEXT, text)
-            }
-    }
-
     override fun onBackPressed()
     {
-        if(viewModel.published)
-        {
-            setResult(RESULT_OK)
-            finish()
+        MaterialDialog(this).show {
+            title(text = "Opravdu chcete odejít?")
+            message(text = "Veškeré neuložené změny budou ztraceny.")
+            negativeButton()
+            positiveButton(text = "Odejít") {
+                if(viewModel.published)
+                {
+                    setResult(RESULT_OK)
+                    finish()
+                }
+                else finish()
+            }
         }
-        else finish()
     }
 
     private fun setupLayout()
@@ -138,8 +116,39 @@ class InputReportActivity : AbstractBaseActivity()
                     viewModel.publishRecord(it.id, title, lead, text)
                 }
             }
-            ?: toast("Uloženo")
+            ?: let {
+                updateReportInPreferences()
+                toast("Uloženo")
+            }
         }
+    }
+
+    private fun updateReportInPreferences()
+    {
+        val title: String?
+        val lead: String?
+        val text: String?
+
+        if(viewModel.published)
+        {
+            title = null
+            lead = null
+            text = null
+        }
+        else
+        {
+            title = binding.title.text.toString()
+            lead = binding.lead.text.toString()
+            text = binding.text.text.toString()
+        }
+
+        PreferenceManager
+            .getDefaultSharedPreferences(this)
+            .edit {
+                putString(REPORT_TITLE, title)
+                putString(REPORT_LEAD, lead)
+                putString(REPORT_TEXT, text)
+            }
     }
 
     private fun publishReport()
@@ -170,7 +179,11 @@ class InputReportActivity : AbstractBaseActivity()
             }
             else
             {
-                if(published) toast("Publikováno")
+                if(published)
+                {
+                    toast("Publikováno")
+                    updateReportInPreferences()
+                }
                 else toast("Publikování se nezdařilo!")
             }
         }

@@ -153,7 +153,9 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
         {
             group.roundDates[round.toString()]?.let { weekNumber ->
                 title.text = String.format(getString(R.string.round_state), round)
-                deadline.text = String.format(getString(R.string.round_countdown), DateUtil.getRemainingDaysUntil(weekNumber))
+                val remainingDays = DateUtil.getRemainingDaysUntil(weekNumber)
+                if(remainingDays == 0) deadline.text = "Kolo již proběhlo."
+                else deadline.text = String.format(getString(R.string.round_countdown), remainingDays)
             } ?: let { chooseWeekLayout?.visibility = GONE }
         }
     }

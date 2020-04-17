@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".activities.AddUserToTeamActivity">
+    tools:context=".activities.EditUserActivity">
 
     <include
         layout="@layout/toolbar"
@@ -31,62 +31,76 @@
             style="@style/CardRelativeLayout">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/account_add_user_to_team_title"
+                    android:id="@+id/zzTitle"
                     style="@style/TextViewTitle"
-                    android:text="@string/new_player" />
+                    android:text="Osobní údaje" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/account_add_user_to_team_name"
-                    android:layout_below="@id/account_add_user_to_team_title"
+                    android:id="@+id/name"
+                    android:layout_below="@id/zzTitle"
                     style="@style/TextInputLayout"
                     android:hint="@string/name"
                     app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/account_add_user_to_team_name_editText"
+                        android:id="@+id/name_editText"
                         style="@style/TextInputEditTextStyle"
                         android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/account_add_user_to_team_surname"
+                    android:id="@+id/surname"
                     style="@style/TextInputLayout"
-                    android:layout_below="@id/account_add_user_to_team_name"
+                    android:layout_below="@id/name"
                     android:hint="@string/surname"
                     app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/account_add_user_to_team_surname_editText"
+                        android:id="@+id/surname_editText"
                         style="@style/TextInputEditTextStyle"
                         android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/account_add_user_to_team_email"
+                    android:id="@+id/email"
                     style="@style/TextInputLayout"
-                    android:layout_below="@id/account_add_user_to_team_surname"
+                    android:layout_below="@id/surname"
                     android:hint="@string/email"
                     app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/account_add_user_to_team_email_editText"
+                        android:id="@+id/email_editText"
                         style="@style/TextInputEditTextStyle"
                         android:inputType="textEmailAddress" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/account_add_user_to_team_birthdate"
+                    android:id="@+id/phone"
                     style="@style/TextInputLayout"
-                    android:layout_below="@id/account_add_user_to_team_email"
+                    android:layout_below="@id/email"
+                    android:hint="@string/phone_number"
+                    app:errorEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/phone_editText"
+                        style="@style/TextInputEditTextStyle"
+                        android:inputType="phone" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/birthdate"
+                    style="@style/TextInputLayout"
+                    android:layout_below="@id/phone"
                     android:layout_marginBottom="12dp"
                     android:hint="@string/birthdate"
                     app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/account_add_user_to_team_birthdate_editText"
+                        android:id="@+id/birthdate_editText"
                         style="@style/TextInputEditTextStyle"
                         android:inputType="date"
                         android:clickable="true"
@@ -94,43 +108,41 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <RadioGroup
-                    android:id="@+id/account_add_user_to_team_sex"
+                <Button
+                    android:id="@+id/changeRoleButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_below="@id/account_add_user_to_team_birthdate">
+                    android:layout_below="@id/birthdate"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_marginStart="8dp"
+                    android:elevation="0dp"
+                    android:minHeight="0dp"
+                    android:clickable="false"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:text="Předat roli"
+                    android:textColor="@color/middleLightGrey"
+                    android:textSize="@dimen/common_text_size" />
 
-                    <androidx.appcompat.widget.AppCompatRadioButton
-                        android:id="@+id/account_add_user_to_team_sex_man"
-                        android:text="@string/man"
-                        android:paddingEnd="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:checked="true"
-                        android:textColor="@color/radio_button"
-                        android:theme="@style/CheckBoxStyle"
-                        tools:ignore="RtlSymmetry" />
-
-                    <androidx.appcompat.widget.AppCompatRadioButton
-                        android:id="@+id/account_add_user_to_team_sex_woman"
-                        android:text="@string/woman"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:theme="@style/CheckBoxStyle"
-                        android:textColor="@color/radio_button"
-                        android:layout_weight="1" />
-
-                </RadioGroup>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/newTeamManager"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_below="@id/changeRoleButton"
+                    android:textSize="13sp"
+                    android:textColor="@color/lightGrey" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/account_add_user_to_team_add_button"
+                    android:id="@+id/saveButton"
                     style="@style/FloatingActionButton"
-                    android:layout_below="@id/account_add_user_to_team_sex"
+                    android:layout_marginEnd="1dp"
+                    android:layout_below="@id/birthdate"
+                    android:clickable="false"
+                    app:backgroundTint="@color/middleLightGrey"
                     android:layout_alignParentEnd="true"
                     android:layout_marginBottom="8dp"
-                    app:srcCompat="@drawable/ic_add_white_24dp" />
+                    app:srcCompat="@drawable/ic_save_white_24dp" />
 
             </RelativeLayout>
 

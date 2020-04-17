@@ -1,5 +1,6 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -16,6 +17,7 @@ import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.google.firebase.firestore.Query
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.activities.EditUserActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayerInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.paging.ShowUsersPagingAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
@@ -37,6 +39,8 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
     companion object
     {
         fun newInstance(): PlayersFragment = PlayersFragment()
+
+        const val EDIT_USER_REQUEST = 1
     }
 
     override fun getName(): String = "PlayersFragment"
@@ -50,6 +54,7 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
     override fun onDestroyView()
     {
         super.onDestroyView()
+        binding.refreshLayout.setOnRefreshListener(null)
 
         adapter?.onDelete = null
         adapter?.onEdit = null
@@ -70,6 +75,12 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
         showUsers()
         sortUsers()
         searchUser()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == EDIT_USER_REQUEST && resultCode == RESULT_OK) adapter?.refresh()
     }
 
     private fun refreshUsers()
@@ -97,8 +108,11 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
             deleteUser(user)
         }
 
-        adapter?.onEdit = {
-            viewModel.editUser(it)
+        adapter?.onEdit = { user ->
+            val intent = Intent(activity, EditUserActivity::class.java).apply {
+                putExtra(EditUserActivity.USER, user)
+            }
+            startActivityForResult(intent, EDIT_USER_REQUEST)
         }
 
         adapter?.onClick = { user ->
@@ -194,7 +208,7 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
             .setPrefetchDistance(6)
-            .setPageSize(5)
+            .setPageSize(4)
             .build()
 
         return FirestorePagingOptions.Builder<User>()

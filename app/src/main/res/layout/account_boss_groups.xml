@@ -20,13 +20,13 @@
             android:id="@+id/account_boss_choose_playOff"
             style="@style/CardRelativeLayout">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/account_boss_groups_open_playOff_title"
                 style="@style/TextViewTitle"
                 android:layout_marginBottom="0dp"
                 android:text="Baráž" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/account_boss_groups_open_playOff_text"
                 style="@style/TextViewTitleLeft"
                 android:gravity="center"
@@ -56,7 +56,7 @@
 
         </RelativeLayout>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/account_boss_groups_text"
             style="@style/TextViewTitleLeft"
             android:gravity="center"
@@ -65,7 +65,7 @@
             android:layout_below="@id/account_boss_choose_playOff"
             android:text="@string/generate_matches_in_groups" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/account_boss_groups_note"
             style="@style/TextViewTitleLeft"
             android:gravity="center"
@@ -89,7 +89,7 @@
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:max="100"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,7 +21,7 @@
             android:background="@drawable/rounded_object"
             android:elevation="@dimen/elevation">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/account_tm_make_team_text"
                 style="@style/TextViewTitle"
                 android:text="@string/create_team" />
@@ -117,7 +116,7 @@
             android:elevation="@dimen/elevation"
             android:background="@drawable/rounded_object">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/account_tm_make_team_add_player_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -144,34 +143,29 @@
 
         </RelativeLayout>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/account_tm_make_team_players_text"
                 style="@style/TextViewTitleLeft"
                 android:gravity="center"
                 android:layout_below="@id/account_tm_make_team_add_player"
                 android:text="@string/players" />
 
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/account_tm_make_team_refresh_players"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/account_tm_make_team_players_text"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:minHeight="400dp">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/account_tm_make_team_players_recyclerView"
-                android:minHeight="400dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_below="@id/account_tm_make_team_players_text"/>
+                android:layout_height="match_parent" />
 
-            <FrameLayout
-                android:id="@+id/account_tm_make_team_players_recyclerView_mask"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                android:background="#80F5F5F5"
-                android:layout_below="@id/account_tm_make_team_players_text"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:minHeight="400dp"/>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </RelativeLayout>
 

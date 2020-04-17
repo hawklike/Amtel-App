@@ -14,9 +14,10 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.StringUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.adapters.ShowGroupsMenuAdapterVM
 
-class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, private val isRanking: Boolean)
+class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, private val isRanking: Boolean, private val user: User?)
     : RecyclerView.Adapter<ShowGroupsMenuAdapter.ViewHolder>()
 {
     private val viewModel = ViewModelProviders.of(context as FragmentActivity).get(
@@ -28,7 +29,7 @@ class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, pri
     {
         val card: RelativeLayout = itemView.findViewById(R.id.group_menu_card)
         val name: TextView = itemView.findViewById(R.id.group_menu_card_name)
-        val logo: TextView = itemView.findViewById(R.id.group_menu_card_logo)
+        val label: TextView = itemView.findViewById(R.id.group_menu_card_logo)
         val rounds: TextView = itemView.findViewById(R.id.group_menu_card_size)
         val actualRound: TextView = itemView.findViewById(R.id.group_menu_card_actual)
 
@@ -53,17 +54,19 @@ class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, pri
     {
         val group = getItem(position)
         holder.name.text = group.name
-        holder.logo.text = StringUtil.createLabel(group.name)
+        holder.label.text = StringUtil.createLabel(group.name)
 
         if(isRanking)
         {
             viewModel.isRanking(holder, group)
+            viewModel.highlightCard(holder, user, group)
             return
         }
 
         if(group.playOff)
         {
             viewModel.getPlayOffDate(holder, group)
+            viewModel.highlightCard(holder, user, group)
             return
         }
 
@@ -82,6 +85,7 @@ class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, pri
                     round?.let { String.format(context.getString(R.string.actual_round), it) }
                         ?: String.format(context.getString(R.string.actual_round), context.getString(R.string.is_not))
             }
+            viewModel.highlightCard(holder, user, group)
         }
     }
 

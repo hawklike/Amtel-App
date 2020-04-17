@@ -14,6 +14,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.WhichButton
+import com.afollestad.materialdialogs.actions.setActionButtonEnabled
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -162,10 +164,10 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private fun getData()
     {
         userId = AuthManager.currentUser!!.uid
-        match = matchViewModel.match.value?.let { it } ?: Match()
+        match = matchViewModel.match.value ?: Match()
         homeTeam = matchViewModel.homeTeam.value?.let { if(it is ValidTeam) it.self else Team() } ?: Team()
         awayTeam = matchViewModel.awayTeam.value?.let { if(it is ValidTeam) it.self else Team() } ?: Team()
-        week = matchViewModel.week.value?.let { it } ?: InvalidWeek()
+        week = matchViewModel.week.value ?: InvalidWeek()
     }
 
     private fun populateFields()
@@ -316,21 +318,25 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                     true-> {
                         displayConfirmationDialog(
                             "Chcete podat námitku?",
-                            "Vámi zapsané údaje budou poslány vedoucímu soutěže k posouzení.",
+                            "Skóre: $score\n\nVámi zapsané skóre bude posláno vedoucímu soutěže k posouzení.",
                             "Podat") {
                             viewModel.inputResult(homeTeam.users, awayTeam.users, isHeadOfLeague, isReport = true) }
                     }
 
                     false -> {
-                        val title = if(!isHeadOfLeague && match.edits[round.toString()] == 1)
-                            getString(R.string.match_input_confirmation_last_attempt_text)
-                        else getString(R.string.match_input_confirmation_text)
+                            val message =
+                                if(!isHeadOfLeague && match.edits[round.toString()] == 1)
+                                    "Skóre: $score\n\nMáte poslední pokus na zapsání výsledku."
+                                else if(!isHeadOfLeague)
+                                    "Skóre: $score\n\nZapsat výsledek půjde již jenom jednou."
+                                else
+                                    "Skóre: $score"
 
                         displayConfirmationDialog(
                             "Zapsat výsledek?",
-                            title) {
-                            viewModel.inputResult(homeTeam.users, awayTeam.users, isHeadOfLeague)
+                            message) {
                             dialog.show()
+                            viewModel.inputResult(homeTeam.users, awayTeam.users, isHeadOfLeague)
                         }
                     }
                 }
@@ -402,12 +408,12 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     }
 
-    private fun displayConfirmationDialog(title: String, message: String, button: String = "Zapsat", callback: () -> Unit)
+    private fun displayConfirmationDialog(title: String, message: String?, button: String = "Zapsat", callback: () -> Unit)
     {
         MaterialDialog(activity!!)
             .title(text = title)
-            .message(text = message)
             .show {
+                message?.let { message(text = it) }
                 positiveButton(text = button) { callback.invoke() }
                 negativeButton()
             }
@@ -430,7 +436,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                 if(round == 2 && match.groupName == getString(R.string.fifty_plus_group)) listItemMultiChoice(this, players, editText)
                 else listItemSingleChoice(this, players, editText)
             }
-            positiveButton(R.string.ok)
+
+            positiveButton()
         }
     }
 
@@ -447,8 +454,11 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
      //output looks like this: <<name>> - <<email>>, <<name>> - <<email>>
     private fun listItemMultiChoice(dialog: MaterialDialog, players: List<String>, editText: EditText): MaterialDialog
     {
-        return dialog.listItemsMultiChoice(items = players) { _, _, items ->
-            editText.setText(items.joinToString("$COMMA ") { it.toString().replace("\n", " $EM_DASH ") })
+        return dialog.listItemsMultiChoice(items = players, waitForPositiveButton = false) { _, indices, items ->
+            editText.setText(items.joinToString("$COMMA ") {
+                it.toString().replace("\n", " $EM_DASH ")
+            })
+            dialog.setActionButtonEnabled(WhichButton.POSITIVE, indices.size == 2)
         }
     }
 
@@ -482,5 +492,16 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         }
     }
 
+    private val score: String
+        get()
+        {
+            val firstSet = "${firstSetHome.text}:${firstSetAway.text}"
+            val secondSet = "${secondSetHome.text}:${secondSetAway.text}"
 
+            val thirdSet = if(thirdSetHome.text.isEmpty()) ""
+            else "${thirdSetHome.text}:${thirdSetAway.text}"
+
+            return if(thirdSet.isEmpty()) listOf(firstSet, secondSet).joinToString(", ")
+            else listOf(firstSet, secondSet, thirdSet).joinToString(", ")
+        }
 }

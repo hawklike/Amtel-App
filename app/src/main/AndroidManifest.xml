@@ -50,6 +50,7 @@
         <activity android:name=".activities.PlayerInfoActivity" />
         <activity android:name=".activities.InputReportActivity" />
         <activity android:name=".activities.ShowReportActivity"/>
+        <activity android:name=".activities.EditUserActivity"/>
 
         <service
             android:name=".services.GenerateScheduleService"

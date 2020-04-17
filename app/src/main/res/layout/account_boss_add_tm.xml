@@ -17,7 +17,7 @@
             android:id="@+id/account_boss_add_tm"
             style="@style/CardRelativeLayout">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/account_boss_add_tm_text"
                     style="@style/TextViewTitle"
                     android:text="@string/add_tm" />
@@ -79,7 +79,7 @@
             android:layout_below="@id/account_boss_add_tm"
             style="@style/CardRelativeLayout">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/account_boss_deadline_text"
                     style="@style/TextViewTitle"
                     android:text="Uzavření soupisek" />
@@ -107,7 +107,7 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/dash"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
@@ -135,7 +135,7 @@
 
             </RelativeLayout>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/account_boss_deadline_delete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

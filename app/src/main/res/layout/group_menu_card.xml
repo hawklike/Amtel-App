@@ -4,7 +4,7 @@
     android:id="@+id/group_menu_card"
     style="@style/CustomMenuCardView">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/group_menu_card_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,7 +15,7 @@
         android:textColor="@color/darkGrey"
         android:textSize="24sp" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/group_menu_card_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         android:textColor="@color/darkGrey"
         android:textSize="12sp" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/group_menu_card_actual"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
         android:textColor="@color/darkGrey"
         android:textSize="12sp" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/group_menu_card_logo"
         android:layout_alignParentEnd="true"
         android:layout_width="wrap_content"

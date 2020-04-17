@@ -2,6 +2,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.data.repository
 
 import android.util.Log
 import com.google.firebase.firestore.Query
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.TestingUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.ReportDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Report
 import kotlinx.coroutines.Dispatchers
@@ -17,12 +18,16 @@ object ReportRepository
         return@withContext try
         {
             ReportDAO().insert(report)
-            Log.i(TAG, "setReport(): $report successfully added/updated to database")
+            Log.d(TAG, "setReport(): report $report successfully added/updated to database")
             report
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "setReport(): $report not added to database because ${ex.message}")
+            Log.e(TAG, "setReport(): report $report not added/updated to database because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::setReport(): report $report not added/updated to database because ${ex.message}")
+                throwNonFatal(ex)
+            }
             null
         }
     }
@@ -33,12 +38,16 @@ object ReportRepository
         return@withContext try
         {
             ReportDAO().delete(reportId)
-            Log.i(TAG, "deleteReport(): report with id $reportId successfully deleted")
+            Log.d(TAG, "deleteReport(): report with id $reportId successfully deleted")
             true
         }
         catch(ex: Exception)
         {
             Log.e(TAG, "deleteReport(): report with id $reportId not deleted because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::deleteReport(): report with id $reportId not deleted because ${ex.message}")
+                throwNonFatal(ex)
+            }
             false
         }
     }

@@ -19,17 +19,18 @@ object LeagueRepository
         return@withContext try
         {
             val league = LeagueDAO().findById(leagueId).toObject<League>()
-            Log.i("LeagueManager", "getActualSeason(): ${league?.actualSeason} successfully retrieved from database")
+            Log.d(TAG, "getActualSeason(): ${league?.actualSeason} successfully retrieved from database")
             league?.actualSeason
         }
         catch(ex: Exception)
         {
-            Log.e("LeagueManager", "getActualSeason(): actual season not retrieved from database because ${ex.message}")
+            Log.e(TAG, "getActualSeason(): actual season not retrieved from database because ${ex.message}")
+
             null
         }
     }
 
-    suspend fun changeSeason(): Boolean = withContext(IO)
+    suspend fun incrementSeason(): Boolean = withContext(IO)
     {
         return@withContext try
         {
@@ -80,12 +81,12 @@ object LeagueRepository
             league?.let { dao.insert(it) }
             date = dao.findById(leagueId).toObject<League>()?.serverTime
             dao.update(leagueId, mapOf(serverTime to null))
-            Log.i("LeagueManager", "successfully retrieved serverTime: $date")
+            Log.d(TAG, "successfully retrieved serverTime: $date")
             date
         }
         catch(ex: Exception)
         {
-            Log.e("LeagueManager", "serverTime not retrieved")
+            Log.e(TAG, "serverTime not retrieved")
             null
         }
     }

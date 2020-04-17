@@ -85,8 +85,8 @@ class AccountFragment : AbstractMainActivityFragment()
         val role = user.role.toRole()
         if(role == HEAD_OF_LEAGUE)
         {
-            adapter.addFragment(AccountBossAddTMFragment.newInstance(), getString(R.string.account_boss_adapter_add_TM))
             adapter.addFragment(AccountBossMakeGroupsFragment.newInstance(), getString(R.string.account_boss_adapter_make_groups))
+            adapter.addFragment(AccountBossAddTMFragment.newInstance(), getString(R.string.account_boss_adapter_add_TM))
             adapter.addFragment(AccountPersonalFragment.newInstance(), getString(R.string.account_adapter_personal))
         }
         else if(role == TEAM_MANAGER)
@@ -98,9 +98,10 @@ class AccountFragment : AbstractMainActivityFragment()
                     if(team is ValidTeam) mainActivityModel.setTeam(team)
                 } ?: mainActivityModel.setTeam(NoTeam)
 
-                adapter.addFragment(AccountPersonalFragment.newInstance(), getString(R.string.account_adapter_personal))
                 adapter.addFragment(AccountTMMakeTeamFragment.newInstance(), getString(R.string.account_tm_adapter_make_team))
+                adapter.addFragment(AccountPersonalFragment.newInstance(), getString(R.string.account_adapter_personal))
                 adapter.notifyDataSetChanged()
+                setProgressBar(false)
             }
         }
         viewPager.adapter = adapter
