@@ -9,6 +9,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.TestingUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
@@ -43,6 +44,7 @@ class LoginFragmentVM : ViewModel()
                 if(firebaseUser != null)
                 {
                     val user = UserRepository.findUser(firebaseUser.uid)
+                    TestingUtil.setCurrentUser(email)
                     if(user != null)
                     {
                         if(user.firstSign) UserRepository.updateUser(user.id, mapOf("firstSign" to false))
