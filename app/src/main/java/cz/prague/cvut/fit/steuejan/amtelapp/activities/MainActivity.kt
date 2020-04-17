@@ -21,6 +21,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.TestingUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.AccountFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.account.LoginFragment
@@ -113,14 +114,15 @@ class MainActivity : AbstractBaseActivity()
             when(user)
             {
                 is SignedUser -> {
-                    Log.i(TAG, "displayAccount(): ${user.self} is signed")
+                    Log.d(TAG, "${user.self} is signed")
+                    TestingUtil.setCurrentUser(user.self.email)
                     if(::drawer.isInitialized) drawer.updateName(0, StringHolder(getString(R.string.account)))
                     baseActivityVM.setLogoutIcon(true)
                     populateFragment(AccountFragment.newInstance())
                 }
                 is DeletedUser -> userDeleted(0)
                 else -> {
-                    Log.i(TAG, "displayAccount(): user unsigned")
+                    Log.d(TAG, "user unsigned")
                     if(::drawer.isInitialized) drawer.updateName(0, StringHolder(getString(R.string.login)))
                     populateFragment(LoginFragment.newInstance())
                 }
@@ -218,7 +220,7 @@ class MainActivity : AbstractBaseActivity()
 
     private fun populateFragment(fragment: AbstractMainActivityFragment)
     {
-        Log.i(TAG, "${fragment.getName()} populated")
+        Log.d(TAG, "${fragment.getName()} populated")
         supportFragmentManager.commit {
             replace(R.id.main_container, fragment)
         }
