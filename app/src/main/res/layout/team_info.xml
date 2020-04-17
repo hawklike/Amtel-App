@@ -163,6 +163,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/team_info_avgRank"
                         android:layout_centerHorizontal="true"
+                        android:gravity="center"
                         android:text="Prům. umístění"
                         android:textColor="@color/darkGrey"
                         android:textSize="14sp" />
