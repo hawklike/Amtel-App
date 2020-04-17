@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.TestingUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MatchDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -26,12 +27,17 @@ object MatchRepository
         return@withContext try
         {
             MatchDAO().insert(match)
-            Log.i(TAG, "addMatch(): $match successfully added to database")
+            Log.d(TAG, "setMatch(): match $match successfully set/updated in database")
+
             ValidMatch(match)
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addMatch(): $match not added to database because ${ex.message}")
+            Log.e(TAG, "setMatch(): match $match not set/updated in database because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::setMatch(): match $match not set/updated in database because ${ex.message}")
+                throwNonFatal(ex)
+            }
             NoMatch
         }
     }
@@ -42,12 +48,16 @@ object MatchRepository
         return@withContext try
         {
             MatchDAO().update(documentId, mapOfFieldsAndValues)
-            Log.i(TAG, "updateMatch(): match with id $documentId successfully updated with $mapOfFieldsAndValues")
+            Log.d(TAG, "updateMatch(): match with id $documentId successfully updated with $mapOfFieldsAndValues")
             true
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateMatch(): match with id $documentId not updated because ${ex.message}")
+            Log.e(TAG, "updateMatch(): match with id $documentId not updated with $mapOfFieldsAndValues because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::updateMatch(): match with id $documentId not updated with $mapOfFieldsAndValues because ${ex.message}")
+                throwNonFatal(ex)
+            }
             false
         }
     }
@@ -58,12 +68,16 @@ object MatchRepository
         return@withContext try
         {
             val match = MatchDAO().findById(id).toObject<Match>()
-            Log.i(TAG, "findMatch(): $match found in database")
+            Log.d(TAG, "findMatch(): match $match found in database")
             match?.let { ValidMatch(match) } ?: NoMatch
         }
         catch(ex: Exception)
         {
             Log.e(TAG, "findMatch(): match with id $id not found in database because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::findMatch(): match with id $id not found in database because ${ex.message}")
+                throwNonFatal(ex)
+            }
             NoMatch
         }
     }
@@ -97,12 +111,16 @@ object MatchRepository
         {
             val matchesTeam1 = MatchDAO().getMatches(team1.id!!, year).toObjects<Match>()
             val matches = matchesTeam1.filter { it.teams.contains(team2.id!!) }
-            Log.i(TAG, "getCommonMatches(): $matches for $team1 and $team2 in $year successfully retrieved from database")
+            Log.d(TAG, "getCommonMatches(): $matches for $team1 and $team2 in $year successfully retrieved from database")
             matches
         }
         catch(ex: Exception)
         {
             Log.e(TAG, "getCommonMatches(): matches for $team1 and $team2 in $year not found in database because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::getCommonMatches(): matches for $team1 and $team2 in $year not found in database because ${ex.message}")
+                throwNonFatal(ex)
+            }
             listOf<Match>()
         }
     }
@@ -117,7 +135,14 @@ object MatchRepository
             matches.forEach { if(!deleteMatch(it.id)) ok = false }
             ok
         }
-        catch(ex: Exception) { false }
+        catch(ex: Exception)
+        {
+            with(TestingUtil) {
+                log("$TAG::deleteAllMatches(): all matches from group with id $groupId and year $year not deleted because ${ex.message}")
+                throwNonFatal(ex)
+            }
+            false
+        }
     }
 
     private suspend fun deleteMatch(matchId: String?): Boolean = withContext(IO)
@@ -126,12 +151,16 @@ object MatchRepository
         return@withContext try
         {
             MatchDAO().delete(matchId)
-            Log.i(TAG, "deleteMatch(): match with id $matchId successfully deleted")
+            Log.d(TAG, "deleteMatch(): match with id $matchId successfully deleted")
             true
         }
         catch(ex: Exception)
         {
             Log.e(TAG, "deleteMatch(): match with id $matchId not deleted because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::deleteMatch(): match with id $matchId not deleted because ${ex.message}")
+                throwNonFatal(ex)
+            }
             false
         }
     }
