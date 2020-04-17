@@ -5,8 +5,10 @@ package cz.prague.cvut.fit.steuejan.amtelapp.business.util
 import android.preference.PreferenceManager
 import android.util.Log
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail
+import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.AESCrypt
 
 object EmailSender
@@ -25,12 +27,16 @@ object EmailSender
                 {
                     override fun onSuccess()
                     {
-                        Log.i(TAG, "sendEmail(): email to $mailTo successfully sent")
+                        Log.d(TAG, "sendEmail(): email to $mailTo successfully sent")
                     }
 
                     override fun onFail(ex: Exception)
                     {
                         Log.e(TAG, "sendEmail(): email to $mailTo not sent because ${ex.message}")
+                        with(TestingUtil) {
+                            log("$TAG::sendEmail(): email to $mailTo not sent because ${ex.message}")
+                            throwNonFatal(ex)
+                        }
                     }
                 })
                 .send()
@@ -48,6 +54,7 @@ object EmailSender
 
     var hasPassword = false
     var headOfLeagueEmail: String? = null
+
+    private val USERNAME = context.getString(R.string.appEmail)
     private const val TAG = "EmailSender"
-    private const val USERNAME = "noreply.amtelopava@gmail.com"
 }
