@@ -17,7 +17,6 @@ object PhoneNumberValidator
             }
             catch(ex: Exception) { return false }
         }
-        Log.i("PhoneNumberValidator", "isValid(): is $phoneNumber valid? $result")
         return result
     }
 }

@@ -7,6 +7,7 @@ import com.google.firebase.auth.*
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.TestingUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -48,11 +49,15 @@ object AuthManager
             auth2.createUserWithEmailAndPassword(email, password).await()
             val user = auth2.currentUser?.uid
             auth2.signOut()
-            Log.i(TAG, "signUpUser(): user with $email successfully registered")
+            Log.d(TAG, "signUpUser(): user with $email successfully registered")
             user
         } catch(ex: Exception)
         {
-            Log.e(TAG, "signUpUser(): unsuccessful login because ${ex.message}")
+            Log.e(TAG, "signUpUser(): unsuccessful registration because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::signUpUser(): unsuccessful registration because ${ex.message}")
+                throwNonFatal(ex)
+            }
             null
         }
     }
@@ -62,7 +67,7 @@ object AuthManager
         return@withContext try
         {
             val user = auth.signInWithEmailAndPassword(email, password).await().user
-            Log.i(TAG, "signInUser(): $user successfully logged in")
+            Log.d(TAG, "signInUser(): $user successfully logged in")
             user
         } catch(ex: Exception)
         {
@@ -79,7 +84,7 @@ object AuthManager
             try
             {
                 user.updatePassword(newPassword).await()
-                Log.i(TAG, "changePassword(): new password successfully changed")
+                Log.d(TAG, "changePassword(): new password successfully changed")
                 ValidPassword(newPassword)
             }
             catch(ex: Exception)
@@ -91,6 +96,10 @@ object AuthManager
         else
         {
             Log.e(TAG, "changePassword(): new password failed because there is no signed user")
+            with(TestingUtil) {
+                log("$TAG::changePassword(): new password failed because there is no signed user")
+                throwNonFatal(RuntimeException("Request for password change when not allowed."))
+            }
             InvalidPassword()
         }
     }
@@ -103,7 +112,7 @@ object AuthManager
             try
             {
                 user.updateEmail(newEmail).await()
-                Log.i(TAG, "changeEmail(): new email successfully changed")
+                Log.d(TAG, "changeEmail(): new email successfully changed")
                 ValidEmail(newEmail)
             }
             catch(ex: Exception)

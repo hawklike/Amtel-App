@@ -58,24 +58,15 @@ class TeamToGroupInputter
 
     private suspend fun removeFromGroup(team: Team)
     {
-        println("helllo1")
         val group = GroupRepository.findGroup(team.groupId)
         if(group is ValidGroup)
         {
-            println("helllo2")
             val season = group.self.teamIds[DateUtil.actualSeason]
-            println("hello3: $season")
-            println("hello3: group: ${group.self.teamIds}")
             season?.removeAll { it == team.id }
-            println("hello4: $season")
-            println("hello4: group: ${group.self.teamIds}")
             if(season != null && season.isEmpty())
             {
-                println("hello5")
                 group.self.teamIds.remove(DateUtil.actualSeason)
-                println("hello5: group: ${group.self.teamIds}")
             }
-            println("hello6: group: ${group.self.teamIds}")
             GroupRepository.setGroup(group.self, false)
         }
     }

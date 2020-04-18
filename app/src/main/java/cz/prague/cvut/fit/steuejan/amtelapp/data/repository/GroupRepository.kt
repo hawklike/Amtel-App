@@ -3,6 +3,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.data.repository
 import android.util.Log
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.TestingUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.GroupDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
@@ -21,12 +22,16 @@ object GroupRepository
         {
             if(merge) GroupDAO().insert(group)
             else GroupDAO().insert(group, false)
-            Log.i(TAG, "addGroup(): $group successfully added to database")
+            Log.d(TAG, "setGroup(): group $group successfully added/updated to database")
             ValidGroup(group)
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addGroup(): $group not added to database because ${ex.message}")
+            Log.e(TAG, "setGroup(): group $group not added/updated to database because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::setGroup(): group $group not added/updated to database because ${ex.message}")
+                throwNonFatal(ex)
+            }
             NoGroup
         }
     }
@@ -36,12 +41,16 @@ object GroupRepository
         return@withContext try
         {
             GroupDAO().insertPlayOff(playOff)
-            Log.i(TAG, "addPlayOff(): $playOff successfully added to database")
+            Log.d(TAG, "setPlayoff(): playoff $playOff successfully set in database")
             ValidGroup(playOff)
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "addPlayOff(): $playOff not added to database because ${ex.message}")
+            Log.e(TAG, "setPlayoff(): playoff $playOff not set in database because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::setPlayoff(): playoff $playOff not set in database because ${ex.message}")
+                throwNonFatal(ex)
+            }
             NoGroup
         }
     }
@@ -52,12 +61,16 @@ object GroupRepository
         return@withContext try
         {
             val group = GroupDAO().findById(id).toObject<Group>()
-            Log.i(TAG, "findGroup(): $group found in database")
+            Log.d(TAG, "findGroup(): group $group found in database")
             group?.let { ValidGroup(group) } ?: NoGroup
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "findGroup(): group with $id not found in database because ${ex.message}")
+            Log.e(TAG, "findGroup(): group with id $id not found in database because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::findGroup(): group with id $id not found in database because ${ex.message}")
+                throwNonFatal(ex)
+            }
             NoGroup
         }
     }
@@ -68,12 +81,16 @@ object GroupRepository
         return@withContext try
         {
             GroupDAO().delete(groupId)
-            Log.i(TAG, "deleteUser(): group with id $groupId successfully deleted")
+            Log.d(TAG, "deleteGroup(): group with id $groupId successfully deleted")
             true
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "deleteUser(): group with id $groupId not deleted because ${ex.message}")
+            Log.e(TAG, "deleteGroup(): group with id $groupId not deleted because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::deleteGroup(): group with id $groupId not deleted because ${ex.message}")
+                throwNonFatal(ex)
+            }
             false
         }
     }
@@ -84,12 +101,16 @@ object GroupRepository
         return@withContext try
         {
             GroupDAO().update(documentId, mapOfFieldsAndValues)
-            Log.i(TAG, "updateGroup(): group with id $documentId successfully updated with $mapOfFieldsAndValues")
+            Log.d(TAG, "updateGroup(): group with id $documentId successfully updated with $mapOfFieldsAndValues")
             true
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateGroup(): group with id $documentId not updated because $ex")
+            Log.e(TAG, "updateGroup(): group with id $documentId not updated because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::updateGroup(): group with id $documentId not updated because ${ex.message}")
+                throwNonFatal(ex)
+            }
             false
         }
     }
@@ -99,12 +120,16 @@ object GroupRepository
         return@withContext try
         {
             val groups = GroupDAO().find(field, value).toObjects<Group>()
-            Log.i(TAG, "findGroups(): $groups where $field is $value found successfully")
+            Log.d(TAG, "findGroups(): groups $groups where $field is $value found successfully")
             ValidGroups(groups)
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "findGroups(): groups not found because ${ex.message}")
+            Log.e(TAG, "findGroups(): groups where $field is $value not found because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::findGroups(): groups where $field is $value not found because ${ex.message}")
+                throwNonFatal(ex)
+            }
             NoGroup
         }
     }
@@ -114,12 +139,16 @@ object GroupRepository
         return@withContext try
         {
             val groups = GroupDAO().retrieveAll().toObjects<Group>().sortedBy { it.rank }
-            Log.i(TAG, "retrieveAll(): $groups retrieved successfully")
+            Log.d(TAG, "retrieveAllGroups(): $groups retrieved successfully")
             ValidGroups(groups)
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "retrieveAll(): groups not retrieved because ${ex.message}")
+            Log.e(TAG, "retrieveAllGroups(): groups not retrieved because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::retrieveAllGroups(): groups not retrieved because ${ex.message}")
+                throwNonFatal(ex)
+            }
             NoGroup
         }
     }
@@ -130,42 +159,16 @@ object GroupRepository
         {
             val snapshots = GroupDAO().retrieveAllGroupsExceptPlayoff(orderBy).get().await()
             val groups = snapshots.toObjects<Group>()
-            Log.i(TAG, "retrieveAllGroupsExceptPlayOff(): $groups except playoff retrieved successfully")
+            Log.d(TAG, "retrieveAllGroupsExceptPlayOff(): groups $groups except playoff retrieved successfully")
             ValidGroups(groups)
         }
         catch(ex: Exception)
         {
             Log.e(TAG, "retrieveAllGroupsExceptPlayOff(): groups not retrieved because ${ex.message}")
-            NoGroup
-        }
-    }
-
-    suspend fun retrieveAllGroupsPlayingPlayoff(orderBy: String = "rank"): GroupState = withContext(IO)
-    {
-        return@withContext try
-        {
-            val groups = GroupDAO().retrieveAllGroupsPlayingPlayoff(orderBy).toObjects<Group>()
-            Log.i(TAG, "retrieveAllGroupsPlayingPlayoff(): $groups playing playoff retrieved successfully")
-            ValidGroups(groups)
-        }
-        catch(ex: Exception)
-        {
-            Log.e(TAG, "retrieveAllGroupsPlayingPlayoff(): groups not retrieved because ${ex.message}")
-            NoGroup
-        }
-    }
-
-    suspend fun retrieveAllGroupsNotPlayingPlayoff(orderBy: String = "rank"): GroupState = withContext(IO)
-    {
-        return@withContext try
-        {
-            val groups = GroupDAO().retrieveAllGroupsNotPlayingPlayoff(orderBy).toObjects<Group>()
-            Log.i(TAG, "retrieveAllGroupsNotPlayingPlayoff(): $groups not playing playoff retrieved successfully")
-            ValidGroups(groups)
-        }
-        catch(ex: Exception)
-        {
-            Log.e(TAG, "retrieveAllGroupsNotPlayingPlayoff(): groups not retrieved because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::retrieveAllGroupsExceptPlayOff(): groups not retrieved because ${ex.message}")
+                throwNonFatal(ex)
+            }
             NoGroup
         }
     }
@@ -176,12 +179,16 @@ object GroupRepository
         return@withContext try
         {
             val teams = GroupDAO().retrieveTeamsInGroup(groupId).toObjects<Team>()
-            Log.i(TAG, "retrieveTeamsInGroup(): $teams in $groupId retrieved successfully")
+            Log.d(TAG, "retrieveTeamsInGroup(): teams $teams in group with id $groupId retrieved successfully")
             ValidTeams(teams)
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "retrieveTeamsInGroup(): teams not retrieved because ${ex.message}")
+            Log.e(TAG, "retrieveTeamsInGroup(): teams in group with id $groupId not retrieved because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::retrieveTeamsInGroup(): teams in group with id $groupId not retrieved because ${ex.message}")
+                throwNonFatal(ex)
+            }
             NoTeam
         }
     }

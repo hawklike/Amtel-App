@@ -3,6 +3,7 @@ package cz.prague.cvut.fit.steuejan.amtelapp.data.repository
 import android.util.Log
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.Query.Direction.ASCENDING
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.TestingUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.dao.MessageDAO
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Message
 import kotlinx.coroutines.Dispatchers.IO
@@ -19,12 +20,16 @@ object MessageRepository
         {
             if(message.messageText.isEmpty()) return@withContext null
             MessageDAO().insert(message, updateId(matchId, private))
-            Log.i(TAG, "$message successfully added to a database")
+            Log.d(TAG, "addMessage(): message $message successfully added to a database")
             message
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "$message not added to a database because ${ex.message}")
+            Log.e(TAG, "addMessage(): message $message not added to a database because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::addMessage(): message $message not added to a database because ${ex.message}")
+                throwNonFatal(ex)
+            }
             null
         }
     }
