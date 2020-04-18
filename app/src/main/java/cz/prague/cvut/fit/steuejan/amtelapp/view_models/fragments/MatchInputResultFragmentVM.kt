@@ -95,6 +95,15 @@ class MatchInputResultFragmentVM : ViewModel()
     private lateinit var homePlayersText: String
     private lateinit var awayPlayersText: String
 
+    var homeEmails: List<String> = listOf()
+    var awayEmails: List<String> = listOf()
+
+    var mHomePlayers: List<User> = listOf()
+    var mAwayPlayers: List<User> = listOf()
+
+    var selectedHomePlayers: List<Int> = listOf()
+    var selectedAwayPlayers: List<Int> = listOf()
+
     /*---------------------------------------------------*/
 
     private lateinit var match: Match
@@ -204,6 +213,8 @@ class MatchInputResultFragmentVM : ViewModel()
 
         val homeUsers = mutableListOf<User>()
         val awayUsers = mutableListOf<User>()
+
+
 
         homePlayersList.forEach { user ->
             val email = user.removeWhitespaces().split(EM_DASH).last()

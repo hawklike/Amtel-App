@@ -221,11 +221,11 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private fun setListeners()
     {
         homePlayers.setOnClickListener {
-            addPlayersDialog(it as EditText, homeTeam, getString(R.string.choose_player_home_team))
+            addPlayersDialog(it as EditText, homeTeam, getString(R.string.choose_player_home_team), true)
         }
 
         awayPlayers.setOnClickListener {
-            addPlayersDialog(it as EditText, awayTeam, getString(R.string.choose_player_away_team))
+            addPlayersDialog(it as EditText, awayTeam, getString(R.string.choose_player_away_team), false)
         }
 
         inputResult.setOnClickListener {
@@ -424,37 +424,69 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
      *  two matches are singles and one is double. According to a round number and a group name,
      *  a user may input only one or more players who played in the particular match.
      */
-    private fun addPlayersDialog(editText: EditText, team: Team, title: String): MaterialDialog
+    private fun addPlayersDialog(editText: EditText, team: Team, title: String, homeTeam: Boolean): MaterialDialog
     {
         return MaterialDialog(activity!!).show {
             title(text = title)
-            val players = team.users.map { "${it.name} ${it.surname}\n${it.email}" }
 
-            if(round == 3) listItemMultiChoice(this, players, editText)
+            if(round == 3) listItemMultiChoice(this, team, editText, homeTeam)
             else
             {
-                if(round == 2 && match.groupName == getString(R.string.fifty_plus_group)) listItemMultiChoice(this, players, editText)
-                else listItemSingleChoice(this, players, editText)
+                if(round == 2 && match.groupName == getString(R.string.fifty_plus_group)) listItemMultiChoice(this, team, editText, homeTeam)
+                else listItemSingleChoice(this, team, editText, homeTeam)
             }
 
             positiveButton()
         }
     }
 
-
     //output looks like this: <<name>> - <<email>>
-    private fun listItemSingleChoice(dialog: MaterialDialog, players: List<String>, editText: EditText): MaterialDialog
+    private fun listItemSingleChoice(dialog: MaterialDialog, team: Team, editText: EditText, homeTeam: Boolean): MaterialDialog
     {
-        return dialog.listItemsSingleChoice(items = players) { _, _, item ->
+        val players = team.users.map { "${it.name} ${it.surname}\n${it.email}" }
+
+        val selectedItems = if(homeTeam) viewModel.selectedHomePlayers
+        else viewModel.selectedAwayPlayers
+
+        return dialog.listItemsSingleChoice(
+            items = players,
+            initialSelection = if(selectedItems.isEmpty()) -1 else selectedItems.first()
+        ) { _, index, item ->
+            if(homeTeam)
+            {
+                viewModel.selectedHomePlayers = listOf(index)
+                viewModel.mHomePlayers = listOf(team.users[index])
+            }
+            else
+            {
+                viewModel.selectedAwayPlayers = listOf(index)
+                viewModel.mAwayPlayers = listOf(team.users[index])
+            }
+
             editText.setText(item.toString().replace("\n", " $EM_DASH "))
         }
     }
 
-
      //output looks like this: <<name>> - <<email>>, <<name>> - <<email>>
-    private fun listItemMultiChoice(dialog: MaterialDialog, players: List<String>, editText: EditText): MaterialDialog
+    private fun listItemMultiChoice(dialog: MaterialDialog, team: Team, editText: EditText, homeTeam: Boolean): MaterialDialog
     {
-        return dialog.listItemsMultiChoice(items = players, waitForPositiveButton = false) { _, indices, items ->
+        val players = team.users.map { "${it.name} ${it.surname}\n${it.email}" }
+
+        val selectedItems = if(homeTeam) viewModel.selectedHomePlayers
+        else viewModel.selectedAwayPlayers
+
+        return dialog.listItemsMultiChoice(
+            items = players,
+            waitForPositiveButton = false,
+            initialSelection = selectedItems.toIntArray()
+        ) { _, indices, items ->
+            if(homeTeam)
+            {
+                viewModel.selectedHomePlayers = indices.toList()
+                viewModel.mHomePlayers = listOf() //TODO
+            }
+            else viewModel.selectedAwayPlayers = indices.toList()
+
             editText.setText(items.joinToString("$COMMA ") {
                 it.toString().replace("\n", " $EM_DASH ")
             })

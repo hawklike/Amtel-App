@@ -29,7 +29,7 @@
     <string name="user_registration_failure_title">Registrace se nepovedla</string>
     <string name="user_registration_failure_message">Uživatel již byl zaregistrován v minulosti.</string>
     <string name="user_registration_confirmation_title">Opravdu chcete přidat tohoto uživatele?</string>
-    <string name="verificationEmail_subject">amtelOpava_registrace</string>
+    <string name="verificationEmail_subject">Byl vám udělen přístup do aplikace AMTEL Opava</string>
     <string name="user_registration_success_message">Bude odeslán automatický email vedoucímu týmu.</string>
     <string name="account_boss_adapter_add_TM">Vedoucí</string>
     <string name="account_boss_adapter_make_groups">Skupiny</string>
