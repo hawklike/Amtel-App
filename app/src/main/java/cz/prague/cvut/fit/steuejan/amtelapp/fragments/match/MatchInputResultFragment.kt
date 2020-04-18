@@ -44,7 +44,6 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     private var isReport = false
 
     private lateinit var match: Match
-    private lateinit var userId: String
 
     private lateinit var homeTeam: Team
     private lateinit var awayTeam: Team
@@ -167,7 +166,6 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private fun getData()
     {
-        userId = AuthManager.currentUser!!.uid
         match = matchViewModel.match.value ?: Match()
         homeTeam = matchViewModel.homeTeam.value?.let { if(it is ValidTeam) it.self else Team() } ?: Team()
         awayTeam = matchViewModel.awayTeam.value?.let { if(it is ValidTeam) it.self else Team() } ?: Team()
@@ -199,7 +197,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
 
     private fun prepareLayout()
     {
-        when(userId)
+        when(AuthManager.currentUser!!.uid)
         {
             homeTeam.tmId -> {
                 reportButton.visibility = View.INVISIBLE
@@ -283,7 +281,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     {
         viewModel.isReported.observe(viewLifecycleOwner) { match ->
             val result = MatchRepository.getResults(match.rounds[round - 1])
-            viewModel.sendEmail(homeTeam, awayTeam, result.sets, result.games, userId)
+            viewModel.sendEmail(homeTeam, awayTeam, result.sets, result.games)
             toast("Výsledek byl odeslán k posouzení.")
         }
     }
@@ -297,7 +295,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             sets.text = result.sets
             games.text = result.games
             disableInputButtonIf { !isHeadOfLeague && match.edits[round.toString()] == 0 }
-            viewModel.sendEmail(homeTeam, awayTeam, sets.text, games.text, userId)
+//            viewModel.sendEmail(homeTeam, awayTeam, sets.text, games.text)
             matchViewModel.setPage(round)
         }
     }

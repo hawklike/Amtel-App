@@ -81,6 +81,9 @@ object DateUtil
     fun compareDates(first: Date?, second: Date?): Int
             = DateTimeComparator.getDateOnlyInstance().compare(DateTime(first), DateTime(second))
 
+    fun compareDatesWithTime(first: Date?, second: Date?): Int
+            = DateTimeComparator.getInstance().compare(DateTime(first), DateTime(second))
+
     fun getAge(birthdate: Date): Int
             = Years.yearsBetween(LocalDate(birthdate), LocalDate()).years
 

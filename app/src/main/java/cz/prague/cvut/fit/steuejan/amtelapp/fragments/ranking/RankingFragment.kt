@@ -32,8 +32,6 @@ class RankingFragment : AbstractBaseFragment()
     private var group = Group()
 
     private val teams: MutableList<Team> = mutableListOf()
-//    private var orderBy = RankingOrderBy.POINTS
-//    private var reverseOrder = false
 
     private lateinit var actualSortOption: TextView
 

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
-import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.*
@@ -174,7 +173,7 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
     {
         intent.extras?.let { bundle ->
             match = bundle.getParcelable(MATCH)!!
-            week = bundle.getParcelable<ValidWeek?>(WEEK)?.let { it } ?: InvalidWeek()
+            week = bundle.getParcelable<ValidWeek?>(WEEK) ?: InvalidWeek()
             userName = bundle.getString(USER_NAME, "anonym")
         }
 
@@ -200,10 +199,10 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
         awayName.text = awayTeam.name
         score.text = match.homeScore?.let { "$it : ${match.awayScore}" } ?: "N/A"
 
-        changePlace.setText(match.place?.let { it } ?: homeTeam.place )
+        changePlace.setText(match.place ?: homeTeam.place )
 
         viewModel.date.observe(this) { date ->
-            date?.let { changeDate.setText(it.toMyString("dd.MM.yyyy 'v' HH:mm")) }
+            date?.let { changeDate.setText(it.toMyString(getString(R.string.dateTime_format))) }
         }
 
         if(currentRole == AuthManager.SignedIn.HOME_MANAGER)
@@ -298,7 +297,7 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
                     val isHomeWinner = text == homeTeam.name
                     if(--match.defaultEndGameEdits <= 0) disableDefaultEndGame()
 
-                    countMatchScore(viewModel.defaultEndGame(match, isHomeWinner, homeTeam, awayTeam), true)
+                    countDefaultMatchScore(viewModel.defaultEndGame(match, isHomeWinner, homeTeam, awayTeam))
 
                     score.text = if(isHomeWinner) "3 : 0" else "0 : 3"
                     toast("Tým ${if(isHomeWinner) homeTeam.name else awayTeam.name} kontumačně vyhrál.")
@@ -418,20 +417,22 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
         if(requestCode == MATCH_RESULT_CODE && resultCode == Activity.RESULT_OK)
         {
             data?.let {
+                val lastUpdated = match.lastUpdate
                 match = it.getParcelableExtra(MATCH)
+                viewModel.sendEmail(lastUpdated, match, homeTeam, awayTeam)
                 val result = viewModel.countTotalScore(match)
                 score.text = if(result.home + result.away != 0) "${result.home} : ${result.away}" else "N/A"
             }
         }
     }
 
-    private fun countMatchScore(match: Match, isDefaultLoss: Boolean)
+    private fun countDefaultMatchScore(match: Match)
     {
         val intent = Intent(this, CountMatchScoreService::class.java).apply {
             putExtra(CountMatchScoreService.HOME_TEAM, homeTeam)
             putExtra(CountMatchScoreService.AWAY_TEAM, awayTeam)
             putExtra(CountMatchScoreService.MATCH, match)
-            putExtra(CountMatchScoreService.DEFAULT_LOSS, isDefaultLoss)
+            putExtra(CountMatchScoreService.DEFAULT_LOSS, true)
         }
         ContextCompat.startForegroundService(this, intent)
     }

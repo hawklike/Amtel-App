@@ -21,7 +21,6 @@ fun String.toRole(): UserRole
     {
         "head_of_league" -> UserRole.HEAD_OF_LEAGUE
         "manager_of_team" -> UserRole.TEAM_MANAGER
-        "team_manager" -> UserRole.TEAM_MANAGER //TODO: delete this (deprecated)
         "player" -> UserRole.PLAYER
         else -> throw IllegalArgumentException("given role doesn't exist")
     }
