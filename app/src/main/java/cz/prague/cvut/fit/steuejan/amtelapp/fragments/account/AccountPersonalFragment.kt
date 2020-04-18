@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -15,17 +16,16 @@ import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.datetime.datePicker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.removeWhitespaces
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.shrinkWhitespaces
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.*
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toSex
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.AccountPersonalFragmentVM
+import java.util.*
 
 class AccountPersonalFragment : AbstractMainActivityFragment()
 {
@@ -181,6 +181,8 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
                 datePicker(currentDate = savedDate) { _, date ->
                     val dateText = date.toMyString()
                     birthdateLayout.editText?.setText(dateText)
+                    if(DateUtil.compareDates(date.time, "18.04.2006".toDate()) == 0)
+                        toast("V tento den se narodil můj brácha. Tímto mu přeji vše nejlepší.", length = Toast.LENGTH_LONG)
                 }
             }
         }
@@ -197,15 +199,9 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     {
         viewModel.isPersonalInfoChanged().observe(viewLifecycleOwner) { state ->
             progressDialog.dismiss()
+            if(state is PersonalInfoSuccess) toast(R.string.personalInfo_change_success_title)
+            else toast( R.string.personalInfo_change_failure_title)
             update(state)
-            val title = viewModel.createAfterPersonalInfoDialog(state).title
-
-            MaterialDialog(activity!!)
-                .title(text = title)
-                .show {
-                    positiveButton(R.string.ok)
-                    onDismiss {}
-                }
         }
     }
 

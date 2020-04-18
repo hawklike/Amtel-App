@@ -93,7 +93,7 @@ class AccountPersonalFragmentVM : ViewModel()
         else
         {
             title = App.context.getString(R.string.password_change_failure_title)
-            message = App.context.getString(R.string.password_change_failure_message)
+            message = "Uběhla již nějaká doba od posledního přihlášení. Prosím odhlašte se a zkuste to znovu."
         }
 
         return Pair(title, message)
@@ -157,19 +157,6 @@ class AccountPersonalFragmentVM : ViewModel()
         }
 
         return okFullName && okBirthdate && okPhoneNumber
-    }
-
-    fun createAfterPersonalInfoDialog(state: PersonalInfoState): Message
-    {
-        return if(state is PersonalInfoSuccess) Message(
-            App.context.getString(R.string.personalInfo_change_success_title),
-            null
-        )
-        else Message(
-            App.context.getString(
-                R.string.personalInfo_change_failure_title
-            ), null
-        )
     }
 
     fun setDialogBirthdate(birthdate: Editable): Calendar?
