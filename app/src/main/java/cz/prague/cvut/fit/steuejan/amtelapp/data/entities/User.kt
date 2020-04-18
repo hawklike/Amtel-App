@@ -21,6 +21,12 @@ data class User(override var id: String? = null,
                 var searchSurname: String = "",
                 val admin: Boolean = false
                 ) : Parcelable, Entity<User>()
+{
+    override fun toString(): String
+    {
+        return "$name $surname – $email"
+    }
+}
 
 fun User.toPlayer(): Player
 {

@@ -17,11 +17,11 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.*
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.match.MatchInputResultFragment.Companion.COMMA
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.match.MatchInputResultFragment.Companion.EM_DASH
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SetState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidSet
 import kotlinx.coroutines.launch
+import java.util.*
 
 @Suppress("PrivatePropertyName")
 class MatchInputResultFragmentVM : ViewModel()
@@ -92,17 +92,11 @@ class MatchInputResultFragmentVM : ViewModel()
     var homePlayersBefore = listOf<Player>()
     var awayPlayersBefore = listOf<Player>()
 
-    private lateinit var homePlayersText: String
-    private lateinit var awayPlayersText: String
+    var mHomePlayers: List<Player> = listOf()
+    var mAwayPlayers: List<Player> = listOf()
 
-    var homeEmails: List<String> = listOf()
-    var awayEmails: List<String> = listOf()
-
-    var mHomePlayers: List<User> = listOf()
-    var mAwayPlayers: List<User> = listOf()
-
-    var selectedHomePlayers: List<Int> = listOf()
-    var selectedAwayPlayers: List<Int> = listOf()
+    var selectedHomePlayers: MutableList<Int> = mutableListOf()
+    var selectedAwayPlayers: MutableList<Int> = mutableListOf()
 
     /*---------------------------------------------------*/
 
@@ -113,6 +107,55 @@ class MatchInputResultFragmentVM : ViewModel()
     }
 
     /*---------------------------------------------------*/
+
+    fun setSelectedPlayers(homeTeam: Team, awayTeam: Team)
+    {
+        homeTeam.users.forEachIndexed { index, user ->
+            mHomePlayers.find { it.playerId == user.id}?.let {
+                selectedHomePlayers.add(index)
+            }
+        }
+
+        awayTeam.users.forEachIndexed { index, user ->
+            mAwayPlayers.find { it.playerId == user.id}?.let {
+                selectedAwayPlayers.add(index)
+            }
+        }
+    }
+
+    fun handleListItemSingleChoice(team: Team, selectedIndex: Int, homeTeam: Boolean)
+    {
+        if(homeTeam)
+        {
+            selectedHomePlayers = mutableListOf(selectedIndex)
+            mHomePlayers = listOf(team.users[selectedIndex].toPlayer())
+        }
+        else
+        {
+            selectedAwayPlayers = mutableListOf(selectedIndex)
+            mAwayPlayers = listOf(team.users[selectedIndex].toPlayer())
+        }
+    }
+
+    fun handleListItemMultiChoice(team: Team, selectedIndices: IntArray, homeTeam: Boolean)
+    {
+        val queue = ArrayDeque<Player>()
+        team.users.forEachIndexed { index, user ->
+            if(selectedIndices.contains(index)) queue.add(user.toPlayer())
+        }
+
+        if(homeTeam)
+        {
+            selectedHomePlayers = selectedIndices.toMutableList()
+            mHomePlayers = queue.toList()
+        }
+        else
+        {
+            selectedAwayPlayers = selectedIndices.toMutableList()
+            mAwayPlayers = queue.toList()
+        }
+    }
+
 
     /**
      * Call this method before inputResult() method
@@ -133,8 +176,8 @@ class MatchInputResultFragmentVM : ViewModel()
             confirmSet(_secondHome, _secondAway)
             if(!isFiftyGroup) confirmSet(_thirdHome, _thirdAway)
 
-            confirmPlayers(homePlayersText, _homePlayers, true)
-            confirmPlayers(awayPlayersText, _awayPlayers, false)
+            confirmPlayers(homePlayersText, _homePlayers, isFiftyGroup)
+            confirmPlayers(awayPlayersText, _awayPlayers, isFiftyGroup)
 
             _isInputOk.value = m_isInputOk
         }
@@ -143,7 +186,7 @@ class MatchInputResultFragmentVM : ViewModel()
     /**
      * Call this method only if confirmInput() returns true
      */
-    fun inputResult(homePlayers: List<User>, awayPlayers: List<User>, isHeadOfLeague: Boolean, ignoreTie: Boolean = false, isReport: Boolean = false)
+    fun inputResult(isHeadOfLeague: Boolean, ignoreTie: Boolean = false, isReport: Boolean = false)
     {
         viewModelScope.launch {
             val home1: Int = (firstHome.value as ValidSet).self
@@ -162,12 +205,13 @@ class MatchInputResultFragmentVM : ViewModel()
 
             if(calculateScore(match, home1, away1, home2, away2, home3, away3, ignoreTie))
             {
-                val (homeUsers, awayUsers) = parsePlayers(homePlayers, awayPlayers)
+                addPlayers()
                 if(!isHeadOfLeague) match.edits[round.toString()] = match.edits[round.toString()]!! - 1
                 if(!isReport)
                 {
+                    match.lastUpdate = Date()
                     MatchRepository.setMatch(match)
-                    updatePlayers(homeUsers, awayUsers)
+                    updatePlayers()
                     _matchAdded.value = match
                 }
                 else _isReported.value = match
@@ -175,64 +219,71 @@ class MatchInputResultFragmentVM : ViewModel()
         }
     }
 
-    private suspend fun updatePlayers(homeUsers: List<User>, awayUsers: List<User>)
+    private suspend fun updatePlayers()
     {
         val roundNumber = round
         val round: Round = match.rounds[roundNumber - 1]
 
         val before = homePlayersBefore + awayPlayersBefore
-        val now = homeUsers + awayUsers
+        val now = mHomePlayers + mAwayPlayers
 
         if(before.isEmpty())
         {
             now.forEach {
-                UserRepository.addRound(it.id!!, match.id!!, round, roundNumber)
+                UserRepository.addRound(it.playerId, match.id!!, round, roundNumber)
             }
         }
         else if(before.size == now.size)
         {
-            //side note: id means the same as playerId, it is only a different name but has the same purpose
             now.forEachIndexed { index, nowUser ->
                 //player was changed
-                if(nowUser.id != before[index].playerId)
+                if(nowUser.playerId != before[index].playerId)
                     //delete round from a previous user
                     UserRepository.deleteRound(before[index].playerId, match.id!!, roundNumber)
 
                 // add/update round to a current user
-                UserRepository.addRound(nowUser.id!!, match.id!!, round, roundNumber)
+                UserRepository.addRound(nowUser.playerId, match.id!!, round, roundNumber)
             }
         }
     }
 
-    private fun parsePlayers(homePlayers: List<User>, awayPlayers: List<User>): Pair<List<User>, List<User>>
+    private fun addPlayers()
     {
         val round: Round = match.rounds[round - 1]
 
-        val homePlayersList = homePlayersText.split("$COMMA ")
-        val awayPlayersList = awayPlayersText.split("$COMMA ")
+//        val homePlayersList = homePlayersText.split("$COMMA ")
+//        val awayPlayersList = awayPlayersText.split("$COMMA ")
 
-        val homeUsers = mutableListOf<User>()
-        val awayUsers = mutableListOf<User>()
+//        val homeUsers = mutableListOf<User>()
+//        val awayUsers = mutableListOf<User>()
 
 
-
-        homePlayersList.forEach { user ->
-            val email = user.removeWhitespaces().split(EM_DASH).last()
-            homePlayers.find { it.email == email }?.let {
-                round.homePlayers.add(Player(it.id!!, it.name, it.surname, it.email, it.birthdate, it.sex, true))
-                homeUsers.add(it)
-            }
+        mHomePlayers.forEach {
+            round.homePlayers.add(Player(it.playerId, it.name, it.surname, it.email, it.birthdate, it.sex, true))
         }
 
-        awayPlayersList.forEach { user ->
-            val email = user.removeWhitespaces().split(EM_DASH).last()
-            awayPlayers.find { it.email == email }?.let {
-                round.awayPlayers.add(Player(it.id!!, it.name, it.surname, it.email, it.birthdate, it.sex, false))
-                awayUsers.add(it)
-            }
+        mAwayPlayers.forEach {
+            round.awayPlayers.add(Player(it.playerId, it.name, it.surname, it.email, it.birthdate, it.sex, false))
         }
+//
+//
+//        homePlayersList.forEach { user ->
+//            val email = user.removeWhitespaces().split(EM_DASH).last()
+//            homePlayers.find { it.email == email }?.let {
+//                round.homePlayers.add(Player(it.id!!, it.name, it.surname, it.email, it.birthdate, it.sex, true))
+//                homeUsers.add(it)
+//            }
+//        }
+//
+//        awayPlayersList.forEach { user ->
+//            val email = user.removeWhitespaces().split(EM_DASH).last()
+//            awayPlayers.find { it.email == email }?.let {
+//                round.awayPlayers.add(Player(it.id!!, it.name, it.surname, it.email, it.birthdate, it.sex, false))
+//                awayUsers.add(it)
+//            }
+//        }
 
-        return Pair(homeUsers, awayUsers)
+//        return Pair(homeUsers, awayUsers)
     }
 
     private fun calculateScore(match: Match, home1: Int, away1: Int, home2: Int, away2: Int, home3: Int?, away3: Int?, ignoreTie: Boolean): Boolean
@@ -303,7 +354,7 @@ class MatchInputResultFragmentVM : ViewModel()
         }
     }
 
-    private fun confirmPlayers(players: Editable, data: MutableLiveData<Boolean>, isHome: Boolean)
+    private fun confirmPlayers(players: Editable, data: MutableLiveData<Boolean>, fiftyGroup: Boolean)
     {
         if(players.isEmpty())
         {
@@ -312,15 +363,11 @@ class MatchInputResultFragmentVM : ViewModel()
         }
         else
         {
-            if(round == 3 && players.split("$COMMA ").size != 2)
+            //50+ group plays two double matches, other groups play only one double
+            if((!fiftyGroup && round == 3 && players.split("$COMMA ").size != 2) || (fiftyGroup && (round == 2 || round == 3) && players.split("$COMMA ").size != 2))
             {
                 data.value = false
                 m_isInputOk = false
-            }
-            else
-            {
-                if(isHome) homePlayersText = players.toString()
-                else awayPlayersText = players.toString()
             }
         }
     }
@@ -345,8 +392,8 @@ class MatchInputResultFragmentVM : ViewModel()
                         match.dateAndTime?.toMyString() ?: context.getString(R.string.unspecified),
                         sets.toString().removeWhitespaces(),
                         games,
-                        homePlayersText,
-                        awayPlayersText
+                        mHomePlayers.joinToString(", "),
+                        mAwayPlayers.joinToString(", ")
                     )
 
                     awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
@@ -363,7 +410,7 @@ class MatchInputResultFragmentVM : ViewModel()
                     
                     Dle něj je správný stav zápasu následující:
                     Skóre: ${sets.toString().removeWhitespaces()} na sety a $games na gemy.
-                    Hráči: $homePlayersText a $awayPlayersText
+                    Hráči: ${mHomePlayers.joinToString(", ")} a ${mAwayPlayers.joinToString(", ")}
                     
                     Na tento email prosím neodpovídejte.
                     
@@ -385,8 +432,8 @@ class MatchInputResultFragmentVM : ViewModel()
                         match.dateAndTime?.toMyString() ?: context.getString(R.string.unspecified),
                         sets.toString().removeWhitespaces(),
                         games,
-                        homePlayersText,
-                        awayPlayersText
+                        mHomePlayers.joinToString(", "),
+                        mAwayPlayers.joinToString(", ")
                     )
 
                     homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }

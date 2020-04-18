@@ -12,4 +12,13 @@ data class Player(var playerId: String = "",
                   var birthdate: Date? = null,
                   var sex: Boolean = true,
                   var isHome: Boolean? = null
-                  ) : Parcelable
+                  ) : Parcelable, Comparable<Player>
+{
+    override fun toString(): String
+    {
+        return "$name $surname – $email"
+    }
+
+    override fun compareTo(other: Player): Int =
+        compareBy<Player>{ it.playerId }.compare(this, other)
+}
