@@ -14,6 +14,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 object TeamRepository
@@ -102,8 +103,28 @@ object TeamRepository
         }
     }
 
-    fun retrieveAllTeams(): Query
+    fun retrieveAllTeamsQuery(): Query
             = TeamDAO().retrieveAllTeams()
+
+    suspend fun retrieveAllTeams(): List<Team> = withContext(IO)
+    {
+        return@withContext try
+        {
+            retrieveAllTeamsQuery()
+                .get()
+                .await()
+                .toObjects<Team>()
+        }
+        catch(ex: Exception)
+        {
+            Log.e(TAG, "retrieveAllTeams: teams not retrieved because ${ex.message}")
+            with(TestingUtil) {
+                log("$TAG::retrieveAllTeams: teams not retrieved because ${ex.message}")
+                throwNonFatal(ex)
+            }
+            emptyList<Team>()
+        }
+    }
 
     suspend fun updateUserInTeam(updatedUser: User?): Boolean = withContext(IO)
     {

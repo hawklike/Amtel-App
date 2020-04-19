@@ -269,7 +269,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
        if(requestCode == EDIT_USER_CODE && resultCode == RESULT_OK)
        {
            viewModel.getUpdatedTeam(team)
-           viewModel.team.observe(activity!!) {
+           viewModel.team.observe(viewLifecycleOwner) {
                refreshLayout.isRefreshing = true
                mainActivityModel.setTeam(ValidTeam(it))
                populateAdapter(it.users)
