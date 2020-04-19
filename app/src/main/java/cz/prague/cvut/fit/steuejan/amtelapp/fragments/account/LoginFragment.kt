@@ -1,10 +1,12 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -70,8 +72,7 @@ class LoginFragment : AbstractMainActivityFragment()
             val password = passwordLayout.editText!!.text.toString().trim()
 
             deleteErrors()
-            //TODO: change back to password
-            viewModel.loginUser(email, "123456")
+            viewModel.loginUser(email, password)
         }
 
         lostPassword.setOnClickListener {

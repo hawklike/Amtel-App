@@ -4,15 +4,12 @@ import java.util.*
 
 object StringUtil
 {
-    //TODO: uncomment this
     fun getRandomString(length: Int) : String
     {
-//        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz1234567890"
-//        return (1..length)
-//            .map { allowedChars.random() }
-//            .joinToString("")
-
-        return "123456"
+        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz1234567890"
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
     }
 
     fun createLabel(text: String): CharSequence
