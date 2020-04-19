@@ -7,5 +7,5 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 class TeamsFragmentVM : ViewModel()
 {
     var orderBy = TeamOrderBy.NAME
-    var query = TeamRepository.retrieveAllTeams()
+    var query = TeamRepository.retrieveAllTeamsQuery()
 }

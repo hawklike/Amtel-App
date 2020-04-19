@@ -103,7 +103,6 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         {
             val users = (team as ValidTeam).self.users
             populateAdapter(users)
-            refreshLayout.isRefreshing = false
         }
         else refreshLayout.isRefreshing = false
     }
@@ -266,6 +265,16 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
                 mainActivityModel.setTeam(ValidTeam(it))
             }
         }
+
+       if(requestCode == EDIT_USER_CODE && resultCode == RESULT_OK)
+       {
+           viewModel.getUpdatedTeam(team)
+           viewModel.team.observe(viewLifecycleOwner) {
+               refreshLayout.isRefreshing = true
+               mainActivityModel.setTeam(ValidTeam(it))
+               populateAdapter(it.users)
+           }
+       }
     }
 
     private fun updateFields()
@@ -290,8 +299,9 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
     private fun populateAdapter(users: List<User>)
     {
         this.users.clear()
-        this.users.addAll(users)
+        this.users.addAll(users.sortedBy { it.role })
         adapter?.notifyDataSetChanged()
+        refreshLayout.isRefreshing = false
     }
 
     private fun confirmDays()

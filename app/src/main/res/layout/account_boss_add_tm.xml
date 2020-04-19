@@ -64,6 +64,26 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <CheckBox
+                    android:id="@+id/account_boss_add_tm_choose_team"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vybrat tým"
+                    android:theme="@style/CheckBoxStyle"
+                    android:checked="false"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/account_boss_add_tm_email"/>
+
+                <TextView
+                    android:id="@+id/account_boss_add_tm_chosen_team"
+                    android:layout_below="@id/account_boss_add_tm_choose_team"
+                    android:layout_width="wrap_content"
+                    android:textColor="@color/lightGrey"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginStart="8dp"
+                    />
+
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/account_boss_add_tm_add"
                     style="@style/FloatingActionButton"

@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.viewModels
@@ -12,6 +15,7 @@ import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.datetime.datePicker
+import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
@@ -24,6 +28,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidRegistration
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.AccountBossAddTMFragmentVM
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class AccountBossAddTMFragment : AbstractMainActivityFragment()
@@ -41,6 +47,8 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     private lateinit var nameLayout: TextInputLayout
     private lateinit var surnameLayout: TextInputLayout
     private lateinit var emailLayout: TextInputLayout
+    private lateinit var chooseTeam: CheckBox
+    private lateinit var chosenTeam: TextView
     private lateinit var addUserButton: FloatingActionButton
 
     private lateinit var deadlineFromLayout: TextInputLayout
@@ -59,6 +67,8 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
         nameLayout = view.findViewById(R.id.account_boss_add_tm_name)
         surnameLayout = view.findViewById(R.id.account_boss_add_tm_surname)
         emailLayout = view.findViewById(R.id.account_boss_add_tm_email)
+        chooseTeam = view.findViewById(R.id.account_boss_add_tm_choose_team)
+        chosenTeam = view.findViewById(R.id.account_boss_add_tm_chosen_team)
         addUserButton = view.findViewById(R.id.account_boss_add_tm_add)
         deadlineFromLayout = view.findViewById(R.id.account_boss_add_deadline_date_from)
         deadlineToLayout = view.findViewById(R.id.account_boss_add_deadline_date_to)
@@ -78,6 +88,7 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     {
         super.onDestroyView()
         addUserButton.setOnClickListener(null)
+        chooseTeam.setOnCheckedChangeListener(null)
         deadlineFromLayout.editText?.setOnClickListener(null)
         deadlineToLayout.editText?.setOnClickListener(null)
         deleteDeadline.setOnClickListener(null)
@@ -123,6 +134,53 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
                     viewModel.deleteDeadline()
                     deadlineFromLayout.editText?.text?.clear()
                     deadlineToLayout.editText?.text?.clear()
+                }
+            }
+        }
+
+        chooseTeam.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked)
+            {
+                MaterialDialog(activity!!).show {
+                    title(text = "Přidat vedoucího do již existujícího týmu?")
+                    message(text = "Stávající vedoucí týmu bude nahrazen novým vedoucím.")
+                    positiveButton(text = "Vybrat tým") {
+                        progressDialog.show()
+                        showTeams()
+                    }
+                    negativeButton {
+                        chooseTeam.isChecked = false
+                    }
+                }
+            }
+            else
+            {
+                viewModel.chosenTeam = null
+                chosenTeam.visibility = GONE
+                chosenTeam.text = null
+            }
+        }
+    }
+
+    private fun showTeams()
+    {
+        viewModel.retrieveAllTeams()
+        viewModel.teams.observe(viewLifecycleOwner) { teams ->
+            progressDialog.dismiss()
+            MaterialDialog(activity!!).show {
+                title(text = "Vybrat tým")
+
+                val teamNames = teams.map { it.name }
+                listItemsSingleChoice(items = teamNames) { _, index, _ ->
+                    viewModel.chosenTeam = teams[index]
+                }
+                onDismiss {
+                    viewModel.chosenTeam?.let {
+                        toast("Byl vybrán tým ${it.name}.")
+                        chosenTeam.visibility = VISIBLE
+                        chosenTeam.text = it.name
+                    }
+                    ?: toast("Nebyl vybrán žádný tým.")
                 }
             }
         }

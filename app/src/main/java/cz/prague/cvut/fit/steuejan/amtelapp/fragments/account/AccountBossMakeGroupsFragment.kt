@@ -13,7 +13,6 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
@@ -85,7 +84,7 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
 
     private fun setupRecycler()
     {
-        val query = TeamRepository.retrieveAllTeams().orderBy(TeamOrderBy.GROUP.toString())
+        val query = TeamRepository.retrieveAllTeamsQuery().orderBy(TeamOrderBy.GROUP.toString())
         val options = FirestoreRecyclerOptions.Builder<Team>()
             .setQuery(query, Team::class.java)
             .setLifecycleOwner(viewLifecycleOwner)

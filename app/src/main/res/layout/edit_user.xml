@@ -100,7 +100,7 @@
                     app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/birthdate_editText"
+                        android:id="@+id/zzBirthdate_editText"
                         style="@style/TextInputEditTextStyle"
                         android:inputType="date"
                         android:clickable="true"
@@ -120,8 +120,8 @@
                     android:clickable="false"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
-                    android:text="Předat roli"
-                    android:textColor="@color/middleLightGrey"
+                    android:text="Smazat roli"
+                    android:textColor="@color/blue"
                     android:textSize="@dimen/common_text_size" />
 
                 <androidx.appcompat.widget.AppCompatTextView

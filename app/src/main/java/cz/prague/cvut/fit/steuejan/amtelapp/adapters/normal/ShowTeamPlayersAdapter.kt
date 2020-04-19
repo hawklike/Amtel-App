@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -95,6 +96,14 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
             holder.email.setTextColor(getColor(R.color.blue))
             holder.birthdate.setTextColor(getColor(R.color.blue))
             holder.editButton.visibility = GONE
+        }
+        else
+        {
+            holder.deleteButton.visibility = VISIBLE
+            holder.fullName.setTextColor(getColor(R.color.darkGrey))
+            holder.email.setTextColor(getColor(R.color.darkGrey))
+            holder.birthdate.setTextColor(getColor(R.color.darkGrey))
+            holder.editButton.visibility = VISIBLE
         }
 
         holder.fullName.text = String.format(context.getString(R.string.full_name_placeholder), user.surname, user.name)
