@@ -120,8 +120,8 @@
                     android:clickable="false"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
-                    android:text="Předat roli"
-                    android:textColor="@color/middleLightGrey"
+                    android:text="Smazat roli"
+                    android:textColor="@color/blue"
                     android:textSize="@dimen/common_text_size" />
 
                 <androidx.appcompat.widget.AppCompatTextView

@@ -42,7 +42,6 @@ class EditUserActivity : AbstractBaseActivity()
     companion object
     {
         const val USER = "user"
-        const val TEAM = "team"
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -120,25 +119,16 @@ class EditUserActivity : AbstractBaseActivity()
     private fun changeRole()
     {
         with(binding) {
-//            changeRoleButton.isClickable = true
-//            changeRoleButton.setTextColor(App.getColor(R.color.blue))
-//
-//            changeRoleButton.setOnClickListener {
-//                viewModel.team?.let { team ->
-//                    val emails = team.users.map { it.email }.toMutableList()
-//                    emails.remove(viewModel.user?.email ?: "")
-//
-//                    MaterialDialog(this@EditUserActivity).show {
-//                        title(text = "Předat roli jinému hráči")
-//                        listItemsSingleChoice(initialSelection = viewModel.emailIdx, items = emails) { _, index, text ->
-//                            viewModel.chosenEmail = text.toString()
-//                            viewModel.emailIdx = index
-//                        }
-//                        positiveButton()
-//                        negativeButton()
-//                    }
-//                }
-//            }
+            changeRoleButton.setOnClickListener {
+                MaterialDialog(this@EditUserActivity).show {
+                    title(text = "Opravdu chcete smazat roli?")
+                    message(text = "Vedoucí týmu se stane běžným hráčem a ztratí ke svému týmu přístup. Již nebude moct vytvářet soupisku a zapisovat výsledky zápasů. Aby daný tým neosiřel (neměl vedoucího), přidejte nového vedoucího v sekci:\n\nUčet > Vedoucí\n\nZměna se projeví až po kliknutí na tlačítko uložit (modré kulaté tlačítko s ikonkou diskety).")
+                    positiveButton(text = "Smazat") {
+                        viewModel.deleteRole = true
+                    }
+                    negativeButton()
+                }
+            }
         }
     }
 

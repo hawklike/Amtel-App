@@ -13,6 +13,7 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,6 +22,8 @@ import java.util.*
 class EditUserActivityVM : ViewModel()
 {
     var user: User? = null
+
+    var deleteRole: Boolean = false
 
     var chosenEmail: String? = null
     var emailIdx = -1
@@ -75,6 +78,8 @@ class EditUserActivityVM : ViewModel()
                     this.birthdate = birthdate.toDate()
                     this.firstSign = user?.firstSign ?: false
                 }
+
+                if(deleteRole) user?.role = UserRole.PLAYER.toString()
 
                 val success = UserRepository.setUser(user)?.let {
                     TeamRepository.updateUserInTeam(user)
