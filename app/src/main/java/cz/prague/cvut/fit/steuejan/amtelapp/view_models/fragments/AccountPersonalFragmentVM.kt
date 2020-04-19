@@ -118,12 +118,12 @@ class AccountPersonalFragmentVM : ViewModel()
                     this.firstSign = false
                 }
 
-                val success = UserRepository.setUser(user)
+                val success = UserRepository.setUser(user)?.let {
+                    TeamRepository.updateUserInTeam(user)
+                }
 
-                TeamRepository.updateUserInTeam(user)
-
-                success?.let { personalInfoChange.value = PersonalInfoSuccess(name, surname, birthdate, phone, sex)  }
-                    ?: let { personalInfoChange.value = PersonalInfoFailure }
+                if(success == true) personalInfoChange.value = PersonalInfoSuccess(name, surname, birthdate, phone, sex)
+                else personalInfoChange.value = PersonalInfoFailure
             }
         }
     }

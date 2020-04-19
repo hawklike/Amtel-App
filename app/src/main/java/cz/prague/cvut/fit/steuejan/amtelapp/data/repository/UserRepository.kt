@@ -17,8 +17,9 @@ import kotlinx.coroutines.withContext
 
 object UserRepository
 {
-    suspend fun setUser(user: User): User? = withContext(IO)
+    suspend fun setUser(user: User?): User? = withContext(IO)
     {
+        user ?: return@withContext null
         val (englishName, englishSurname) = StringUtil.prepareCzechOrdering(user.name, user.surname)
         user.englishName = englishName
         user.englishSurname = englishSurname

@@ -105,19 +105,20 @@ object TeamRepository
     fun retrieveAllTeams(): Query
             = TeamDAO().retrieveAllTeams()
 
-    suspend fun updateUserInTeam(newUser: User): Boolean = withContext(IO)
+    suspend fun updateUserInTeam(updatedUser: User?): Boolean = withContext(IO)
     {
+        updatedUser ?: return@withContext false
         return@withContext try
         {
-            TeamDAO().updateUser(newUser)
-            Log.d(TAG, "updateUserInTeam(): $newUser successfully updated")
+            TeamDAO().updateUser(updatedUser)
+            Log.d(TAG, "updateUserInTeam(): $updatedUser successfully updated")
             true
         }
         catch(ex: Exception)
         {
-            Log.e(TAG, "updateUserInTeam(): user $newUser not updated because ${ex.message}")
+            Log.e(TAG, "updateUserInTeam(): user $updatedUser not updated because ${ex.message}")
             with(TestingUtil) {
-                log("$TAG::updateUserInTeam(): user $newUser not updated because ${ex.message}")
+                log("$TAG::updateUserInTeam(): user $updatedUser not updated because ${ex.message}")
                 throwNonFatal(ex)
             }
             false

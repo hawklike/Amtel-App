@@ -121,7 +121,7 @@ class TeamInfoActivity : AbstractProfileActivity()
 
         val team = viewModel.mTeam ?: Team()
         playersAdapter = ShowPlayersAdapter(
-            team.users.map { it.toPlayer() },
+            team.users.sortedBy { it.role } .map { it.toPlayer() },
             true,
             team = team
         )

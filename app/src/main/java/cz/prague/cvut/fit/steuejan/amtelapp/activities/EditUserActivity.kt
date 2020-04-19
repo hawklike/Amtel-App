@@ -1,24 +1,32 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.activities
 
+import android.app.Activity
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import com.afollestad.materialdialogs.datetime.datePicker
 import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.removeWhitespaces
+import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.TEAM_MANAGER
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.EditUserBinding
+import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.EditUserActivityVM
+import kotlinx.android.synthetic.main.edit_user.*
 
 class EditUserActivity : AbstractBaseActivity()
 {
@@ -42,11 +50,14 @@ class EditUserActivity : AbstractBaseActivity()
         binding = EditUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
-        getData()
-        getTeam()
+        setUser()
         setToolbarTitle("Upravit hráče")
         setArrowBack()
         populateField()
+        changeBirthday()
+        changeRole()
+        confirmInput()
+        saveUser()
     }
 
     override fun onDestroy()
@@ -59,14 +70,11 @@ class EditUserActivity : AbstractBaseActivity()
         }
     }
 
-    private fun getData()
+    private fun setUser()
     {
         intent.extras?.let { bundle ->
             viewModel.user = bundle.getParcelable(USER)
-            viewModel.team = bundle.getParcelable(TEAM)
         }
-
-       viewModel.getTeam()
     }
 
     private fun populateField()
@@ -93,13 +101,18 @@ class EditUserActivity : AbstractBaseActivity()
         else binding.changeRoleButton.visibility = GONE
     }
 
-    private fun getTeam()
+    private fun changeBirthday()
     {
-        viewModel.teamLoaded.observe(this) { loaded ->
-            if(loaded)
-            {
-                changeRole()
-                saveUser()
+        binding.birthdate.editText?.setOnClickListener {
+            MaterialDialog(this).show {
+                val savedDate = binding.birthdate.editText?.text?.let {
+                    viewModel.setDialogBirthdate(it)
+                }
+
+                datePicker(currentDate = savedDate) { _, date ->
+                    val dateText = date.toMyString()
+                    binding.birthdate.editText?.setText(dateText)
+                }
             }
         }
     }
@@ -107,25 +120,79 @@ class EditUserActivity : AbstractBaseActivity()
     private fun changeRole()
     {
         with(binding) {
-            changeRoleButton.isClickable = true
-            changeRoleButton.setTextColor(App.getColor(R.color.blue))
+//            changeRoleButton.isClickable = true
+//            changeRoleButton.setTextColor(App.getColor(R.color.blue))
+//
+//            changeRoleButton.setOnClickListener {
+//                viewModel.team?.let { team ->
+//                    val emails = team.users.map { it.email }.toMutableList()
+//                    emails.remove(viewModel.user?.email ?: "")
+//
+//                    MaterialDialog(this@EditUserActivity).show {
+//                        title(text = "Předat roli jinému hráči")
+//                        listItemsSingleChoice(initialSelection = viewModel.emailIdx, items = emails) { _, index, text ->
+//                            viewModel.chosenEmail = text.toString()
+//                            viewModel.emailIdx = index
+//                        }
+//                        positiveButton()
+//                        negativeButton()
+//                    }
+//                }
+//            }
+        }
+    }
 
-            changeRoleButton.setOnClickListener {
-                viewModel.team?.let { team ->
-                    val emails = team.users.map { it.email }.toMutableList()
-                    emails.remove(viewModel.user?.email ?: "")
+    private fun confirmInput()
+    {
+        confirmName()
+        confirmSurname()
+        confirmEmail()
+        confirmPhoneNumber()
+        confirmBirthdate()
+    }
 
-                    MaterialDialog(this@EditUserActivity).show {
-                        title(text = "Předat roli jinému hráči")
-                        listItemsSingleChoice(initialSelection = viewModel.emailIdx, items = emails) { _, index, text ->
-                            viewModel.chosenEmail = text.toString()
-                            viewModel.emailIdx = index
-                        }
-                        positiveButton()
-                        negativeButton()
-                    }
-                }
-            }
+    private fun confirmName()
+    {
+        viewModel.name.observe(this) { name ->
+            if(name is InvalidName)
+                binding.name.error = name.errorMessage
+            progressDialog.dismiss()
+        }
+    }
+
+    private fun confirmSurname()
+    {
+        viewModel.surname.observe(this) { surname ->
+            if(surname is InvalidSurname)
+                binding.surname.error = surname.errorMessage
+            progressDialog.dismiss()
+        }
+    }
+
+    private fun confirmEmail()
+    {
+        viewModel.email.observe(this) { email ->
+            if(email is InvalidEmail)
+                binding.email.error = email.errorMessage
+            progressDialog.dismiss()
+        }
+    }
+
+    private fun confirmPhoneNumber()
+    {
+        viewModel.phoneNumber.observe(this) { phoneNumber ->
+            if(phoneNumber is InvalidPhoneNumber)
+                binding.phone.error = phoneNumber.errorMessage
+            progressDialog.dismiss()
+        }
+    }
+
+    private fun confirmBirthdate()
+    {
+        viewModel.birthdate.observe(this) { birthdate ->
+            if(birthdate is InvalidBirthdate)
+                binding.birthdate.error = birthdate.errorMessage
+            progressDialog.dismiss()
         }
     }
 
@@ -134,7 +201,39 @@ class EditUserActivity : AbstractBaseActivity()
         with(binding) {
             saveButton.isClickable = true
             saveButton.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.blue))
+            saveButton.setOnClickListener {
+                progressDialog.show()
+                clearErrors()
+                val name = name.editText?.text.toString().trim()
+                val surname = surname.editText?.text.toString().trim()
+                val email = email.editText?.text.toString().trim()
+                val phone = phone.editText?.text.toString()
+                val birthdate = birthdate.editText?.text.toString().trim()
+                viewModel.editUser(name, surname, email, phone, birthdate)
+            }
+        }
+
+        viewModel.userEdited.observe(this) { success ->
+            progressDialog.dismiss()
+            if(success)
+            {
+                toast("Vše proběhlo v pořádku.")
+                setResult(Activity.RESULT_OK)
+                onBackPressed()
+            }
+            else toast("Upravit hráče se nepodařilo.")
         }
     }
 
+    private fun clearErrors()
+    {
+        with(binding)
+        {
+            name.error = null
+            surname.error = null
+            email.error = null
+            phone.error = null
+            birthdate.error = null
+        }
+    }
 }

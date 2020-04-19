@@ -213,4 +213,16 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
         }
     }
 
+    fun getUpdatedTeam(team: TeamState)
+    {
+        if(team is ValidTeam)
+        {
+            viewModelScope.launch {
+                TeamRepository.findTeam(team.self.id).let {
+                    if(it is ValidTeam) _team.value = it.self
+                }
+            }
+        }
+    }
+
 }
