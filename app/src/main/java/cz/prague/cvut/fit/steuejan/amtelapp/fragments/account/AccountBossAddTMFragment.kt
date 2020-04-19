@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.RelativeLayout
@@ -46,6 +48,7 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     private lateinit var surnameLayout: TextInputLayout
     private lateinit var emailLayout: TextInputLayout
     private lateinit var chooseTeam: CheckBox
+    private lateinit var chosenTeam: TextView
     private lateinit var addUserButton: FloatingActionButton
 
     private lateinit var deadlineFromLayout: TextInputLayout
@@ -65,6 +68,7 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
         surnameLayout = view.findViewById(R.id.account_boss_add_tm_surname)
         emailLayout = view.findViewById(R.id.account_boss_add_tm_email)
         chooseTeam = view.findViewById(R.id.account_boss_add_tm_choose_team)
+        chosenTeam = view.findViewById(R.id.account_boss_add_tm_chosen_team)
         addUserButton = view.findViewById(R.id.account_boss_add_tm_add)
         deadlineFromLayout = view.findViewById(R.id.account_boss_add_deadline_date_from)
         deadlineToLayout = view.findViewById(R.id.account_boss_add_deadline_date_to)
@@ -149,7 +153,12 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
                     }
                 }
             }
-            else viewModel.chosenTeam = null
+            else
+            {
+                viewModel.chosenTeam = null
+                chosenTeam.visibility = GONE
+                chosenTeam.text = null
+            }
         }
     }
 
@@ -167,7 +176,9 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
                 }
                 onDismiss {
                     viewModel.chosenTeam?.let {
-                        toast("Byl vybrán tým ${viewModel.chosenTeam}.")
+                        toast("Byl vybrán tým ${it.name}.")
+                        chosenTeam.visibility = VISIBLE
+                        chosenTeam.text = it.name
                     }
                     ?: toast("Nebyl vybrán žádný tým.")
                 }

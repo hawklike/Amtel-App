@@ -74,6 +74,16 @@
                     android:layout_marginTop="8dp"
                     android:layout_below="@id/account_boss_add_tm_email"/>
 
+                <TextView
+                    android:id="@+id/account_boss_add_tm_chosen_team"
+                    android:layout_below="@id/account_boss_add_tm_choose_team"
+                    android:layout_width="wrap_content"
+                    android:textColor="@color/lightGrey"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginStart="8dp"
+                    />
+
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/account_boss_add_tm_add"
                     style="@style/FloatingActionButton"
