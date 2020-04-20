@@ -1,6 +1,8 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities
 
+import android.os.Build
 import android.text.Editable
+import android.text.Html
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -31,10 +33,6 @@ import java.util.*
 
 class MatchArrangementActivityVM : ViewModel()
 {
-
-
-    /*---------------------------------------------------*/
-
     private val _teams = SingleLiveEvent<Pair<Team, Team>>()
     val teams: LiveData<Pair<Team, Team>> = _teams
 
@@ -258,14 +256,14 @@ class MatchArrangementActivityVM : ViewModel()
                 {
                     homeTeam.tmId -> {
                         val message = getEmailText(match, homeTeam, awayTeam, "Vedoucí týmu ${homeTeam.name}")
-                        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message, BackgroundMail.TYPE_HTML) }
-                        EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message, BackgroundMail.TYPE_HTML) }
+                        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+                        EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
                     }
                     awayTeam.tmId -> {}
                     else -> {
                         val message = getEmailText(match, homeTeam, awayTeam, "Vedoucí soutěže")
-                        homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message, BackgroundMail.TYPE_HTML) }
-                        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message, BackgroundMail.TYPE_HTML) }
+                        homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+                        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
                     }
                 }
             }
@@ -274,7 +272,7 @@ class MatchArrangementActivityVM : ViewModel()
 
     private fun getEmailText(match: Match, homeTeam: Team, awayTeam: Team, author: String): String
     {
-        return """
+        val message = """
             <p>Dobrý den,</p>
             <p>$author právě zadal do aplikace výsledek utkání <strong>${homeTeam.name}–${awayTeam.name}</strong> ze dne ${match.dateAndTime?.toMyString() ?: "nespecifikováno"}.</p>
             
@@ -296,6 +294,11 @@ class MatchArrangementActivityVM : ViewModel()
             
             <p>Administrátor aplikace AMTEL Opava</p>
         """.trimIndent()
+
+        return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY).toString()
+        else
+            Html.fromHtml(message).toString()
     }
 
     private fun getScore(match: Match): String

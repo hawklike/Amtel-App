@@ -6,7 +6,7 @@ object StringUtil
 {
     fun getRandomString(length: Int) : String
     {
-        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz1234567890"
+        val allowedChars = "abcdefghiklmnopqrstuvwxyz1234567890"
         return (1..length)
             .map { allowedChars.random() }
             .joinToString("")
