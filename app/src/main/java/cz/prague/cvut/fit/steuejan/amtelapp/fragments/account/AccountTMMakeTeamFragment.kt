@@ -228,7 +228,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
                 }
         }
 
-        addPlayer.setOnClickListener { toast("V průběhu ligy nelze přidávat nové hráče.") }
+        addPlayer.setOnClickListener { toast("Po uzavření soupisky nelze přidat nového hráče.") }
     }
 
     private fun addPlayer()

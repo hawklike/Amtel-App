@@ -47,7 +47,7 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
             deleteButton.setOnClickListener {
                 if(!isAllowed)
                 {
-                    toast("V průběhu ligy nelze hráče smazat.")
+                    toast("Po uzavření soupisky nelze hráče smazat.")
                     return@setOnClickListener
                 }
 
@@ -69,7 +69,12 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
                 onClick?.invoke(getItem(adapterPosition))
             }
 
-            card.setOnClickListener {
+            editButton.setOnClickListener {
+                if(!isAllowed)
+                {
+                    toast("Po uzavření soupisky nelze hráče upravit.")
+                    return@setOnClickListener
+                }
                 onEdit?.invoke(getItem(adapterPosition))
             }
         }
