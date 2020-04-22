@@ -55,7 +55,7 @@
                         android:layout_centerHorizontal="true"
                         android:text="Utkání"
                         android:textColor="@color/darkGrey"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                 </RelativeLayout>
 
@@ -82,7 +82,7 @@
                         android:layout_centerHorizontal="true"
                         android:text="Pozice"
                         android:textColor="@color/darkGrey"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                 </RelativeLayout>
 
@@ -111,7 +111,7 @@
                         android:layout_centerHorizontal="true"
                         android:text="Skupina"
                         android:textColor="@color/darkGrey"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                 </RelativeLayout>
 
@@ -138,7 +138,7 @@
                         android:layout_centerHorizontal="true"
                         android:text="Úspěšnost"
                         android:textColor="@color/darkGrey"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                 </RelativeLayout>
 
@@ -166,7 +166,7 @@
                         android:gravity="center"
                         android:text="Prům. umístění"
                         android:textColor="@color/darkGrey"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                 </RelativeLayout>
 
@@ -193,7 +193,7 @@
                         android:layout_centerHorizontal="true"
                         android:text="Tituly"
                         android:textColor="@color/darkGrey"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                 </RelativeLayout>
 

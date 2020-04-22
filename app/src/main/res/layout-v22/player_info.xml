@@ -59,7 +59,7 @@
                                 android:layout_centerHorizontal="true"
                                 android:text="Tým"
                                 android:textColor="@color/darkGrey"
-                                android:textSize="14sp" />
+                                android:textSize="13sp" />
 
                         </RelativeLayout>
 
@@ -86,7 +86,7 @@
                                 android:layout_centerHorizontal="true"
                                 android:text="Skupina"
                                 android:textColor="@color/darkGrey"
-                                android:textSize="14sp" />
+                                android:textSize="13sp" />
 
                         </RelativeLayout>
 
@@ -120,7 +120,7 @@
                             android:layout_centerHorizontal="true"
                             android:text="Věk"
                             android:textColor="@color/darkGrey"
-                            android:textSize="14sp" />
+                            android:textSize="13sp" />
 
                     </RelativeLayout>
 
@@ -147,7 +147,7 @@
                             android:layout_centerHorizontal="true"
                             android:text="Úspěšnost"
                             android:textColor="@color/darkGrey"
-                            android:textSize="14sp" />
+                            android:textSize="13sp" />
 
                     </RelativeLayout>
 
@@ -173,7 +173,7 @@
                             android:layout_centerHorizontal="true"
                             android:text="Zápasy"
                             android:textColor="@color/darkGrey"
-                            android:textSize="14sp" />
+                            android:textSize="13sp" />
 
                     </RelativeLayout>
 
