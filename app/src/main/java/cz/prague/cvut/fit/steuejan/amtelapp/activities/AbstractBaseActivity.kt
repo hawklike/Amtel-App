@@ -44,6 +44,12 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
         handleLogout()
     }
 
+    override fun onDestroy()
+    {
+        super.onDestroy()
+        toolbar.removeAllViews()
+    }
+
     private fun handleLogout()
     {
         baseActivityVM.logoutIcon.observe(this) { visibility ->

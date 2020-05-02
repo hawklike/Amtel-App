@@ -99,6 +99,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         addPersonalInfo.setOnClickListener(null)
         changePassword.setOnClickListener(null)
         changeEmail.setOnClickListener(null)
+        birthdateLayout.editText?.setOnClickListener(null)
 
         accountPersonalLayout?.removeAllViews()
         changePasswordLayout?.removeAllViews()

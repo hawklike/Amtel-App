@@ -1,0 +1,13 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background color -->
+    <item android:drawable="@color/blue"/>
+
+    <!-- Logo at the center of the screen -->
+    <item
+        android:drawable="@drawable/amtel_logo_white"
+        android:right="50dp"
+        android:left="50dp"
+        android:top="50dp"
+        android:bottom="50dp"
+        android:gravity="center"/>
+</layer-list>

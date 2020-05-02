@@ -78,6 +78,8 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
     override fun onDestroyView()
     {
         super.onDestroyView()
+        recyclerView?.adapter = null
+        recyclerView?.removeAllViews()
         adapter = null
         recyclerView = null
     }

@@ -73,8 +73,9 @@ class ShowGroupsMenuFragment : AbstractMainActivityFragment()
     {
         super.onDestroyView()
         adapter?.onNextClick = null
-        recyclerView = null
+        recyclerView?.adapter = null
         adapter = null
+        recyclerView = null
     }
 
     private fun setupRecycler()

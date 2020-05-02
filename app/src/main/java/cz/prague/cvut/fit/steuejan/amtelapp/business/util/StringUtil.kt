@@ -22,16 +22,16 @@ object StringUtil
 
     fun prepareCzechOrdering(name: String, surname: String): Pair<String, String>
     {
-        val convertedName = changeToEnglishForm(name)
-        val convertedSurname = changeToEnglishForm(surname)
+        val convertedName = changeToEnglishTranscription(name)
+        val convertedSurname = changeToEnglishTranscription(surname)
 
         return Pair(convertedName, convertedSurname)
     }
 
     fun prepareCzechOrdering(text: String): String
-            = changeToEnglishForm(text)
+            = changeToEnglishTranscription(text)
 
-    private fun changeToEnglishForm(text: String): String
+    private fun changeToEnglishTranscription(text: String): String
     {
         return text.toLowerCase(Locale.getDefault())
             .replace("č", "czz")
