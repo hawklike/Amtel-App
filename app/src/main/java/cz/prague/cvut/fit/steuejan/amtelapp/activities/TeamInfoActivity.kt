@@ -142,7 +142,7 @@ class TeamInfoActivity : AbstractProfileActivity()
         matchesRecyclerView?.setHasFixedSize(true)
         matchesRecyclerView?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        val query = TeamRepository.retrieveMatches(viewModel.mTeam ?: Team(id = "hlen"))
+        val query = TeamRepository.retrieveMatches(viewModel.mTeam ?: Team(id = "You are reading my code, cool."))
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
             .setPrefetchDistance(6)
@@ -154,7 +154,7 @@ class TeamInfoActivity : AbstractProfileActivity()
             .setQuery(query, config, Match::class.java)
             .build()
 
-        matchesAdapter = ShowTeamMatchesPagingAdapter(viewModel.mTeam ?: Team(id = "mucus"), options)
+        matchesAdapter = ShowTeamMatchesPagingAdapter(viewModel.mTeam ?: Team(id = "I wish you a nice day."), options)
         matchesAdapter?.onClick = { match ->
             val intent = Intent(this, MatchViewPagerActivity::class.java).apply {
                 putExtra(MatchViewPagerActivity.MATCH, match)

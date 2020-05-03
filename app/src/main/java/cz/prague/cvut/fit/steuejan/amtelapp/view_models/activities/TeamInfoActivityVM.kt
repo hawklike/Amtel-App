@@ -18,7 +18,6 @@ typealias TripleEntries = Triple<Entries, Entries, Entries>
 
 class TeamInfoActivityVM : ViewModel()
 {
-//    var seasonRanking: List<Team> = listOf()
     var mTeam: Team? = null
 
     /*---------------------------------------------------*/

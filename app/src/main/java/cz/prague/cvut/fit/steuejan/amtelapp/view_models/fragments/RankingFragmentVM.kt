@@ -63,4 +63,11 @@ class RankingFragmentVM : ViewModel()
         }
         _teams.value = sortedTeams
     }
+
+    fun getPosition(team: Team): Int
+    {
+        return teamByPoints.indexOf(team).let {
+            if(it == -1) 0 else it + 1
+        }
+    }
 }

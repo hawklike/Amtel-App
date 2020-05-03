@@ -216,11 +216,16 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
 
             deleteErrors()
 
+            val message = """
+${if(team is NoTeam) "Název týmu: $name\nAdresa kurtu: $place" else "Adresa kurtu: $place"}
+Hrací dny: $playingDays${if(team is NoTeam) "\n\nNázev týmu již nepůjde vícekrát změnit!" else ""}
+            """.trimIndent()
+
             MaterialDialog(activity!!)
-                .title(text = "Uložit tým?")
-                .message(R.string.create_team_dialog_message)
+                .title(text = if(team is NoTeam) "Uložit tým?" else "Aktualizovat tým?")
+                .message(text = message)
                 .show {
-                    positiveButton(text = "Uložit") {
+                    positiveButton(text = if(team is NoTeam) "Uložit" else "Aktualizovat") {
                         progressDialog.show()
                         viewModel.createTeam(user, name, place, playingDays)
                     }
