@@ -57,10 +57,10 @@ class ShowPlayerRoundsAdapter(private val rounds: List<Round>, private val playe
         val isHomePlayer = round.homePlayers.find { it.playerId == player.playerId }?.let { true } ?: false
         when
         {
-            round.homeGems == null || round.awayGems == null -> setResultButton(holder, "-", R.color.lightGrey)
-            round.homeGems!! == round.awayGems!! -> setResultButton(holder, "-", R.color.lightGrey)
-            isHomePlayer && round.homeGems!! > round.awayGems!! -> setResultButton(holder, "V", R.color.blue)
-            !isHomePlayer && round.awayGems!! > round.homeGems!! -> setResultButton(holder, "V", R.color.blue)
+            round.homeSets == null || round.awaySets == null -> setResultButton(holder, "-", R.color.lightGrey)
+            round.homeSets!! == round.awaySets!! -> setResultButton(holder, "!", R.color.yellow)
+            isHomePlayer && round.homeSets!! > round.awaySets!! -> setResultButton(holder, "V", R.color.blue)
+            !isHomePlayer && round.awaySets!! > round.homeSets!! -> setResultButton(holder, "V", R.color.blue)
             else -> setResultButton(holder, "P", R.color.red)
         }
     }

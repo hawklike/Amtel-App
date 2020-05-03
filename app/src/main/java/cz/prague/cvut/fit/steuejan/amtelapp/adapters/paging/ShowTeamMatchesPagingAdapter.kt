@@ -65,7 +65,7 @@ class ShowTeamMatchesPagingAdapter(private val team: Team, options: FirestorePag
         when
         {
             match.homeScore == null || match.awayScore == null -> setResultButton(holder, "-", R.color.lightGrey)
-            match.homeScore!! == match.awayScore!! -> setResultButton(holder, "-", R.color.lightGrey)
+            match.homeScore!! == match.awayScore!! -> setResultButton(holder, "!", R.color.yellow)
             isHomeTeam && match.homeScore!! > match.awayScore!! -> setResultButton(holder, "V", R.color.blue)
             !isHomeTeam && match.awayScore!! > match.homeScore!! -> setResultButton(holder, "V", R.color.blue)
             else -> setResultButton(holder, "P", R.color.red)
