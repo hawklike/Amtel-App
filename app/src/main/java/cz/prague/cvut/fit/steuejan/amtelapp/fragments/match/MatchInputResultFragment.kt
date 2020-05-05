@@ -81,7 +81,6 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     companion object
     {
         private const val ROUND = "round"
-        const val COMMA = ",\u001B"
 
         fun newInstance(round: Int): MatchInputResultFragment
         {
@@ -191,8 +190,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         thirdSetHome.setText(round.homeGemsSet3?.toString())
         thirdSetAway.setText(round.awayGemsSet3?.toString())
 
-        homePlayers.setText(round.homePlayers.joinToString("$COMMA ") { "${it.name} ${it.surname}" })
-        awayPlayers.setText(round.awayPlayers.joinToString("$COMMA ") { "${it.name} ${it.surname}" })
+        homePlayers.setText(round.homePlayers.joinToString(", ") { "${it.name} ${it.surname}" })
+        awayPlayers.setText(round.awayPlayers.joinToString(", ") { "${it.name} ${it.surname}" })
     }
 
     private fun prepareLayout()
@@ -251,9 +250,6 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         val thirdHome = thirdSetHome.text.toString()
         val thirdAway = thirdSetAway.text.toString()
 
-        val homePlayersText = homePlayers.text
-        val awayPlayersText = awayPlayers.text
-
         deleteErrors()
 
         viewModel.confirmInput(
@@ -263,8 +259,6 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             secondAway,
             thirdHome,
             thirdAway,
-            homePlayersText,
-            awayPlayersText,
             match.groupName == getString(R.string.fifty_plus_group)
         )
     }
@@ -451,8 +445,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             initialSelection = if(selectedItems.isEmpty()) -1 else selectedItems.first()
         ) { _, index, _ ->
             viewModel.handleListItemSingleChoice(team, index, homeTeam)
-            if(homeTeam) editText.setText(viewModel.mHomePlayers.joinToString("$COMMA ") { "${it.name} ${it.surname}" })
-            else editText.setText(viewModel.mAwayPlayers.joinToString("$COMMA ") { "${it.name} ${it.surname}" })
+            if(homeTeam) editText.setText(viewModel.mHomePlayers.joinToString(", ") { "${it.name} ${it.surname}" })
+            else editText.setText(viewModel.mAwayPlayers.joinToString(", ") { "${it.name} ${it.surname}" })
         }
     }
 
@@ -470,8 +464,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             initialSelection = selectedItems.toIntArray()
         ) { _, indices, _ ->
             viewModel.handleListItemMultiChoice(team, indices, homeTeam)
-            if(homeTeam) editText.setText(viewModel.mHomePlayers.joinToString("$COMMA ") { "${it.name} ${it.surname}" })
-            else editText.setText(viewModel.mAwayPlayers.joinToString("$COMMA ") { "${it.name} ${it.surname}" })
+            if(homeTeam) editText.setText(viewModel.mHomePlayers.joinToString(", ") { "${it.name} ${it.surname}" })
+            else editText.setText(viewModel.mAwayPlayers.joinToString(", ") { "${it.name} ${it.surname}" })
             dialog.setActionButtonEnabled(WhichButton.POSITIVE, indices.size == 2)
         }
     }

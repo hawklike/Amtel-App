@@ -17,7 +17,6 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.*
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.match.MatchInputResultFragment.Companion.COMMA
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SetState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidSet
@@ -161,7 +160,7 @@ class MatchInputResultFragmentVM : ViewModel()
     /**
      * Call this method before inputResult() method
      */
-    fun confirmInput(firstHome: String, firstAway: String, secondHome: String, secondAway: String, thirdHome: String, thirdAway: String, homePlayersText: Editable, awayPlayersText: Editable, isFiftyGroup: Boolean)
+    fun confirmInput(firstHome: String, firstAway: String, secondHome: String, secondAway: String, thirdHome: String, thirdAway: String, isFiftyGroup: Boolean)
     {
         viewModelScope.launch {
             m_isInputOk = true
@@ -177,8 +176,8 @@ class MatchInputResultFragmentVM : ViewModel()
             confirmSet(_secondHome, _secondAway)
             if(!isFiftyGroup) confirmSet(_thirdHome, _thirdAway)
 
-            confirmPlayers(homePlayersText, _homePlayers, isFiftyGroup)
-            confirmPlayers(awayPlayersText, _awayPlayers, isFiftyGroup)
+            confirmPlayers(mHomePlayers, _homePlayers, isFiftyGroup)
+            confirmPlayers(mAwayPlayers, _awayPlayers, isFiftyGroup)
 
             _isInputOk.value = m_isInputOk
         }
@@ -329,7 +328,7 @@ class MatchInputResultFragmentVM : ViewModel()
         }
     }
 
-    private fun confirmPlayers(players: Editable, data: MutableLiveData<Boolean>, fiftyGroup: Boolean)
+    private fun confirmPlayers(players: List<Player>, data: MutableLiveData<Boolean>, fiftyGroup: Boolean)
     {
         if(players.isEmpty())
         {
@@ -339,7 +338,7 @@ class MatchInputResultFragmentVM : ViewModel()
         else
         {
             //50+ group plays two double matches, other groups play only one double
-            if((!fiftyGroup && round == 3 && players.split("$COMMA ").size != 2) || (fiftyGroup && (round == 2 || round == 3) && players.split("$COMMA ").size != 2))
+            if((!fiftyGroup && round == 3 && players.size != 2) || (fiftyGroup && (round == 2 || round == 3) && players.size != 2))
             {
                 data.value = false
                 m_isInputOk = false
