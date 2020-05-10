@@ -26,6 +26,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.fragments.miscellaneous.MapFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.TeamInfoActivityVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.RankingFragmentVM
 
+/*
+Displays a team profile with its statistics.
+ */
 class TeamInfoActivity : AbstractProfileActivity()
 {
     private val viewModel by viewModels<TeamInfoActivityVM>()

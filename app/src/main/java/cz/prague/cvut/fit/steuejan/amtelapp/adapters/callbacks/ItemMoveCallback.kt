@@ -3,6 +3,9 @@ package cz.prague.cvut.fit.steuejan.amtelapp.adapters.callbacks
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
+/*
+This class handles drag and drop option in a recyclerView.
+ */
 class ItemMoveCallback(private val mAdapter: ItemTouchHelperContract) : ItemTouchHelper.Callback()
 {
     override fun isLongPressDragEnabled(): Boolean  = true

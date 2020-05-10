@@ -14,6 +14,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.SignedUser
 import cz.prague.cvut.fit.steuejan.amtelapp.states.UserState
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.ScheduleRoundsActivityVM
 
+/*
+Represents an activity which has a built in view pager that shows some rounds.
+ */
 class RoundsViewPagerActivity : AbstractViewPagerActivity()
 {
     private val viewModel by viewModels<ScheduleRoundsActivityVM>()

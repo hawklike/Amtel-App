@@ -25,7 +25,6 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toSex
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.AccountPersonalFragmentVM
-import java.util.*
 
 class AccountPersonalFragment : AbstractMainActivityFragment()
 {
@@ -292,6 +291,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
                     positiveButton(R.string.ok)
                     onDismiss {
                         passwordLayout.editText?.text?.clear()
+                        confirmPasswordLayout.editText?.text?.clear()
                     }
                 }
         }

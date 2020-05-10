@@ -58,6 +58,7 @@ class InputReportActivity : AbstractBaseActivity()
     override fun onResume()
     {
         super.onResume()
+        //display last saved title, lead and text when the report is not published yet
         viewModel.report ?: with(PreferenceManager.getDefaultSharedPreferences(this)) {
             with(binding) {
                 title.setText(getString(REPORT_TITLE, ""))
@@ -76,6 +77,7 @@ class InputReportActivity : AbstractBaseActivity()
             positiveButton(text = "Odejít") {
                 if(viewModel.published)
                 {
+                    //in order to refresh reports in the ReportsFragment
                     setResult(RESULT_OK)
                     finish()
                 }
@@ -90,6 +92,7 @@ class InputReportActivity : AbstractBaseActivity()
             viewModel.report = bundle.getParcelable(REPORT)
         }
 
+        //the report has been already published
         viewModel.report?.let {
             setToolbarTitle("Upravit článek")
             with(binding) {
@@ -107,6 +110,7 @@ class InputReportActivity : AbstractBaseActivity()
     private fun saveReport()
     {
         binding.saveReport.setOnClickListener {
+            //if the report has been already published, update the report in database
             viewModel.report?.let {
                 with(binding) {
                     progressDialog.show()
@@ -116,6 +120,7 @@ class InputReportActivity : AbstractBaseActivity()
                     viewModel.publishRecord(it.id, title, lead, text)
                 }
             }
+                //else save the work in progress
             ?: let {
                 updateReportInPreferences()
                 toast("Uloženo")
@@ -129,6 +134,7 @@ class InputReportActivity : AbstractBaseActivity()
         val lead: String?
         val text: String?
 
+        //clear data in preferences when the report is published
         if(viewModel.published)
         {
             title = null
@@ -170,6 +176,7 @@ class InputReportActivity : AbstractBaseActivity()
             }
         }
 
+        //invoked when the report was published
         viewModel.reportPublished.observe(this) { published ->
             progressDialog.dismiss()
             if(viewModel.report != null)

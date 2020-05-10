@@ -94,6 +94,7 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
     override fun onBindViewHolder(holder: ViewHolder, position: Int)
     {
         val user = getItem(position)
+        //team manager cannot delete and edit himself
         if(user.role.toRole() == UserRole.TEAM_MANAGER)
         {
             holder.deleteButton.visibility = GONE
@@ -115,6 +116,7 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
         holder.email.text = user.email
         user.birthdate?.let { holder.birthdate.text = it.toMyString() }
 
+        //is line up creation allowed?
         if(!isAllowed)
         {
             holder.fullName.alpha = 0.5f

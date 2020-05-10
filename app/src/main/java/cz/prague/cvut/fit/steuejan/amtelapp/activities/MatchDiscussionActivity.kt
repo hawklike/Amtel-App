@@ -90,7 +90,7 @@ class MatchDiscussionActivity : AbstractBaseActivity(), ShowMessagesPagingAdapte
                         inputField.setSingleLine(false)
                         inputField.imeOptions = EditorInfo.IME_FLAG_NO_ENTER_ACTION
                         inputField.maxLines = 4
-                        //fixed jumping of a cursor to the beginning of the text
+                        //fixed jumping cursor to the beginning of the text
                         if(text.length == 1) inputField.setSelection(text.length)
 
                         inputField.error =

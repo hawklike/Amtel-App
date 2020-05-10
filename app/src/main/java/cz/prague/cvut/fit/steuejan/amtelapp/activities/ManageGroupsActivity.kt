@@ -52,6 +52,11 @@ class ManageGroupsActivity : AbstractBaseActivity()
         generatePlayoff()
     }
 
+    /*
+    Handles the "open playoff" button. When playoff is currently opened,
+    disables opening the playoff again. Also sets time interval when the playoff
+    is opened.
+     */
     private fun getPlayoff()
     {
         viewModel.playoff ?: viewModel.getPlayoff()
@@ -66,6 +71,9 @@ class ManageGroupsActivity : AbstractBaseActivity()
         }
     }
 
+    /*
+    Playoff is opened.
+     */
     private fun disablePlayoffButton()
     {
         generatePlayOffButton.setTextColor(App.getColor(R.color.red))
@@ -89,6 +97,9 @@ class ManageGroupsActivity : AbstractBaseActivity()
         }
     }
 
+    /*
+    Starts service which handles the playoff opening and finishes the season.
+     */
     private fun setPlayOff()
     {
         val groups = viewModel.groups.value ?: emptyList()
@@ -125,6 +136,9 @@ class ManageGroupsActivity : AbstractBaseActivity()
         viewModel.getGroupsExceptPlayOff()
     }
 
+    /*
+    Populates RecyclerView with all groups except playoff.
+     */
     private fun setupRecycler()
     {
         recyclerView = findViewById(R.id.account_boss_groups_recyclerView)
@@ -150,6 +164,7 @@ class ManageGroupsActivity : AbstractBaseActivity()
     override fun onBackPressed()
     {
         adapter?.list?.let {
+            //in order to update groups positions
             val intent = Intent().apply {
                 putParcelableArrayListExtra(GROUPS, ArrayList(it))
             }

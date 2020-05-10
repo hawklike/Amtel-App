@@ -66,8 +66,7 @@ object DateUtil
     {
         val lastDay = DateTime(getWeekDate(week).last().time).withHourOfDay(23).withMinuteOfHour(59)
         val today = DateTime()
-        val remainingDays = Days.daysBetween(today, lastDay).days
-        return if(remainingDays < 0) 0 else remainingDays
+        return Days.daysBetween(today, lastDay).days
     }
 
     fun getRemainingDaysUntil(date: Date): Int

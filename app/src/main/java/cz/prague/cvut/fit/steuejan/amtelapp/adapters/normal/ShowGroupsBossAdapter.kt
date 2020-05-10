@@ -31,6 +31,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.services.GroupDeletionService
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.adapters.ShowGroupsBossAdapterVM
 import java.util.*
 
+/*
+Shows groups within ManageGroupsActivity.
+ */
 class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<Group>)
     : RecyclerView.Adapter<ShowGroupsBossAdapter.ViewHolder>(), ItemMoveCallback.ItemTouchHelperContract
 {
@@ -72,6 +75,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             handleVisibility()
         }
 
+        //change group visibility
         private fun handleVisibility()
         {
             if(!group.visibility) visibility.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.lightGrey))
@@ -88,6 +92,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             }
         }
 
+        //delete group
         private fun handleDeleteButton()
         {
             deleteButton.setOnClickListener {
@@ -114,6 +119,10 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             context.startService(serviceIntent)
         }
 
+        /*
+        Generate matches. If there are no teams in the group, disable the button.
+        Otherwise change the button text whether the matches have been generated or not.
+         */
         private fun handleGenerateButton()
         {
             if(rounds == 0)
@@ -146,6 +155,9 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             }
         }
 
+        /*
+        Shows dialog when before generating matches.
+         */
         private fun showDialog(title: String, buttonText: String, message: String, callback: () -> Unit)
         {
             generateButton.setOnClickListener {
@@ -180,6 +192,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             return isValid
         }
 
+        //start a service which handles matches generating
         private fun generateSchedule(regenerate: Boolean)
         {
             val intent = Intent(context, GenerateScheduleService::class.java).apply {
@@ -207,6 +220,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
         holder.init(group)
     }
 
+    //drag and drop option
     override fun onItemMove(fromPosition: Int, toPosition: Int)
     {
         if(fromPosition < toPosition)

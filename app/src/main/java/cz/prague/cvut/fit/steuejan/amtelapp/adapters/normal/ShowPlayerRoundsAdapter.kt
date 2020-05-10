@@ -13,6 +13,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.RoundCardSquareBinding
 
+/*
+Shows players played rounds (one match consists of three rounds).
+ */
 class ShowPlayerRoundsAdapter(private val rounds: List<Round>, private val player: Player)
     : RecyclerView.Adapter<ShowPlayerRoundsAdapter.ViewHolder>()
 {
@@ -52,6 +55,7 @@ class ShowPlayerRoundsAdapter(private val rounds: List<Round>, private val playe
         }
     }
 
+    //display label which depends on whether the player won or not
     private fun resolveWinner(holder: ViewHolder, round: Round)
     {
         val isHomePlayer = round.homePlayers.find { it.playerId == player.playerId }?.let { true } ?: false

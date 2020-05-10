@@ -90,6 +90,9 @@ class EditUserActivity : AbstractBaseActivity()
         }
     }
 
+    /*
+    If the logged in user is a head of league, display change role button.
+     */
     private fun displayChangeRoleButton(user: User)
     {
         if(AuthManager.currentUser?.uid != null && AuthManager.currentUser?.uid == LeagueRepository.headOfLeague?.id)
@@ -116,6 +119,11 @@ class EditUserActivity : AbstractBaseActivity()
         }
     }
 
+    /*
+    Only enabled for team managers and visible for a head of league.
+    After clicking on the change role button, team manager losses his role
+    and is converted into an ordinary user.
+     */
     private fun changeRole()
     {
         with(binding) {
@@ -203,6 +211,7 @@ class EditUserActivity : AbstractBaseActivity()
             }
         }
 
+        //invoke when a user is edited
         viewModel.userEdited.observe(this) { success ->
             progressDialog.dismiss()
             if(success)

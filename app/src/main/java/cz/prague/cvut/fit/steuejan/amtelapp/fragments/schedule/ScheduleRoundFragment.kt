@@ -38,6 +38,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidWeek
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.PlayoffActivityVM
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.ScheduleRoundFragmentVM
 
+/*
+This class represents a single fragment with some matches played that round.
+ */
 class ScheduleRoundFragment : AbstractScheduleActivityFragment()
 {
     private val viewModel by viewModels<ScheduleRoundFragmentVM>()
@@ -134,6 +137,10 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
         setObservers()
     }
 
+    /*
+    If the logged in user is head of league, show a window where he can input the number of a week.
+    Otherwise show how many days are remaining until the end of the round.
+     */
     private fun populateFields()
     {
         if(::playoff.isInitialized)
@@ -154,7 +161,7 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
             group.roundDates[round.toString()]?.let { weekNumber ->
                 title.text = String.format(getString(R.string.round_state), round)
                 val remainingDays = DateUtil.getRemainingDaysUntil(weekNumber)
-                if(remainingDays == 0) deadline.text = "Kolo již proběhlo."
+                if(remainingDays < 0) deadline.text = "Kolo již proběhlo."
                 else deadline.text = String.format(getString(R.string.round_countdown), remainingDays)
             } ?: let { chooseWeekLayout?.visibility = GONE }
         }
@@ -177,6 +184,7 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
     @SuppressLint("SetTextI18n")
     private fun setObservers()
     {
+        //invoked when a week number is input
         viewModel.week.observe(viewLifecycleOwner) { week ->
             when(week)
             {
@@ -190,6 +198,9 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
         }
     }
 
+    /*
+    Shows matches that week in the particular group.
+     */
     private fun setupRecycler()
     {
         val query =

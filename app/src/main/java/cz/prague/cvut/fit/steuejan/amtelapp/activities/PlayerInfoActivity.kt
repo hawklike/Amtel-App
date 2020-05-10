@@ -21,6 +21,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidMatch
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.PlayerInfoActivityVM
 import java.util.*
 
+/*
+This class represents player profile with its statistics.
+ */
 class PlayerInfoActivity : AbstractProfileActivity()
 {
     private lateinit var binding: PlayerInfoBinding
@@ -87,6 +90,9 @@ class PlayerInfoActivity : AbstractProfileActivity()
     }
 
 
+    /*
+    Displays a dialog when a user is deleted.
+     */
     private fun isPlayerExisting(player: User?): Boolean
     {
         if(player == null)

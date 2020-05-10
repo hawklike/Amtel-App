@@ -77,7 +77,7 @@ class MatchViewPagerActivity : AbstractViewPagerActivity()
     {
         intent.extras?.let { bundle ->
             match = bundle.getParcelable(MATCH) ?: Match(id = "Hello there")
-            week = bundle.getParcelable<ValidWeek?>(WEEK)?.let { it } ?: InvalidWeek()
+            week = bundle.getParcelable<ValidWeek?>(WEEK) ?: InvalidWeek()
             title = bundle.getString(TITLE) ?: "AMTEL Opava"
             homeTeam = bundle.getParcelable<Team>(HOME_TEAM)?.let { ValidTeam(it) } ?: NoTeam
             awayTeam = bundle.getParcelable<Team>(AWAY_TEAM)?.let { ValidTeam(it) } ?: NoTeam
@@ -85,6 +85,9 @@ class MatchViewPagerActivity : AbstractViewPagerActivity()
         }
     }
 
+    /*
+    This method handles whether the view pager should display match result or input result fragment.
+     */
     override fun setupViewPager(viewPager: ViewPager)
     {
         tabs.tabMode = TabLayout.MODE_FIXED
