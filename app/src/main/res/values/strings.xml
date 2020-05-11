@@ -269,7 +269,7 @@
     <string name="chooseTeam_message">Stávající vedoucí týmu bude nahrazen novým vedoucím.</string>
     <string name="choose_team">Vybrat tým</string>
     <string name="team_not_chosen">Nebyl vybrán žádný tým.</string>
-    <string name="team_was_chosen">\"Byl vybrán tým \"</string>
+    <string name="team_was_chosen">Byl vybrán tým "</string>
     <string name="save">Uložit</string>
     <string name="deletion_successful">Úspěšně smazáno.</string>
     <string name="deletion_failure">Smazání se nepodařilo.</string>
@@ -284,7 +284,7 @@
     <string name="you_may_change_your_personal_information_here">Své osobní údaje si můžete změnit zde.</string>
     <string name="line_up_closed_cant_add_player">Po uzavření soupisky nelze přidat nového hráče.</string>
     <string name="send">Zaslat</string>
-    <string name="input">\"Zapsat \"</string>
+    <string name="input">Zapsat</string>
     <string name="n_round">. zápas</string>
     <string name="result_reported_toast">Výsledek byl odeslán k posouzení.</string>
     <string name="input_result_title">Zapsat výsledek?</string>
