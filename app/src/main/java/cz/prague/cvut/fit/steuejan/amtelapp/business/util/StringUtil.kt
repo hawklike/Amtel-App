@@ -12,6 +12,7 @@ object StringUtil
             .joinToString("")
     }
 
+    //creates an acronym of the first three letters in the text
     fun createLabel(text: String): CharSequence
     {
         return text.fold(StringBuilder()) { acc, c ->

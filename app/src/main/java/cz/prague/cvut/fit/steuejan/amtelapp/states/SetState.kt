@@ -9,6 +9,7 @@ sealed class SetState
     {
         fun validate(score: String, optional: Boolean, isFiftyGroup: Boolean): SetState
         {
+            //score not input
             if(score.isEmpty() && !optional) return InvalidSet(context.getString(R.string.gems_empty_error))
 
             var games = Int.MAX_VALUE
@@ -19,11 +20,13 @@ sealed class SetState
             {
                 games < 0 -> InvalidSet(context.getString(R.string.too_little_gems_error))
                 games > 7 && games != Int.MAX_VALUE && !isFiftyGroup -> InvalidSet(String.format(context.getString(R.string.too_many_gems_error), 7))
+                //50+ group plays the last set up to 10 points
                 games > 10 && games != Int.MAX_VALUE && isFiftyGroup -> InvalidSet(String.format(context.getString(R.string.too_many_points_error), 10))
                 else -> ValidSet(games)
             }
         }
 
+        //checks if the score is input according to tennis rules
         fun validate(gamesHome: Int, gamesAway: Int): Boolean
         {
             if(gamesHome == Int.MAX_VALUE || gamesAway == Int.MAX_VALUE) return false

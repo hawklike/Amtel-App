@@ -12,7 +12,6 @@ import com.firebase.ui.firestore.paging.FirestorePagingAdapter
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.firebase.ui.firestore.paging.LoadingState
 import com.google.firebase.firestore.ktx.toObject
-import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.getColor
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
@@ -111,7 +110,7 @@ class ShowUsersPagingAdapter(options: FirestorePagingOptions<User>, private val 
         holder.email.text = user.email
 
         holder.birthdate.apply {
-            text = user.birthdate?.toMyString() ?: "Datum narození neznámé"
+            text = user.birthdate?.toMyString("'ročník' yyyy") ?: "ročník neznámý"
         }
 
         holder.team.apply {

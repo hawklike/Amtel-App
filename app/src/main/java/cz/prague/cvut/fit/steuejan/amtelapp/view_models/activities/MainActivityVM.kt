@@ -93,6 +93,17 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
 
     /*---------------------------------------------------*/
 
+    private val accountPage = MutableLiveData<Int>()
+
+    fun setAccountPage(page: Int)
+    {
+        accountPage.value = page
+    }
+
+    fun getAccountPage(): LiveData<Int> = accountPage
+
+    /*---------------------------------------------------*/
+
     private val _progressBar = SingleLiveEvent<Boolean>()
     val progressBar: LiveData<Boolean> = _progressBar
     fun setProgressBar(on: Boolean)
@@ -123,14 +134,16 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
             val user = UserRepository.findUser(uid)
             if(user != null)
             {
+                //current user role is a player, therefore shouldn't have an access to the administration part of the app
                 if(user.role.toRole() == PLAYER)
                 {
                     _userAccountDeleted.value = true
                     return@launch
                 }
+                //everything is ok, emit livedata
                 isUserLoggedIn(SignedUser(user))
                 setUser(user)
-                Log.i(AbstractBaseActivity.TAG, "displayAccount(): $user currently logged in")
+                Log.d(AbstractBaseActivity.TAG, "displayAccount(): $user currently logged in")
             }
             else _userAccountDeleted.value = true
         }
@@ -171,6 +184,7 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
     }
 
     //https://stackoverflow.com/a/27312494/9723204
+    //could (should) be implemented with a broadcast receiver
     fun checkInternetConnection()
     {
         viewModelScope.launch {

@@ -49,6 +49,12 @@ object DateUtil
         return cal[Calendar.WEEK_OF_YEAR]
     }
 
+    /*
+    finds a date of a match according to playing days of home and away teams
+    rules:
+        1. find a common date for both teams
+        2. if not found, retrieve the first possible date of a home team
+     */
     fun findDate(homeDays: List<Day>, awayDays: List<Day>, range: List<Date>): Date?
     {
         val days = homeDays.intersect(awayDays)

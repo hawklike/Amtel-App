@@ -30,6 +30,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayerInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowTeamPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.TEAM_MANAGER
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.AccountTMMakeTeamFragmentVM
@@ -112,6 +114,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         super.onDestroyView()
         adapter?.onDelete = null
         adapter?.onClick = null
+        adapter?.onLongClick = null
         adapter?.onEdit = null
         recyclerView?.adapter = null
         recyclerView = null
@@ -174,10 +177,18 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         }
 
         adapter?.onEdit = { user ->
-            val intent = Intent(activity, EditUserActivity::class.java).apply {
-                putExtra(EditUserActivity.USER, user)
+            if(user.role.toRole() == TEAM_MANAGER)
+            {
+                mainActivityModel.setAccountPage(AccountFragment.PERSONAL_TM)
+                toast("Své osobní údaje si můžete změnit zde.")
             }
-            startActivityForResult(intent, EDIT_USER_CODE)
+            else
+            {
+                val intent = Intent(activity, EditUserActivity::class.java).apply {
+                    putExtra(EditUserActivity.USER, user)
+                }
+                startActivityForResult(intent, EDIT_USER_CODE)
+            }
         }
 
         recyclerView?.adapter = adapter
