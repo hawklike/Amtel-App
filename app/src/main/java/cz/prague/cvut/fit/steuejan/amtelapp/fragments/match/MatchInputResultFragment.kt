@@ -24,9 +24,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMatchActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.services.CountMatchScoreService
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
@@ -81,7 +81,6 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
     companion object
     {
         private const val ROUND = "round"
-        const val COMMA = ",\u001B"
 
         fun newInstance(round: Int): MatchInputResultFragment
         {
@@ -128,7 +127,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         overviewLayout = view.findViewById(R.id.match_input_overview)
         resultsLayout = view.findViewById(R.id.match_input_results)
 
-        inputResult.text = "Zapsat $round. zápas"
+        inputResult.text = "${getString(R.string.input)}$round${getString(R.string.n_round)}"
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -191,8 +190,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         thirdSetHome.setText(round.homeGemsSet3?.toString())
         thirdSetAway.setText(round.awayGemsSet3?.toString())
 
-        homePlayers.setText(round.homePlayers.joinToString("$COMMA ") { "${it.name} ${it.surname}" })
-        awayPlayers.setText(round.awayPlayers.joinToString("$COMMA ") { "${it.name} ${it.surname}" })
+        homePlayers.setText(round.homePlayers.joinToString(", ") { "${it.name} ${it.surname}" })
+        awayPlayers.setText(round.awayPlayers.joinToString(", ") { "${it.name} ${it.surname}" })
     }
 
     private fun prepareLayout()
@@ -251,9 +250,6 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         val thirdHome = thirdSetHome.text.toString()
         val thirdAway = thirdSetAway.text.toString()
 
-        val homePlayersText = homePlayers.text
-        val awayPlayersText = awayPlayers.text
-
         deleteErrors()
 
         viewModel.confirmInput(
@@ -263,8 +259,6 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             secondAway,
             thirdHome,
             thirdAway,
-            homePlayersText,
-            awayPlayersText,
             match.groupName == getString(R.string.fifty_plus_group)
         )
     }
@@ -282,7 +276,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         viewModel.isReported.observe(viewLifecycleOwner) { match ->
             val result = MatchRepository.getResults(match.rounds[round - 1])
             viewModel.sendEmail(homeTeam, awayTeam, result.sets, result.games)
-            toast("Výsledek byl odeslán k posouzení.")
+            toast(R.string.result_reported_toast)
         }
     }
 
@@ -351,7 +345,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                 //dialog not dismissed and don't know why
                 dialog.dismiss()
                 displayConfirmationDialog(
-                    "Zapsat výsledek?",
+                    getString(R.string.input_result_title),
                     getString(R.string.match_tie_warning)) {
                     viewModel.inputResult(
                         isHeadOfLeague, ignoreTie = true, isReport = isReport
@@ -451,8 +445,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             initialSelection = if(selectedItems.isEmpty()) -1 else selectedItems.first()
         ) { _, index, _ ->
             viewModel.handleListItemSingleChoice(team, index, homeTeam)
-            if(homeTeam) editText.setText(viewModel.mHomePlayers.joinToString("$COMMA ") { "${it.name} ${it.surname}" })
-            else editText.setText(viewModel.mAwayPlayers.joinToString("$COMMA ") { "${it.name} ${it.surname}" })
+            if(homeTeam) editText.setText(viewModel.mHomePlayers.joinToString(", ") { "${it.name} ${it.surname}" })
+            else editText.setText(viewModel.mAwayPlayers.joinToString(", ") { "${it.name} ${it.surname}" })
         }
     }
 
@@ -470,8 +464,8 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
             initialSelection = selectedItems.toIntArray()
         ) { _, indices, _ ->
             viewModel.handleListItemMultiChoice(team, indices, homeTeam)
-            if(homeTeam) editText.setText(viewModel.mHomePlayers.joinToString("$COMMA ") { "${it.name} ${it.surname}" })
-            else editText.setText(viewModel.mAwayPlayers.joinToString("$COMMA ") { "${it.name} ${it.surname}" })
+            if(homeTeam) editText.setText(viewModel.mHomePlayers.joinToString(", ") { "${it.name} ${it.surname}" })
+            else editText.setText(viewModel.mAwayPlayers.joinToString(", ") { "${it.name} ${it.surname}" })
             dialog.setActionButtonEnabled(WhichButton.POSITIVE, indices.size == 2)
         }
     }

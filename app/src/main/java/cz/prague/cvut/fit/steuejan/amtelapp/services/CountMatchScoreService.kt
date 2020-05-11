@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.MatchScoreCounter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -44,12 +45,28 @@ class CountMatchScoreService : Service(), CoroutineScope
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int
     {
-        val homeTeam = intent?.getParcelableExtra(HOME_TEAM) ?: Team(id = "Hello there!")
-        val awayTeam = intent?.getParcelableExtra(AWAY_TEAM) ?: Team(id = "You are reading my code.")
-        val match = intent?.getParcelableExtra(MATCH) ?: Match(id = "That's nice from you.")
-        val defaultLoss = intent?.getBooleanExtra(DEFAULT_LOSS, false) ?: false
-
         createNotificationChannel()
+        if(intent == null)
+        {
+            val message = "Zkuste prosím zapsat výsledek znovu nebo napište vedoucímu soutěže, pokud již máte vyčerpán limit."
+
+            val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_error_white_24dp)
+                .setContentTitle("Chyba při zápisu utkání")
+                .setStyle(NotificationCompat.BigTextStyle()
+                    .bigText(message))
+                .setContentText(message)
+                .build()
+
+            NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, notification)
+            return START_NOT_STICKY
+        }
+
+        val homeTeam = intent.getParcelableExtra<Team>(HOME_TEAM)
+        val awayTeam = intent.getParcelableExtra<Team>(AWAY_TEAM)
+        val match = intent.getParcelableExtra<Match>(MATCH)
+        val defaultLoss = intent.getBooleanExtra(DEFAULT_LOSS, false)
+
         startForeground(NOTIFICATION_ID, notification)
         launch {
             MatchScoreCounter(
@@ -60,6 +77,7 @@ class CountMatchScoreService : Service(), CoroutineScope
                 .withDefaultLoss(defaultLoss)
                 .countTotalScore()
             stopForeground(true)
+            stopSelf()
         }
 
         return START_STICKY

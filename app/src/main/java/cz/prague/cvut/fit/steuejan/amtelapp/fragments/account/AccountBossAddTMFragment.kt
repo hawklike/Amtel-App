@@ -28,8 +28,6 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidCredentials
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidRegistration
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.AccountBossAddTMFragmentVM
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class AccountBossAddTMFragment : AbstractMainActivityFragment()
@@ -127,9 +125,9 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
 
         deleteDeadline.setOnClickListener {
             MaterialDialog(activity!!).show {
-                title(text = "Vymazat deadline soupisky?")
+                title(R.string.delete_deadline_title)
                 negativeButton()
-                positiveButton(text = "Smazat") {
+                positiveButton(R.string.delete) {
                     progressDialog.show()
                     viewModel.deleteDeadline()
                     deadlineFromLayout.editText?.text?.clear()
@@ -142,9 +140,9 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
             if(isChecked)
             {
                 MaterialDialog(activity!!).show {
-                    title(text = "Přidat vedoucího do již existujícího týmu?")
-                    message(text = "Stávající vedoucí týmu bude nahrazen novým vedoucím.")
-                    positiveButton(text = "Vybrat tým") {
+                    title(text = getString(R.string.chooseTeam_title))
+                    message(text = getString(R.string.chooseTeam_message))
+                    positiveButton(text = getString(R.string.choose_team)) {
                         progressDialog.show()
                         showTeams()
                     }
@@ -168,7 +166,7 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
         viewModel.teams.observe(viewLifecycleOwner) { teams ->
             progressDialog.dismiss()
             MaterialDialog(activity!!).show {
-                title(text = "Vybrat tým")
+                title(R.string.choose_team)
 
                 val teamNames = teams.map { it.name }
                 listItemsSingleChoice(items = teamNames) { _, index, _ ->
@@ -176,11 +174,11 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
                 }
                 onDismiss {
                     viewModel.chosenTeam?.let {
-                        toast("Byl vybrán tým ${it.name}.")
+                        toast(getString(R.string.team_was_chosen) + it.name + ".")
                         chosenTeam.visibility = VISIBLE
                         chosenTeam.text = it.name
                     }
-                    ?: toast("Nebyl vybrán žádný tým.")
+                    ?: toast(R.string.team_not_chosen)
                 }
             }
         }
@@ -199,7 +197,7 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
                 deadline = date.time
                 textInputLayout.editText?.setText(dateText)
             }
-            positiveButton(text = "Uložit") {
+            positiveButton(text = getString(R.string.save)) {
                 viewModel.setDeadline(deadline, from)
                 progressDialog.show()
             }
@@ -219,8 +217,8 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     {
         viewModel.isDeadlineDeleted.observe(viewLifecycleOwner) { deleted ->
             progressDialog.dismiss()
-            if(deleted) toast("Úspěšně smazáno.")
-            else toast("Smazání se nepodařilo.")
+            if(deleted) toast(getString(R.string.deletion_successful))
+            else toast(getString(R.string.deletion_failure))
         }
     }
 
@@ -237,8 +235,8 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
     {
         viewModel.isDeadlineAdded.observe(viewLifecycleOwner) { success ->
             progressDialog.dismiss()
-            if(success) toast("Deadline byl úspěšně uložen.")
-            else toast("Deadline se nepodařilo uložit.")
+            if(success) toast(getString(R.string.deadline_added_sucess))
+            else toast(getString(R.string.deadline_added_failure))
         }
     }
 
@@ -261,7 +259,7 @@ class AccountBossAddTMFragment : AbstractMainActivityFragment()
             .title(R.string.user_registration_confirmation_title)
             .message(text = "${credentials.name} ${credentials.surname}\n${credentials.email}")
             .show {
-                positiveButton(text = "Přidat") {
+                positiveButton(R.string.add) {
                     viewModel.createUser(credentials)
                     progressDialog.show()
                 }

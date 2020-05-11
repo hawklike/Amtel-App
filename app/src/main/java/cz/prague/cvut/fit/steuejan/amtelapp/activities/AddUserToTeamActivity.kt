@@ -87,6 +87,7 @@ class AddUserToTeamActivity : AbstractBaseActivity()
             val birthdate = birthdateLayout.editText?.text.toString().trim()
 
             deleteErrors()
+            //add user to team
             viewModel.addUser(name, surname, email, birthdate, sex, team)
         }
 
@@ -156,6 +157,9 @@ class AddUserToTeamActivity : AbstractBaseActivity()
         }
     }
 
+    /*
+    This method handles a situation when a user is added to team.
+     */
     private fun isUserAdded()
     {
         viewModel.isUserAdded().observe(this) { teamState ->
@@ -171,6 +175,7 @@ class AddUserToTeamActivity : AbstractBaseActivity()
             MaterialDialog(this)
                 .title(text = title)
                 .show {
+                    //when clicked on OK, go back to previous activity
                     positiveButton(R.string.ok) { this@AddUserToTeamActivity.onBackPressed() }
                 }
         }

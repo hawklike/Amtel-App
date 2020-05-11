@@ -25,7 +25,6 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toSex
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.AccountPersonalFragmentVM
-import java.util.*
 
 class AccountPersonalFragment : AbstractMainActivityFragment()
 {
@@ -99,6 +98,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         addPersonalInfo.setOnClickListener(null)
         changePassword.setOnClickListener(null)
         changeEmail.setOnClickListener(null)
+        birthdateLayout.editText?.setOnClickListener(null)
 
         accountPersonalLayout?.removeAllViews()
         changePasswordLayout?.removeAllViews()
@@ -291,6 +291,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
                     positiveButton(R.string.ok)
                     onDismiss {
                         passwordLayout.editText?.text?.clear()
+                        confirmPasswordLayout.editText?.text?.clear()
                     }
                 }
         }
@@ -307,14 +308,14 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
                     {
                         progressDialog.dismiss()
                         updateTeam(user.teamId)
-                        showDialog("Email byl úspěšně změněn", "Nyní se přihlásíte pomocí nového emailu.")
+                        showDialog(getString(R.string.email_change_success), getString(R.string.email_change_sucess_instructions))
                     }
                 }
             }
             else
             {
                 progressDialog.dismiss()
-                showDialog("Email se nepodařilo změnit", (email as InvalidEmail).errorMessage)
+                showDialog(getString(R.string.email_change_failure), (email as InvalidEmail).errorMessage)
             }
         }
     }
@@ -340,7 +341,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         MaterialDialog(activity!!)
             .title(R.string.password_change_confirmation_title)
             .show {
-                positiveButton(text = "Změnit") {
+                positiveButton(text = getString(R.string.change)) {
                     viewModel.addNewPassword(newPassword)
                     progressDialog.show()
                 }
@@ -354,9 +355,9 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     private fun displayChangeEmailDialog(newEmail: String)
     {
         MaterialDialog(activity!!)
-            .title(text = "Opravdu chcete změnit email?")
+            .title(text = getString(R.string.change_email_dialog_title))
             .show {
-                positiveButton(text = "Změnit") {
+                positiveButton(R.string.change) {
                     viewModel.changeEmail(newEmail)
                     progressDialog.show()
                 }

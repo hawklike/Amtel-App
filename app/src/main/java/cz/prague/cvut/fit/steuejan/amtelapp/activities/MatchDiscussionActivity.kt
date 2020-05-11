@@ -81,26 +81,26 @@ class MatchDiscussionActivity : AbstractBaseActivity(), ShowMessagesPagingAdapte
 
         addMessageButton.setOnClickListener {
             MaterialDialog(this)
-                .title(text = "Přidat příspěvek")
+                .title(text = getString(R.string.add_message))
                 .show {
                     var input: CharSequence = ""
-                    input(hint = "Zde napište příspěvek...", maxLength = 1024, waitForPositiveButton = false) { dialog, text ->
+                    input(hint = getString(R.string.add_message_hint), maxLength = 1024, waitForPositiveButton = false) { dialog, text ->
                         val inputField = dialog.getInputField()
                         //multiple lines
                         inputField.setSingleLine(false)
                         inputField.imeOptions = EditorInfo.IME_FLAG_NO_ENTER_ACTION
                         inputField.maxLines = 4
-                        //fixed jumping of a cursor to the beginning of the text
+                        //fixed jumping cursor to the beginning of the text
                         if(text.length == 1) inputField.setSelection(text.length)
 
                         inputField.error =
                             if(text.trim().isNotEmpty()) null
-                            else "Příspěvek nesmí být prázdný."
+                            else getString(R.string.add_message_isEmpty)
 
                         dialog.setActionButtonEnabled(WhichButton.POSITIVE, text.trim().isNotEmpty())
                         input = text
                     }
-                    positiveButton(text = "Přidat") { viewModel.addMessage(input.toString(), matchId) }
+                    positiveButton(text = getString(R.string.add)) { viewModel.addMessage(input.toString(), matchId) }
                     negativeButton()
                 }
         }

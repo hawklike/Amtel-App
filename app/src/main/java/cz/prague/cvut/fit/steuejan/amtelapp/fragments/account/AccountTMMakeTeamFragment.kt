@@ -30,6 +30,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.activities.PlayerInfoActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal.ShowTeamPlayersAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.TEAM_MANAGER
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments.AccountTMMakeTeamFragmentVM
@@ -112,6 +114,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         super.onDestroyView()
         adapter?.onDelete = null
         adapter?.onClick = null
+        adapter?.onLongClick = null
         adapter?.onEdit = null
         recyclerView?.adapter = null
         recyclerView = null
@@ -132,7 +135,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
             if(!mainActivityModel.isDeadlineAlertShown)
             {
                 MaterialDialog(activity!!).show {
-                    title(text = "Uzavření soupisky")
+                    title(text = getString(R.string.line_up_closing))
                     message(text = viewModel.deadlineDialog)
                     positiveButton()
                 }
@@ -174,10 +177,18 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
         }
 
         adapter?.onEdit = { user ->
-            val intent = Intent(activity, EditUserActivity::class.java).apply {
-                putExtra(EditUserActivity.USER, user)
+            if(user.role.toRole() == TEAM_MANAGER)
+            {
+                mainActivityModel.setAccountPage(AccountFragment.PERSONAL_TM)
+                toast(R.string.you_may_change_your_personal_information_here)
             }
-            startActivityForResult(intent, EDIT_USER_CODE)
+            else
+            {
+                val intent = Intent(activity, EditUserActivity::class.java).apply {
+                    putExtra(EditUserActivity.USER, user)
+                }
+                startActivityForResult(intent, EDIT_USER_CODE)
+            }
         }
 
         recyclerView?.adapter = adapter
@@ -216,11 +227,16 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
 
             deleteErrors()
 
+            val message = """
+${if(team is NoTeam) "Název týmu: $name\nAdresa kurtu: $place" else "Adresa kurtu: $place"}
+Hrací dny: $playingDays${if(team is NoTeam) "\n\nNázev týmu již nepůjde vícekrát změnit!" else ""}
+            """.trimIndent()
+
             MaterialDialog(activity!!)
-                .title(text = "Uložit tým?")
-                .message(R.string.create_team_dialog_message)
+                .title(text = if(team is NoTeam) "Uložit tým?" else "Aktualizovat tým?")
+                .message(text = message)
                 .show {
-                    positiveButton(text = "Uložit") {
+                    positiveButton(text = if(team is NoTeam) "Uložit" else "Aktualizovat") {
                         progressDialog.show()
                         viewModel.createTeam(user, name, place, playingDays)
                     }
@@ -228,7 +244,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
                 }
         }
 
-        addPlayer.setOnClickListener { toast("V průběhu ligy nelze přidávat nové hráče.") }
+        addPlayer.setOnClickListener { toast(R.string.line_up_closed_cant_add_player) }
     }
 
     private fun addPlayer()

@@ -2,7 +2,10 @@ package cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments
 
 import android.preference.PreferenceManager
 import android.text.Editable
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
@@ -88,7 +91,7 @@ class AccountBossAddTMFragmentVM : ViewModel()
         chosenTeam?.let { team ->
             val previousTM = team.tmId
 
-            //update a team manager in team
+            //update a team manager in the team
             team.tmId = user.id!!
             team.usersId.add(user.id!!)
 

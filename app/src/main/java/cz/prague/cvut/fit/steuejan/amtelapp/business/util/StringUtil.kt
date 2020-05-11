@@ -4,17 +4,15 @@ import java.util.*
 
 object StringUtil
 {
-    //TODO: uncomment this
     fun getRandomString(length: Int) : String
     {
-//        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz1234567890"
-//        return (1..length)
-//            .map { allowedChars.random() }
-//            .joinToString("")
-
-        return "123456"
+        val allowedChars = "abcdefghiklmnopqrstuvwxyz1234567890"
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
     }
 
+    //creates an acronym of the first three letters in the text
     fun createLabel(text: String): CharSequence
     {
         return text.fold(StringBuilder()) { acc, c ->
@@ -25,16 +23,16 @@ object StringUtil
 
     fun prepareCzechOrdering(name: String, surname: String): Pair<String, String>
     {
-        val convertedName = changeToEnglishForm(name)
-        val convertedSurname = changeToEnglishForm(surname)
+        val convertedName = changeToEnglishTranscription(name)
+        val convertedSurname = changeToEnglishTranscription(surname)
 
         return Pair(convertedName, convertedSurname)
     }
 
     fun prepareCzechOrdering(text: String): String
-            = changeToEnglishForm(text)
+            = changeToEnglishTranscription(text)
 
-    private fun changeToEnglishForm(text: String): String
+    private fun changeToEnglishTranscription(text: String): String
     {
         return text.toLowerCase(Locale.getDefault())
             .replace("č", "czz")

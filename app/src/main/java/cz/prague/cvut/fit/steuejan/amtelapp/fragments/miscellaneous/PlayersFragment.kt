@@ -128,7 +128,7 @@ class PlayersFragment : AbstractMainActivityFragment(), ShowUsersPagingAdapter.D
     private fun deleteUser(user: User?)
     {
         MaterialDialog(activity!!)
-            .title(R.string.delete_user_confirmation_message)
+            .title(text = "Opravdu chcete smazat hráče ${user?.name} ${user?.surname}?")
             .show {
                 positiveButton(text = "Smazat") {
                     binding.refreshLayout.isRefreshing = true

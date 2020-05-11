@@ -34,6 +34,7 @@ object AuthManager
             .setApplicationId(context.getString(R.string.project_id))
             .build()
 
+        //in order to sign up a new user without signing in
         val auth2 = try
         {
             val myApp = FirebaseApp.initializeApp(context, firebaseOptions, "amtel-helper")
@@ -144,6 +145,7 @@ object AuthManager
             }
     }
 
+    //if known IDs of home and away team managers, this method retrieves who is currently signed in
     fun getCurrentRole(homeManagerId: String?, awayManagerId: String?): SignedIn
     {
         return currentUser?.let {

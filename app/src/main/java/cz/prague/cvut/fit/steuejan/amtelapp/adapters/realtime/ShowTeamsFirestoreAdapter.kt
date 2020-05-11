@@ -61,7 +61,7 @@ class ShowTeamsFirestoreAdapter(private val context: Context, options: Firestore
     {
         holder.teamName.text = team.name
         holder.group.text =
-            if(team.groupName == null) "Bez skupiny"
+            if(team.groupName == null) context.getString(R.string.without_group)
             else team.groupName
     }
 }

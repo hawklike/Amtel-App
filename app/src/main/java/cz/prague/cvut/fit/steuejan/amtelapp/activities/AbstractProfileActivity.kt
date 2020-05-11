@@ -16,6 +16,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 
 abstract class AbstractProfileActivity : AbstractBaseActivity(), OnChartValueSelectedListener
 {
+    /*
+    Sets the visuals of pie charts.
+     */
     protected fun initChart(
         chart: PieChart,
         entries: List<PieEntry>,
@@ -52,6 +55,9 @@ abstract class AbstractProfileActivity : AbstractBaseActivity(), OnChartValueSel
         chart.invalidate()
     }
 
+    /*
+    Defines how the data will look inside a pie chart. If the value is 0, don't display the value.
+     */
     class CustomFormatter : ValueFormatter()
     {
         override fun getFormattedValue(value: Float): String
@@ -60,6 +66,9 @@ abstract class AbstractProfileActivity : AbstractBaseActivity(), OnChartValueSel
 
     override fun onNothingSelected() {}
 
+    /*
+    Displays a label when clicked on a value in a pie chart. The label describes meaning of the value.
+     */
     override fun onValueSelected(e: Entry, h: Highlight)
     {
         val pie = e as? PieEntry

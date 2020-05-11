@@ -97,9 +97,39 @@ class RankingSolver(private val teams: List<Team>, private val year: Int)
             results[team] = Score()
         }
 
+        if(teams.size == 2 && matches.size == 1) return compareTwoTeams(teams, matches.first())
+
         //already sorted by score
         results = setResults(results, matches).toMutableMap()
         return checkResults(results)
+    }
+
+    private fun compareTwoTeams(teams: MutableList<Team>, match: Match): List<Team>
+    {
+        val homeTeam: Team
+        val awayTeam: Team
+
+        if(teams.first().id == match.homeId)
+        {
+            homeTeam = teams.first()
+            awayTeam = teams.last()
+        }
+        else
+        {
+            homeTeam = teams.last()
+            awayTeam = teams.first()
+        }
+
+        var homeWinnerRounds = 0
+        var awayWinnerRounds = 0
+
+        match.rounds.forEach { round ->
+            if(round.homeWinner == true) homeWinnerRounds++
+            else if(round.homeWinner == false) awayWinnerRounds++
+        }
+
+        return if(homeWinnerRounds >= awayWinnerRounds) listOf(homeTeam, awayTeam)
+        else listOf(awayTeam, homeTeam)
     }
 
     /*

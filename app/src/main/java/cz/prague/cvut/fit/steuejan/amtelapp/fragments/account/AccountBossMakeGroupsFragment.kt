@@ -20,9 +20,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.ManageGroupsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowTeamsFirestoreAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidName
@@ -78,6 +78,8 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
     override fun onDestroyView()
     {
         super.onDestroyView()
+        recyclerView?.adapter = null
+        recyclerView?.removeAllViews()
         adapter = null
         recyclerView = null
     }
@@ -107,11 +109,10 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
         }
 
         createGroup.setOnClickListener {
+            progressDialog.show()
             val groupName = nameLayout.editText?.text.toString()
-
             nameLayout.error = null
             viewModel.createGroup(groupName, playingPlayOff)
-            progressDialog.show()
         }
 
         showGroups.setOnClickListener {
@@ -168,6 +169,7 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
     private fun confirmGroupName()
     {
         viewModel.groupName.observe(viewLifecycleOwner) {
+            progressDialog.dismiss()
             if(it is InvalidName)
                 nameLayout.error = it.errorMessage
         }

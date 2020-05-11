@@ -10,6 +10,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.FragmentMapBinding
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractBaseFragment
 import kotlinx.coroutines.Dispatchers
@@ -113,7 +114,7 @@ class MapFragment : AbstractBaseFragment(), OnMapReadyCallback
             else
             {
                 val court = LatLng(address.latitude, address.longitude)
-                map.addMarker(MarkerOptions().position(court).title("Zde hrají legendy"))
+                map.addMarker(MarkerOptions().position(court).title(getString(R.string.map_marker_title)))
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(court, 15f))
             }
         }

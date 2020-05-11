@@ -21,6 +21,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidMatch
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.PlayerInfoActivityVM
 import java.util.*
 
+/*
+This class represents player profile with its statistics.
+ */
 class PlayerInfoActivity : AbstractProfileActivity()
 {
     private lateinit var binding: PlayerInfoBinding
@@ -45,7 +48,7 @@ class PlayerInfoActivity : AbstractProfileActivity()
         binding = PlayerInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
-        setToolbarTitle("Načítám hráče...")
+        setToolbarTitle(getString(R.string.loading_players))
         setArrowBack()
         setPlayer()
     }
@@ -87,13 +90,16 @@ class PlayerInfoActivity : AbstractProfileActivity()
     }
 
 
+    /*
+    Displays a dialog when a user is deleted.
+     */
     private fun isPlayerExisting(player: User?): Boolean
     {
         if(player == null)
         {
             MaterialDialog(this).show {
-                title(text = "Hráč byl v minulosti smazán")
-                positiveButton(text = "To je mi líto") {
+                title(text = getString(R.string.playerinfo_player_deleted))
+                positiveButton(text = getString(R.string.i_am_sorry)) {
                     this@PlayerInfoActivity.onBackPressed()
                 }
             }
@@ -163,14 +169,14 @@ class PlayerInfoActivity : AbstractProfileActivity()
 
             val entries = viewModel.getChartData()
 
-            if(entries.first.size == 3) initChart(roundsChart, entries.first, "Zápasy", R.color.blue, R.color.red, R.color.lightGrey)
-            else initChart(roundsChart, entries.first, "Zápasy", R.color.lightGrey)
+            if(entries.first.size == 3) initChart(roundsChart, entries.first, getString(R.string.rounds), R.color.blue, R.color.red, R.color.lightGrey)
+            else initChart(roundsChart, entries.first, getString(R.string.rounds), R.color.lightGrey)
 
-            if(entries.second.size == 2) initChart(setsChart, entries.second, "Sety")
-            else initChart(setsChart, entries.second, "Sety", R.color.lightGrey)
+            if(entries.second.size == 2) initChart(setsChart, entries.second, getString(R.string.sets))
+            else initChart(setsChart, entries.second, getString(R.string.sets), R.color.lightGrey)
 
-            if(entries.third.size == 2) initChart(gamesChart, entries.third, "Gemy")
-            else initChart(gamesChart, entries.third, "Gemy", R.color.lightGrey)
+            if(entries.third.size == 2) initChart(gamesChart, entries.third, getString(R.string.games))
+            else initChart(gamesChart, entries.third, getString(R.string.games), R.color.lightGrey)
         }
     }
 

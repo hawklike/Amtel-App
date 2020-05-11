@@ -8,10 +8,9 @@ import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.GroupRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.GroupRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -46,11 +45,13 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
         {
             viewModelScope.launch {
                 val groups = GroupRepository.findGroups("name", groupName)
+                //group already exists
                 if(groups is ValidGroups && groups.self.isNotEmpty())
                 {
                     _group.value = NoGroup
                     return@launch
                 }
+                //create new group
                 _group.value = GroupRepository.setGroup(Group(null, groupName, playingPlayOff = playingPlayOff)).let {
                     if(it is ValidGroup) ValidGroup(it.self)
                     else NoGroup
@@ -67,15 +68,15 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
         }
     }
 
-    fun updateGroups(group: GroupState)
-    {
-        if(group is ValidGroup)
-        {
-            val groups = getAllGroups().value?.toMutableList() ?: mutableListOf()
-            groups.add(group.self)
-            setAllGroups(groups.toList())
-        }
-    }
+//    fun updateGroups(group: GroupState)
+//    {
+//        if(group is ValidGroup)
+//        {
+//            val groups = getAllGroups().value?.toMutableList() ?: mutableListOf()
+//            groups.add(group.self)
+//            setAllGroups(groups.toList())
+//        }
+//    }
 
     private fun confirmName(groupName: String): Boolean
     {
@@ -86,8 +87,9 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
                 false
             }
 
+            //cannot name a new group "Baráž"
             groupName.firstLetterUpperCase() == context.getString(R.string.playOff) -> {
-                groupNameState.value = InvalidName("Zadejte prosím jiný název skupiny.")
+                groupNameState.value = InvalidName(context.getString(R.string.playoff_group_name_conflict))
                 false
             }
 
@@ -98,6 +100,9 @@ class AccountBossMakeGroupsFragmentVM : ViewModel()
         }
     }
 
+    /*
+    Updates each group rank, i.e. the lower rank the better group it is.
+     */
     fun updateRanks(groups: List<Group>)
     {
         GlobalScope.launch {

@@ -13,6 +13,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Round
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.RoundCardSquareBinding
 
+/*
+Shows players played rounds (one match consists of three rounds).
+ */
 class ShowPlayerRoundsAdapter(private val rounds: List<Round>, private val player: Player)
     : RecyclerView.Adapter<ShowPlayerRoundsAdapter.ViewHolder>()
 {
@@ -52,15 +55,16 @@ class ShowPlayerRoundsAdapter(private val rounds: List<Round>, private val playe
         }
     }
 
+    //display label which depends on whether the player won or not
     private fun resolveWinner(holder: ViewHolder, round: Round)
     {
         val isHomePlayer = round.homePlayers.find { it.playerId == player.playerId }?.let { true } ?: false
         when
         {
-            round.homeGems == null || round.awayGems == null -> setResultButton(holder, "-", R.color.lightGrey)
-            round.homeGems!! == round.awayGems!! -> setResultButton(holder, "-", R.color.lightGrey)
-            isHomePlayer && round.homeGems!! > round.awayGems!! -> setResultButton(holder, "V", R.color.blue)
-            !isHomePlayer && round.awayGems!! > round.homeGems!! -> setResultButton(holder, "V", R.color.blue)
+            round.homeSets == null || round.awaySets == null -> setResultButton(holder, "-", R.color.lightGrey)
+            round.homeSets!! == round.awaySets!! -> setResultButton(holder, "!", R.color.yellow)
+            isHomePlayer && round.homeSets!! > round.awaySets!! -> setResultButton(holder, "V", R.color.blue)
+            !isHomePlayer && round.awaySets!! > round.homeSets!! -> setResultButton(holder, "V", R.color.blue)
             else -> setResultButton(holder, "P", R.color.red)
         }
     }

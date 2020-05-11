@@ -8,8 +8,8 @@
         <item name="android:textColorPrimary">@color/darkGrey</item>
         <item name="android:windowBackground">@color/veryVeryLightGrey</item>
 
-        <item name="fontFamily">@font/proxima_nova_regular</item>
-        <item name="android:fontFamily">@font/proxima_nova_regular</item>
+        <item name="fontFamily">@font/open_sans_regular</item>
+        <item name="android:fontFamily">@font/open_sans_regular</item>
 
         <item name="android:statusBarColor">@color/blue</item>
         <!-- Material dialog -->
@@ -190,8 +190,8 @@
     </style>
 
     <style name="ToolbarTitleFont">
-        <item name="android:fontFamily">@font/proxima_nova_regular</item>
-        <item name="fontFamily">@font/proxima_nova_regular</item>
+        <item name="android:fontFamily">@font/open_sans_regular</item>
+        <item name="fontFamily">@font/open_sans_regular</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">24sp</item>

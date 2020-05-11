@@ -26,6 +26,8 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowMessagesFirestoreAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager.SignedIn.HEAD_OF_LEAGUE
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager.SignedIn.HOME_MANAGER
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -60,7 +62,7 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
     private val opponent: User?
         get()
         {
-            return if(currentRole == AuthManager.SignedIn.HOME_MANAGER) awayManager
+            return if(currentRole == HOME_MANAGER) awayManager
             else homeManager
         }
 
@@ -163,6 +165,9 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
         matchInfoLayout = null
     }
 
+    /*
+    Messages are loaded, disables progress bar.
+     */
     override fun onLoaded(position: Int)
     {
         messagesRecyclerView?.layoutManager?.scrollToPosition(position)
@@ -205,7 +210,8 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
             date?.let { changeDate.setText(it.toMyString(getString(R.string.dateTime_format))) }
         }
 
-        if(currentRole == AuthManager.SignedIn.HOME_MANAGER)
+        //home manager may set a default end game
+        if(currentRole == HOME_MANAGER || currentRole == HEAD_OF_LEAGUE)
         {
             defaultEndGame.visibility = VISIBLE
             if(match.defaultEndGameEdits <= 0) disableDefaultEndGame()
@@ -249,7 +255,7 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
     {
         addToCalendar.setOnClickListener {
             MaterialDialog(this).show {
-                title(text = "Přidat utkání do kalendáře?")
+                title(text = getString(R.string.add_match_to_calendar))
                 positiveButton(R.string.yes) {
                     addToCalendarIntent()
                 }
@@ -260,10 +266,12 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
 
     private fun addToCalendarIntent()
     {
+        //time when a match starts
         val startMillis = match.dateAndTime?.toCalendar()?.run {
             timeInMillis
-        } ?: run { toast("Nebylo nalezeno datum a čas utkání."); return }
+        } ?: run { toast(getString(R.string.date_time_not_found)); return }
 
+        //time when a match finishes, defaultly set to three hours after start time
         val endMillis = match.dateAndTime?.toCalendar()?.run {
             this.add(Calendar.HOUR_OF_DAY, 3)
             timeInMillis
@@ -278,19 +286,22 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
             putExtra(CalendarContract.Events.EVENT_LOCATION, match.place)
         }
 
-        try { startActivity(Intent.createChooser(intent, "Přidat utkání" + "...")) }
-        catch(ex: ActivityNotFoundException) { toast("Nemáte nainstalovaný kalendář.") }
+        try { startActivity(Intent.createChooser(intent, getString(R.string.add_match) + "...")) }
+        catch(ex: ActivityNotFoundException) { toast(getString(R.string.calendar_not_installed)) }
     }
 
+    /*
+    Home manager or head of league may set default end game.
+     */
     private fun defaultEndGame()
     {
         defaultEndGame.setOnClickListener {
             MaterialDialog(this).show {
-                title(text = "Kontumace")
+                title(text = getString(R.string.default_end_game))
 
                 val msg =
-                    if(match.defaultEndGameEdits == 2) "Zvolte prosím vítěze. Výsledek budete moct jednou opravit."
-                    else "Zvolte prosím vítěze. Máte poslední možnost opravy!"
+                    if(match.defaultEndGameEdits == 2) getString(R.string.default_end_game_choose_winner_twoEdits)
+                    else getString(R.string.default_end_game_choose_winner_oneEdit)
 
                 message(text = msg)
                 listItemsSingleChoice(items = listOf(homeTeam.name, awayTeam.name)) { _, _, text ->
@@ -315,8 +326,8 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
                 val intent = Intent(Intent.ACTION_DIAL)
                 intent.data = Uri.parse("tel:$it")
                 try { startActivity(intent) }
-                catch(ex: ActivityNotFoundException) { toast("Z vašeho zařízení nelze volat.") }
-            } ?: toast("${opponent?.name} ${opponent?.surname} nemá uložené telefonní číslo.")
+                catch(ex: ActivityNotFoundException) { toast(getString(R.string.phone_not_supporting_calls)) }
+            } ?: toast(opponent?.name.toString() + " " + opponent?.surname + getString(R.string.phone_number_not_saved))
         }
     }
 
@@ -407,6 +418,7 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
         if(!activityStarted)
         {
             activityStarted = true
+            viewModel.displayWelcomeToast()
             startActivityForResult(intent, MATCH_RESULT_CODE)
         }
     }
@@ -417,6 +429,7 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
         if(requestCode == MATCH_RESULT_CODE && resultCode == Activity.RESULT_OK)
         {
             data?.let {
+                //retrieve the last updated match from MatchInputResultFragment
                 val lastUpdated = match.lastUpdate
                 match = it.getParcelableExtra(MATCH)
                 viewModel.sendEmail(lastUpdated, match, homeTeam, awayTeam)
@@ -426,6 +439,9 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
         }
     }
 
+    /*
+    Starts a service which resolves default end game.
+     */
     private fun countDefaultMatchScore(match: Match)
     {
         val intent = Intent(this, CountMatchScoreService::class.java).apply {

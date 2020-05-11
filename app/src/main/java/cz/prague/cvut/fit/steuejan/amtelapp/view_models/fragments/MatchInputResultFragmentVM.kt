@@ -1,6 +1,5 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments
 
-import android.text.Editable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,15 +8,14 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.removeWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.*
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.match.MatchInputResultFragment.Companion.COMMA
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SetState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidSet
@@ -138,6 +136,7 @@ class MatchInputResultFragmentVM : ViewModel()
         }
     }
 
+    //this method sets selected players in the dialog
     fun handleListItemMultiChoice(team: Team, selectedIndices: IntArray, homeTeam: Boolean)
     {
         val queue = ArrayDeque<Player>()
@@ -157,11 +156,7 @@ class MatchInputResultFragmentVM : ViewModel()
         }
     }
 
-
-    /**
-     * Call this method before inputResult() method
-     */
-    fun confirmInput(firstHome: String, firstAway: String, secondHome: String, secondAway: String, thirdHome: String, thirdAway: String, homePlayersText: Editable, awayPlayersText: Editable, isFiftyGroup: Boolean)
+    fun confirmInput(firstHome: String, firstAway: String, secondHome: String, secondAway: String, thirdHome: String, thirdAway: String, isFiftyGroup: Boolean)
     {
         viewModelScope.launch {
             m_isInputOk = true
@@ -177,40 +172,38 @@ class MatchInputResultFragmentVM : ViewModel()
             confirmSet(_secondHome, _secondAway)
             if(!isFiftyGroup) confirmSet(_thirdHome, _thirdAway)
 
-            confirmPlayers(homePlayersText, _homePlayers, isFiftyGroup)
-            confirmPlayers(awayPlayersText, _awayPlayers, isFiftyGroup)
+            confirmPlayers(mHomePlayers, _homePlayers, isFiftyGroup)
+            confirmPlayers(mAwayPlayers, _awayPlayers, isFiftyGroup)
 
             _isInputOk.value = m_isInputOk
         }
     }
 
-    /**
-     * Call this method only if confirmInput() returns true
-     */
     fun inputResult(isHeadOfLeague: Boolean, ignoreTie: Boolean = false, isReport: Boolean = false)
     {
         viewModelScope.launch {
             val home1: Int = (firstHome.value as ValidSet).self
             val home2: Int = (secondHome.value as ValidSet).self
             val home3: Int? = with((thirdHome.value as ValidSet).self) {
-                if(this == Int.MAX_VALUE) null
+                if(this == Int.MAX_VALUE) null //last set not input
                 else this
             }
 
             val away1: Int = (firstAway.value as ValidSet).self
             val away2: Int = (secondAway.value as ValidSet).self
             val away3: Int? = with((thirdAway.value as ValidSet).self) {
-                if(this == Int.MAX_VALUE) null
+                if(this == Int.MAX_VALUE) null //last set not input
                 else this
             }
 
             if(calculateScore(match, home1, away1, home2, away2, home3, away3, ignoreTie))
             {
                 addPlayers()
-                if(!isHeadOfLeague) match.edits[round.toString()] = match.edits[round.toString()]!! - 1
+                if(!isHeadOfLeague) match.edits[round.toString()] = match.edits[round.toString()]!! - 1 //decrease number of free edits
                 if(!isReport)
                 {
                     match.lastUpdate = Date()
+                    //update match in database
                     MatchRepository.setMatch(match)
                     updatePlayers()
                     _matchAdded.value = match
@@ -223,14 +216,16 @@ class MatchInputResultFragmentVM : ViewModel()
     private suspend fun updatePlayers()
     {
         val roundNumber = round
-        val round: Round = match.rounds[roundNumber - 1]
+        val round = match.rounds[roundNumber - 1]
 
         val before = homePlayersBefore + awayPlayersBefore
         val now = mHomePlayers + mAwayPlayers
 
+        //players input for the first time
         if(before.isEmpty())
         {
             now.forEach {
+                //update in database
                 UserRepository.addRound(it.playerId, match.id!!, round, roundNumber)
             }
         }
@@ -248,6 +243,7 @@ class MatchInputResultFragmentVM : ViewModel()
         }
     }
 
+    //add players to a round
     private fun addPlayers()
     {
         val round: Round = match.rounds[round - 1]
@@ -283,12 +279,15 @@ class MatchInputResultFragmentVM : ViewModel()
 
         if(!ignoreTie && homeSets == awaySets)
         {
+            //warn a user that the result is tied
             _isTie.value = true
             return false
         }
 
+        //insert round into a match (one match consists of three rounds)
         match.rounds[round - 1] = Round(homeSets, awaySets, homeGames, awayGames, home1, away1, home2, away2, home3, away3, matchId = match.id!!, round = round)
         setMatchScore(homeSets, awaySets)
+        //everything ok
         return true
     }
 
@@ -310,6 +309,7 @@ class MatchInputResultFragmentVM : ViewModel()
             val homeGames = (home.value as ValidSet).self
             val awayGames = (away.value as ValidSet).self
 
+            //games are invalid
             if(homeGames == Int.MAX_VALUE && awayGames == Int.MAX_VALUE) return
 
             if(!SetState.validate(homeGames, awayGames))
@@ -329,7 +329,7 @@ class MatchInputResultFragmentVM : ViewModel()
         }
     }
 
-    private fun confirmPlayers(players: Editable, data: MutableLiveData<Boolean>, fiftyGroup: Boolean)
+    private fun confirmPlayers(players: List<Player>, data: MutableLiveData<Boolean>, fiftyGroup: Boolean)
     {
         if(players.isEmpty())
         {
@@ -339,7 +339,7 @@ class MatchInputResultFragmentVM : ViewModel()
         else
         {
             //50+ group plays two double matches, other groups play only one double
-            if((!fiftyGroup && round == 3 && players.split("$COMMA ").size != 2) || (fiftyGroup && (round == 2 || round == 3) && players.split("$COMMA ").size != 2))
+            if((!fiftyGroup && round == 3 && players.size != 2) || (fiftyGroup && (round == 2 || round == 3) && players.size != 2))
             {
                 data.value = false
                 m_isInputOk = false
@@ -347,11 +347,12 @@ class MatchInputResultFragmentVM : ViewModel()
         }
     }
 
+    //sends email only when a match is reported
     fun sendEmail(homeTeam: Team, awayTeam: Team, sets: CharSequence, games: CharSequence)
     {
         viewModelScope.launch {
             val homeManagerEmail = homeTeam.users.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
-            val awayManagerEmail = awayTeam.users.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
+            awayTeam.users.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
 
             if(AuthManager.currentUser?.uid == awayTeam.tmId)
             {
@@ -374,69 +375,6 @@ class MatchInputResultFragmentVM : ViewModel()
                 homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
                 EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
             }
-
-//            when(AuthManager.currentUser!!.uid)
-//            {
-//                homeTeam.tmId -> {
-//                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
-//
-//                    val message = String.format(
-//                        context.getString(R.string.match_input_email),
-//                        homeTeam.name,
-//                        round,
-//                        homeTeam.name,
-//                        awayTeam.name,
-//                        match.dateAndTime?.toMyString() ?: context.getString(R.string.unspecified),
-//                        sets.toString().removeWhitespaces(),
-//                        games,
-//                        mHomePlayers.joinToString(", "),
-//                        mAwayPlayers.joinToString(", ")
-//                    )
-//
-//                    awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
-//                    EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
-//                }
-//
-//                awayTeam.tmId -> {
-//                    val subject = "Byla podána námitka k výsledku $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
-//
-//                    val message = """
-//                    Dobrý den,
-//
-//                    vedoucí týmu ${awayTeam.name} právě podal námitku k $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} ze dne ${match.dateAndTime?.toMyString() ?: "nespecifikováno"}.
-//
-//                    Dle něj je správný stav zápasu následující:
-//                    Skóre: ${sets.toString().removeWhitespaces()} na sety a $games na gemy.
-//                    Hráči: ${mHomePlayers.joinToString(", ")} a ${mAwayPlayers.joinToString(", ")}
-//
-//                    Na tento email prosím neodpovídejte.
-//
-//                    Administrátor aplikace AMTEL Opava
-//                    """.trimIndent()
-//
-//                    homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
-//                    EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
-//                }
-//
-//                else -> {
-//                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
-//
-//                    val message = String.format(
-//                        context.getString(R.string.match_input_email_headOfLeague),
-//                        round,
-//                        homeTeam.name,
-//                        awayTeam.name,
-//                        match.dateAndTime?.toMyString() ?: context.getString(R.string.unspecified),
-//                        sets.toString().removeWhitespaces(),
-//                        games,
-//                        mHomePlayers.joinToString(", "),
-//                        mAwayPlayers.joinToString(", ")
-//                    )
-//
-//                    homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
-//                    awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
-//                }
-//            }
         }
 
     }

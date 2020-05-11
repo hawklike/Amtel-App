@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.removeWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
@@ -15,7 +14,6 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -24,14 +22,6 @@ class EditUserActivityVM : ViewModel()
     var user: User? = null
 
     var deleteRole: Boolean = false
-
-    var chosenEmail: String? = null
-    var emailIdx = -1
-
-    /*---------------------------------------------------*/
-
-    private val _teamLoaded = MutableLiveData<Boolean>()
-    val teamLoaded: LiveData<Boolean> = _teamLoaded
 
     /*---------------------------------------------------*/
 
@@ -70,11 +60,16 @@ class EditUserActivityVM : ViewModel()
         viewModelScope.launch {
             if(confirmInput(name, surname, email, phone, birthdate))
             {
+                val phoneTrimmed = phone.removeWhitespaces().let {
+                    if(it.isEmpty()) null
+                    else it
+                }
+
                 user?.apply {
                     this.name = name
                     this.surname = surname
                     this.email = email
-                    this.phone = phone.removeWhitespaces()
+                    this.phone = phoneTrimmed
                     this.birthdate = birthdate.toDate()
                     this.firstSign = user?.firstSign ?: false
                 }

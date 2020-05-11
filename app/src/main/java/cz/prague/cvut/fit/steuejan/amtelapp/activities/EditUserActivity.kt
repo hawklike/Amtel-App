@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.afollestad.materialdialogs.MaterialDialog
@@ -15,18 +14,15 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.removeWhitespaces
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.PLAYER
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.TEAM_MANAGER
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.EditUserBinding
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities.EditUserActivityVM
-import kotlinx.android.synthetic.main.edit_user.*
 
 class EditUserActivity : AbstractBaseActivity()
 {
@@ -50,7 +46,7 @@ class EditUserActivity : AbstractBaseActivity()
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
         setUser()
-        setToolbarTitle("Upravit hráče")
+        setToolbarTitle(getString(R.string.edit_player))
         setArrowBack()
         populateField()
         changeBirthday()
@@ -85,11 +81,15 @@ class EditUserActivity : AbstractBaseActivity()
                 email.editText?.setText(it.email)
                 phone.editText?.setText(it.phone)
                 birthdate.editText?.setText(it.birthdate?.toMyString())
+                if(it.role.toRole() == PLAYER) phone.visibility = GONE
             }
             displayChangeRoleButton(it)
         }
     }
 
+    /*
+    If the logged in user is a head of league, display change role button.
+     */
     private fun displayChangeRoleButton(user: User)
     {
         if(AuthManager.currentUser?.uid != null && AuthManager.currentUser?.uid == LeagueRepository.headOfLeague?.id)
@@ -116,14 +116,19 @@ class EditUserActivity : AbstractBaseActivity()
         }
     }
 
+    /*
+    Only enabled for team managers and visible for a head of league.
+    After clicking on the change role button, team manager losses his role
+    and is converted into an ordinary user.
+     */
     private fun changeRole()
     {
         with(binding) {
             changeRoleButton.setOnClickListener {
                 MaterialDialog(this@EditUserActivity).show {
-                    title(text = "Opravdu chcete smazat roli?")
-                    message(text = "Vedoucí týmu se stane běžným hráčem a ztratí ke svému týmu přístup. Již nebude moct vytvářet soupisku a zapisovat výsledky zápasů. Aby daný tým neosiřel (neměl vedoucího), přidejte nového vedoucího v sekci:\n\nUčet > Vedoucí\n\nZměna se projeví až po kliknutí na tlačítko uložit (modré kulaté tlačítko s ikonkou diskety).")
-                    positiveButton(text = "Smazat") {
+                    title(text = getString(R.string.delete_role_confirmation))
+                    message(R.string.delete_role_message)
+                    positiveButton(R.string.delete) {
                         viewModel.deleteRole = true
                     }
                     negativeButton()
@@ -203,15 +208,16 @@ class EditUserActivity : AbstractBaseActivity()
             }
         }
 
+        //invoke when a user is edited
         viewModel.userEdited.observe(this) { success ->
             progressDialog.dismiss()
             if(success)
             {
-                toast("Vše proběhlo v pořádku.")
+                toast(R.string.success_long)
                 setResult(Activity.RESULT_OK)
                 onBackPressed()
             }
-            else toast("Upravit hráče se nepodařilo.")
+            else toast(R.string.failure_long)
         }
     }
 

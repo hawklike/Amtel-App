@@ -43,14 +43,20 @@ class LoginFragmentVM : ViewModel()
                 val firebaseUser = AuthManager.signInUser(email, password)
                 if(firebaseUser != null)
                 {
+                    //find signed in user in database
                     val user = UserRepository.findUser(firebaseUser.uid)
+                    //log current user
                     TestingUtil.setCurrentUser(email)
                     if(user != null)
                     {
+                        //user signed in for the first time
                         if(user.firstSign) UserRepository.updateUser(user.id, mapOf("firstSign" to false))
+                        //user is signed, but is player, therefore he was deleted before
                         if(user.role.toRole() == PLAYER) userState.value = DeletedUser
+                        //all ok
                         else userState.value = SignedUser(user, user.firstSign)
                     }
+                    //user is signed in, but not found in database
                     else userState.value = DeletedUser
                 }
                 else userState.value = NoUser
@@ -73,18 +79,18 @@ class LoginFragmentVM : ViewModel()
                     user.firstSign -> context.getString(R.string.user_login_success_message)
                     else -> null
                 }
-                Log.i(TAG, "getUser(): login was successful - current user: $user")
+                Log.d(TAG, "getUser(): login was successful - current user: $user")
             }
 
             is DeletedUser -> {
                 title = context.getString(R.string.user_login_failure_title)
-                message = "Váš účet byl smazán."
+                message = context.getString(R.string.account_deleted)
             }
 
             else -> {
                 title = context.getString(R.string.user_login_failure_title)
                 message = context.getString(R.string.user_login_failure_message)
-                Log.e(TAG, "getUser(): login not successful")
+                Log.d(TAG, "getUser(): login not successful")
             }
         }
 

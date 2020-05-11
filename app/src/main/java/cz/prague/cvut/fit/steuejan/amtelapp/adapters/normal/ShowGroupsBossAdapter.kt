@@ -31,6 +31,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.services.GroupDeletionService
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.adapters.ShowGroupsBossAdapterVM
 import java.util.*
 
+/*
+Shows groups within ManageGroupsActivity.
+ */
 class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<Group>)
     : RecyclerView.Adapter<ShowGroupsBossAdapter.ViewHolder>(), ItemMoveCallback.ItemTouchHelperContract
 {
@@ -57,8 +60,8 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
 
             val size = group.teamIds[DateUtil.actualSeason]?.size ?: 0
 
-            if(group.playingPlayOff) playingPlayOff.text = "Hraje baráž: ano"
-            else playingPlayOff.text = "Hraje baráž: ne"
+            if(group.playingPlayOff) playingPlayOff.text = context.getString(R.string.playing_playoff)
+            else playingPlayOff.text = context.getString(R.string.not_playing_playoff)
 
             name.text = group.name
             this.size.text = String.format(context.getString(R.string.number_teams), size)
@@ -72,11 +75,13 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             handleVisibility()
         }
 
+        //change group visibility
         private fun handleVisibility()
         {
             if(!group.visibility) visibility.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.lightGrey))
             visibility.setOnClickListener {
-                val option = if(group.visibility) "vypnout" else "zapnout"
+                val option = if(group.visibility) context.getString(R.string.turn_off) else context.getString(
+                                    R.string.turn_on)
                 MaterialDialog(context)
                     .title(text = "Chcete $option viditelnost skupiny ${group.name}?")
                     .show {
@@ -88,6 +93,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             }
         }
 
+        //delete group
         private fun handleDeleteButton()
         {
             deleteButton.setOnClickListener {
@@ -95,7 +101,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
                 MaterialDialog(context)
                     .title(text = "Opravdu chcete smazat skupinu ${name.text}?")
                     .show {
-                        positiveButton(text = "Smazat") {
+                        positiveButton(R.string.delete) {
                             deleteGroup(getItem(adapterPosition))
                             list.removeAt(adapterPosition)
                             notifyItemRemoved(adapterPosition)
@@ -114,6 +120,10 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             context.startService(serviceIntent)
         }
 
+        /*
+        Generate matches. If there are no teams in the group, disable the button.
+        Otherwise change the button text whether the matches have been generated or not.
+         */
         private fun handleGenerateButton()
         {
             if(rounds == 0)
@@ -146,6 +156,9 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             }
         }
 
+        /*
+        Shows dialog when before generating matches.
+         */
         private fun showDialog(title: String, buttonText: String, message: String, callback: () -> Unit)
         {
             generateButton.setOnClickListener {
@@ -180,6 +193,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
             return isValid
         }
 
+        //start a service which handles matches generating
         private fun generateSchedule(regenerate: Boolean)
         {
             val intent = Intent(context, GenerateScheduleService::class.java).apply {
@@ -207,6 +221,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
         holder.init(group)
     }
 
+    //drag and drop option
     override fun onItemMove(fromPosition: Int, toPosition: Int)
     {
         if(fromPosition < toPosition)

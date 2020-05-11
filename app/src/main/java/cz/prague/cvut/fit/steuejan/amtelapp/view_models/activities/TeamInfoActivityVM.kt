@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.PieEntry
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
+import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -18,7 +20,6 @@ typealias TripleEntries = Triple<Entries, Entries, Entries>
 
 class TeamInfoActivityVM : ViewModel()
 {
-//    var seasonRanking: List<Team> = listOf()
     var mTeam: Team? = null
 
     /*---------------------------------------------------*/
@@ -76,26 +77,29 @@ class TeamInfoActivityVM : ViewModel()
                 val lossesThisYear = team.lossesPerYear[DateUtil.actualSeason] ?: 0
                 val thisYearEntries =
                     if(winsThisYear + lossesThisYear != 0)
-                        listOf(PieEntry(winsThisYear.toFloat(), "Letošní výhraná utkání"), PieEntry(lossesThisYear.toFloat(), "Letošní prohraná utkání"))
+                        listOf(PieEntry(winsThisYear.toFloat(), context.getString(R.string.win_matches_this_year)), PieEntry(lossesThisYear.toFloat(), context.getString(
+                                                    R.string.lost_matches_this_year)))
                     else
-                        listOf(PieEntry(1f, "Tým v aktuální sezóně ještě neodehrál žádné utkání."))
+                        listOf(PieEntry(1f, context.getString(R.string.not_played_matches_this_year)))
 
                 val winsTotal = team.winsPerYear.values.sum()
                 val lossesTotal = team.lossesPerYear.values.sum()
                 val totalEntries =
                     if(winsTotal + lossesThisYear != 0)
-                        listOf(PieEntry(winsTotal.toFloat(), "Výhraná utkání"), PieEntry(lossesTotal.toFloat(), "Prohraná utkání"))
+                        listOf(PieEntry(winsTotal.toFloat(), context.getString(R.string.total_win_matches)), PieEntry(lossesTotal.toFloat(), context.getString(
+                                                    R.string.total_lost_matches)))
                     else
-                        listOf(PieEntry(1f, "Tým ještě neodehrál žádné utkání."))
+                        listOf(PieEntry(1f, context.getString(R.string.not_played_any_matches)))
 
 
                 val positiveSets = team.positiveSetsPerYear.values.sum()
                 val negativeSets = team.negativeSetsPerYear.values.sum()
                 val setsEntries =
                     if(positiveSets + negativeSets != 0)
-                        listOf(PieEntry(positiveSets.toFloat(), "Celkově získané sety"), PieEntry(negativeSets.toFloat(), "Celkově ztracené sety"))
+                        listOf(PieEntry(positiveSets.toFloat(), context.getString(R.string.total_positive_sets)), PieEntry(negativeSets.toFloat(), context.getString(
+                                                    R.string.total_lost_sets)))
                     else
-                        listOf(PieEntry(1f, "Tým ještě neodehrál žádné sety."))
+                        listOf(PieEntry(1f, context.getString(R.string.not_played_any_sets)))
 
 
                 _charts.value = Triple(thisYearEntries, totalEntries, setsEntries)

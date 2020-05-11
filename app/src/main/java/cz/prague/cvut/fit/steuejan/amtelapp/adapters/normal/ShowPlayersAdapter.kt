@@ -67,6 +67,7 @@ class ShowPlayersAdapter(
             holder.footer.text = String.format(context.getString(R.string.years), DateUtil.getAge(player.birthdate ?: Date()))
             if(player.playerId == team?.tmId)
             {
+                //team manager is highlighted with blue color
                 holder.name.setTextColor(App.getColor(R.color.blue))
                 holder.surname.setTextColor(App.getColor(R.color.blue))
 
@@ -95,6 +96,7 @@ class ShowPlayersAdapter(
         }
     }
 
+    //only used in MatchResultFragment, shows label whether the player is winner or not
     private fun getWinner(holder: ViewHolder, position: Int)
     {
         holder.result.visibility = View.VISIBLE
