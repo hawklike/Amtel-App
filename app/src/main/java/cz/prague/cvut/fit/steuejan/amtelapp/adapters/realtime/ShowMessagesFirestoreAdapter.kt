@@ -46,7 +46,7 @@ class ShowMessagesFirestoreAdapter(options: FirestoreRecyclerOptions<Message>)
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("amtel_chat", getItem(adapterPosition).messageText)
             clipboard.primaryClip = clip
-            toast("Zkopírováno")
+            toast(R.string.copied)
         }
     }
 

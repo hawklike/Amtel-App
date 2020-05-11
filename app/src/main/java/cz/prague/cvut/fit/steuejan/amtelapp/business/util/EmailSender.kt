@@ -13,14 +13,14 @@ import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.AESCrypt
 
 object EmailSender
 {
-    fun sendEmail(mailTo: String, subject: String, message: String)
+    fun sendEmail(mailTo: String, subject: String, message: String, type: String = BackgroundMail.TYPE_PLAIN)
     {
         password?.let {
             BackgroundMail.newBuilder(context)
                 .withUsername(USERNAME)
                 .withPassword(AESCrypt.decrypt(it))
                 .withMailTo(mailTo)
-                .withType(BackgroundMail.TYPE_PLAIN)
+                .withType(type)
                 .withSubject(subject)
                 .withBody(message)
                 .withOnSuccessCallback(object : BackgroundMail.OnSendingCallback

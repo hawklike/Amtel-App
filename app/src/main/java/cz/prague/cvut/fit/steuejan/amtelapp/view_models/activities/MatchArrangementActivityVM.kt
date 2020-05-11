@@ -1,6 +1,8 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models.activities
 
+import android.os.Build
 import android.text.Editable
+import android.text.Html
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,15 +11,15 @@ import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MessageRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.*
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MessageRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.MatchResult
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toDayInWeek
@@ -30,6 +32,7 @@ import java.util.*
 
 class MatchArrangementActivityVM : ViewModel()
 {
+    //home team, away team
     private val _teams = SingleLiveEvent<Pair<Team, Team>>()
     val teams: LiveData<Pair<Team, Team>> = _teams
 
@@ -77,7 +80,7 @@ class MatchArrangementActivityVM : ViewModel()
                 _date.value?.let { dateAndTime ->
                     MatchRepository.updateMatch(match.id!!, mapOf("dateAndTime" to dateAndTime))
                     _match.value?.dateAndTime = dateAndTime
-                    sendEmail(dateAndTime = dateAndTime, place = match.place?.let { it } ?: homeTeam.place)
+                    sendEmailPlaceAndDate(dateAndTime = dateAndTime, place = match.place?.let { it } ?: homeTeam.place)
                 }
             }
         }
@@ -104,7 +107,7 @@ class MatchArrangementActivityVM : ViewModel()
             {
                 toast(context.getString(R.string.match_dateTime_change_success), length = Toast.LENGTH_LONG)
                 _match.value?.dateAndTime = date.time
-                sendEmail(dateAndTime = date.time)
+                sendEmailPlaceAndDate(dateAndTime = date.time)
             }
         }
     }
@@ -118,7 +121,7 @@ class MatchArrangementActivityVM : ViewModel()
                 {
                     toast(context.getString(R.string.match_place_change_success), length = Toast.LENGTH_LONG)
                     _match.value?.place = place
-                    sendEmail(place = place)
+                    sendEmailPlaceAndDate(place = place)
                 }
             }
         }
@@ -144,30 +147,32 @@ class MatchArrangementActivityVM : ViewModel()
         return MatchResult(homeScore, awayScore)
     }
 
-    private fun sendEmail(dateAndTime: Date? = null, place: String? = null)
+    private fun sendEmailPlaceAndDate(dateAndTime: Date? = null, place: String? = null)
     {
-        val homeManagerEmail = teams.value?.first?.users?.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
-        val awayManagerEmail = teams.value?.second?.users?.find {it.role.toRole() == UserRole.TEAM_MANAGER}?.email
+        viewModelScope.launch {
+            val homeManagerEmail = teams.value?.first?.users?.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
+            val awayManagerEmail = teams.value?.second?.users?.find {it.role.toRole() == UserRole.TEAM_MANAGER}?.email
 
-        val match = _match.value ?: return
+            val match = _match.value ?: return@launch
 
-        val subject = "Bylo nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.groupName}"
+            val subject = "Bylo nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.groupName}"
 
-        val message = """
-        Dobrý den,
-        
-        právě bylo v aplikaci nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.groupName}.
-        
-        Místo: ${match.place} ${place?.let { "<---" } ?: ""}
-        Datum a čas: ${match.dateAndTime?.toMyString("dd.MM.yyyy 'v' HH:mm") ?: "nespecifikováno"} ${dateAndTime?.let { "<---" } ?: ""}
-        
-        Na tento email prosím neodpovídejte.
-                            
-        Administrátor aplikace AMTEL Opava
-        """.trimIndent()
+            val message = """
+                Dobrý den,
+                
+                právě bylo v aplikaci nastaveno ${place?.let { "místo " } ?: ""}${if(dateAndTime != null && place != null) "a " else ""}${dateAndTime?.let { "datum " } ?: ""}utkání ${match.home}–${match.away} ve skupině ${match.groupName}.
+                
+                Místo: ${match.place} ${place?.let { "<---" } ?: ""}
+                Datum a čas: ${match.dateAndTime?.toMyString("dd.MM.yyyy 'v' HH:mm") ?: "nespecifikováno"} ${dateAndTime?.let { "<---" } ?: ""}
+                
+                Na tento email prosím neodpovídejte.
+                                    
+                Administrátor aplikace AMTEL Opava
+                """.trimIndent()
 
-        homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
-        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+            homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+            awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+        }
     }
 
     fun defaultEndGame(match: Match, isHomeWinner: Boolean, homeTeam: Team, awayTeam: Team): Match
@@ -180,21 +185,21 @@ class MatchArrangementActivityVM : ViewModel()
             it.awayPlayers = mutableListOf()
         }
 
-        viewModelScope.launch {
-            sendDefaultResultEmail(match, homeTeam, awayTeam)
-        }
-
+        sendDefaultResultEmail(match, homeTeam, awayTeam)
         return match
     }
 
     private fun sendDefaultResultEmail(match: Match, homeTeam: Team, awayTeam: Team)
     {
-        val subject = "Byla zvolena kontumační prohra/výhra v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
+        viewModelScope.launch {
+            val author = if(AuthManager.currentUser!!.uid == homeTeam.tmId) "vedoucí týmu ${homeTeam.name}" else "vedoucí soutěže"
 
-        val message = """
+            val subject = "Byla zvolena kontumační prohra/výhra v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
+
+            val message = """
                     Dobrý den,
                     
-                    vedoucí týmu ${homeTeam.name} právě zvolil kontumační prohru/výhru v utkání ${homeTeam.name}–${awayTeam.name} ze dne ${match.dateAndTime?.toMyString() ?: "nespecifikováno"}.
+                    $author právě zvolil kontumační prohru/výhru v utkání ${homeTeam.name}–${awayTeam.name} ze dne ${match.dateAndTime?.toMyString() ?: "nespecifikováno"}.
                     
                     Kontumačně vyhrál tým: ${if(match.homeScore!! > match.awayScore!!) homeTeam.name else awayTeam.name}
                     Tým ${if(match.homeScore!! < match.awayScore!!) homeTeam.name else awayTeam.name} se rozhodl do utkání nenastoupit a kontumačně prohrál.
@@ -204,9 +209,10 @@ class MatchArrangementActivityVM : ViewModel()
                     Administrátor aplikace AMTEL Opava
                     """.trimIndent()
 
-        val awayManagerEmail = teams.value?.second?.users?.find {it.role.toRole() == UserRole.TEAM_MANAGER}?.email
-        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
-        EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
+            val awayManagerEmail = teams.value?.second?.users?.find {it.role.toRole() == UserRole.TEAM_MANAGER}?.email
+            awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+            EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
+        }
     }
 
     private fun setDefaultResult(match: Match, homePoints: Int, awayPoints: Int)
@@ -218,19 +224,132 @@ class MatchArrangementActivityVM : ViewModel()
             it.awayGemsSet2 = awayPoints
 
             it.homeGems = 2 * homePoints
-            it.awayGems = 2* awayPoints
+            it.awayGems = 2 * awayPoints
 
             if(homePoints > awayPoints)
             {
                 it.homeWinner = true
                 it.homeSets = 2
                 it.awaySets = 0
+                match.homeScore = 3
+                match.awayScore = 0
             }
             else
             {
                 it.homeWinner = false
                 it.homeSets = 0
                 it.awaySets = 2
+                match.homeScore = 0
+                match.awayScore = 3
+            }
+        }
+    }
+
+    fun sendEmail(lastUpdated: Date?, match: Match, homeTeam: Team, awayTeam: Team)
+    {
+        viewModelScope.launch {
+            if(DateUtil.compareDatesWithTime(lastUpdated, match.lastUpdate) != 0)
+            {
+                val homeManagerEmail = homeTeam.users.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
+                val awayManagerEmail = awayTeam.users.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
+
+                val subject = "Byl zapsán výsledek utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
+
+                when(AuthManager.currentUser!!.uid)
+                {
+                    homeTeam.tmId -> {
+                        val message = getEmailText(match, homeTeam, awayTeam, "Vedoucí týmu ${homeTeam.name}")
+                        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+                        EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
+                    }
+                    awayTeam.tmId -> {}
+                    else -> {
+                        val message = getEmailText(match, homeTeam, awayTeam, "Vedoucí soutěže")
+                        homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+                        awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getEmailText(match: Match, homeTeam: Team, awayTeam: Team, author: String): String
+    {
+        val message = """
+            <p>Dobrý den,</p>
+            <p>$author právě zadal do aplikace výsledek utkání <strong>${homeTeam.name}–${awayTeam.name}</strong> ze dne ${match.dateAndTime?.toMyString() ?: "nespecifikováno"}.</p>
+            
+            <h3>Výsledné skóre je následující:</h3>
+            
+            ${homeTeam.name} (domácí) <br>
+            <strong>${match.homeScore}:${match.awayScore}</strong> <br>
+            ${awayTeam.name} (hosté) <br>
+            
+            <h3>Podrobnosti:</h3>
+            
+            <p>${getScore(match)}</p>
+            
+            <h3>Hráči:</h3>
+            
+            <p>${getPlayers(match)}</p>
+            
+            <p>Na tento email prosím neodpovídejte.</p>
+            
+            <p>Administrátor aplikace AMTEL Opava</p>
+        """.trimIndent()
+
+        return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY).toString()
+        else
+            Html.fromHtml(message).toString()
+    }
+
+    private fun getScore(match: Match): String
+    {
+        val firstRound = MatchRepository.getResults(match.rounds[0])
+        val secondRound = MatchRepository.getResults(match.rounds[1])
+        val thirdRound = MatchRepository.getResults(match.rounds[2])
+
+        return """
+            1. zápas: ${firstRound.sets} na sety a ${firstRound.games} na gemy <br>
+            2. zápas: ${secondRound.sets} na sety a ${secondRound.games} na gemy <br>
+            3. zápas: ${thirdRound.sets} na sety a ${thirdRound.games} na gemy <br>
+        """.trimIndent()
+    }
+
+    private fun getPlayers(match: Match): String
+    {
+        val firstRound = with(match.rounds[0]) {
+            "${homePlayers.joinToString(", ")} a ${awayPlayers.joinToString(", ")}"
+        }
+        val secondRound = with(match.rounds[1]) {
+            "${homePlayers.joinToString(", ")} a ${awayPlayers.joinToString(", ")}"
+        }
+        val thirdRound = with(match.rounds[2]) {
+            "${homePlayers.joinToString(", ")} a ${awayPlayers.joinToString(", ")}"
+        }
+
+        return """
+            1. zápas: $firstRound <br>
+            2. zápas: $secondRound <br>
+            3. zápas: $thirdRound  <br>
+        """.trimIndent()
+    }
+
+    /*
+    Displays the toast with information whether a team manager inputs or reports a match result.
+     */
+    fun displayWelcomeToast()
+    {
+        val home = teams.value?.first
+        val away = teams.value?.second
+
+        AuthManager.getCurrentRole(home?.tmId, away?.tmId).let {
+            when(it)
+            {
+                AuthManager.SignedIn.HOME_MANAGER -> toast("Jste domácí tým. Zapisujete výsledek utkání.", length = Toast.LENGTH_LONG)
+                AuthManager.SignedIn.AWAY_MANAGER -> toast("Jste hostující tým. Výsledek můžete pouze nahlásit.", length = Toast.LENGTH_LONG)
+                else -> {}
             }
         }
     }

@@ -49,11 +49,15 @@ class AddUserToTeamActivityVM : ViewModel()
 
     /*---------------------------------------------------*/
 
+    /*
+    Adds a new user into the team given as an argument.
+     */
     fun addUser(name: String, surname: String, email: String, birthdate: String, sex: Sex, team: Team)
     {
         if(confirmUser(name, surname, email, birthdate))
         {
             viewModelScope.launch {
+                //create new user
                 var user: User? = User(
                     null,
                     name.firstLetterUpperCase(),
@@ -67,12 +71,16 @@ class AddUserToTeamActivityVM : ViewModel()
                     team.name
                 )
 
+                //upload a user to a database
                 user = UserRepository.setUser(user!!)
 
+                //checks if the upload was successful
                 if(user != null)
                 {
+                    //add the new user into the team
                     if(team.users.add(user) && team.usersId.add(user.id!!))
                     {
+                        //update the team in database, the team entity has two fields which care about team users
                         TeamRepository.updateTeam(team.id, mapOf("users" to team.users, "usersId" to team.usersId))
                         teamState.value = ValidTeam(team)
                     }
@@ -121,6 +129,9 @@ class AddUserToTeamActivityVM : ViewModel()
         return okName && okSurname && okEmail && okBirthdate
     }
 
+    /*
+    Sets a text which is about to be placed within a dialog.
+     */
     fun createDialog(teamState: TeamState): Message
     {
         return if(teamState is ValidTeam) Message(
@@ -134,6 +145,9 @@ class AddUserToTeamActivityVM : ViewModel()
         )
     }
 
+    /*
+    If the birthdate is set, convert it into type Calendar.
+     */
     fun setDialogBirthdate(birthdate: Editable): Calendar?
     {
         return if(birthdate.isEmpty()) null

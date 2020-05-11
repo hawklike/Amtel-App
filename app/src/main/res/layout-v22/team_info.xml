@@ -50,7 +50,7 @@
                     android:layout_centerHorizontal="true"
                     android:text="Utkání"
                     android:textColor="@color/darkGrey"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
             </RelativeLayout>
 
@@ -76,7 +76,7 @@
                     android:layout_centerHorizontal="true"
                     android:text="Pozice"
                     android:textColor="@color/darkGrey"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
             </RelativeLayout>
 
@@ -103,7 +103,7 @@
                     android:layout_centerHorizontal="true"
                     android:text="Skupina"
                     android:textColor="@color/darkGrey"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
             </RelativeLayout>
 
@@ -137,7 +137,7 @@
                     android:layout_centerHorizontal="true"
                     android:text="Úspěšnost"
                     android:textColor="@color/darkGrey"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
             </RelativeLayout>
 
@@ -163,7 +163,7 @@
                     android:gravity="center"
                     android:text="Prům. umístění"
                     android:textColor="@color/darkGrey"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
             </RelativeLayout>
 
@@ -188,7 +188,7 @@
                     android:layout_centerHorizontal="true"
                     android:text="Tituly"
                     android:textColor="@color/darkGrey"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
             </RelativeLayout>
 
@@ -262,7 +262,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/team_info_matches_recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="102dp"
+                android:layout_height="114dp"
                 android:layout_below="@id/team_info_title_teams"
                 android:layout_marginStart="@dimen/card_margin"
                 android:layout_marginEnd="@dimen/card_margin" />

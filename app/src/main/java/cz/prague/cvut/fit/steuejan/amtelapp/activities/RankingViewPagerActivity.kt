@@ -7,6 +7,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.ranking.RankingFragment
 
+/*
+Represents an activity with view pager, where are stored fragments which server for displaying team ranking.
+ */
 class RankingViewPagerActivity : AbstractViewPagerActivity()
 {
     private var group = Group()

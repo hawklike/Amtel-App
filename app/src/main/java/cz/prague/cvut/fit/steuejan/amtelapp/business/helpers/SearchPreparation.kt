@@ -22,15 +22,18 @@ class SearchPreparation(text: String = "")
         }
     }
 
+    //removes diacritics and converts the text to trimmed lower case text
     fun prepareText(text: String): String
             =  StringUtils.stripAccents(text).toLowerCase(getDefault()).trim()
 
     fun doCompleteSearch(textToSearch: String): Boolean
             = doCompleteSearch2(textToSearch)
 
+    //checks if a complete search is needed or not
     fun doCompleteSearch(): Boolean
             = doCompleteSearch2(preparedText)
 
+    //uses text given as an argument in constructor
     fun removeSportClubAcronym(vararg acronyms: String): String
     {
         acronyms.forEach { this.acronyms.add(it.toLowerCase(getDefault())) }
@@ -39,6 +42,7 @@ class SearchPreparation(text: String = "")
         return preparedText
     }
 
+    //uses name given as an argument to this function, the name is name of a sports club
     fun removeSportClubAcronym(name: String, acronyms: Array<out String> = arrayOf()): String
     {
         acronyms.forEach { this.acronyms.add(it.toLowerCase(getDefault())) }

@@ -136,7 +136,7 @@ class TeamsFragment : AbstractMainActivityFragment(), ShowTeamsPagingAdapter.Dat
                 }
                 else
                 {
-                    viewModel.query = TeamRepository.retrieveAllTeams()
+                    viewModel.query = TeamRepository.retrieveAllTeamsQuery()
                     adapter?.updateOptions(setQueryOptions(viewModel.orderBy))
                 }
             }

@@ -1,9 +1,9 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.adapters.normal
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -29,6 +29,7 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
 
     var onDelete: ((users: MutableList<User>) -> Unit)? = null
     var onClick: ((User) -> Unit)? = null
+    var onLongClick: ((User) -> Unit)? = null
     var onEdit: ((User) -> Unit)? = null
     var isAllowed = false
 
@@ -43,18 +44,38 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
 
         init
         {
+            handleDeleting()
+
+            card.setOnClickListener {
+                onClick?.invoke(getItem(adapterPosition))
+            }
+
+            editButton.setOnClickListener {
+                if(!isAllowed)
+                {
+                    toast("Po uzavření soupisky nelze hráče upravit.")
+                    return@setOnClickListener
+                }
+                onEdit?.invoke(getItem(adapterPosition))
+            }
+        }
+
+        private fun handleDeleting()
+        {
             deleteButton.setOnClickListener {
                 if(!isAllowed)
                 {
-                    toast("V průběhu ligy nelze hráče smazat.")
+                    toast("Po uzavření soupisky nelze hráče smazat.")
                     return@setOnClickListener
                 }
 
+                val user = getItem(adapterPosition)
+
                 MaterialDialog(context)
-                    .title(R.string.delete_user_confirmation_message)
+                    .title(text = "Opravdu chcete smazat hráče ${user.name} ${user.surname}?")
                     .show {
-                        positiveButton(text = "Smazat") {
-                            viewModel.deleteUser(getItem(adapterPosition))
+                        positiveButton(R.string.delete) {
+                            viewModel.deleteUser(user)
                             list.removeAt(adapterPosition)
                             notifyItemRemoved(adapterPosition)
                             notifyItemRangeChanged(adapterPosition, list.size)
@@ -62,14 +83,6 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
                         }
                         negativeButton()
                     }
-            }
-
-            card.setOnClickListener {
-                onClick?.invoke(getItem(adapterPosition))
-            }
-
-            card.setOnClickListener {
-                onEdit?.invoke(getItem(adapterPosition))
             }
         }
     }
@@ -88,19 +101,29 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
     override fun onBindViewHolder(holder: ViewHolder, position: Int)
     {
         val user = getItem(position)
+        //team manager cannot delete himself plus his card is highlighted
         if(user.role.toRole() == UserRole.TEAM_MANAGER)
         {
-            holder.deleteButton.visibility = GONE
+            holder.deleteButton.isEnabled = false
+            holder.deleteButton.backgroundTintList = ColorStateList.valueOf(getColor(R.color.middleLightGrey))
             holder.fullName.setTextColor(getColor(R.color.blue))
             holder.email.setTextColor(getColor(R.color.blue))
             holder.birthdate.setTextColor(getColor(R.color.blue))
-            holder.editButton.visibility = GONE
+        }
+        else
+        {
+            holder.deleteButton.isEnabled = true
+            holder.deleteButton.backgroundTintList = ColorStateList.valueOf(getColor(R.color.red))
+            holder.fullName.setTextColor(getColor(R.color.darkGrey))
+            holder.email.setTextColor(getColor(R.color.darkGrey))
+            holder.birthdate.setTextColor(getColor(R.color.darkGrey))
         }
 
         holder.fullName.text = String.format(context.getString(R.string.full_name_placeholder), user.surname, user.name)
         holder.email.text = user.email
         user.birthdate?.let { holder.birthdate.text = it.toMyString() }
 
+        //is line up creation allowed?
         if(!isAllowed)
         {
             holder.fullName.alpha = 0.5f

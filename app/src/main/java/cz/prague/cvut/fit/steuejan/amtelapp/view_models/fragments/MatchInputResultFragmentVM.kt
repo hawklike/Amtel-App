@@ -1,27 +1,26 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.view_models.fragments
 
-import android.text.Editable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
+import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.EmailSender
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.removeWhitespaces
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.*
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.match.MatchInputResultFragment.Companion.COMMA
-import cz.prague.cvut.fit.steuejan.amtelapp.fragments.match.MatchInputResultFragment.Companion.EM_DASH
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
 import cz.prague.cvut.fit.steuejan.amtelapp.states.SetState
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidSet
 import kotlinx.coroutines.launch
+import java.util.*
 
 @Suppress("PrivatePropertyName")
 class MatchInputResultFragmentVM : ViewModel()
@@ -92,8 +91,11 @@ class MatchInputResultFragmentVM : ViewModel()
     var homePlayersBefore = listOf<Player>()
     var awayPlayersBefore = listOf<Player>()
 
-    private lateinit var homePlayersText: String
-    private lateinit var awayPlayersText: String
+    var mHomePlayers: List<Player> = listOf()
+    var mAwayPlayers: List<Player> = listOf()
+
+    var selectedHomePlayers: MutableList<Int> = mutableListOf()
+    var selectedAwayPlayers: MutableList<Int> = mutableListOf()
 
     /*---------------------------------------------------*/
 
@@ -105,10 +107,56 @@ class MatchInputResultFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
-    /**
-     * Call this method before inputResult() method
-     */
-    fun confirmInput(firstHome: String, firstAway: String, secondHome: String, secondAway: String, thirdHome: String, thirdAway: String, homePlayersText: Editable, awayPlayersText: Editable, isFiftyGroup: Boolean)
+    fun setSelectedPlayers(homeTeam: Team, awayTeam: Team)
+    {
+        homeTeam.users.forEachIndexed { index, user ->
+            mHomePlayers.find { it.playerId == user.id}?.let {
+                selectedHomePlayers.add(index)
+            }
+        }
+
+        awayTeam.users.forEachIndexed { index, user ->
+            mAwayPlayers.find { it.playerId == user.id}?.let {
+                selectedAwayPlayers.add(index)
+            }
+        }
+    }
+
+    fun handleListItemSingleChoice(team: Team, selectedIndex: Int, homeTeam: Boolean)
+    {
+        if(homeTeam)
+        {
+            selectedHomePlayers = mutableListOf(selectedIndex)
+            mHomePlayers = listOf(team.users[selectedIndex].toPlayer())
+        }
+        else
+        {
+            selectedAwayPlayers = mutableListOf(selectedIndex)
+            mAwayPlayers = listOf(team.users[selectedIndex].toPlayer())
+        }
+    }
+
+    //this method sets selected players in the dialog
+    fun handleListItemMultiChoice(team: Team, selectedIndices: IntArray, homeTeam: Boolean)
+    {
+        val queue = ArrayDeque<Player>()
+        team.users.forEachIndexed { index, user ->
+            if(selectedIndices.contains(index)) queue.add(user.toPlayer())
+        }
+
+        if(homeTeam)
+        {
+            selectedHomePlayers = selectedIndices.toMutableList()
+            mHomePlayers = queue.toList()
+        }
+        else
+        {
+            selectedAwayPlayers = selectedIndices.toMutableList()
+            mAwayPlayers = queue.toList()
+        }
+    }
+
+    fun confirmInput(firstHome: String, firstAway: String, secondHome: String, secondAway: String, thirdHome: String, thirdAway: String, isFiftyGroup: Boolean)
     {
         viewModelScope.launch {
             m_isInputOk = true
@@ -124,41 +172,40 @@ class MatchInputResultFragmentVM : ViewModel()
             confirmSet(_secondHome, _secondAway)
             if(!isFiftyGroup) confirmSet(_thirdHome, _thirdAway)
 
-            confirmPlayers(homePlayersText, _homePlayers, true)
-            confirmPlayers(awayPlayersText, _awayPlayers, false)
+            confirmPlayers(mHomePlayers, _homePlayers, isFiftyGroup)
+            confirmPlayers(mAwayPlayers, _awayPlayers, isFiftyGroup)
 
             _isInputOk.value = m_isInputOk
         }
     }
 
-    /**
-     * Call this method only if confirmInput() returns true
-     */
-    fun inputResult(homePlayers: List<User>, awayPlayers: List<User>, isHeadOfLeague: Boolean, ignoreTie: Boolean = false, isReport: Boolean = false)
+    fun inputResult(isHeadOfLeague: Boolean, ignoreTie: Boolean = false, isReport: Boolean = false)
     {
         viewModelScope.launch {
             val home1: Int = (firstHome.value as ValidSet).self
             val home2: Int = (secondHome.value as ValidSet).self
             val home3: Int? = with((thirdHome.value as ValidSet).self) {
-                if(this == Int.MAX_VALUE) null
+                if(this == Int.MAX_VALUE) null //last set not input
                 else this
             }
 
             val away1: Int = (firstAway.value as ValidSet).self
             val away2: Int = (secondAway.value as ValidSet).self
             val away3: Int? = with((thirdAway.value as ValidSet).self) {
-                if(this == Int.MAX_VALUE) null
+                if(this == Int.MAX_VALUE) null //last set not input
                 else this
             }
 
             if(calculateScore(match, home1, away1, home2, away2, home3, away3, ignoreTie))
             {
-                val (homeUsers, awayUsers) = parsePlayers(homePlayers, awayPlayers)
-                if(!isHeadOfLeague) match.edits[round.toString()] = match.edits[round.toString()]!! - 1
+                addPlayers()
+                if(!isHeadOfLeague) match.edits[round.toString()] = match.edits[round.toString()]!! - 1 //decrease number of free edits
                 if(!isReport)
                 {
+                    match.lastUpdate = Date()
+                    //update match in database
                     MatchRepository.setMatch(match)
-                    updatePlayers(homeUsers, awayUsers)
+                    updatePlayers()
                     _matchAdded.value = match
                 }
                 else _isReported.value = match
@@ -166,62 +213,48 @@ class MatchInputResultFragmentVM : ViewModel()
         }
     }
 
-    private suspend fun updatePlayers(homeUsers: List<User>, awayUsers: List<User>)
+    private suspend fun updatePlayers()
     {
         val roundNumber = round
-        val round: Round = match.rounds[roundNumber - 1]
+        val round = match.rounds[roundNumber - 1]
 
         val before = homePlayersBefore + awayPlayersBefore
-        val now = homeUsers + awayUsers
+        val now = mHomePlayers + mAwayPlayers
 
+        //players input for the first time
         if(before.isEmpty())
         {
             now.forEach {
-                UserRepository.addRound(it.id!!, match.id!!, round, roundNumber)
+                //update in database
+                UserRepository.addRound(it.playerId, match.id!!, round, roundNumber)
             }
         }
         else if(before.size == now.size)
         {
-            //side note: id means the same as playerId, it is only a different name but has the same purpose
             now.forEachIndexed { index, nowUser ->
                 //player was changed
-                if(nowUser.id != before[index].playerId)
+                if(nowUser.playerId != before[index].playerId)
                     //delete round from a previous user
                     UserRepository.deleteRound(before[index].playerId, match.id!!, roundNumber)
 
                 // add/update round to a current user
-                UserRepository.addRound(nowUser.id!!, match.id!!, round, roundNumber)
+                UserRepository.addRound(nowUser.playerId, match.id!!, round, roundNumber)
             }
         }
     }
 
-    private fun parsePlayers(homePlayers: List<User>, awayPlayers: List<User>): Pair<List<User>, List<User>>
+    //add players to a round
+    private fun addPlayers()
     {
         val round: Round = match.rounds[round - 1]
 
-        val homePlayersList = homePlayersText.split("$COMMA ")
-        val awayPlayersList = awayPlayersText.split("$COMMA ")
-
-        val homeUsers = mutableListOf<User>()
-        val awayUsers = mutableListOf<User>()
-
-        homePlayersList.forEach { user ->
-            val email = user.removeWhitespaces().split(EM_DASH).last()
-            homePlayers.find { it.email == email }?.let {
-                round.homePlayers.add(Player(it.id!!, it.name, it.surname, it.email, it.birthdate, it.sex, true))
-                homeUsers.add(it)
-            }
+        mHomePlayers.forEach {
+            round.homePlayers.add(Player(it.playerId, it.name, it.surname, it.email, it.birthdate, it.sex, true))
         }
 
-        awayPlayersList.forEach { user ->
-            val email = user.removeWhitespaces().split(EM_DASH).last()
-            awayPlayers.find { it.email == email }?.let {
-                round.awayPlayers.add(Player(it.id!!, it.name, it.surname, it.email, it.birthdate, it.sex, false))
-                awayUsers.add(it)
-            }
+        mAwayPlayers.forEach {
+            round.awayPlayers.add(Player(it.playerId, it.name, it.surname, it.email, it.birthdate, it.sex, false))
         }
-
-        return Pair(homeUsers, awayUsers)
     }
 
     private fun calculateScore(match: Match, home1: Int, away1: Int, home2: Int, away2: Int, home3: Int?, away3: Int?, ignoreTie: Boolean): Boolean
@@ -246,12 +279,15 @@ class MatchInputResultFragmentVM : ViewModel()
 
         if(!ignoreTie && homeSets == awaySets)
         {
+            //warn a user that the result is tied
             _isTie.value = true
             return false
         }
 
+        //insert round into a match (one match consists of three rounds)
         match.rounds[round - 1] = Round(homeSets, awaySets, homeGames, awayGames, home1, away1, home2, away2, home3, away3, matchId = match.id!!, round = round)
         setMatchScore(homeSets, awaySets)
+        //everything ok
         return true
     }
 
@@ -273,6 +309,7 @@ class MatchInputResultFragmentVM : ViewModel()
             val homeGames = (home.value as ValidSet).self
             val awayGames = (away.value as ValidSet).self
 
+            //games are invalid
             if(homeGames == Int.MAX_VALUE && awayGames == Int.MAX_VALUE) return
 
             if(!SetState.validate(homeGames, awayGames))
@@ -292,7 +329,7 @@ class MatchInputResultFragmentVM : ViewModel()
         }
     }
 
-    private fun confirmPlayers(players: Editable, data: MutableLiveData<Boolean>, isHome: Boolean)
+    private fun confirmPlayers(players: List<Player>, data: MutableLiveData<Boolean>, fiftyGroup: Boolean)
     {
         if(players.isEmpty())
         {
@@ -301,86 +338,42 @@ class MatchInputResultFragmentVM : ViewModel()
         }
         else
         {
-            if(round == 3 && players.split("$COMMA ").size != 2)
+            //50+ group plays two double matches, other groups play only one double
+            if((!fiftyGroup && round == 3 && players.size != 2) || (fiftyGroup && (round == 2 || round == 3) && players.size != 2))
             {
                 data.value = false
                 m_isInputOk = false
             }
-            else
-            {
-                if(isHome) homePlayersText = players.toString()
-                else awayPlayersText = players.toString()
-            }
         }
     }
 
-    fun sendEmail(homeTeam: Team, awayTeam: Team, sets: CharSequence, games: CharSequence, user: String)
+    //sends email only when a match is reported
+    fun sendEmail(homeTeam: Team, awayTeam: Team, sets: CharSequence, games: CharSequence)
     {
         viewModelScope.launch {
             val homeManagerEmail = homeTeam.users.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
-            val awayManagerEmail = awayTeam.users.find {it.role.toRole() == UserRole.TEAM_MANAGER}?.email
+            awayTeam.users.find { it.role.toRole() == UserRole.TEAM_MANAGER }?.email
 
-            when(user)
+            if(AuthManager.currentUser?.uid == awayTeam.tmId)
             {
-                homeTeam.tmId -> {
-                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
+                val subject = "Byla podána námitka k výsledku $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
 
-                    val message = String.format(
-                        context.getString(R.string.match_input_email),
-                        homeTeam.name,
-                        round,
-                        homeTeam.name,
-                        awayTeam.name,
-                        match.dateAndTime?.toMyString() ?: context.getString(R.string.unspecified),
-                        sets.toString().removeWhitespaces(),
-                        games,
-                        homePlayersText,
-                        awayPlayersText
-                    )
-
-                    awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
-                    EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
-                }
-
-                awayTeam.tmId -> {
-                    val subject = "Byla podána námitka k výsledku $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
-
-                    val message = """
+                val message = """
                     Dobrý den,
                     
                     vedoucí týmu ${awayTeam.name} právě podal námitku k $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} ze dne ${match.dateAndTime?.toMyString() ?: "nespecifikováno"}.
                     
                     Dle něj je správný stav zápasu následující:
                     Skóre: ${sets.toString().removeWhitespaces()} na sety a $games na gemy.
-                    Hráči: $homePlayersText a $awayPlayersText
+                    Hráči: ${mHomePlayers.joinToString(", ")} a ${mAwayPlayers.joinToString(", ")}
                     
                     Na tento email prosím neodpovídejte.
                     
                     Administrátor aplikace AMTEL Opava
                     """.trimIndent()
 
-                    homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
-                    EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
-                }
-
-                else -> {
-                    val subject = "Byl zapsán výsledek $round. zápasu v utkání ${homeTeam.name}–${awayTeam.name} (skupina ${match.groupName})"
-
-                    val message = String.format(
-                        context.getString(R.string.match_input_email_headOfLeague),
-                        round,
-                        homeTeam.name,
-                        awayTeam.name,
-                        match.dateAndTime?.toMyString() ?: context.getString(R.string.unspecified),
-                        sets.toString().removeWhitespaces(),
-                        games,
-                        homePlayersText,
-                        awayPlayersText
-                    )
-
-                    homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
-                    awayManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
-                }
+                homeManagerEmail?.let { EmailSender.sendEmail(it, subject, message) }
+                EmailSender.headOfLeagueEmail?.let { EmailSender.sendEmail(it, subject, message) }
             }
         }
 

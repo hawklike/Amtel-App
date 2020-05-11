@@ -32,8 +32,6 @@ class RankingFragment : AbstractBaseFragment()
     private var group = Group()
 
     private val teams: MutableList<Team> = mutableListOf()
-//    private var orderBy = RankingOrderBy.POINTS
-//    private var reverseOrder = false
 
     private lateinit var actualSortOption: TextView
 
@@ -121,10 +119,10 @@ class RankingFragment : AbstractBaseFragment()
             year.toString(),
             viewModel.orderBy
         )
-        adapter?.onClick = { team, position ->
+        adapter?.onClick = { team, _ ->
             val intent = Intent(activity!!, TeamInfoActivity::class.java).apply {
                 putExtra(TeamInfoActivity.TEAM, team)
-                putExtra(TeamInfoActivity.RANKING, position + 1)
+                putExtra(TeamInfoActivity.RANKING, viewModel.getPosition(team))
             }
             startActivity(intent)
         }

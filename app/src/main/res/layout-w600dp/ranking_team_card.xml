@@ -8,6 +8,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/ranking_team_card_rank"
         android:layout_width="wrap_content"
+        android:minWidth="23dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:singleLine="true"

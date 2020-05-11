@@ -6,16 +6,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toCalendar
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toDate
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Sex
 import cz.prague.cvut.fit.steuejan.amtelapp.states.*
 import kotlinx.coroutines.launch
@@ -93,7 +93,7 @@ class AccountPersonalFragmentVM : ViewModel()
         else
         {
             title = App.context.getString(R.string.password_change_failure_title)
-            message = App.context.getString(R.string.password_change_failure_message)
+            message = context.getString(R.string.password_change_failure_login_again)
         }
 
         return Pair(title, message)
@@ -104,7 +104,9 @@ class AccountPersonalFragmentVM : ViewModel()
         if(confirmPersonalInfo(fullName, birthdate, phoneNumber))
         {
             val phone: String? = if(phoneNumber.isEmpty()) null else phoneNumber
+            //split fullname and take the first word (split by whitespaces)
             val name = fullName.split(Regex("[ ]+")).first()
+            //split fullname a take the rest (represents surname)
             val surname = fullName.split(Regex("[ ]+")).drop(1).joinToString(" ")
 
             viewModelScope.launch {
@@ -118,12 +120,12 @@ class AccountPersonalFragmentVM : ViewModel()
                     this.firstSign = false
                 }
 
-                val success = UserRepository.setUser(user)
+                val success = UserRepository.setUser(user)?.let {
+                    TeamRepository.updateUserInTeam(user)
+                }
 
-                TeamRepository.updateUserInTeam(user)
-
-                success?.let { personalInfoChange.value = PersonalInfoSuccess(name, surname, birthdate, phone, sex)  }
-                    ?: let { personalInfoChange.value = PersonalInfoFailure }
+                if(success == true) personalInfoChange.value = PersonalInfoSuccess(name, surname, birthdate, phone, sex)
+                else personalInfoChange.value = PersonalInfoFailure
             }
         }
     }
@@ -133,7 +135,8 @@ class AccountPersonalFragmentVM : ViewModel()
         var okFullName = true
         var okBirthdate = true
         var okPhoneNumber = true
-        
+
+        //is empty or doesn't contain two separate words (name and surname)
         if(fullName.isEmpty() || fullName.split(Regex("[ ]+")).size < 2)
         {
             okFullName = false
@@ -159,19 +162,6 @@ class AccountPersonalFragmentVM : ViewModel()
         return okFullName && okBirthdate && okPhoneNumber
     }
 
-    fun createAfterPersonalInfoDialog(state: PersonalInfoState): Message
-    {
-        return if(state is PersonalInfoSuccess) Message(
-            App.context.getString(R.string.personalInfo_change_success_title),
-            null
-        )
-        else Message(
-            App.context.getString(
-                R.string.personalInfo_change_failure_title
-            ), null
-        )
-    }
-
     fun setDialogBirthdate(birthdate: Editable): Calendar?
     {
         return if(birthdate.isEmpty()) null
@@ -192,8 +182,10 @@ class AccountPersonalFragmentVM : ViewModel()
     {
         viewModelScope.launch {
             user.email = email
+            //update user in database
             UserRepository.setUser(user)?.let { user ->
                 user.teamId?.let {
+                    //update user in a team
                     TeamRepository.updateUserInTeam(user)
                 }
                 userUpdated.value = true

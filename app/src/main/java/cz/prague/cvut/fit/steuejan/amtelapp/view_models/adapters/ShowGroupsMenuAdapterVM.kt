@@ -57,8 +57,8 @@ class ShowGroupsMenuAdapterVM : ViewModel()
 
             val actualSeason = group.teamIds.keys.map { it.toInt() }.max() ?: 0
             val text =
-                if(actualSeason > DateUtil.actualSeason.toInt()) "Příští sezóna:"
-                else "Poslední sezóna:"
+                if(actualSeason > DateUtil.actualSeason.toInt()) context.getString(R.string.next_season)
+                else context.getString(R.string.last_season)
 
             holder.actualRound.text = "$text ${if(actualSeason != 0) actualSeason.toString() else context.getString(R.string.is_not)}"
             holder.rounds.text = String.format(

@@ -70,8 +70,7 @@ class LoginFragment : AbstractMainActivityFragment()
             val password = passwordLayout.editText!!.text.toString().trim()
 
             deleteErrors()
-            //TODO: change back to password
-            viewModel.loginUser(email, "123456")
+            viewModel.loginUser(email, password)
         }
 
         lostPassword.setOnClickListener {
@@ -82,7 +81,7 @@ class LoginFragment : AbstractMainActivityFragment()
                     if(email.isNotEmpty())
                     {
                         message(text = String.format(getString(R.string.reset_email_message), email))
-                        positiveButton(text = "Zaslat") { AuthManager.sendResetPassword(email) }
+                        positiveButton(text = getString(R.string.send)) { AuthManager.sendResetPassword(email) }
                     }
                     else
                     {

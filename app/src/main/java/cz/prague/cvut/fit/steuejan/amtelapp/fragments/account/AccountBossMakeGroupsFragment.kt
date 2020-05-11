@@ -13,7 +13,6 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
@@ -21,9 +20,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.ManageGroupsActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowTeamsFirestoreAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.TeamOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidName
@@ -79,13 +78,15 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
     override fun onDestroyView()
     {
         super.onDestroyView()
+        recyclerView?.adapter = null
+        recyclerView?.removeAllViews()
         adapter = null
         recyclerView = null
     }
 
     private fun setupRecycler()
     {
-        val query = TeamRepository.retrieveAllTeams().orderBy(TeamOrderBy.GROUP.toString())
+        val query = TeamRepository.retrieveAllTeamsQuery().orderBy(TeamOrderBy.GROUP.toString())
         val options = FirestoreRecyclerOptions.Builder<Team>()
             .setQuery(query, Team::class.java)
             .setLifecycleOwner(viewLifecycleOwner)
@@ -108,11 +109,10 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
         }
 
         createGroup.setOnClickListener {
+            progressDialog.show()
             val groupName = nameLayout.editText?.text.toString()
-
             nameLayout.error = null
             viewModel.createGroup(groupName, playingPlayOff)
-            progressDialog.show()
         }
 
         showGroups.setOnClickListener {
@@ -169,6 +169,7 @@ class AccountBossMakeGroupsFragment : AbstractMainActivityFragment()
     private fun confirmGroupName()
     {
         viewModel.groupName.observe(viewLifecycleOwner) {
+            progressDialog.dismiss()
             if(it is InvalidName)
                 nameLayout.error = it.errorMessage
         }

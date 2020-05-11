@@ -28,6 +28,9 @@ class ManageGroupsActivityVM : ViewModel()
 
     /*---------------------------------------------------*/
 
+    /*
+    Retrieves all groups from database except the group which represents playoff.
+     */
     fun getGroupsExceptPlayOff()
     {
         viewModelScope.launch {
@@ -36,6 +39,9 @@ class ManageGroupsActivityVM : ViewModel()
         }
     }
 
+    /*
+    Checks whether the playoff is opened or not.
+     */
     fun getPlayoff()
     {
         viewModelScope.launch {

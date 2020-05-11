@@ -17,6 +17,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.view_models.adapters.ShowGroupsMenuAdapterVM
 
+/*
+Shows all groups in a menu.
+ */
 class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, private val isRanking: Boolean, private val user: User?)
     : RecyclerView.Adapter<ShowGroupsMenuAdapter.ViewHolder>()
 {
@@ -37,6 +40,7 @@ class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, pri
 
         init
         {
+            //clicked on the card
             card.setOnClickListener {
                 onNextClick?.invoke(getItem(adapterPosition), actualRoundInt?.minus(1) ?: 0)
             }
@@ -50,6 +54,7 @@ class ShowGroupsMenuAdapter(context: Context, private val list: List<Group>, pri
         return ViewHolder(view)
     }
 
+    //display some stats about all groups
     override fun onBindViewHolder(holder: ViewHolder, position: Int)
     {
         val group = getItem(position)

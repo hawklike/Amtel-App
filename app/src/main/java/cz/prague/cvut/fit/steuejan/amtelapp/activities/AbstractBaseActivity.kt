@@ -44,6 +44,15 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
         handleLogout()
     }
 
+    override fun onDestroy()
+    {
+        super.onDestroy()
+        toolbar.removeAllViews()
+    }
+
+    /*
+    Takes responsibility while logging out a user
+     */
     private fun handleLogout()
     {
         baseActivityVM.logoutIcon.observe(this) { visibility ->
@@ -67,11 +76,15 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
             }
     }
 
+    /*
+    Logout user and clean the state.
+     */
     fun logout()
     {
         Log.i(TAG, "logout")
         auth.signOut()
 
+        //clean
         val mainActivityModel by viewModels<MainActivityVM>()
         mainActivityModel.apply {
             setTitle(getString(R.string.login))
@@ -92,6 +105,9 @@ abstract class AbstractBaseActivity : AppCompatActivity(), CoroutineScope
         }
     }
 
+    /*
+    Sets arrow back in activities and defines what happens when clicked on the arrow.
+     */
     protected fun setArrowBack(onClick: () -> Unit = { onBackPressed() })
     {
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_blue_24dp)

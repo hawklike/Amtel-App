@@ -134,17 +134,8 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         setListeners()
     }
 
-    //FIXME: listener sometimes not triggered
     private fun setListeners()
     {
-//        cardHomeName.setOnFocusChangeListener { _, hasFocus ->
-//            if(hasFocus) startTeamInfoActivity(match.homeId)
-//        }
-//
-//        cardAwayName.setOnFocusChangeListener { _, hasFocus ->
-//            if(hasFocus) startTeamInfoActivity(match.awayId)
-//        }
-
         cardHomeName.setOnClickListener {
             startTeamInfoActivity(match.homeId)
         }
@@ -171,7 +162,7 @@ class MatchResultFragment : AbstractMatchActivityFragment()
 
     private fun getData()
     {
-        match = matchViewModel.match.value?.let { it } ?: Match()
+        match = matchViewModel.match.value ?: Match()
         round = match.rounds[roundNumber - 1]
     }
 
@@ -185,7 +176,7 @@ class MatchResultFragment : AbstractMatchActivityFragment()
         sets.text = MatchRepository.getResults(round).sets
         games.text = MatchRepository.getResults(round).games
 
-        place.text = match.place?.let { it } ?: getString(R.string.place_not_found)
+        place.text = match.place ?: getString(R.string.place_not_found)
         date.text = match.dateAndTime?.toMyString(getString(R.string.dateTime_format)) ?: getString(R.string.dateTime_not_found)
 
         cardHomeName.text = match.home

@@ -11,7 +11,9 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 
-
+/*
+An abstract class for handling activities with view pager.
+ */
 abstract class AbstractViewPagerActivity : AbstractBaseActivity()
 {
     protected lateinit var viewPager: ViewPager

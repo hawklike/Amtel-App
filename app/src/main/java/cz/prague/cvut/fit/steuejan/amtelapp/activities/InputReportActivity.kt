@@ -58,6 +58,7 @@ class InputReportActivity : AbstractBaseActivity()
     override fun onResume()
     {
         super.onResume()
+        //display last saved title, lead and text when the report is not published yet
         viewModel.report ?: with(PreferenceManager.getDefaultSharedPreferences(this)) {
             with(binding) {
                 title.setText(getString(REPORT_TITLE, ""))
@@ -70,12 +71,13 @@ class InputReportActivity : AbstractBaseActivity()
     override fun onBackPressed()
     {
         MaterialDialog(this).show {
-            title(text = "Opravdu chcete odejít?")
-            message(text = "Veškeré neuložené změny budou ztraceny.")
+            title(text = getString(R.string.exit_report_confirmation))
+            message(text = getString(R.string.exit_report_message))
             negativeButton()
-            positiveButton(text = "Odejít") {
+            positiveButton(text = getString(R.string.leave)) {
                 if(viewModel.published)
                 {
+                    //in order to refresh reports in the ReportsFragment
                     setResult(RESULT_OK)
                     finish()
                 }
@@ -90,8 +92,9 @@ class InputReportActivity : AbstractBaseActivity()
             viewModel.report = bundle.getParcelable(REPORT)
         }
 
+        //the report has been already published
         viewModel.report?.let {
-            setToolbarTitle("Upravit článek")
+            setToolbarTitle(getString(R.string.edit_report))
             with(binding) {
                 deleteReport.visibility = VISIBLE
                 publishReport.visibility = GONE
@@ -101,12 +104,13 @@ class InputReportActivity : AbstractBaseActivity()
                 text.setText(it.text)
                 viewModel.published = true
             }
-        } ?: setToolbarTitle("Napsat článek")
+        } ?: setToolbarTitle(getString(R.string.write_report))
     }
     
     private fun saveReport()
     {
         binding.saveReport.setOnClickListener {
+            //if the report has been already published, update the report in database
             viewModel.report?.let {
                 with(binding) {
                     progressDialog.show()
@@ -116,9 +120,10 @@ class InputReportActivity : AbstractBaseActivity()
                     viewModel.publishRecord(it.id, title, lead, text)
                 }
             }
+                //else save the work in progress
             ?: let {
                 updateReportInPreferences()
-                toast("Uloženo")
+                toast(R.string.saved)
             }
         }
     }
@@ -129,6 +134,7 @@ class InputReportActivity : AbstractBaseActivity()
         val lead: String?
         val text: String?
 
+        //clear data in preferences when the report is published
         if(viewModel.published)
         {
             title = null
@@ -155,9 +161,9 @@ class InputReportActivity : AbstractBaseActivity()
     {
         binding.publishReport.setOnClickListener {
             MaterialDialog(this).show {
-                title(text = "Opravdu chcete článek publikovat?")
-                message(text = "Žádné strachy, článek budete moct kdykoliv upravit nebo smazat.")
-                positiveButton(text = "Publikovat") {
+                title(text = getString(R.string.publish_report_title))
+                message(text = getString(R.string.publish_report_message))
+                positiveButton(text = getString(R.string.publish)) {
                     progressDialog.show()
                     with(binding) {
                         val title = title.text.toString().trim()
@@ -170,21 +176,22 @@ class InputReportActivity : AbstractBaseActivity()
             }
         }
 
+        //invoked when the report was published
         viewModel.reportPublished.observe(this) { published ->
             progressDialog.dismiss()
             if(viewModel.report != null)
             {
-                if(published) toast("Aktualizováno")
-                else toast("Aktualizace se nezdařila!")
+                if(published) toast(getString(R.string.updated))
+                else toast(getString(R.string.not_updated))
             }
             else
             {
                 if(published)
                 {
-                    toast("Publikováno")
+                    toast(getString(R.string.published))
                     updateReportInPreferences()
                 }
-                else toast("Publikování se nezdařilo!")
+                else toast(getString(R.string.not_published))
             }
         }
     }
@@ -193,8 +200,8 @@ class InputReportActivity : AbstractBaseActivity()
     {
         binding.deleteReport.setOnClickListener {
             MaterialDialog(this).show {
-                title(text = "Opravdu chcete článek smazat?")
-                positiveButton(text = "Smazat") {
+                title(text = getString(R.string.delete_report_title))
+                positiveButton(R.string.delete) {
                     progressDialog.show()
                     viewModel.deleteReport()
                 }
@@ -206,14 +213,14 @@ class InputReportActivity : AbstractBaseActivity()
             progressDialog.dismiss()
             if(deleted)
             {
-                toast("Smazáno")
+                toast(getString(R.string.deleted))
                 with(binding) {
                     title.text?.clear()
                     lead.text?.clear()
                     text.text?.clear()
                 }
             }
-            else toast("Smazání se nezdařilo!")
+            else toast(getString(R.string.not_deleted))
         }
     }
 }

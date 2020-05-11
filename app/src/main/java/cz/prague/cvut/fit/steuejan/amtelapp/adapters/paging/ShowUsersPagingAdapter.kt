@@ -12,7 +12,6 @@ import com.firebase.ui.firestore.paging.FirestorePagingAdapter
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.firebase.ui.firestore.paging.LoadingState
 import com.google.firebase.firestore.ktx.toObject
-import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.getColor
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
@@ -111,11 +110,11 @@ class ShowUsersPagingAdapter(options: FirestorePagingOptions<User>, private val 
         holder.email.text = user.email
 
         holder.birthdate.apply {
-            text = user.birthdate?.toMyString() ?: "Datum narození neznámé"
+            text = user.birthdate?.toMyString("'ročník' yyyy") ?: "ročník neznámý"
         }
 
         holder.team.apply {
-            text = user.teamName ?: "Bez týmu"
+            text = user.teamName ?: context.getString(R.string.without_team)
         }
 
         holder.fullName.apply {
@@ -136,7 +135,7 @@ class ShowUsersPagingAdapter(options: FirestorePagingOptions<User>, private val 
             LoadingState.LOADING_MORE -> dataLoadedListener?.onLoading()
             LoadingState.LOADED -> dataLoadedListener?.onLoaded()
             LoadingState.FINISHED -> {
-                if(itemCount > 12) toast("Více už toho není.")
+                if(itemCount > 12) toast(R.string.everything_loaded)
                 dataLoadedListener?.onLoaded()
             }
             LoadingState.ERROR -> {}

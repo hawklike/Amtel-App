@@ -80,8 +80,8 @@ class MainActivity : AbstractBaseActivity()
             if(!hasInternet)
             {
                 MaterialDialog(this)
-                    .title(text = "Špatné připojení k internetu")
-                    .message(text = "Aplikace nemusí fungovat správně. Vraťte se prosím zpět do aplikace jakmile budete mít obnovené připojení k internetu.")
+                    .title(text = getString(R.string.bad_internet_connection_title))
+                    .message(text = getString(R.string.bad_internet_connection_message))
                     .positiveButton()
                     .show()
             }
@@ -105,25 +105,32 @@ class MainActivity : AbstractBaseActivity()
 
     private fun displayAccount(savedInstanceState: Bundle?)
     {
+        //the user is logged in and MainActivity is shown for the first time
         AuthManager.currentUser?.let { firebaseUser ->
             if(savedInstanceState == null)
                 viewModel.prepareUser(firebaseUser.uid)
         }
 
+        //invoked when a user logged in state changes
         viewModel.isUserLoggedIn().observe(this) { user ->
             when(user)
             {
                 is SignedUser -> {
                     Log.d(TAG, "${user.self} is signed")
                     TestingUtil.setCurrentUser(user.self.email)
+                    //change the item name in the navigation drawer
                     if(::drawer.isInitialized) drawer.updateName(0, StringHolder(getString(R.string.account)))
                     baseActivityVM.setLogoutIcon(true)
+                    //show the account fragment
                     populateFragment(AccountFragment.newInstance())
                 }
                 is DeletedUser -> userDeleted(0)
                 else -> {
+                    //user is unsigned
                     Log.d(TAG, "user unsigned")
+                    //change the item name in the navigation drawer
                     if(::drawer.isInitialized) drawer.updateName(0, StringHolder(getString(R.string.login)))
+                    //show the login fragment
                     populateFragment(LoginFragment.newInstance())
                 }
             }
@@ -132,6 +139,7 @@ class MainActivity : AbstractBaseActivity()
 
     private fun userAccountDeleted()
     {
+        //invoked when the user was deleted
         viewModel.userAccountDeleted.observe(this) { deleted ->
             if(deleted) showUserDeletedDialog { userDeleted(2) }
         }
@@ -140,8 +148,8 @@ class MainActivity : AbstractBaseActivity()
     private fun showUserDeletedDialog(onDismiss: () -> Unit)
     {
         MaterialDialog(this).show {
-            title(text = "Neplatný účet")
-            message(text = "Váš účet byl smazán.")
+            title(text = getString(R.string.invalid_account))
+            message(text = getString(R.string.account_deleted_text))
             positiveButton()
             onDismiss { onDismiss.invoke() }
         }
@@ -176,6 +184,7 @@ class MainActivity : AbstractBaseActivity()
             )
             .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener
             {
+                //handles which fragment to display when clicked on an item in the navigation drawer
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean
                 {
                     viewModel.setDrawerSelectedPosition(position)
@@ -196,6 +205,7 @@ class MainActivity : AbstractBaseActivity()
                 }
             }).build()
 
+        //highlight selected item and remember the item
         if(savedInstanceState == null)
         {
             AuthManager.currentUser?.let { drawer.setSelection(profile) }
@@ -206,11 +216,16 @@ class MainActivity : AbstractBaseActivity()
 
     private fun updateDrawer()
     {
+        //in order to still show selected item when screen rotates
         viewModel.getDrawerSelectedPosition().observe(this) {
             if(::drawer.isInitialized) drawer.setSelectionAtPosition(it, false)
         }
     }
 
+    /*
+    User is still saved in the database, but lost a role which gives him an access.
+    Therefore has to be logged out.
+     */
     private fun userDeleted(menuItem: Long)
     {
         logout()
@@ -218,6 +233,9 @@ class MainActivity : AbstractBaseActivity()
         viewModel.setDrawerSelectedPosition(drawer.currentSelectedPosition)
     }
 
+    /*
+    Shows a fragment given as an argument.
+     */
     private fun populateFragment(fragment: AbstractMainActivityFragment)
     {
         Log.d(TAG, "${fragment.getName()} populated")

@@ -2,9 +2,9 @@ package cz.prague.cvut.fit.steuejan.amtelapp.view_models.adapters
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import kotlinx.coroutines.launch
 
@@ -14,6 +14,7 @@ class ShowTeamPlayersAdapterVM : ViewModel()
     {
         viewModelScope.launch {
             UserRepository.deleteUser(user.id)
+            //remove user from the team
             val team = TeamRepository.findTeam(user.teamId)
             if(team is ValidTeam)
             {

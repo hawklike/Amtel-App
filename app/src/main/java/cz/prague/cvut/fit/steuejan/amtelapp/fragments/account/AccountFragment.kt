@@ -10,8 +10,8 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.ViewPagerAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.HEAD_OF_LEAGUE
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole.TEAM_MANAGER
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
@@ -21,12 +21,17 @@ import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeam
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-
 class AccountFragment : AbstractMainActivityFragment()
 {
     companion object
     {
         fun newInstance(): AccountFragment = AccountFragment()
+
+        const val MAKE_TEAM_TM = 0
+        const val PERSONAL_TM = 1
+        const val GROUPS_BOSS = 0
+        const val MANAGERS_BOSS = 1
+        const val PERSONAL_BOSS = 2
     }
 
     override val job: Job = Job()
@@ -63,6 +68,7 @@ class AccountFragment : AbstractMainActivityFragment()
         getUser()
         setupViewPager(viewPager, user)
         tabs.setupWithViewPager(viewPager)
+        updatePage()
     }
 
     private fun getUser()
@@ -70,7 +76,7 @@ class AccountFragment : AbstractMainActivityFragment()
         user = mainActivityModel.getUser().value ?: User()
         mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
             user = observedUser?.copy() ?: user
-            Log.i("AccountFragment", "getUser(): user $user observed")
+            Log.d("AccountFragment", "getUser(): user $user observed")
         }
     }
 
@@ -105,5 +111,14 @@ class AccountFragment : AbstractMainActivityFragment()
             }
         }
         viewPager.adapter = adapter
+    }
+
+    //listen to updates
+    private fun updatePage()
+    {
+        mainActivityModel.getAccountPage().observe(viewLifecycleOwner) { page ->
+            if(page in 0..(viewPager.adapter?.count?.minus(1) ?: 0))
+                viewPager.setCurrentItem(page, true)
+        }
     }
 }
