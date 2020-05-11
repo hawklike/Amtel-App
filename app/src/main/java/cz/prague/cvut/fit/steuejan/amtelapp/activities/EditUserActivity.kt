@@ -46,7 +46,7 @@ class EditUserActivity : AbstractBaseActivity()
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
         setUser()
-        setToolbarTitle("Upravit hráče")
+        setToolbarTitle(getString(R.string.edit_player))
         setArrowBack()
         populateField()
         changeBirthday()
@@ -126,9 +126,9 @@ class EditUserActivity : AbstractBaseActivity()
         with(binding) {
             changeRoleButton.setOnClickListener {
                 MaterialDialog(this@EditUserActivity).show {
-                    title(text = "Opravdu chcete smazat roli?")
-                    message(text = "Vedoucí týmu se stane běžným hráčem a ztratí ke svému týmu přístup. Již nebude moct vytvářet soupisku a zapisovat výsledky zápasů. Aby daný tým neosiřel (neměl vedoucího), přidejte nového vedoucího v sekci:\n\nUčet > Vedoucí\n\nZměna se projeví až po kliknutí na tlačítko uložit (modré kulaté tlačítko s ikonkou diskety).")
-                    positiveButton(text = "Smazat") {
+                    title(text = getString(R.string.delete_role_confirmation))
+                    message(R.string.delete_role_message)
+                    positiveButton(R.string.delete) {
                         viewModel.deleteRole = true
                     }
                     negativeButton()
@@ -213,11 +213,11 @@ class EditUserActivity : AbstractBaseActivity()
             progressDialog.dismiss()
             if(success)
             {
-                toast("Vše proběhlo v pořádku.")
+                toast(R.string.success_long)
                 setResult(Activity.RESULT_OK)
                 onBackPressed()
             }
-            else toast("Upravit hráče se nepodařilo.")
+            else toast(R.string.failure_long)
         }
     }
 

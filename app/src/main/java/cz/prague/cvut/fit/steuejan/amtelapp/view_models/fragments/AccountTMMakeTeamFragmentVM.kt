@@ -9,16 +9,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
-import cz.prague.cvut.fit.steuejan.amtelapp.business.util.firstLetterUpperCase
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.UserRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Day
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Message
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toDayInWeek
@@ -64,6 +63,9 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     /*---------------------------------------------------*/
 
+    /*
+    This method creates a new team, if not created, or updates an existing team.
+     */
     fun createTeam(user: User, name: String, place: String, days: String)
     {
         if(confirmInput(name, days))
@@ -73,15 +75,19 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
                 val users = mutableListOf<User>().apply {
                     user.teamId?.let {
+                        //team already created
                         val team = TeamRepository.findTeam(it)
                         if(team is ValidTeam)
                         {
+                            //team has no users, add team manager
                             if(team.self.users.isEmpty()) add(user)
+                            //team already has users, copy them (add them to list)
                             else addAll(team.self.users)
                         }
-                    } ?: add(user)
+                    } ?: add(user) //team not created yet, add team manager among future team players
                 }
 
+                //create/update team
                 var team: Team? = Team(
                     user.teamId,
                     name,
@@ -92,8 +98,10 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
                     users
                 )
 
+                //set team in database
                 team = TeamRepository.setTeam(team!!)
 
+                //all ok?
                 if(team != null) teamState.value = ValidTeam(team)
                 else teamState.value = NoTeam
             }
@@ -102,6 +110,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     fun updateUser(user: User, team: Team)
     {
+        //user has a (new) team
         viewModelScope.launch {
             UserRepository.updateUser(user.id, mapOf(
                 "teamId" to user.teamId,
@@ -129,7 +138,9 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
         if(DateUtil.serverTime == null)
         {
             viewModelScope.launch {
+                //get actual time from server
                 LeagueRepository.getServerTime()?.let {
+                    //keep that time until next visit
                     DateUtil.serverTime = it
                     isLineUpAllowed(it)
                 }
@@ -169,12 +180,15 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
 
     private fun isLineUpAllowed(serverTime: Date?)
     {
+        //deadline not set yet
         if(deadline == null)
         {
             viewModelScope.launch {
+                //retrieve deadline from database
                 LeagueRepository.getDeadline()?.let { deadlineRange ->
                     val from = deadlineRange.first
                     val to = deadlineRange.second
+                    //update variable
                     deadline = deadlineRange
                     _isLineUpAllowed.value = isLineUpAllowed(serverTime, from, to)
                 }
@@ -182,6 +196,7 @@ class AccountTMMakeTeamFragmentVM : ViewModel()
         }
         else
         {
+            //deadline is already set
             val from = deadline?.first
             val to = deadline?.second
             _isLineUpAllowed.value = isLineUpAllowed(serverTime, from, to)

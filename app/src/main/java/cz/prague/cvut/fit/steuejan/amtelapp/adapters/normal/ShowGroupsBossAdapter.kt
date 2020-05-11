@@ -60,8 +60,8 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
 
             val size = group.teamIds[DateUtil.actualSeason]?.size ?: 0
 
-            if(group.playingPlayOff) playingPlayOff.text = "Hraje baráž: ano"
-            else playingPlayOff.text = "Hraje baráž: ne"
+            if(group.playingPlayOff) playingPlayOff.text = context.getString(R.string.playing_playoff)
+            else playingPlayOff.text = context.getString(R.string.not_playing_playoff)
 
             name.text = group.name
             this.size.text = String.format(context.getString(R.string.number_teams), size)
@@ -80,7 +80,8 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
         {
             if(!group.visibility) visibility.backgroundTintList = ColorStateList.valueOf(App.getColor(R.color.lightGrey))
             visibility.setOnClickListener {
-                val option = if(group.visibility) "vypnout" else "zapnout"
+                val option = if(group.visibility) context.getString(R.string.turn_off) else context.getString(
+                                    R.string.turn_on)
                 MaterialDialog(context)
                     .title(text = "Chcete $option viditelnost skupiny ${group.name}?")
                     .show {
@@ -100,7 +101,7 @@ class ShowGroupsBossAdapter(private val context: Context, val list: MutableList<
                 MaterialDialog(context)
                     .title(text = "Opravdu chcete smazat skupinu ${name.text}?")
                     .show {
-                        positiveButton(text = "Smazat") {
+                        positiveButton(R.string.delete) {
                             deleteGroup(getItem(adapterPosition))
                             list.removeAt(adapterPosition)
                             notifyItemRemoved(adapterPosition)

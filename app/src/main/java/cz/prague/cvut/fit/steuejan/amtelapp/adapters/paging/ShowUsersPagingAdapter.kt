@@ -114,7 +114,7 @@ class ShowUsersPagingAdapter(options: FirestorePagingOptions<User>, private val 
         }
 
         holder.team.apply {
-            text = user.teamName ?: "Bez týmu"
+            text = user.teamName ?: context.getString(R.string.without_team)
         }
 
         holder.fullName.apply {
@@ -135,7 +135,7 @@ class ShowUsersPagingAdapter(options: FirestorePagingOptions<User>, private val 
             LoadingState.LOADING_MORE -> dataLoadedListener?.onLoading()
             LoadingState.LOADED -> dataLoadedListener?.onLoaded()
             LoadingState.FINISHED -> {
-                if(itemCount > 12) toast("Více už toho není.")
+                if(itemCount > 12) toast(R.string.everything_loaded)
                 dataLoadedListener?.onLoaded()
             }
             LoadingState.ERROR -> {}

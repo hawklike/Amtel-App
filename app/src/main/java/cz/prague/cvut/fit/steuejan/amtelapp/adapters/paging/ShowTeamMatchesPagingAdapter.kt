@@ -13,6 +13,7 @@ import com.firebase.ui.firestore.paging.FirestorePagingAdapter
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.google.firebase.firestore.ktx.toObject
 import cz.prague.cvut.fit.steuejan.amtelapp.App
+import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.context
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
@@ -57,7 +58,7 @@ class ShowTeamMatchesPagingAdapter(private val team: Team, options: FirestorePag
 
         getWinner(holder, isHomeTeam, match)
 
-        holder.date.text = match.dateAndTime?.toMyString() ?: "datum neznámé"
+        holder.date.text = match.dateAndTime?.toMyString() ?: context.getString(R.string.date_unknown)
     }
 
     private fun getWinner(holder: ViewHolder, isHomeTeam: Boolean, match: Match)

@@ -1,12 +1,10 @@
 package cz.prague.cvut.fit.steuejan.amtelapp.fragments.account
 
 import android.os.Bundle
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -83,7 +81,7 @@ class LoginFragment : AbstractMainActivityFragment()
                     if(email.isNotEmpty())
                     {
                         message(text = String.format(getString(R.string.reset_email_message), email))
-                        positiveButton(text = "Zaslat") { AuthManager.sendResetPassword(email) }
+                        positiveButton(text = getString(R.string.send)) { AuthManager.sendResetPassword(email) }
                     }
                     else
                     {

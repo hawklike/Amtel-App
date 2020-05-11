@@ -78,17 +78,17 @@ class ManageGroupsActivity : AbstractBaseActivity()
     {
         generatePlayOffButton.setTextColor(App.getColor(R.color.red))
         generatePlayOffButton.isEnabled = false
-        generatePlayOffButton.text = "Otevřeno"
+        generatePlayOffButton.text = getString(R.string.opened)
     }
 
     private fun generatePlayoff()
     {
         generatePlayOffButton.setOnClickListener {
             MaterialDialog(this)
-                .title(text = "Opravdu chcete otevřít baráž?")
-                .message(text = "Budou vygenerována utkání o postup/sestup a přesunuty nejlepší/nejhorší týmy do patřičných skupin.\n\nBaráž bude otevřena na dva týdny, poté se automaticky uzavře a aktuální sezóna bude ukončena. Po uplynutí dvou týdnů budete moct otevřít novou baráž.\n\nMějte prosím strpení, generování bude chvíli trvat.")
+                .title(text = getString(R.string.open_playoff_title))
+                .message(R.string.open_playoff_message)
                 .show {
-                    positiveButton(text = "Otevřít") {
+                    positiveButton(text = getString(R.string.open)) {
                         setPlayOff()
                         disablePlayoffButton()
                     }

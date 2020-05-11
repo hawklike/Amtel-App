@@ -22,11 +22,11 @@ import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchArrangementActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.activities.MatchViewPagerActivity
 import cz.prague.cvut.fit.steuejan.amtelapp.adapters.realtime.ShowMatchesFirestoreAdapter
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.DateUtil
 import cz.prague.cvut.fit.steuejan.amtelapp.business.util.toMyString
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Group
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.Playoff
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.UserRole
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.toRole
@@ -147,7 +147,7 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
         {
             weekRange.visibility = VISIBLE
             weekRange.text = "${playoff.startDate.toMyString()} – ${playoff.endDate.toMyString()}"
-            title.text = "Stav baráže"
+            title.text = getString(R.string.playoff_state)
             deadline.text = "Počet dní do konce baráže: ${DateUtil.getRemainingDaysUntil(playoff.endDate)}"
         }
         else if(user is SignedUser && (user as SignedUser).self.role.toRole() == UserRole.HEAD_OF_LEAGUE)
@@ -161,7 +161,7 @@ class ScheduleRoundFragment : AbstractScheduleActivityFragment()
             group.roundDates[round.toString()]?.let { weekNumber ->
                 title.text = String.format(getString(R.string.round_state), round)
                 val remainingDays = DateUtil.getRemainingDaysUntil(weekNumber)
-                if(remainingDays < 0) deadline.text = "Kolo již proběhlo."
+                if(remainingDays < 0) deadline.text = getString(R.string.round_is_over)
                 else deadline.text = String.format(getString(R.string.round_countdown), remainingDays)
             } ?: let { chooseWeekLayout?.visibility = GONE }
         }

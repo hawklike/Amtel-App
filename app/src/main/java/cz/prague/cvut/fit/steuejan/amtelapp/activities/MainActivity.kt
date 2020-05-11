@@ -80,8 +80,8 @@ class MainActivity : AbstractBaseActivity()
             if(!hasInternet)
             {
                 MaterialDialog(this)
-                    .title(text = "Špatné připojení k internetu")
-                    .message(text = "Aplikace nemusí fungovat správně. Vraťte se prosím zpět do aplikace jakmile budete mít obnovené připojení k internetu.")
+                    .title(text = getString(R.string.bad_internet_connection_title))
+                    .message(text = getString(R.string.bad_internet_connection_message))
                     .positiveButton()
                     .show()
             }
@@ -148,8 +148,8 @@ class MainActivity : AbstractBaseActivity()
     private fun showUserDeletedDialog(onDismiss: () -> Unit)
     {
         MaterialDialog(this).show {
-            title(text = "Neplatný účet")
-            message(text = "Váš účet byl smazán.")
+            title(text = getString(R.string.invalid_account))
+            message(text = getString(R.string.account_deleted_text))
             positiveButton()
             onDismiss { onDismiss.invoke() }
         }

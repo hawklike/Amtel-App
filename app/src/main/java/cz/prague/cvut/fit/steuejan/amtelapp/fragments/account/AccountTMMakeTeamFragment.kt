@@ -135,7 +135,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
             if(!mainActivityModel.isDeadlineAlertShown)
             {
                 MaterialDialog(activity!!).show {
-                    title(text = "Uzavření soupisky")
+                    title(text = getString(R.string.line_up_closing))
                     message(text = viewModel.deadlineDialog)
                     positiveButton()
                 }
@@ -180,7 +180,7 @@ class AccountTMMakeTeamFragment : AbstractMainActivityFragment()
             if(user.role.toRole() == TEAM_MANAGER)
             {
                 mainActivityModel.setAccountPage(AccountFragment.PERSONAL_TM)
-                toast("Své osobní údaje si můžete změnit zde.")
+                toast(R.string.you_may_change_your_personal_information_here)
             }
             else
             {
@@ -244,7 +244,7 @@ Hrací dny: $playingDays${if(team is NoTeam) "\n\nNázev týmu již nepůjde ví
                 }
         }
 
-        addPlayer.setOnClickListener { toast("Po uzavření soupisky nelze přidat nového hráče.") }
+        addPlayer.setOnClickListener { toast(R.string.line_up_closed_cant_add_player) }
     }
 
     private fun addPlayer()

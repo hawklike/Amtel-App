@@ -74,7 +74,7 @@ class ShowTeamPlayersAdapter(private val context: Context, private val list: Mut
                 MaterialDialog(context)
                     .title(text = "Opravdu chcete smazat hráče ${user.name} ${user.surname}?")
                     .show {
-                        positiveButton(text = "Smazat") {
+                        positiveButton(R.string.delete) {
                             viewModel.deleteUser(user)
                             list.removeAt(adapterPosition)
                             notifyItemRemoved(adapterPosition)

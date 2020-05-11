@@ -140,7 +140,7 @@ class MainActivityVM(private val state: SavedStateHandle) : ViewModel()
                     _userAccountDeleted.value = true
                     return@launch
                 }
-                //everything is ok, emit livedata
+                //everything is ok, emit live data
                 isUserLoggedIn(SignedUser(user))
                 setUser(user)
                 Log.d(AbstractBaseActivity.TAG, "displayAccount(): $user currently logged in")

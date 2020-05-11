@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.prague.cvut.fit.steuejan.amtelapp.business.RankingSolver
 import cz.prague.cvut.fit.steuejan.amtelapp.business.helpers.SingleLiveEvent
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.TeamRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy
 import cz.prague.cvut.fit.steuejan.amtelapp.data.util.RankingOrderBy.POINTS
 import cz.prague.cvut.fit.steuejan.amtelapp.states.ValidTeams
@@ -51,16 +51,20 @@ class RankingFragmentVM : ViewModel()
     {
         var sortedTeams: List<Team> = listOf()
         withContext(Default) {
+            //teams not sorted yet by points
             if(teamByPoints.isEmpty() && orderBy == POINTS)
             {
                 sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
                 teamByPoints = sortedTeams
             }
+            //teams already sorted by points
             else if(teamByPoints.isNotEmpty() && orderBy == POINTS) sortedTeams = teamByPoints
+            //sort teams by any other order than points
             else sortedTeams = RankingSolver(teams, year).withOrder(orderBy).sort()
 
             if(reverse) sortedTeams = sortedTeams.reversed()
         }
+        //update live data
         _teams.value = sortedTeams
     }
 

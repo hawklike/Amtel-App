@@ -308,14 +308,14 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
                     {
                         progressDialog.dismiss()
                         updateTeam(user.teamId)
-                        showDialog("Email byl úspěšně změněn", "Nyní se přihlásíte pomocí nového emailu.")
+                        showDialog(getString(R.string.email_change_success), getString(R.string.email_change_sucess_instructions))
                     }
                 }
             }
             else
             {
                 progressDialog.dismiss()
-                showDialog("Email se nepodařilo změnit", (email as InvalidEmail).errorMessage)
+                showDialog(getString(R.string.email_change_failure), (email as InvalidEmail).errorMessage)
             }
         }
     }
@@ -341,7 +341,7 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
         MaterialDialog(activity!!)
             .title(R.string.password_change_confirmation_title)
             .show {
-                positiveButton(text = "Změnit") {
+                positiveButton(text = getString(R.string.change)) {
                     viewModel.addNewPassword(newPassword)
                     progressDialog.show()
                 }
@@ -355,9 +355,9 @@ class AccountPersonalFragment : AbstractMainActivityFragment()
     private fun displayChangeEmailDialog(newEmail: String)
     {
         MaterialDialog(activity!!)
-            .title(text = "Opravdu chcete změnit email?")
+            .title(text = getString(R.string.change_email_dialog_title))
             .show {
-                positiveButton(text = "Změnit") {
+                positiveButton(R.string.change) {
                     viewModel.changeEmail(newEmail)
                     progressDialog.show()
                 }

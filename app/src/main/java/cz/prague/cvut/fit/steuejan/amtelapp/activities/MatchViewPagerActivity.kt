@@ -64,8 +64,8 @@ class MatchViewPagerActivity : AbstractViewPagerActivity()
 
         viewModel.page.observe(this) { page ->
             MaterialDialog(this)
-                .title(text = "Zápas byl úspěšně přidán.")
-                .positiveButton(text = "Dále") {
+                .title(text = getString(R.string.match_input_success))
+                .positiveButton(text = getString(R.string.next)) {
                     if(page == 3) onBackPressed()
                     else animatePagerTransition()
                 }

@@ -75,7 +75,7 @@ class TeamInfoActivity : AbstractProfileActivity()
         setContentView(R.layout.team_info)
         super.onCreate(savedInstanceState)
         getData()
-        setToolbarTitle("Načítám tým...")
+        setToolbarTitle(getString(R.string.loading_team))
         setArrowBack()
         initAll()
     }

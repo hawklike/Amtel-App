@@ -52,7 +52,6 @@ class RoundsViewPagerActivity : AbstractViewPagerActivity()
     {
         val adapter = ViewPagerAdapter(supportFragmentManager)
         val rounds = group.rounds[DateUtil.actualSeason] ?: 0
-        println("rounds: $rounds")
 
         (1..rounds).map { round ->
             adapter.addFragment(

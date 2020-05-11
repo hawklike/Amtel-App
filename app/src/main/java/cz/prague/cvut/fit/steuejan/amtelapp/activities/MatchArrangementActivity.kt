@@ -255,7 +255,7 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
     {
         addToCalendar.setOnClickListener {
             MaterialDialog(this).show {
-                title(text = "Přidat utkání do kalendáře?")
+                title(text = getString(R.string.add_match_to_calendar))
                 positiveButton(R.string.yes) {
                     addToCalendarIntent()
                 }
@@ -269,7 +269,7 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
         //time when a match starts
         val startMillis = match.dateAndTime?.toCalendar()?.run {
             timeInMillis
-        } ?: run { toast("Nebylo nalezeno datum a čas utkání."); return }
+        } ?: run { toast(getString(R.string.date_time_not_found)); return }
 
         //time when a match finishes, defaultly set to three hours after start time
         val endMillis = match.dateAndTime?.toCalendar()?.run {
@@ -286,8 +286,8 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
             putExtra(CalendarContract.Events.EVENT_LOCATION, match.place)
         }
 
-        try { startActivity(Intent.createChooser(intent, "Přidat utkání" + "...")) }
-        catch(ex: ActivityNotFoundException) { toast("Nemáte nainstalovaný kalendář.") }
+        try { startActivity(Intent.createChooser(intent, getString(R.string.add_match) + "...")) }
+        catch(ex: ActivityNotFoundException) { toast(getString(R.string.calendar_not_installed)) }
     }
 
     /*
@@ -297,11 +297,11 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
     {
         defaultEndGame.setOnClickListener {
             MaterialDialog(this).show {
-                title(text = "Kontumace")
+                title(text = getString(R.string.default_end_game))
 
                 val msg =
-                    if(match.defaultEndGameEdits == 2) "Zvolte prosím vítěze. Výsledek budete moct jednou opravit."
-                    else "Zvolte prosím vítěze. Máte poslední možnost opravy!"
+                    if(match.defaultEndGameEdits == 2) getString(R.string.default_end_game_choose_winner_twoEdits)
+                    else getString(R.string.default_end_game_choose_winner_oneEdit)
 
                 message(text = msg)
                 listItemsSingleChoice(items = listOf(homeTeam.name, awayTeam.name)) { _, _, text ->
@@ -326,8 +326,8 @@ class MatchArrangementActivity : AbstractBaseActivity(), ShowMessagesFirestoreAd
                 val intent = Intent(Intent.ACTION_DIAL)
                 intent.data = Uri.parse("tel:$it")
                 try { startActivity(intent) }
-                catch(ex: ActivityNotFoundException) { toast("Z vašeho zařízení nelze volat.") }
-            } ?: toast("${opponent?.name} ${opponent?.surname} nemá uložené telefonní číslo.")
+                catch(ex: ActivityNotFoundException) { toast(getString(R.string.phone_not_supporting_calls)) }
+            } ?: toast(opponent?.name.toString() + " " + opponent?.surname + getString(R.string.phone_number_not_saved))
         }
     }
 

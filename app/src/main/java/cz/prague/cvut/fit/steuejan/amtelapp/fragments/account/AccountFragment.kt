@@ -76,7 +76,7 @@ class AccountFragment : AbstractMainActivityFragment()
         user = mainActivityModel.getUser().value ?: User()
         mainActivityModel.getUser().observe(viewLifecycleOwner) { observedUser ->
             user = observedUser?.copy() ?: user
-            Log.i("AccountFragment", "getUser(): user $user observed")
+            Log.d("AccountFragment", "getUser(): user $user observed")
         }
     }
 

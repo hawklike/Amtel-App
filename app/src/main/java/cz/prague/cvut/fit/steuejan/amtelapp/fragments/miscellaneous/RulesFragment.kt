@@ -12,8 +12,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.observe
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.User
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.LeagueRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.databinding.RulesFragmentBinding
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMainActivityFragment
 
@@ -73,8 +73,8 @@ class RulesFragment : AbstractMainActivityFragment()
             putExtra(Intent.EXTRA_EMAIL, arrayOf(LeagueRepository.headOfLeague?.email ?: ""))
         }
 
-        try { startActivity(Intent.createChooser(intent, "Poslat email" + "...")) }
-        catch(ex: ActivityNotFoundException) { toast("Nemáte naistalovaný emailový klient.") }
+        try { startActivity(Intent.createChooser(intent, getString(R.string.send_email) + "...")) }
+        catch(ex: ActivityNotFoundException) { toast(getString(R.string.email_client_not_installed)) }
     }
 
     private fun call()
@@ -83,7 +83,7 @@ class RulesFragment : AbstractMainActivityFragment()
             val intent = Intent(Intent.ACTION_DIAL)
             intent.data = Uri.parse("tel:$it")
             try { startActivity(intent) }
-            catch(ex: ActivityNotFoundException) { toast("Z vašeho zařízení nelze volat.") }
+            catch(ex: ActivityNotFoundException) { toast(R.string.phone_not_supporting_calls) }
         }
     }
 

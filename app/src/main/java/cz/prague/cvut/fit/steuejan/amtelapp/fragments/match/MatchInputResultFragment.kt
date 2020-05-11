@@ -24,9 +24,9 @@ import cz.prague.cvut.fit.steuejan.amtelapp.App
 import cz.prague.cvut.fit.steuejan.amtelapp.App.Companion.toast
 import cz.prague.cvut.fit.steuejan.amtelapp.R
 import cz.prague.cvut.fit.steuejan.amtelapp.business.AuthManager
-import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Match
 import cz.prague.cvut.fit.steuejan.amtelapp.data.entities.Team
+import cz.prague.cvut.fit.steuejan.amtelapp.data.repository.MatchRepository
 import cz.prague.cvut.fit.steuejan.amtelapp.fragments.abstracts.AbstractMatchActivityFragment
 import cz.prague.cvut.fit.steuejan.amtelapp.services.CountMatchScoreService
 import cz.prague.cvut.fit.steuejan.amtelapp.states.InvalidSet
@@ -127,7 +127,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         overviewLayout = view.findViewById(R.id.match_input_overview)
         resultsLayout = view.findViewById(R.id.match_input_results)
 
-        inputResult.text = "Zapsat $round. zápas"
+        inputResult.text = "${getString(R.string.input)}$round${getString(R.string.n_round)}"
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?)
@@ -276,7 +276,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
         viewModel.isReported.observe(viewLifecycleOwner) { match ->
             val result = MatchRepository.getResults(match.rounds[round - 1])
             viewModel.sendEmail(homeTeam, awayTeam, result.sets, result.games)
-            toast("Výsledek byl odeslán k posouzení.")
+            toast(R.string.result_reported_toast)
         }
     }
 
@@ -345,7 +345,7 @@ class MatchInputResultFragment : AbstractMatchActivityFragment()
                 //dialog not dismissed and don't know why
                 dialog.dismiss()
                 displayConfirmationDialog(
-                    "Zapsat výsledek?",
+                    getString(R.string.input_result_title),
                     getString(R.string.match_tie_warning)) {
                     viewModel.inputResult(
                         isHeadOfLeague, ignoreTie = true, isReport = isReport
