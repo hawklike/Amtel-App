@@ -1,5 +1,5 @@
 ## About the app 📱
-This repository consists of the Android application which helps to organize an amateur tennis league. The application is a practical part of my Bachelor thesis at CTU in Prague.
+*AMTEL Opava* application - the Android application which helps to organize the amateur tennis league. The application is a practical part of my Bachelor thesis at CTU in Prague.
 
 ## Used technologies ⚙️
 * Written in Kotlin with coroutines
