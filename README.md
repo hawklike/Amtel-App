@@ -1,6 +1,8 @@
 ## About the app 📱
 *AMTEL Opava* application - the Android application which helps to organize the amateur tennis league. The application is a practical part of my Bachelor thesis at CTU in Prague.
 
+The application itself provides an interface for creating new matches, editing groups in which the teams play, inputting matches scores, showing the actual ranking of teams within groups, presenting teams and players statistics, chatting with other players and many more. The app supports authentication and persistent data layer on the cloud.
+
 ## Used technologies ⚙️
 * Written in Kotlin with coroutines
 * Android Jetpack - LiveData, ViewModel, ViewBinding
