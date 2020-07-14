@@ -1,3 +1,5 @@
+[![AMTEL Opava App](https://img.shields.io/badge/AMTEL%20Opava-APK-red.svg?style=for-the-badge&logo=android)](https://github.com/hawklike/amtel-app/blob/master/AMTEL_Opava_1.2-beta.apk)
+
 ## About the app 📱
 *AMTEL Opava* application - the Android application which helps to organize the amateur tennis league. The application is a practical part of my Bachelor thesis at CTU in Prague.
 
